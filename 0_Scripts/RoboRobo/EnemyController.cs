@@ -25,6 +25,9 @@ public class EnemyController : Stats
     [Tooltip("장애물로 인식할 레이어")] [SerializeField]
     private LayerMask obstacleMask;
 
+	[Tooltip("플레이어 태그")] [SerializeField] 
+	private string playerTag;
+
     // [Tooltip("난이도 상승 시간")] [SerializeField]
     // private float maxReinforcementTime; // 난이도 상승 시간
     #endregion
@@ -98,15 +101,19 @@ public class EnemyController : Stats
 
 				if (Physics.Raycast(transform.position, cols[0].gameObject.transform.position - transform.position, out hit, findRadius, playerMask | obstacleMask))
 				{
-                    distance = (cols[0].gameObject.transform.position - transform.position).magnitude;
-                    targetTrans = cols[0].gameObject.transform;
 
-                    dir = (targetTrans.position - transform.position);
-                    dir.y = 0;
-                    dir = dir.normalized;
+					if (hit.transform.tag == playerTag)
+					{
+						distance = (cols[0].gameObject.transform.position - transform.position).magnitude;
+						targetTrans = cols[0].gameObject.transform;
 
-                    return;
-                }
+						dir = (targetTrans.position - transform.position);
+						dir.y = 0;
+						dir = dir.normalized;
+
+						return;
+					}
+				}
 			}
 		}
 
@@ -209,9 +216,12 @@ public class EnemyController : Stats
 		}
 
 		SelectAnimation(3, true);
-		base.Damaged(_damage);
+        
+        base.Damaged(_damage);
 
-		if (EnemyAudioSource != null && !EnemyAudioSource.isPlaying)
+        StatsUI.instance.SetEnemyHp();
+
+        if (EnemyAudioSource != null && !EnemyAudioSource.isPlaying)
 		{
 			EnemyAudioSource.Play();
 		}
@@ -225,5 +235,10 @@ public class EnemyController : Stats
 		targetTrans = null;
 		GameManager.instance.ChkWin();
 		dmgCol.enabled = false;
+	}
+
+	public float GetHpBar()
+	{
+		return (float)nowHp / maxHp;
 	}
 }

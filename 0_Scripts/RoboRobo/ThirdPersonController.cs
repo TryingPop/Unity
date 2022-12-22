@@ -9,6 +9,7 @@ public class ThirdPersonController : Stats
     #region Component or Object
     
     [Header("컴포넌트 및 오브젝트")]
+
     [Tooltip("캐릭터 몸체 오브젝트")] [SerializeField]
     private Transform chrBody; 
 
@@ -22,7 +23,8 @@ public class ThirdPersonController : Stats
     private BoxCollider atkCollider;
 
     [Tooltip("색상")] [SerializeField]
-    private SkinnedMeshRenderer chrMesh; 
+    private SkinnedMeshRenderer chrMesh;
+
     #endregion Component or Object
 
 
@@ -67,22 +69,18 @@ public class ThirdPersonController : Stats
     // 현재 스테미너
     private float nowStamina;
 
-    // 플레이어 타임
-    private float chrTime;
-
     // 강체
     private Rigidbody playerRigidbody;
 
     // 플레이어 캡슐 콜라이더
     private CapsuleCollider playerCollider; 
 
-    private void Awake()
+    private void Start()
     {
 
-        // 컴포넌트 가져오기 - 강체와 캡슐 콜라이더
+        // 컴포넌트 가져오기
         playerRigidbody = GetComponent<Rigidbody>(); 
         playerCollider = GetComponent<CapsuleCollider>(); 
-
 
         // 피격 시 변환 시킬 마테리얼
         if (chrMesh == null)
@@ -93,15 +91,21 @@ public class ThirdPersonController : Stats
         // hp 설정
         SetHp();
 
+        // 초기 스테미너 세팅
+        nowStamina = maxStamina;
+
+        // ui 초기화
+        StatsUI.instance.SetHp(nowHp);
+        StatsUI.instance.SetStamina(nowStamina);
+        StatsUI.instance.SetAtk(atk);
+
         // 초기 애니메이션 속도 세팅
         chrAnimator.speed = 2.0f;
 
         // 초기 이동속도 세팅
         applySpeed = moveSpeed;
 
-        // 초기 스테미나 세팅
-        nowStamina = maxStamina;
-
+        // 히든 초기화
         hidden = Hidden.None;
         
     }
@@ -224,6 +228,7 @@ public class ThirdPersonController : Stats
     {
         if (groundBool && Input.GetKeyDown(KeyCode.Space)) // 지면에 닫고 스페이스바를 누른 경우
         {
+
             playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // 위로 점프
         }
     }
@@ -232,6 +237,7 @@ public class ThirdPersonController : Stats
     {
         Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X")) * lookSensitivity; // 각각 x, y 축 회전 값
         Vector3 camAngle = cameraBox.rotation.eulerAngles; // 현재 카메라 회전 앵글
+        mouseDelta *= Time.deltaTime * 100f;
 
         float x = camAngle.x - mouseDelta.x; // 값 제한을 두기위해 변수로 받아옴
 
@@ -246,7 +252,7 @@ public class ThirdPersonController : Stats
             // 361f 해야지 위쪽으로 넘어가기 가능
         }
         
-        cameraBox.rotation = Quaternion.Euler(x, camAngle.y + mouseDelta.y, camAngle.z); // 카메라 회전
+        cameraBox.rotation = Quaternion.Euler(x, camAngle.y + mouseDelta.y, camAngle.z);// 카메라 회전
     }
 
     void Attack() // 공격
@@ -271,6 +277,8 @@ public class ThirdPersonController : Stats
                 {
                     nowStamina = 0; // 스테미나 0
                 }
+
+                StatsUI.instance.SetStamina(nowStamina);
             }
             
         }
@@ -285,16 +293,23 @@ public class ThirdPersonController : Stats
                 {
                     nowStamina = maxStamina;
                 }
+
+                StatsUI.instance.SetStamina(nowStamina);
             }
         }
 
     }
 
+    /// <summary>
+    /// 피격 메소드
+    /// </summary>
+    /// <param name="_damage">데미지</param>
     public override void Damaged(int _damage)
     {
         chrAnimator.SetBool("damageChk", true); // 데미지 상태 표시
         base.Damaged(_damage); // 데미지 주는 함수 최소값 1 보정
                                // 및 사망 확인
+        StatsUI.instance.SetHp(nowHp);
     }
 
     public void ChangeColor(Color color)
@@ -315,6 +330,7 @@ public class ThirdPersonController : Stats
     public void SetNone()
     {
         hidden = Hidden.None;
+        StatsUI.instance.SetAtk(atk);
     }
 
     /// <summary>
@@ -323,6 +339,7 @@ public class ThirdPersonController : Stats
     public void SetImmortality()
     {
         hidden = Hidden.Immortality;
+        StatsUI.instance.SetAtk(atk);
     }
 
     /// <summary>
@@ -331,6 +348,7 @@ public class ThirdPersonController : Stats
     public void SetHealthMan()
     {
         hidden = Hidden.HealthMan;
+        StatsUI.instance.SetAtk(atk);
     }
 
     /// <summary>
@@ -339,6 +357,7 @@ public class ThirdPersonController : Stats
     public void SetTimeConqueror()
     {
         hidden = Hidden.TimeConqueror;
+        StatsUI.instance.SetAtk(atk);
     }
 
     /// <summary>
@@ -347,5 +366,15 @@ public class ThirdPersonController : Stats
     public void SetNuclearAttacker()
     {
         hidden = Hidden.NuclearAttacker;
+        StatsUI.instance.SetAtk(nuclearAtk);
+    }
+
+    /// <summary>
+    /// 연속 어태커
+    /// </summary>
+    public void SetContinuousAttacker()
+    {
+        hidden = Hidden.ContinuousAttacker;
+        StatsUI.instance.SetAtk(atk);
     }
 }

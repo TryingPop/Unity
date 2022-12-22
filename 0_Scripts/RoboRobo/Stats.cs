@@ -14,12 +14,6 @@ public class Stats : MonoBehaviour
     [Tooltip("데미지 수치")] [SerializeField]
     protected GameObject damageEffect;
 
-    [Tooltip("체력바를 포함한 빈 오브젝트")] [SerializeField]
-    private GameObject hpUI;
-
-    [Tooltip("체력 수치 텍스트")] [SerializeField]
-    private Text hpText;
-
     [Tooltip("데미지 줄 박스 콜라이더")] [SerializeField]
     protected BoxCollider dmgCol; 
     #endregion Component or GameObject
@@ -29,13 +23,13 @@ public class Stats : MonoBehaviour
     #region Convertible Variable 
     [Header("스텟")]
     [Tooltip("최대 체력")] [SerializeField]
-    private int maxHp; 
+    protected int maxHp; 
 
     [Tooltip("공격력")] [SerializeField]
     public int atk;
 
     [Tooltip("방어력")] [SerializeField]
-    internal int def;
+    protected int def;
 
     [Tooltip("히든 스텟")] [SerializeField]
     public Hidden hidden;
@@ -51,7 +45,8 @@ public class Stats : MonoBehaviour
                             Immortality, // 죽지 않는다
                             HealthMan, // 스테미나 무한
                             TimeConqueror, // 시간 지배자
-                            NuclearAttacker // 파워풀한 공격
+                            NuclearAttacker, // 파워풀한 공격
+                            ContinuousAttacker // 연속 공격
                           }
 
     // 현재 체력
@@ -70,9 +65,10 @@ public class Stats : MonoBehaviour
     {
         if (!deadBool) // 사망 상태시에만 공격
         {
-            // 데미지 계산 식 max(공격력 - 방어력, 1) 
             
+            // 데미지 계산 식 max(공격력 - 방어력, 1) 
             _damage = _damage - def;
+
             if (_damage < 1)
             {
                 _damage = 1; // 데미지 최소값 1 보정

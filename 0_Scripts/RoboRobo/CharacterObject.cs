@@ -28,7 +28,7 @@ public class CharacterObject : MonoBehaviour
 
     // 공격 범위 콜라이더
     private BoxCollider atkCollider;
-    
+
 
     void Awake()
     {
@@ -93,6 +93,15 @@ public class CharacterObject : MonoBehaviour
     IEnumerator Attack(Collider other, float time)
     {
 
+        GiveDamage(other);
+
+        atkCollider.enabled = false;
+        
+        yield return new WaitForSeconds(time);
+    }
+
+    private void GiveDamage(Collider other)
+    {
         // 데미지 전달용 변수
         int dmg;
 
@@ -106,11 +115,11 @@ public class CharacterObject : MonoBehaviour
             dmg = playerController.atk;
         }
 
-        other.SendMessage("Damaged", dmg); // enemy면 데미지 주는거
-        atkCollider.enabled = false;
-        yield return new WaitForSeconds(time);
-    }
+        // other.SendMessage("Damaged", dmg); // enemy면 데미지 주는거
+        StatsUI.instance.enemyController = other.GetComponent<EnemyController>();
 
+        StatsUI.instance.enemyController?.Damaged(dmg);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -126,7 +135,23 @@ public class CharacterObject : MonoBehaviour
             {
                 Instantiate(hiddenParticle, other.transform);
             }
-            StartCoroutine(Attack(other, 0.2f));
+
+            if (playerController.hidden != Stats.Hidden.ContinuousAttacker)
+            {
+                StartCoroutine(Attack(other, 0.25f));
+            }
+            else
+            {
+                GiveDamage(other);
+            }
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (playerController.hidden == Stats.Hidden.ContinuousAttacker)
+        {
+            GiveDamage(other);
         }
     }
 }
