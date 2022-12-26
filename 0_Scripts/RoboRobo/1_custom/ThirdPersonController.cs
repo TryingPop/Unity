@@ -117,7 +117,9 @@ public class ThirdPersonController : Stats
     void Update()
     {
         // 죽지 않은 상태에서만 실행 가능
-        if (!deadBool && !GameManager.instance.uiBool) 
+        if (!deadBool 
+            // && !GameManager.instance.uiBool
+            ) 
         {
             // 키입력 상태 체크
             IsGround(); // 지면 체크
