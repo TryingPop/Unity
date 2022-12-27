@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Tooltip("플레이어 애니메이터")]
     private ThirdPersonController thirdPersonController;
 
+    [Tooltip("사냥 미션")]
+    public HuntingMission huntingMission;
+
 
     /// <summary>
     /// 게임 상태
@@ -83,7 +86,7 @@ public class GameManager : MonoBehaviour
         if (instance == null) 
                               
         {
-            instance = this; 
+            instance = this;
         }
         else
         {
@@ -97,6 +100,18 @@ public class GameManager : MonoBehaviour
         enemyCount = 0;
         accTime = 1f;
         SetCheatBtnNum(0);
+
+        if (huntingMission == null)
+        {
+
+            huntingMission = FindObjectOfType<HuntingMission>();
+        }
+
+        if (thirdPersonController == null)
+        {
+
+            thirdPersonController = FindObjectOfType<ThirdPersonController>();
+        }
 
         beCheat = false;
         audio = GetComponent<AudioSource>();
@@ -287,7 +302,7 @@ public class GameManager : MonoBehaviour
         {
 
             // 커스텀 로보로보 스타트
-            SceneManager.LoadScene("2_custom");
+            SceneManager.LoadScene("1_custom");
             // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }

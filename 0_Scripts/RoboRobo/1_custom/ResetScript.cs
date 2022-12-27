@@ -10,10 +10,23 @@ public class ResetScript : MonoBehaviour
     [SerializeField] [Tooltip("데미지")]
     private int damage;
 
+    [SerializeField]
+    [Tooltip("적만 닿으면 바로 제거")]
+    private bool isDelete;
+
     private void OnTriggerEnter(Collider other)
     {
-        other.transform.position = Vector3.zero;
-        other.gameObject.GetComponent<Stats>().Damaged(damage);
-        Instantiate(rescueParticle, other.transform.position, Quaternion.identity);
+        if (!isDelete || other.tag == "Player")
+        {
+
+            other.transform.position = Vector3.zero;
+            other.gameObject.GetComponent<Stats>().Damaged(damage);
+            Instantiate(rescueParticle, other.transform.position, Quaternion.identity);
+        }
+        else
+        {
+
+            other.gameObject.GetComponent<Stats>().Damaged(int.MaxValue);
+        }
     }
 }

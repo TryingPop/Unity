@@ -120,6 +120,8 @@ public class EnemySpawner : MonoBehaviour
 
             int num = Random.Range(0, enemyPrefabs.Length);
 
+            // 여기에 생성 코드 넣기 당장은 instantiate
+            // 추후에 object pooling 기법 이용
             Instantiate(enemyPrefabs[num], item.position, Quaternion.identity);
         }
     }

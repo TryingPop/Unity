@@ -23,8 +23,11 @@ public class CharacterObject : MonoBehaviour
     [Tooltip("공격 이펙트")] [SerializeField]
     private ParticleSystem atkParticle;
 
-    [Tooltip("히든 이펙트")] [SerializeField]
-    private ParticleSystem hiddenParticle;
+    [Tooltip("폭발 이펙트")] [SerializeField]
+    private ParticleSystem nuclearParticle;
+
+    [Tooltip("홈런 이펙트")] [SerializeField]
+    private ParticleSystem homerunParticle;
 
     // 공격 범위 콜라이더
     private BoxCollider atkCollider;
@@ -127,13 +130,17 @@ public class CharacterObject : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
 
-            if (playerController.hidden != Stats.Hidden.NuclearAttacker)
+            if (playerController.hidden == Stats.Hidden.NuclearAttacker)
             {
-                Instantiate(atkParticle, other.transform);
+                Instantiate(nuclearParticle, other.transform);
+            }
+            else if (playerController.hidden == Stats.Hidden.HomeRun)
+            {
+                Instantiate(homerunParticle, other.transform);
             }
             else
             {
-                Instantiate(hiddenParticle, other.transform);
+                Instantiate(atkParticle, other.transform);
             }
 
             if (playerController.hidden != Stats.Hidden.ContinuousAttacker)
@@ -144,20 +151,16 @@ public class CharacterObject : MonoBehaviour
                 // 넉백 어택 
                 if (playerController.hidden == Stats.Hidden.HomeRun)
                 {
-                    Debug.Log("홈런~?");
-                    Vector3 forceDir = ((other.transform.position - transform.position).normalized + transform.up);
-                    Debug.Log("구드");
-                    StatsUI.instance.enemyController?.EnemyRigidbody.AddForce(forceDir * playerController.forcePow, ForceMode.Impulse);
 
-                    Debug.Log("적 홈런 가능?");
+                    Vector3 forceDir = ((other.transform.position - transform.position).normalized + transform.up);
+                    StatsUI.instance.enemyController?.EnemyRigidbody.AddForce(forceDir * playerController.forcePow, ForceMode.Impulse);
                 }
             }
             else
             {
+
                 GiveDamage(other);
             }
-
-           
         }
     }
 
@@ -171,6 +174,7 @@ public class CharacterObject : MonoBehaviour
     
     public void HammerActive()
     {
+        
         playerController.hammerObj.SetActive(true);
     }
 }
