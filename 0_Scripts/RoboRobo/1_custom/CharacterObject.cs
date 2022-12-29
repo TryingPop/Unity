@@ -119,9 +119,9 @@ public class CharacterObject : MonoBehaviour
         }
 
         // other.SendMessage("Damaged", dmg); // enemy면 데미지 주는거
-        StatsUI.instance.enemyController = other.GetComponent<EnemyController>();
+        StatsUI.instance.stats = other.GetComponent<Stats>();
 
-        StatsUI.instance.enemyController?.Damaged(dmg);
+        StatsUI.instance.stats?.Damaged(dmg);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -132,15 +132,15 @@ public class CharacterObject : MonoBehaviour
 
             if (playerController.hidden == Stats.Hidden.NuclearAttacker)
             {
-                Instantiate(nuclearParticle, other.transform);
+                Instantiate(nuclearParticle, other.transform.position + other.transform.up, Quaternion.identity);
             }
             else if (playerController.hidden == Stats.Hidden.HomeRun)
             {
-                Instantiate(homerunParticle, other.transform);
+                Instantiate(homerunParticle, other.transform.position + other.transform.up, Quaternion.identity);
             }
             else
             {
-                Instantiate(atkParticle, other.transform);
+                Instantiate(atkParticle, other.transform.position + other.transform.up, Quaternion.identity);
             }
 
             if (playerController.hidden != Stats.Hidden.ContinuousAttacker)
@@ -153,7 +153,7 @@ public class CharacterObject : MonoBehaviour
                 {
 
                     Vector3 forceDir = ((other.transform.position - transform.position).normalized + transform.up);
-                    StatsUI.instance.enemyController?.EnemyRigidbody.AddForce(forceDir * playerController.forcePow, ForceMode.Impulse);
+                    StatsUI.instance.stats?.rd.AddForce(forceDir * playerController.forcePow, ForceMode.Impulse);
                 }
             }
             else

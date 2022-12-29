@@ -30,6 +30,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] [Tooltip("Enemy Pooling")]
     private Transform enemyPool;
 
+    [SerializeField] [Tooltip("Enemy Max Num")]
+    private int maxNum;
+
     private List<int> spawnerNum;
     private float spawnTime;
     private int spawnCnt;
@@ -63,16 +66,20 @@ public class EnemySpawner : MonoBehaviour
     /// <returns></returns>
     private IEnumerator StartCreating()
     {
+        while (true)
+        {
+            if (enemyPool.childCount < maxNum)
+            {
+                SetSpawnNum();
 
-        SetSpawnNum();
+                SetSpawners();
 
-        SetSpawners();
+                Spawning();
 
-        Spawning();
-
-        SetSpawnTime();
-
-        yield return new WaitForSeconds(spawnTime);
+                SetSpawnTime();
+            }
+            yield return new WaitForSeconds(spawnTime);
+        }
     }
 
 
@@ -84,7 +91,7 @@ public class EnemySpawner : MonoBehaviour
     {
 
         spawnCnt = Random.Range(Mathf.Min(spawnMinNum, enemySpawners.Length), 
-                                Mathf.Max(spawnMaxNum, enemySpawners.Length) + 1
+                                Mathf.Min(spawnMaxNum, enemySpawners.Length) + 1
                                 );
     }
 
@@ -115,14 +122,18 @@ public class EnemySpawner : MonoBehaviour
     /// </summary>
     private void Spawning()
     {
-        foreach (var item in enemySpawners)
+        // foreach (var item in enemySpawners)
+        for (int i = 0; i < spawnerNum.Count; i++)
         {
 
             int num = Random.Range(0, enemyPrefabs.Length);
 
             // 여기에 생성 코드 넣기 당장은 instantiate
             // 추후에 object pooling 기법 이용
-            Instantiate(enemyPrefabs[num], item.position, Quaternion.identity);
+            if (enemyPool.childCount < maxNum)
+            {
+                Instantiate(enemyPrefabs[num], enemySpawners[spawnerNum[i]].position, Quaternion.identity, enemyPool);
+            }
         }
     }
 

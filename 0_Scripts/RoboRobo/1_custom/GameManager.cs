@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,7 +38,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Tooltip("치트 모드 활성화 시 사용할 노래")] 
     private AudioClip[] cheatSnd;
 
-    private AudioSource audio;
+    private AudioSource audioSource;
 
     [SerializeField] [Tooltip("플레이어 애니메이터")]
     private ThirdPersonController thirdPersonController;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
     [Tooltip("사냥 미션")]
     public HuntingMission huntingMission;
 
+    public event EventHandler Reset;
 
     /// <summary>
     /// 게임 상태
@@ -59,9 +61,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GAMESTATE state;
 
-    // 적 수 0이하면 승리
-    private int enemyCount;
-    
     // 가속 시간
     public float accTime;
 
@@ -77,9 +76,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
 
-        // 화면에 마우스 커서 잠그고 안보이게 하기
-        Cursor.lockState = CursorLockMode.Locked; 
-        Cursor.visible = false; 
+
 
         // 싱글톤 할당
         // is null과 == null 차이 주의하기!
@@ -93,11 +90,11 @@ public class GameManager : MonoBehaviour
             // 뒤에 추가되는 건 게임매니저가 사라짐
             Destroy(this); 
         }
+        
 
         // 초기 상태 
         state = GAMESTATE.Play;
         Time.timeScale = 1.0f;
-        enemyCount = 0;
         accTime = 1f;
         SetCheatBtnNum(0);
 
@@ -114,9 +111,9 @@ public class GameManager : MonoBehaviour
         }
 
         beCheat = false;
-        audio = GetComponent<AudioSource>();
-        audio.clip = bgmSnd;
-        audio.Play();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = bgmSnd;
+        audioSource.Play();
     }
 
 
@@ -131,6 +128,9 @@ public class GameManager : MonoBehaviour
             ChkState(); 
         }
     }
+
+
+
 
     /// <summary>
     /// 일시 정지 해야하는지 재개해야하는지 판별
@@ -272,7 +272,8 @@ public class GameManager : MonoBehaviour
             thirdPersonController.chrAnimator.SetTrigger("GameOver");
             thirdPersonController.chrAnimator.SetBool("isWin", isWin);
             thirdPersonController.hammerObj.SetActive(false);
-            
+
+
             ChkUI();
             
 
@@ -302,19 +303,22 @@ public class GameManager : MonoBehaviour
         {
 
             // 커스텀 로보로보 스타트
-            SceneManager.LoadScene("1_custom");
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+            Reset(this, EventArgs.Empty);
+
+            state = GAMESTATE.Play;
+            Time.timeScale = 1.0f;
+            accTime = 1f;
+            SetCheatBtnNum(0);
+
+            beCheat = false;
+            audioSource.clip = bgmSnd;
+            audioSource.Play();
+
         }
     }
 
-
-    /// <summary>
-    /// 시작 시 적 숫자 체크
-    /// </summary>
-    public void ChkEnemyCount()
-    {
-        enemyCount++;
-    }
 
     /// <summary>
     /// 적 죽을 때 마다 적 카운트 감소 
@@ -324,10 +328,12 @@ public class GameManager : MonoBehaviour
     {
 
         // 적 카운트 감소
-        enemyCount--;
+        // enemyCount--;
+        huntingMission.ChangeDestroyCnt();
+
 
         // 적 수가 0 이하면 게임 승리 메소드 실행
-        if (enemyCount <= 0) 
+        if (huntingMission.ChkWin() && state != GAMESTATE.Gameover)
         {
 
             // 게임 승리
@@ -353,8 +359,8 @@ public class GameManager : MonoBehaviour
         if (!beCheat)
         {
             beCheat = true;
-            audio.clip = cheatSnd[Random.Range(0, cheatSnd.Length)];
-            audio.Play();
+            audioSource.clip = cheatSnd[UnityEngine.Random.Range(0, cheatSnd.Length)];
+            audioSource.Play();
         }
     }
 

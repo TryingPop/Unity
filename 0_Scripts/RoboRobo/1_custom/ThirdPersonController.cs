@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -71,9 +72,6 @@ public class ThirdPersonController : Stats
     // 현재 스테미너
     private float nowStamina;
 
-    // 강체
-    private Rigidbody playerRigidbody;
-
     // 플레이어 캡슐 콜라이더
     private CapsuleCollider playerCollider;
 
@@ -81,9 +79,12 @@ public class ThirdPersonController : Stats
 
     private void Start()
     {
+        // 화면에 마우스 커서 잠그고 안보이게 하기
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         // 컴포넌트 가져오기
-        playerRigidbody = GetComponent<Rigidbody>(); 
+        rd = GetComponent<Rigidbody>(); 
         playerCollider = GetComponent<CapsuleCollider>(); 
 
         // 피격 시 변환 시킬 마테리얼
@@ -92,25 +93,9 @@ public class ThirdPersonController : Stats
             chrMesh = GetComponentInChildren<SkinnedMeshRenderer>(); 
         }
 
-        // hp 설정
-        SetHp();
+        GameManager.instance.Reset += Reset;
 
-        // 초기 스테미너 세팅
-        nowStamina = maxStamina;
-
-        // ui 초기화
-        StatsUI.instance.SetHp(nowHp);
-        StatsUI.instance.SetStamina(nowStamina);
-        StatsUI.instance.SetAtk(atk);
-
-        // 초기 애니메이션 속도 세팅
-        chrAnimator.speed = 2.0f;
-
-        // 초기 이동속도 세팅
-        applySpeed = moveSpeed;
-
-        // 히든 초기화
-        hidden = Hidden.None;
+        Reset(this, EventArgs.Empty);
         
     }
 
@@ -143,6 +128,33 @@ public class ThirdPersonController : Stats
                 StartSquat();
             }
         }
+    }
+
+
+    private void Reset(object sender, EventArgs e)
+    {
+        deadBool = false;
+        transform.position = Vector3.zero;
+
+        // hp 설정
+        SetHp();
+
+        // 초기 스테미너 세팅
+        nowStamina = maxStamina;
+
+        // ui 초기화
+        StatsUI.instance.SetHp(nowHp);
+        StatsUI.instance.SetStamina(nowStamina);
+        StatsUI.instance.SetAtk(atk);
+
+        // 초기 애니메이션 속도 세팅
+        chrAnimator.speed = 2.0f;
+
+        // 초기 이동속도 세팅
+        applySpeed = moveSpeed;
+
+        // 히든 초기화
+        hidden = Hidden.None;
     }
 
     void StartSquat()
@@ -223,11 +235,11 @@ public class ThirdPersonController : Stats
 
             if (hidden != Hidden.TimeConqueror)
             {
-                playerRigidbody.MovePosition(transform.position + moveDir * applySpeed * Time.deltaTime); // 이동
+                rd.MovePosition(transform.position + moveDir * applySpeed * Time.deltaTime); // 이동
             }
             else
             {
-                playerRigidbody.MovePosition(transform.position + moveDir * applySpeed * 2 * GameManager.instance.accTime * Time.deltaTime); // 이동
+                rd.MovePosition(transform.position + moveDir * applySpeed * 2 * GameManager.instance.accTime * Time.deltaTime); // 이동
             }
 
         }
@@ -246,7 +258,7 @@ public class ThirdPersonController : Stats
         if (groundBool && Input.GetKeyDown(KeyCode.Space)) // 지면에 닫고 스페이스바를 누른 경우
         {
 
-            playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // 위로 점프
+            rd.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // 위로 점프
         }
     }
 
@@ -331,8 +343,10 @@ public class ThirdPersonController : Stats
     {
         chrAnimator.SetBool("damageChk", true); // 데미지 상태 표시
         base.Damaged(_damage); // 데미지 주는 함수 최소값 1 보정
-                               // 및 사망 확인
-        StatsUI.instance.SetHp(nowHp);
+        
+        StatsUI.instance?.SetHp(nowHp);
+
+        ChkDead();
     }
 
     public void ChangeColor(Color color)
@@ -340,11 +354,13 @@ public class ThirdPersonController : Stats
         chrMesh.material.color = color;
     }
 
+
     protected override void Dead()
     {
         base.Dead();
 
-        GameManager.instance.GameOver(false);
+        GameManager.instance?.GameOver(false);
+
     }
 
     /// <summary>
@@ -353,7 +369,7 @@ public class ThirdPersonController : Stats
     public void SetNone()
     {
         hidden = Hidden.None;
-        StatsUI.instance.SetAtk(atk);
+        StatsUI.instance?.SetAtk(atk);
     }
 
     /// <summary>
@@ -362,7 +378,7 @@ public class ThirdPersonController : Stats
     public void SetImmortality()
     {
         hidden = Hidden.Immortality;
-        StatsUI.instance.SetAtk(atk);
+        StatsUI.instance?.SetAtk(atk);
     }
 
     /// <summary>

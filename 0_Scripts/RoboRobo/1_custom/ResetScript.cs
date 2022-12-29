@@ -21,12 +21,14 @@ public class ResetScript : MonoBehaviour
 
             other.transform.position = Vector3.zero;
             other.gameObject.GetComponent<Stats>().Damaged(damage);
+            
             Instantiate(rescueParticle, other.transform.position, Quaternion.identity);
         }
         else
         {
 
-            other.gameObject.GetComponent<Stats>().Damaged(int.MaxValue);
+            other.gameObject.GetComponent<Stats>().Damaged(1000000000);
+            Destroy(other.gameObject, 2f);
         }
     }
 }

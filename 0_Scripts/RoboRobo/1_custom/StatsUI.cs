@@ -16,7 +16,7 @@ public class StatsUI : MonoBehaviour
     [SerializeField] private Text EnemyHpTxt;
     [SerializeField] private float activeHpTime;
 
-    [HideInInspector] public EnemyController enemyController;
+    [HideInInspector] public Stats stats;
 
     private WaitForSeconds hpTime;
     private int seeCnt;
@@ -60,8 +60,8 @@ public class StatsUI : MonoBehaviour
     {
 
         StartCoroutine(ActiveEnemyHp());
-        EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * enemyController.GetHpBar();
-        EnemyHpTxt.text = enemyController.GetHpBar() >= 1 ? "100%" : $"{100 * enemyController.GetHpBar():F1}%";
+        EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * stats.GetHpBar();
+        EnemyHpTxt.text = stats.GetHpBar() <= 0 ? "0%" : $"{100 * stats.GetHpBar():F1}%";
     }
 
     private IEnumerator ActiveEnemyHp()

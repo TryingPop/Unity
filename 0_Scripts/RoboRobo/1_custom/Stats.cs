@@ -15,7 +15,8 @@ public class Stats : MonoBehaviour
     protected GameObject damageEffect;
 
     [Tooltip("데미지 줄 박스 콜라이더")] [SerializeField]
-    protected BoxCollider dmgCol; 
+    protected BoxCollider dmgCol;
+
     #endregion Component or GameObject
 
 
@@ -56,6 +57,8 @@ public class Stats : MonoBehaviour
     // 생존 변수
     protected bool deadBool;
 
+    public Rigidbody rd;
+
     // 초기 hp 설정 함수 
     protected void SetHp() 
     {
@@ -70,7 +73,7 @@ public class Stats : MonoBehaviour
         {
             
             // 데미지 계산 식 max(공격력 - 방어력, 1) 
-            _damage = _damage - def;
+            _damage -= def;
 
             if (_damage < 1)
             {
@@ -80,17 +83,7 @@ public class Stats : MonoBehaviour
 
             nowHp -= _damage; // 데미지 적용
 
-            if (nowHp <= 0) // 체력이 음수면
-            {
 
-                nowHp = 0;
-
-                if (hidden != Hidden.Immortality)
-                {
-
-                    Dead();
-                }
-            }
         }
 
         if (damageEffect != null)
@@ -100,8 +93,31 @@ public class Stats : MonoBehaviour
         }
     }
 
+    protected virtual void ChkDead()
+    {
+        // 체력이 0 이하고 생존한 경우
+        if (nowHp <= 0 && !deadBool) 
+        {
+
+            if (hidden != Hidden.Immortality)
+            {
+
+                nowHp = 0;
+                Dead();
+            }
+        }
+
+    }
+
     protected virtual void Dead() // 사망
     {
         deadBool = true;
+    }
+
+
+    public float GetHpBar()
+    {
+
+        return (float)nowHp / maxHp;
     }
 }

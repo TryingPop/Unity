@@ -39,7 +39,6 @@ public class EnemyController : Stats
 	private bool isAtk; // 공격 상태?
 
     private Transform targetTrans; // 타겟의 transform
-	public Rigidbody EnemyRigidbody; // 자신의 리지드 바디
 	private Animation EnemyAnimation; // 적의 애니메이션
 	private AudioSource EnemyAudioSource; // 적의 오디오소스
 
@@ -49,7 +48,7 @@ public class EnemyController : Stats
 
 	private void Start()
 	{
-		EnemyRigidbody = GetComponent<Rigidbody>(); // 자신의 리지드바디
+		rd = GetComponent<Rigidbody>(); // 자신의 리지드바디
 		EnemyAudioSource = GetComponent<AudioSource>(); // 자신의 오디오 소스
 		if (stateList == null)
 		{
@@ -74,7 +73,8 @@ public class EnemyController : Stats
 			findRadius = attackRange;
 		}
 
-		GameManager.instance.ChkEnemyCount();
+		// GameManager.instance.ChkEnemyCount();
+		GameManager.instance.huntingMission.ChangeTargetNum();
 	}
 
 	void Update()
@@ -158,7 +158,7 @@ public class EnemyController : Stats
 
 	void Move()
 	{
-        EnemyRigidbody.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
+        rd.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
 		transform.LookAt(transform.position + dir);
     }
 
@@ -226,22 +226,20 @@ public class EnemyController : Stats
 
 			EnemyAudioSource.Play();
 		}
+
+		ChkDead();
 	}
 
 	protected override void Dead()
 	{
-
 		base.Dead();
 		StopAllCoroutines();
 		isAtk = false;
 		targetTrans = null;
 		GameManager.instance.ChkWin();
+		
 		dmgCol.enabled = false;
 	}
 
-	public float GetHpBar()
-	{
 
-		return (float)nowHp / maxHp;
-	}
 }

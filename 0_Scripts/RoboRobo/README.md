@@ -5,7 +5,8 @@
 
 ## 수정 내역
 ### 1_custom Scene 
-#### GameManager를 2_custom Scene에서도 사용하기 위해
-#### 승리 조건 미션 구분 중
+#### 없음 
 ### 2_custom Scene 제작 중
-#### 없음
+#### 1_custom의 캐릭터와 GameManager, UI 등 양도 가능
+#### 초기화 부분 진행 완료
+#### 3_customScene BT로 제작하고 코드 정리 필수!
