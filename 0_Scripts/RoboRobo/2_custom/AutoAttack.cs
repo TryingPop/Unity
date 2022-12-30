@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class AutoAttack : Stats
 {
@@ -16,6 +17,8 @@ public class AutoAttack : Stats
     private Animation EnemyAnimation;
     private AudioSource EnemyAudioSource;
 
+    public IObjectPool<AutoAttack> poolToReturn;
+
 
     private void Awake()
     {
@@ -29,6 +32,8 @@ public class AutoAttack : Stats
 
             controller = targetTrans.GetComponent<ThirdPersonController>();
         }
+
+
     }
 
 
@@ -38,21 +43,27 @@ public class AutoAttack : Stats
         EnemyAudioSource = GetComponent<AudioSource>();
         EnemyAnimation = GetComponent<Animation>();
 
-        SetHp();
         EnemyAnimation["0_idle"].layer = 0;
         EnemyAnimation["1_walk"].layer = 1;
         EnemyAnimation["2_attack"].layer = 2;
         EnemyAnimation["3_attacked"].layer = 3;
 
-        EnemyAnimation.CrossFade("0_idle", 0.2f);
-        EnemyAnimation.CrossFade("1_walk", 0.1f);
-        EnemyAnimation.CrossFade("2_attack", 0.1f);
+        Reset();
     }
-
 
     private void Update()
     {
         Move();
+        EnemyAnimation.CrossFade("2_attack", 0.1f);
+    }
+
+    public void Reset()
+    {
+        SetHp();
+
+        
+        EnemyAnimation.CrossFade("0_idle", 0.2f);
+        EnemyAnimation.CrossFade("1_walk", 0.1f);
         EnemyAnimation.CrossFade("2_attack", 0.1f);
     }
 
@@ -120,8 +131,11 @@ public class AutoAttack : Stats
         // 점수 메소드
         GameManager.instance.ChkWin();
 
+        poolToReturn.Release(element: this);
+
+
         // 비활성화
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
     }
 
 }

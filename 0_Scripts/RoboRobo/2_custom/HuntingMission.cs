@@ -65,6 +65,5 @@ public class HuntingMission : MonoBehaviour
     {
         targetNum = setTargetNum;
         destroyCnt = 0;
-        Debug.Log("제대로 진행 안됐음");
     }
 }

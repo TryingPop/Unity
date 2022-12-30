@@ -9,7 +9,9 @@ public class GameManager : MonoBehaviour
 {
 
     // GameManager 싱글톤
-    public static GameManager instance; 
+    public static GameManager instance;
+    
+    public int enemyNum;
 
     #region ResultUI
     [Header("결과 창")]
@@ -22,11 +24,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] [Tooltip("버튼 텍스트")]
     private Text btnText;
-
-    // 7개 존재
-    [SerializeField] [Tooltip("치트 버튼들")]
-    private Image[] CheatBtns;
-
 
     #endregion
 
@@ -67,9 +64,6 @@ public class GameManager : MonoBehaviour
     // ui 상태 변수
     public bool uiBool;
 
-    // 현재 활성화된 치트 번호
-    private int cheatBtnNum;
-
     // 치트 사용 유무
     private bool beCheat;
 
@@ -96,7 +90,7 @@ public class GameManager : MonoBehaviour
         state = GAMESTATE.Play;
         Time.timeScale = 1.0f;
         accTime = 1f;
-        SetCheatBtnNum(0);
+
 
         if (huntingMission == null)
         {
@@ -310,12 +304,6 @@ public class GameManager : MonoBehaviour
             state = GAMESTATE.Play;
             Time.timeScale = 1.0f;
             accTime = 1f;
-            SetCheatBtnNum(0);
-
-            beCheat = false;
-            audioSource.clip = bgmSnd;
-            audioSource.Play();
-
         }
     }
 
@@ -340,19 +328,6 @@ public class GameManager : MonoBehaviour
             GameOver(true);
         }
     }
-
-    public void SetCheatBtnNum(int num)
-    {
-        // 칼라 초기화
-        CheatBtns[cheatBtnNum].color = Color.white;
-
-
-        cheatBtnNum = num;
-        Color color = Color.gray;
-        color.a = 0.5f;
-        CheatBtns[cheatBtnNum].color = color;
-    }
-
 
     public void SetAudio()
     {

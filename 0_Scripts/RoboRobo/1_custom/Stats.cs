@@ -64,7 +64,9 @@ public class Stats : MonoBehaviour
     {
 
         nowHp = maxHp;
+        deadBool = false;
     }
+
 
     public virtual void Damaged(int _damage) // 데미지 메서드
     {

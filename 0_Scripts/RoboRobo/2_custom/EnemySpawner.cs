@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -27,11 +28,13 @@ public class EnemySpawner : MonoBehaviour
     [Range(5, 9)]
     private int spawnMaxNum;
 
-    [SerializeField] [Tooltip("Enemy Pooling")]
-    private Transform enemyPool;
 
-    [SerializeField] [Tooltip("Enemy Max Num")]
-    private int maxNum;
+    [SerializeField] [Tooltip("Object Pool Script")]
+    private ObjCreator createScript;
+    
+
+    public int maxNum;
+    public Transform enemyPool;
 
     private List<int> spawnerNum;
     private float spawnTime;
@@ -51,6 +54,8 @@ public class EnemySpawner : MonoBehaviour
 
             Destroy(gameObject);
         }
+
+        createScript = GetComponent<ObjCreator>();
     }
 
 
@@ -68,16 +73,13 @@ public class EnemySpawner : MonoBehaviour
     {
         while (true)
         {
-            if (enemyPool.childCount < maxNum)
-            {
-                SetSpawnNum();
+            SetSpawnNum();
 
-                SetSpawners();
+            SetSpawners();
 
-                Spawning();
+            Spawning();
 
-                SetSpawnTime();
-            }
+            SetSpawnTime();
             yield return new WaitForSeconds(spawnTime);
         }
     }
@@ -126,14 +128,17 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < spawnerNum.Count; i++)
         {
 
-            int num = Random.Range(0, enemyPrefabs.Length);
+            // int num = Random.Range(0, enemyPrefabs.Length);
 
             // 여기에 생성 코드 넣기 당장은 instantiate
             // 추후에 object pooling 기법 이용
+            /*
             if (enemyPool.childCount < maxNum)
             {
+                GameManager.instance.enemyNum++;
                 Instantiate(enemyPrefabs[num], enemySpawners[spawnerNum[i]].position, Quaternion.identity, enemyPool);
-            }
+            }*/
+            createScript.CreateObj(enemySpawners[spawnerNum[i]].position);
         }
     }
 

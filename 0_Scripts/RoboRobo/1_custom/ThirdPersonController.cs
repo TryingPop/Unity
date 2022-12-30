@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ThirdPersonController : Stats
@@ -56,6 +57,7 @@ public class ThirdPersonController : Stats
     // 지면에 닿았는지 확인하는 변수
     private bool groundBool;
 
+
     // 움직임 중?
     private bool activeBool;
 
@@ -77,6 +79,20 @@ public class ThirdPersonController : Stats
 
     public float forcePow = 10f;
 
+
+    // 낙하 데미지 체크 용도
+    [SerializeField] [Tooltip("최소 낙하 거리")]
+    private float minFallDis = 2f;
+    [SerializeField] [Tooltip("낙하 데미지 배율")]
+    private float fallRatio = 0.1f;
+    
+    // 낙하 여부 판단용 변수
+    private bool jumpBool;
+    
+    //점프 시작 점
+    private float fallDis;
+
+
     private void Start()
     {
         // 화면에 마우스 커서 잠그고 안보이게 하기
@@ -92,9 +108,10 @@ public class ThirdPersonController : Stats
         {
             chrMesh = GetComponentInChildren<SkinnedMeshRenderer>(); 
         }
+        
+        hidden = Hidden.None;
 
         GameManager.instance.Reset += Reset;
-
         Reset(this, EventArgs.Empty);
         
     }
@@ -123,10 +140,6 @@ public class ThirdPersonController : Stats
             // 행동 후 상태 체크 
             StaminaChk(); // 스테미너 상태 체크
 
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                StartSquat();
-            }
         }
     }
 
@@ -136,6 +149,7 @@ public class ThirdPersonController : Stats
         deadBool = false;
         transform.position = Vector3.zero;
 
+        chrAnimator.Rebind();
         // hp 설정
         SetHp();
 
@@ -153,19 +167,42 @@ public class ThirdPersonController : Stats
         // 초기 이동속도 세팅
         applySpeed = moveSpeed;
 
-        // 히든 초기화
-        hidden = Hidden.None;
-    }
-
-    void StartSquat()
-    {
-        chrAnimator.SetTrigger("GG");
+        hammerObj.SetActive(true);
     }
 
 
     void IsGround() // 지면 체크 
     {
-        groundBool = Physics.Raycast(transform.position, Vector3.down, playerCollider.bounds.extents.y + 0.1f);
+
+        if (hidden != Hidden.HealthMan)
+        {
+            groundBool = Physics.Raycast(transform.position, Vector3.down, playerCollider.bounds.extents.y + 0.1f);
+
+            // 낙하 데미지 추가
+            if (jumpBool != groundBool)
+            {
+
+                // 점프 순간
+                if (jumpBool)
+                {
+
+                    fallDis = transform.position.y;
+                }
+                else
+                {
+
+                    float _dis = fallDis - transform.position.y;
+                    if (_dis >= minFallDis)
+                    {
+                        Damaged((int)(_dis * fallRatio));
+                    }
+                }
+
+            }
+
+            jumpBool = groundBool;
+        }
+
         // 현재는 레이케스트를 통해 플레이어 지면 밑에 콜라이더의 크기 절반 + 0.1 만큼 거리 체크
     }
 
@@ -196,7 +233,7 @@ public class ThirdPersonController : Stats
     void Move() // 이동
     {
         Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")); // 상하좌우 키 입력값 보관
-        pushBool = (moveInput != Vector2.zero); // 키입력 누른지 안누른지 확인할 때 쓰는 용도
+        pushBool =  (moveInput != Vector2.zero); // 키입력 누른지 안누른지 확인할 때 쓰는 용도
 
         if (pushBool) // 이동
         {
@@ -258,6 +295,7 @@ public class ThirdPersonController : Stats
         if (groundBool && Input.GetKeyDown(KeyCode.Space)) // 지면에 닫고 스페이스바를 누른 경우
         {
 
+            pushBool = true;
             rd.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // 위로 점프
         }
     }
@@ -344,9 +382,10 @@ public class ThirdPersonController : Stats
         chrAnimator.SetBool("damageChk", true); // 데미지 상태 표시
         base.Damaged(_damage); // 데미지 주는 함수 최소값 1 보정
         
-        StatsUI.instance?.SetHp(nowHp);
 
         ChkDead();
+
+        StatsUI.instance?.SetHp(nowHp);
     }
 
     public void ChangeColor(Color color)
@@ -361,15 +400,6 @@ public class ThirdPersonController : Stats
 
         GameManager.instance?.GameOver(false);
 
-    }
-
-    /// <summary>
-    /// 특성 X
-    /// </summary>
-    public void SetNone()
-    {
-        hidden = Hidden.None;
-        StatsUI.instance?.SetAtk(atk);
     }
 
     /// <summary>
@@ -388,6 +418,8 @@ public class ThirdPersonController : Stats
     {
         hidden = Hidden.HealthMan;
         StatsUI.instance.SetAtk(atk);
+        groundBool = true;
+        jumpBool = true;
     }
 
     /// <summary>
