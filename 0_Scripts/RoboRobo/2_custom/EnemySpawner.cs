@@ -71,7 +71,7 @@ public class EnemySpawner : MonoBehaviour
     /// <returns></returns>
     private IEnumerator StartCreating()
     {
-        while (true)
+        while (GameManager.instance.state == GameManager.GAMESTATE.Play)
         {
             SetSpawnNum();
 
@@ -80,6 +80,7 @@ public class EnemySpawner : MonoBehaviour
             Spawning();
 
             SetSpawnTime();
+
             yield return new WaitForSeconds(spawnTime);
         }
     }

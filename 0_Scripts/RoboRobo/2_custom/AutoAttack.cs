@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -60,7 +61,6 @@ public class AutoAttack : Stats
     public void Reset()
     {
         SetHp();
-
         
         EnemyAnimation.CrossFade("0_idle", 0.2f);
         EnemyAnimation.CrossFade("1_walk", 0.1f);
@@ -83,6 +83,7 @@ public class AutoAttack : Stats
     {
         
         dmgCol.enabled = false;
+        isAtk = true;
 
         controller.ChangeColor(Color.red);
         controller.Damaged(atk);
@@ -91,15 +92,20 @@ public class AutoAttack : Stats
 
         controller.ChangeColor(Color.white);
         dmgCol.enabled = true;
+        isAtk = false;
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && isAtk)
+        if (GameManager.instance.state == GameManager.GAMESTATE.Play)
         {
 
-            StartCoroutine(Attack(0.5f));
+            if (other.tag == "Player" && !isAtk)
+            {
+
+                StartCoroutine(Attack(0.5f));
+            }
         }
     }
 

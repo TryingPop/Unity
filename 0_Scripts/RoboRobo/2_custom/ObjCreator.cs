@@ -12,7 +12,7 @@ public class ObjCreator : MonoBehaviour
 
     public ObjectPool<AutoAttack> objPool;
 
-    private void Start()
+    private void OnEnable()
     {
 
         objPool = new ObjectPool<AutoAttack>

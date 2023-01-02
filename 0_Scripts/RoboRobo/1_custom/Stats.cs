@@ -42,7 +42,7 @@ public class Stats : MonoBehaviour
     /// <summary>
     /// 히든 스텟 
     /// </summary>
-    public enum Hidden { None,
+    public enum Hidden {    None,
                             Immortality, // 죽지 않는다
                             HealthMan, // 스테미나 무한
                             TimeConqueror, // 시간 지배자
@@ -85,7 +85,10 @@ public class Stats : MonoBehaviour
 
             nowHp -= _damage; // 데미지 적용
 
-
+            if (nowHp < 0)
+            {
+                nowHp = 0;
+            }
         }
 
         if (damageEffect != null)
@@ -104,7 +107,7 @@ public class Stats : MonoBehaviour
             if (hidden != Hidden.Immortality)
             {
 
-                nowHp = 0;
+ 
                 Dead();
             }
         }

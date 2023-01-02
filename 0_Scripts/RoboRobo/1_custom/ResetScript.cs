@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Transactions;
 using UnityEngine;
 
 public class ResetScript : MonoBehaviour
@@ -16,18 +17,24 @@ public class ResetScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
         if (!isDelete || other.tag == "Player")
         {
 
             other.transform.position = Vector3.zero;
-            other.gameObject.GetComponent<Stats>()?.Damaged(damage);
-            
-            Instantiate(rescueParticle, other.transform.position, Quaternion.identity);
+            Stats stats = other.gameObject.GetComponent<Stats>();
+            stats.Damaged(damage);
+            stats.rd.velocity = Vector3.zero;
+
+            if (other.tag == "Player")
+            {
+                Instantiate(rescueParticle, other.transform.position, Quaternion.identity);
+            }
         }
         else
         {
             other.gameObject.GetComponent<Stats>()?.Damaged(100000000);
-            Destroy(other.gameObject, 2f);
+             Destroy(other.gameObject, 2f);
         }
     }
 }

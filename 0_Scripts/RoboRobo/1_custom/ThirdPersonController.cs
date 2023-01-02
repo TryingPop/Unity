@@ -150,6 +150,9 @@ public class ThirdPersonController : Stats
         transform.position = Vector3.zero;
 
         chrAnimator.Rebind();
+
+        ChangeColor(Color.white);
+
         // hp 설정
         SetHp();
 
@@ -210,6 +213,7 @@ public class ThirdPersonController : Stats
     {
         if (Input.GetKey(KeyCode.LeftShift) && nowStamina > 0) // 왼쪽 쉬프트를 달리기 속도 적용
         {
+
             runBool = true; // 스테미너 깎을 때 쓸 용도
 
             if (hidden != Hidden.HealthMan)
@@ -220,10 +224,12 @@ public class ThirdPersonController : Stats
             {
                 applySpeed = runSpeed * 2f; // 달리기 속도 2배
             }
+
             staminaBool = true; // 스테미나 사용 상태
         }
         else
         {
+
             runBool = false; // 달리기 상태 X
             applySpeed = moveSpeed; // 걷는 속도 적용
             staminaBool = false; // 스테미너 사용상태 X

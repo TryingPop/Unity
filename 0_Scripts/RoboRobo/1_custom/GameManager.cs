@@ -55,8 +55,7 @@ public class GameManager : MonoBehaviour
 
 
     // 현재 게임 상태
-    [SerializeField]
-    private GAMESTATE state;
+    public GAMESTATE state;
 
     // 가속 시간
     public float accTime;
@@ -318,7 +317,7 @@ public class GameManager : MonoBehaviour
         // 적 카운트 감소
         // enemyCount--;
         huntingMission.ChangeDestroyCnt();
-
+        huntingMission.ChkRemainEnemyCnt();
 
         // 적 수가 0 이하면 게임 승리 메소드 실행
         if (huntingMission.ChkWin() && state != GAMESTATE.Gameover)
@@ -333,6 +332,7 @@ public class GameManager : MonoBehaviour
     {
         if (!beCheat)
         {
+
             beCheat = true;
             audioSource.clip = cheatSnd[UnityEngine.Random.Range(0, cheatSnd.Length)];
             audioSource.Play();
