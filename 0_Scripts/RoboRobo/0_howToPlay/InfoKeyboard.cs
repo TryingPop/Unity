@@ -15,7 +15,8 @@ public class InfoKeyboard : MonoBehaviour
     public bool jumpBool;
     public bool runBool;
 
-    public delegate void ColorBtn(bool isActive);
+    public bool atkBool;
+    public bool pauseBool;
 
     private void Awake()
     {
@@ -32,7 +33,7 @@ public class InfoKeyboard : MonoBehaviour
     }
 
     /// <summary>
-    /// 이동키 누름 확인
+    /// 이동 키 누름 확인
     /// </summary>
     public void ChkMoveKey()
     {
@@ -82,30 +83,51 @@ public class InfoKeyboard : MonoBehaviour
         }
     }
 
-    public void ChkKey(ColorBtn method, ref bool chkBool, KeyCode Key)
+    /// <summary>
+    /// 키 누름 메소드
+    /// </summary>
+    /// <param name="method">버튼 변경 색상 메소드</param>
+    /// <param name="chkBool">확인용 상태 변수</param>
+    /// <param name="Key">대립할 키 코드</param>
+    public void ChkKey(ref bool chkBool, KeyCode Key)
     {
         if (Input.GetKeyDown(Key))
         {
-            method(true);
             chkBool = true;
         }
         else if (Input.GetKeyUp(Key))
         {
-            method(false);
             chkBool = false;
         }
     }
 
-
+    /// <summary>
+    /// 달리기 키 누름 확인
+    /// </summary>
     public void ChkRunKey()
     {
         
-        ChkKey(InfoBtn.instance.ColorRunBtn, ref runBool, KeyCode.LeftShift);
+        ChkKey(ref runBool, KeyCode.LeftShift);
     }
 
+    /// <summary>
+    /// 점프 키 누름 확인
+    /// </summary>
     public void ChkJumpKey()
     {
 
-        ChkKey(InfoBtn.instance.ColorJumpBtn, ref jumpBool, KeyCode.Space);
+        ChkKey(ref jumpBool, KeyCode.Space);
+    }
+
+    public void ChkPause()
+    {
+
+        ChkKey(ref pauseBool, KeyCode.Escape);
+    }
+
+    public void ChkAtk()
+    {
+
+        ChkKey(ref atkBool, KeyCode.Mouse0);
     }
 }

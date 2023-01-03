@@ -39,7 +39,11 @@ public class InfoAnimation : MonoBehaviour
     public void ChkAttack(bool isActive)
     {
 
-        animator.SetBool("attackChk", isActive);
+        if (isActive)
+        {
+
+            animator.SetBool("attackChk", isActive);
+        }
     }
 
     public void ChkJump(bool isActive)
