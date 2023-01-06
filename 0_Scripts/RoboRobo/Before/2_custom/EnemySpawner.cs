@@ -8,33 +8,18 @@ public class EnemySpawner : MonoBehaviour
 
     public static EnemySpawner instance;
 
-    [Tooltip("생성할 장소")]
-    public Transform[] enemySpawners;
+    [SerializeField] private float spawnMinTime;
+    [SerializeField] private float spawnMaxTime;
+    [SerializeField] private ObjCreator createScript;
 
-    [SerializeField] [Tooltip("생성할 적")]
-    private GameObject[] enemyPrefabs;
+    [SerializeField, Range(0, 5)] private int spawnMinNum;
+    [SerializeField, Range(5, 9)] private int spawnMaxNum;
 
-    [SerializeField] [Tooltip("최소 생성 시간")]
-    private float spawnMinTime;
+    public Transform[] spawnersTrans;
 
-    [SerializeField] [Tooltip("최대 생성 시간")]
-    private float spawnMaxTime;
-
-    [SerializeField] [Tooltip("최소 생성 개수")]
-    [Range(0, 5)]
-    private int spawnMinNum;
-
-    [SerializeField] [Tooltip("최대 생성 개수")]
-    [Range(5, 9)]
-    private int spawnMaxNum;
-
-
-    [SerializeField] [Tooltip("Object Pool Script")]
-    private ObjCreator createScript;
-    
+    public Transform poolTrans;
 
     public int maxNum;
-    public Transform enemyPool;
 
     private List<int> spawnerNum;
     private float spawnTime;
@@ -93,8 +78,8 @@ public class EnemySpawner : MonoBehaviour
     void SetSpawnNum()
     {
 
-        spawnCnt = Random.Range(Mathf.Min(spawnMinNum, enemySpawners.Length), 
-                                Mathf.Min(spawnMaxNum, enemySpawners.Length) + 1
+        spawnCnt = Random.Range(Mathf.Min(spawnMinNum, spawnersTrans.Length), 
+                                Mathf.Min(spawnMaxNum, spawnersTrans.Length) + 1
                                 );
     }
 
@@ -106,11 +91,10 @@ public class EnemySpawner : MonoBehaviour
 
         spawnerNum = new List<int>();
 
-
         while (spawnerNum.Count < spawnCnt)
         {
 
-            int num = Random.Range(0, enemySpawners.Length);
+            int num = Random.Range(0, spawnersTrans.Length);
 
             if (!spawnerNum.Contains(num))
             {
@@ -125,21 +109,11 @@ public class EnemySpawner : MonoBehaviour
     /// </summary>
     private void Spawning()
     {
-        // foreach (var item in enemySpawners)
+
         for (int i = 0; i < spawnerNum.Count; i++)
         {
 
-            // int num = Random.Range(0, enemyPrefabs.Length);
-
-            // 여기에 생성 코드 넣기 당장은 instantiate
-            // 추후에 object pooling 기법 이용
-            /*
-            if (enemyPool.childCount < maxNum)
-            {
-                GameManager.instance.enemyNum++;
-                Instantiate(enemyPrefabs[num], enemySpawners[spawnerNum[i]].position, Quaternion.identity, enemyPool);
-            }*/
-            createScript.CreateObj(enemySpawners[spawnerNum[i]].position);
+            createScript.CreateObj(spawnersTrans[spawnerNum[i]].position);
         }
     }
 

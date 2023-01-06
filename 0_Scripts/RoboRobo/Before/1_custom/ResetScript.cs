@@ -24,7 +24,6 @@ public class ResetScript : MonoBehaviour
             other.transform.position = Vector3.zero;
             Stats stats = other.gameObject.GetComponent<Stats>();
             stats.Damaged(damage);
-            stats.rd.velocity = Vector3.zero;
 
             if (other.tag == "Player")
             {

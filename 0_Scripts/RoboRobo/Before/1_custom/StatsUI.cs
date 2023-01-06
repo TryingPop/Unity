@@ -16,8 +16,6 @@ public class StatsUI : MonoBehaviour
     [SerializeField] private Text EnemyHpTxt;
     [SerializeField] private float activeHpTime;
 
-    [HideInInspector] public Stats stats;
-
     private WaitForSeconds hpTime;
     private int seeCnt;
     
@@ -56,12 +54,12 @@ public class StatsUI : MonoBehaviour
         atkText.text = $"{atk}";
     }
 
-    public void SetEnemyHp()
+    public void SetEnemyHp(Stats targetStatus)
     {
 
         StartCoroutine(ActiveEnemyHp());
-        EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * stats.GetHpBar();
-        EnemyHpTxt.text = stats.GetHpBar() <= 0 ? "0%" : $"{100 * stats.GetHpBar():F1}%";
+        EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * targetStatus.GetHpBar();
+        EnemyHpTxt.text = targetStatus.GetHpBar() <= 0 ? "0%" : $"{100 * targetStatus.GetHpBar():F1}%";
     }
 
     private IEnumerator ActiveEnemyHp()
@@ -70,6 +68,7 @@ public class StatsUI : MonoBehaviour
         seeCnt++;
 
         yield return hpTime;
+        
         seeCnt--;
 
         if (seeCnt == 0)

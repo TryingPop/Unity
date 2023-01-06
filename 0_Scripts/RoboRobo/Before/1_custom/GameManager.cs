@@ -15,33 +15,26 @@ public class GameManager : MonoBehaviour
 
     #region ResultUI
     [Header("결과 창")]
-    [SerializeField] [Tooltip("결과창 UI")]
+    [SerializeField, Tooltip("결과창 UI")]
     private GameObject resultUI; 
 
     // 일시 정지, 패배, 승리 밖에 없다
-    [SerializeField] [Tooltip("상황 설명 텍스트")]
-    private Text informText; 
+    [SerializeField, Tooltip("상황 설명 텍스트")] private Text informText; 
 
-    [SerializeField] [Tooltip("버튼 텍스트")]
-    private Text btnText;
+    [SerializeField, Tooltip("버튼 텍스트")] private Text btnText;
 
     #endregion
 
-    // 기본 노래
-    [SerializeField] [Tooltip("기본 브금")]
-    private AudioClip bgmSnd;
+    [SerializeField, Tooltip("기본 브금")] private AudioClip bgmSnd;
 
-    // 치트 노래
-    [SerializeField] [Tooltip("치트 모드 활성화 시 사용할 노래")] 
-    private AudioClip[] cheatSnd;
+    [SerializeField, Tooltip("치트 모드 활성화 시 사용할 노래")] private AudioClip[] cheatSnd;
 
-    private AudioSource audioSource;
 
-    [SerializeField] [Tooltip("플레이어 애니메이터")]
-    private ThirdPersonController thirdPersonController;
+    [SerializeField, Tooltip("플레이어 애니메이터")] private PlayerController controller;
 
-    [Tooltip("사냥 미션")]
-    public HuntingMission huntingMission;
+    [Tooltip("사냥 미션")] public HuntingMission huntingMission;
+
+    [SerializeField] private AudioScript myAS;
 
     public event EventHandler Reset;
 
@@ -58,7 +51,7 @@ public class GameManager : MonoBehaviour
     public GAMESTATE state;
 
     // 가속 시간
-    public float accTime;
+    public bool accBool;
 
     // ui 상태 변수
     public bool uiBool;
@@ -88,7 +81,7 @@ public class GameManager : MonoBehaviour
         // 초기 상태 
         state = GAMESTATE.Play;
         Time.timeScale = 1.0f;
-        accTime = 1f;
+        
 
 
         if (huntingMission == null)
@@ -97,16 +90,16 @@ public class GameManager : MonoBehaviour
             huntingMission = FindObjectOfType<HuntingMission>();
         }
 
-        if (thirdPersonController == null)
+        if (controller == null)
         {
 
-            thirdPersonController = FindObjectOfType<ThirdPersonController>();
+            controller = FindObjectOfType<PlayerController>();
         }
 
         beCheat = false;
-        audioSource = GetComponent<AudioSource>();
-        audioSource.clip = bgmSnd;
-        audioSource.Play();
+        if (myAS == null) { GetComponent<AudioScript>(); }
+        myAS?.SetSnd(bgmSnd);
+        myAS?.GetSnd(true);
     }
 
 
@@ -253,7 +246,7 @@ public class GameManager : MonoBehaviour
         state = GAMESTATE.Gameover;
 
         // 게임 속도 1/10으로 설정
-        accTime = 10f;
+        // accBool = 10f;
         Time.timeScale = 0.1f;
 
         // resultUI 가 있으면 게임 오버 ui 띄우고 없으면 바로 다시 시작
@@ -262,14 +255,13 @@ public class GameManager : MonoBehaviour
 
             GameOverText(isWin);
 
-            thirdPersonController.chrAnimator.SetTrigger("GameOver");
-            thirdPersonController.chrAnimator.SetBool("isWin", isWin);
-            thirdPersonController.hammerObj.SetActive(false);
+            // 게임오버
+            // thirdPersonController.chrAnim.SetTrigger("GameOver");
+            // thirdPersonController.chrAnim.SetBool("isWin", isWin);
+            // thirdPersonController.hammerObj.SetActive(false);
 
 
             ChkUI();
-            
-
         }
         else
         {
@@ -302,7 +294,7 @@ public class GameManager : MonoBehaviour
 
             state = GAMESTATE.Play;
             Time.timeScale = 1.0f;
-            accTime = 1f;
+            // accTime = 1f;
         }
     }
 
@@ -334,9 +326,8 @@ public class GameManager : MonoBehaviour
         {
 
             beCheat = true;
-            audioSource.clip = cheatSnd[UnityEngine.Random.Range(0, cheatSnd.Length)];
-            audioSource.Play();
+            myAS?.SetSnd(cheatSnd[UnityEngine.Random.Range(0, cheatSnd.Length)]);
+            myAS?.GetSnd(true);
         }
     }
-
 }

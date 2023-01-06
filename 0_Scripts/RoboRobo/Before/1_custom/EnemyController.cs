@@ -32,9 +32,6 @@ public class EnemyController : Stats
     // private float maxReinforcementTime; // 난이도 상승 시간
     #endregion
 
-    // 현재 미구현
-    // private float reinforcementTime; // 난이도 상승에 잴 시간
-
     private float distance; // 자신과 적과의 거리
 	private bool isAtk; // 공격 상태?
 
@@ -48,7 +45,7 @@ public class EnemyController : Stats
 
 	private void Start()
 	{
-		rd = GetComponent<Rigidbody>(); // 자신의 리지드바디
+		myRd = GetComponent<Rigidbody>(); // 자신의 리지드바디
 		EnemyAudioSource = GetComponent<AudioSource>(); // 자신의 오디오 소스
 		if (stateList == null)
 		{
@@ -158,7 +155,7 @@ public class EnemyController : Stats
 
 	void Move()
 	{
-        rd.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
+        myRd.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
 		transform.LookAt(transform.position + dir);
     }
 
@@ -180,17 +177,17 @@ public class EnemyController : Stats
 	IEnumerator Attack(GameObject obj, float time)
 	{
 		WaitForSeconds waitTime = new WaitForSeconds(time);
-		dmgCol.enabled = false;
+		// dmgCol.enabled = false;
 		
-        ThirdPersonController controller = obj.GetComponent<ThirdPersonController>();
-		controller.ChangeColor(Color.red);
-		controller.Damaged(atk);
+        var controller = obj.GetComponent<PlayerController>();
+		// controller.ChangeColor(Color.red);
+		// controller.Damaged(status.Atk);
         
 		yield return waitTime;
 
-		controller.ChangeColor(Color.white);
+		// controller.ChangeColor(Color.white);
 
-		dmgCol.enabled = true;
+		// dmgCol.enabled = true;
 	}
 
 	private void OnTriggerEnter(Collider other)
@@ -219,7 +216,7 @@ public class EnemyController : Stats
         
         base.Damaged(_damage);
 
-        StatsUI.instance.SetEnemyHp();
+        StatsUI.instance.SetEnemyHp(this);
 
         if (EnemyAudioSource != null && !EnemyAudioSource.isPlaying)
 		{
@@ -238,7 +235,7 @@ public class EnemyController : Stats
 		targetTrans = null;
 		GameManager.instance.ChkWin();
 		
-		dmgCol.enabled = false;
+		// dmgCol.enabled = false;
 	}
 
 

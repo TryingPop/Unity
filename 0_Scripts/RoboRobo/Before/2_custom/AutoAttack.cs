@@ -8,15 +8,13 @@ public class AutoAttack : Stats
 {
 
     private static Transform targetTrans;
-    private static ThirdPersonController controller;
+    private static PlayerController controller;
 
     private static float moveSpeed = 5f;
 
     private Vector3 dir;
-    private bool isAtk;
 
-    private Animation EnemyAnimation;
-    private AudioSource EnemyAudioSource;
+    private Animation myAnim;
 
     public IObjectPool<AutoAttack> poolToReturn;
 
@@ -31,40 +29,48 @@ public class AutoAttack : Stats
         if (controller == null)
         {
 
-            controller = targetTrans.GetComponent<ThirdPersonController>();
+            controller = targetTrans.GetComponent<PlayerController>();
         }
 
+        GetComp();
 
+        myAnim = GetComponent<Animation>();
+
+
+        myWC.Attack += Attack;
     }
 
 
     private void Start()
     {
-        rd = GetComponent<Rigidbody>();
-        EnemyAudioSource = GetComponent<AudioSource>();
-        EnemyAnimation = GetComponent<Animation>();
-
-        EnemyAnimation["0_idle"].layer = 0;
-        EnemyAnimation["1_walk"].layer = 1;
-        EnemyAnimation["2_attack"].layer = 2;
-        EnemyAnimation["3_attacked"].layer = 3;
 
         Reset();
+
+        myAnim["0_idle"].layer = 0;
+        myAnim["1_walk"].layer = 1;
+        myAnim["2_attack"].layer = 2;
+        myAnim["3_attacked"].layer = 3;
+
     }
 
     private void Update()
     {
         Move();
-        EnemyAnimation.CrossFade("2_attack", 0.1f);
+        myAnim.CrossFade("2_attack", 0.1f);
     }
 
     public void Reset()
     {
-        SetHp();
+        Init();
+
+        // dmgCol.enabled = true;
+        myAnim.CrossFade("0_idle", 0.2f);
+        myAnim.CrossFade("1_walk", 0.1f);
+        myAnim.CrossFade("2_attack", 0.1f);
+
         
-        EnemyAnimation.CrossFade("0_idle", 0.2f);
-        EnemyAnimation.CrossFade("1_walk", 0.1f);
-        EnemyAnimation.CrossFade("2_attack", 0.1f);
+
+        StartCoroutine(Attack());
     }
 
 
@@ -74,74 +80,52 @@ public class AutoAttack : Stats
         dir.y = 0;
         dir = dir.normalized;
 
-        rd.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
+        myRd.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
         transform.LookAt(transform.position + dir);
     }
 
 
-    IEnumerator Attack(float time)
+
+
+    public override void Damaged(int atk)
     {
-        
-        dmgCol.enabled = false;
-        isAtk = true;
 
-        controller.ChangeColor(Color.red);
-        controller.Damaged(atk);
+        base.Damaged(atk);
 
-        yield return new WaitForSeconds(time);
-
-        controller.ChangeColor(Color.white);
-        dmgCol.enabled = true;
-        isAtk = false;
-    }
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (GameManager.instance.state == GameManager.GAMESTATE.Play)
-        {
-
-            if (other.tag == "Player" && !isAtk)
-            {
-
-                StartCoroutine(Attack(0.5f));
-            }
-        }
-    }
-
-
-    public override void Damaged(int _damage)
-    {
-        if (!EnemyAudioSource.isPlaying)
-        {
-
-            EnemyAudioSource.Play();
-        }
-
-
-        base.Damaged(_damage);
-
-        StatsUI.instance.SetEnemyHp();
+        StatsUI.instance.SetEnemyHp(this);
 
         ChkDead();
     }
 
 
+    protected override IEnumerator Attack()
+    {
+        while (!deadBool)
+        {
+            myWC.AtkColActive(true);
+
+            yield return atkWaitTime;
+        }
+    }
+
+    protected override void Attack(object sender, Collider other)
+    {
+
+        controller.Damaged(status.Atk);
+
+        base.Attack(sender, other);
+    }
+
     protected override void Dead()
     {
         base.Dead();
         StopAllCoroutines();
-        isAtk = false;
-        dmgCol.enabled = false;
+
+        // event 해제
 
         // 점수 메소드
         GameManager.instance.ChkWin();
 
         poolToReturn.Release(element: this);
-
-
-        // 비활성화
-        // gameObject.SetActive(false);
     }
-
 }

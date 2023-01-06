@@ -1,128 +1,202 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Stats : MonoBehaviour
 {
     // 인스펙터에서 받아 올 컴포넌트나 게임오브젝트
-    #region Component or GameObject
+#region Variable 
     [Header("컴포넌트 or 오브젝트")]
-    [Tooltip("맞을 때 생성되는 파티클")] [SerializeField]
-    private ParticleSystem attParticle; 
+    [SerializeField] private    ParticleSystem      damagedParticle;    // 피격 시 생기는 파티클
+    [SerializeField] protected  GameObject          damagedText;        // 데미지 수치 UI
     
-    [Tooltip("데미지 수치")] [SerializeField]
-    protected GameObject damageEffect;
+    [SerializeField] protected  Status              status;             // 능력치 스크립터블 오브젝트
+    [SerializeField] protected  AudioClip           damagedSnd;         // 피격 사운드
+    [SerializeField] protected  ParticleSystem      atkParticle;        // 공격 시 생기는 파티클 
+    [SerializeField] protected  WeaponController    myWC;               // 공격할 콜라이더를 담고 있다
+    [SerializeField] protected  AudioScript         myAS;              // 소리 컨트롤러        
 
-    [Tooltip("데미지 줄 박스 콜라이더")] [SerializeField]
-    protected BoxCollider dmgCol;
+    [HideInInspector] public      Rigidbody       myRd;
 
-    #endregion Component or GameObject
+    protected   WaitForSeconds  atkWaitTime;    // 캐싱용
+    protected   Stats           targetStatus;
+    protected   Vector3         moveDir;        // 방향
 
-
-    // 인스펙터에서 조절 가능한 변수
-    #region Convertible Variable 
-    [Header("스텟")]
-    [Tooltip("최대 체력")] [SerializeField]
-    protected int maxHp; 
-
-    [Tooltip("공격력")] [SerializeField]
-    public int atk;
-
-    [Tooltip("방어력")] [SerializeField]
-    protected int def;
-
-    [Tooltip("히든 스텟")] [SerializeField]
-    public Hidden hidden;
-
-    [Tooltip("파워 데미지")] [SerializeField]
-    public int nuclearAtk;
-    #endregion Convertible Variable
+    protected   int     nowHp;      // 현재 Hp
+    protected   bool    atkBool;    // 공격 여부
+    protected   bool    deadBool;   // 사망 여부
+#endregion Variable
 
     /// <summary>
-    /// 히든 스텟 
+    /// 초기화 함수
+    /// 추후에 GameManager LoadScene에서 쓸꺼
     /// </summary>
-    public enum Hidden {    None,
-                            Immortality, // 죽지 않는다
-                            HealthMan, // 스테미나 무한
-                            TimeConqueror, // 시간 지배자
-                            NuclearAttacker, // 파워풀한 공격
-                            ContinuousAttacker, // 연속 공격
-                            HomeRun // 넉백 공격
-                          }
+    protected virtual void Init()
+    {
 
-    // 현재 체력
-    protected int nowHp;
+        SetHp();
+    }
 
-    // 생존 변수
-    protected bool deadBool;
+    /// <summary>
+    /// 자신 컴포넌트 갖기
+    /// </summary>
+    protected virtual void GetComp()
+    {
 
-    public Rigidbody rd;
+        if (myRd == null) myRd = GetComponent<Rigidbody>();
+        if (myWC == null) myWC = GetComponentInChildren<WeaponController>();
+        if (myAS == null) myAS = GetComponent<AudioScript>();
 
-    // 초기 hp 설정 함수 
+
+        if (status.AtkInterval <= 0) 
+        { 
+            
+            atkWaitTime = null; 
+        }
+        else
+        { 
+            atkWaitTime = new WaitForSeconds(status.AtkInterval); 
+        }
+    }
+
+    /// <summary>
+    /// 체력과 사망상태 초기화
+    /// </summary>
     protected void SetHp() 
     {
 
-        nowHp = maxHp;
+        nowHp = status.Hp;
         deadBool = false;
     }
 
+    protected Vector3 SetDirXZ(Vector3 dir)
+    {
+       
+        dir.y = 0;
+        dir = dir.normalized;
 
-    public virtual void Damaged(int _damage) // 데미지 메서드
+        return dir;
+    }
+
+    /// <summary>
+    /// 이동
+    /// </summary>
+    /// <param name="Spd">속도</param>
+    protected virtual void Move(float Spd)
     {
 
-        if (!deadBool) // 사망 상태시에만 공격
+        myRd.MovePosition(transform.position + moveDir * Spd);
+    }
+
+    protected virtual void Attack(object sender, Collider other)
+    {
+
+        myWC.AtkColActive(false);
+    }
+
+    /// <summary>
+    /// 공격
+    /// </summary>
+    /// <returns></returns>
+    protected virtual IEnumerator Attack()
+    {
+        
+        atkBool = true;
+        myWC.AtkColActive(true);
+
+        yield return atkWaitTime;
+
+        atkBool = false;
+        myWC.AtkColActive(false);
+    }
+
+    /// <summary>
+    /// 생존 시에만 피격 최소 데미지 1 보정, 최소 hp 0 보정
+    /// </summary>
+    /// <param name="atk">공격력</param>
+    public virtual void Damaged(int atk) 
+    {
+        myAS.SetSnd(damagedSnd);
+        myAS.GetSnd(false);
+
+        if (!deadBool) 
         {
             
-            // 데미지 계산 식 max(공격력 - 방어력, 1) 
-            _damage -= def;
+            atk -= status.Def;
 
-            if (_damage < 1)
+            if (atk < 1)
             {
 
-                _damage = 1; // 데미지 최소값 1 보정
+                atk = 1; 
             }
 
-            nowHp -= _damage; // 데미지 적용
+            nowHp -= atk; 
 
             if (nowHp < 0)
             {
+
                 nowHp = 0;
             }
         }
 
-        if (damageEffect != null)
+        // 데미지 텍스트 생성 및 수치 확인
+        if (damagedText != null)
         {
-            GameObject obj = Instantiate(damageEffect, transform);
-            obj.GetComponent<DamageScript>().SetTxt(_damage.ToString());
+            
+            GameObject obj = Instantiate(damagedText, transform);
+            obj.GetComponent<DamageScript>()?.SetTxt(atk.ToString());
         }
+
+        ChkDead();
     }
 
+    /// <summary>
+    /// hp < 0 이하이고 생존 상태일 때만 Dead 실행
+    /// </summary>
     protected virtual void ChkDead()
     {
-        // 체력이 0 이하고 생존한 경우
+
         if (nowHp <= 0 && !deadBool) 
         {
 
-            if (hidden != Hidden.Immortality)
-            {
-
- 
-                Dead();
-            }
+            Dead();
         }
-
     }
 
-    protected virtual void Dead() // 사망
+
+    protected virtual void Dead() 
     {
+        
         deadBool = true;
     }
 
+    /// <summary>
+    /// Stats 스크립트 받아오는 메소드
+    /// </summary>
+    /// <param name="gameObject">대상</param>
+    protected virtual void SetTargetStats(GameObject gameObject)
+    {
 
+        targetStatus = gameObject.GetComponent<Stats>();
+    }
+
+    /// <summary>
+    /// 공격 파티클 생성
+    /// </summary>
+    protected virtual void SetAtkParticle()
+    {
+
+        Instantiate(atkParticle, targetStatus.transform.position, Quaternion.identity);
+    }
+
+    /// <summary>
+    /// 현재 체력 %
+    /// Enemy 쪽에서만 쓸꺼
+    /// </summary>
+    /// <returns>현재 체력 %</returns>
     public float GetHpBar()
     {
 
-        return (float)nowHp / maxHp;
+        return (float)nowHp / status.Hp;
     }
 }

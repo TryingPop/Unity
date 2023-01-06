@@ -5,7 +5,7 @@ using UnityEngine;
 public class MinimapCamera : MonoBehaviour
 {
 
-    private Camera camera;
+    [SerializeField] private Camera subCam;
 
     // [SerializeField] [Tooltip("회전 여부")]
     // private bool canRotate;
@@ -23,10 +23,10 @@ public class MinimapCamera : MonoBehaviour
     void Awake()
     {
 
-        if (camera == null)
+        if (subCam == null)
         {
 
-            camera = GetComponent<Camera>();
+            subCam = GetComponent<Camera>();
         }
     }
 
@@ -46,6 +46,6 @@ public class MinimapCamera : MonoBehaviour
             heightSize = minSize;
         }
 
-        camera.orthographicSize = heightSize;
+        subCam.orthographicSize = heightSize;
     }
 }

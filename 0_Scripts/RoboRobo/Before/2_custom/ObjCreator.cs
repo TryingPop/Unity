@@ -21,7 +21,7 @@ public class ObjCreator : MonoBehaviour
             createFunc: () =>
             {
 
-                var createObj = Instantiate(original: obj, parent: EnemySpawner.instance.enemyPool);
+                var createObj = Instantiate(original: obj, parent: EnemySpawner.instance.poolTrans);
                 createObj.poolToReturn = objPool;
 
                 return createObj;
@@ -31,12 +31,12 @@ public class ObjCreator : MonoBehaviour
             {
 
                 poolObj.gameObject.SetActive(true);
+                poolObj.Reset();
             },
 
             actionOnRelease: (poolObj) =>
             {
 
-                poolObj.Reset();
                 poolObj.gameObject.SetActive(false);
                 
             },
