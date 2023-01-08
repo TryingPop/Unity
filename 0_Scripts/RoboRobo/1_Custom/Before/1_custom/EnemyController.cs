@@ -7,9 +7,6 @@ public class EnemyController : Stats
 {
     #region Convertible Variable
     [Header("스텟")]
-	[Tooltip("이동 속도")] [SerializeField]
-	private float moveSpeed; 
-
 	[Tooltip("찾을 반경")] [SerializeField]
 	private float findRadius;
 
@@ -28,12 +25,10 @@ public class EnemyController : Stats
 	[Tooltip("플레이어 태그")] [SerializeField] 
 	private string playerTag;
 
-    // [Tooltip("난이도 상승 시간")] [SerializeField]
-    // private float maxReinforcementTime; // 난이도 상승 시간
+	[SerializeField] private EnemyState state;
+	[SerializeField] private StateIdle idle;
+
     #endregion
-
-    
-
 
     private float distance;         // 자신과 적과의 거리
 
@@ -47,17 +42,26 @@ public class EnemyController : Stats
 
     private void Awake()
     {
+
 		GetComp();
+    }
+
+    protected override void GetComp()
+    {
+
+		base.GetComp();
+
+        myAnim = GetComponent<Animation>();
+		state = GetComponent<EnemyState>();
+		idle = GetComponent<StateIdle>();
     }
 
     private void Start()
 	{
 
-
 		if (stateList == null) { stateList = new List<string>() { "0_idle", "1_walk", "2_attack", "3_attacked" }; }
 
-        myAnim = GetComponent<Animation>();
-
+		idle.SetTotalWeight();
 		SetHp();
 
 		// 행동을 따로 하게 하기 위해 레이어 구분
@@ -82,12 +86,38 @@ public class EnemyController : Stats
 	{
 		if (!deadBool)
 		{
-			FindDistance(); // 시야 안에 들어오는지 확인
-			Action(); // 시야안에 들어올 경우 행동
+
+			state.ChkState(targetTrans);
+
+			FSM(state.GetState());
+
+			// GetDistance(); // 시야 안에 들어오는지 확인
+			// Action(); // 시야안에 들어올 경우 행동
 		}
 	}
 
-	void FindDistance() // 적과의 거리 측정
+	private void FSM(EnemyState.State state)
+	{
+
+		switch (state)
+		{
+
+			case EnemyState.State.idle:
+				idle.Action(myRd, status.MoveSpd);
+				break;
+
+			case EnemyState.State.attack:
+
+				break;
+
+			default:
+				break;
+		}
+	}
+
+
+	void GetDistance() 
+		// 적과의 거리 측정
 	{
 		Collider[] cols = Physics.OverlapSphere(transform.position, findRadius,
 												// LayerMask.GetMask("Player")|LayerMask.GetMask("Allies"));
@@ -105,6 +135,7 @@ public class EnemyController : Stats
 
 					if (hit.transform.tag == playerTag)
 					{
+
 						distance = (cols[0].gameObject.transform.position - transform.position).magnitude;
 						targetTrans = cols[0].gameObject.transform;
 
@@ -120,6 +151,7 @@ public class EnemyController : Stats
 
 		if (distance < findRadius)
 		{
+
 			distance = findRadius + 1;
 		}
 
@@ -127,52 +159,53 @@ public class EnemyController : Stats
 		return;
 	}
 
+
 	void Action()
     {
-		if (targetTrans == null) // 타겟 유무 판별
+		if (targetTrans == null)				// 타겟 유무 판별
 		{
 			SelectAnimation(1, false);
 			return;
 		}
 
 		SelectAnimation(1, true);
-		Move(); // 타겟이 있으니 타겟으로 이동!
+		Move(status.MoveSpd * Time.deltaTime);	// 타겟이 있으니 타겟으로 이동!
 		AttackAnimation();
     }
+
 
 	void SelectAnimation(int i, bool start = true)
 	{
 		if (i >= stateList.Count)
 		{
+
 			return;
 		}
 
 		if (start) 
 		{
+
 			myAnim.CrossFade(stateList[i], 0.1f);
 		}
 		else
 		{
+
 			myAnim.Stop(stateList[i]);
 		}
 	}
-
-	void Move()
-	{
-        myRd.MovePosition(transform.position + moveDir * moveSpeed * Time.deltaTime);
-		transform.LookAt(transform.position + moveDir);
-    }
 
 	void AttackAnimation()
 	{
 		if (distance < attackRange)
 		{
+
 			SelectAnimation(2, true);
 			isAtk = true;
 			
 		}
 		else
 		{
+
 			SelectAnimation(2, false);
 			isAtk = false;
 		}
@@ -227,7 +260,6 @@ public class EnemyController : Stats
 		targetTrans = null;
 		GameManager.instance.ChkWin();
 		
-		// dmgCol.enabled = false;
 	}
 
 

@@ -5,17 +5,22 @@ using UnityEngine;
 public class EnemyState : MonoBehaviour
 {
 
-    public enum State { idle, tracking, attack, damaged }
+    public enum State 
+    { 
+        idle, 
+        attack, 
+        damaged 
+    }
 
-    [SerializeField; private State myState;
+    [SerializeField] private State myState;
     
-    [SerializeField] private LayerMask playerMask;
-    [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private LayerMask playerMask;      // 타겟 레이어
+    [SerializeField] private LayerMask obstacleMask;    // 장애물 레이어
     
-    [SerializeField] private string targetTag;
+    [SerializeField] private string targetTag;          // 타겟 태그
 
-    [SerializeField] private float findRadius;
-    [SerializeField] private float findAngle;
+    [SerializeField] private float findRadius;          // 공격 상태로 바뀔 거리
+    [SerializeField] private float findAngle;           // 각도 찾기
 
     /// <summary>
     /// 상태 설정 메소드
@@ -27,7 +32,36 @@ public class EnemyState : MonoBehaviour
         myState = state;
     }
 
+    /// <summary>
+    /// 현재 상태를 반환
+    /// </summary>
+    /// <returns>현재 상태</returns>
+    public State GetState()
+    {
 
+        return myState;
+    }
+
+    /// <summary>
+    /// 상태 확인 메소드
+    /// </summary>
+    /// <param name="targetTrans">공격 상태일 때 담을 목표</param>
+    public void ChkState(Transform targetTrans) 
+    {
+
+        // 타겟이 공격 범위에 있으면 공격 상태
+        if (ChkTarget(findRadius, findAngle, out targetTrans))
+        {
+
+            SetState(State.attack);
+        }
+        // 없는 경우면 대기
+        else
+        {
+
+            SetState(State.idle);
+        }
+    }
     
 
     /// <summary>
