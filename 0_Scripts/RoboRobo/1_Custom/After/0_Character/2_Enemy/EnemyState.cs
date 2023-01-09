@@ -68,7 +68,7 @@ public class EnemyState : MonoBehaviour
 
         if (beforeState != myState)
         {
-            
+
             chkBool = true;
         }
     }

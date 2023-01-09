@@ -32,6 +32,27 @@ public class StateIdle : MonoBehaviour
     public bool moveBool;           // 이동 중인지 확인
     public bool chatBool;           // 대화 중인지 확인
 
+
+    /// <summary>
+    /// actionBool 값 설정 및 체크
+    /// </summary>
+    /// <param name="state">현재 행동</param>
+    /// <returns>actionBool의 상태</returns>
+    public void SetActionBool(EnemyState.State state)
+    {
+
+        if (state == EnemyState.State.idle)
+        {
+
+            actionBool = true;
+        }        
+        else
+        {
+
+            actionBool = false;
+        }
+    }
+
     /// <summary>
     /// 전체 가중치
     /// </summary>
