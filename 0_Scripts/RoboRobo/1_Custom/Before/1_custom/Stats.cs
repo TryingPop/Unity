@@ -19,7 +19,7 @@ public class Stats : MonoBehaviour
     [HideInInspector] public      Rigidbody       myRd;
 
     protected   WaitForSeconds  atkWaitTime;    // 캐싱용
-    protected   Stats           targetStatus;
+    protected   Stats           targetStats;
     protected   Vector3         moveDir;        // 방향
 
     protected   int     nowHp;      // 현재 Hp
@@ -177,7 +177,7 @@ public class Stats : MonoBehaviour
     protected virtual void SetTargetStats(GameObject gameObject)
     {
 
-        targetStatus = gameObject.GetComponent<Stats>();
+        targetStats = gameObject.GetComponent<Stats>();
     }
 
     /// <summary>
@@ -186,7 +186,7 @@ public class Stats : MonoBehaviour
     protected virtual void SetAtkParticle()
     {
 
-        Instantiate(atkParticle, targetStatus.transform.position, Quaternion.identity);
+        Instantiate(atkParticle, targetStats.transform.position, Quaternion.identity);
     }
 
     /// <summary>

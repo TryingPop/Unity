@@ -22,6 +22,8 @@ public class EnemyState : MonoBehaviour
     [SerializeField] private float findRadius;          // 공격 상태로 바뀔 거리
     [SerializeField] private float findAngle;           // 각도 찾기
 
+    private State beforeState;                          // 상태 변화 확인용
+    public bool chkBool;                                // 상태 변화 존재
     /// <summary>
     /// 상태 설정 메소드
     /// </summary>
@@ -46,13 +48,15 @@ public class EnemyState : MonoBehaviour
     /// 상태 확인 메소드
     /// </summary>
     /// <param name="targetTrans">공격 상태일 때 담을 목표</param>
-    public void ChkState(Transform targetTrans) 
+    public void ChkState(ref Transform targetTrans) 
     {
+        beforeState = myState;
+        chkBool = false;
 
         // 타겟이 공격 범위에 있으면 공격 상태
-        if (ChkTarget(findRadius, findAngle, out targetTrans))
+        if (ChkTarget(findRadius, findAngle, ref targetTrans))
         {
-
+            
             SetState(State.attack);
         }
         // 없는 경우면 대기
@@ -60,6 +64,12 @@ public class EnemyState : MonoBehaviour
         {
 
             SetState(State.idle);
+        }
+
+        if (beforeState != myState)
+        {
+            
+            chkBool = true;
         }
     }
     
@@ -71,7 +81,7 @@ public class EnemyState : MonoBehaviour
     /// <param name="angle">찾을 각도</param>
     /// <param name="targetTrans">찾는 경우 담을 대상</param>
     /// <returns>있는지 없는지 유무</returns>
-    private bool ChkTarget(float radius, float angle, out Transform targetTrans)
+    private bool ChkTarget(float radius, float angle, ref Transform targetTrans)
     {
 
         Collider[] targetCols = ChkRadius(radius);
@@ -84,14 +94,17 @@ public class EnemyState : MonoBehaviour
 
                 if (ChkAngle(targetCols[i].gameObject, angle) && ChkObstacle(targetCols[i].gameObject, radius))
                 {
-                 
+
+                    // SetTrans(targetCols[i].transform, targetTrans);
+
+                    // Debug.Log(targetTrans);
                     targetTrans = targetCols[i].transform;
                     return true;
                 }
             }
         }
 
-        targetTrans = null;
+        SetTrans(null, ref targetTrans);
         return false;
     }
 
@@ -136,7 +149,7 @@ public class EnemyState : MonoBehaviour
 
         RaycastHit _hit;
 
-        if (Physics.Raycast(transform.position, obj.transform.position - transform.position, out _hit, playerMask | obstacleMask))
+        if (Physics.Raycast(transform.position, obj.transform.position - transform.position, out _hit, distance, playerMask | obstacleMask))
         {
 
             if (_hit.transform.tag == targetTag)
@@ -154,9 +167,11 @@ public class EnemyState : MonoBehaviour
     /// </summary>
     /// <param name="trans">넘길 값</param>
     /// <param name="targetTrans">받아올 대상</param>
-    private void SetTrans(Transform trans, out Transform targetTrans)
+    private void SetTrans(Transform trans, ref Transform targetTrans)
     {
 
         targetTrans = trans;
     }
+
+
 }

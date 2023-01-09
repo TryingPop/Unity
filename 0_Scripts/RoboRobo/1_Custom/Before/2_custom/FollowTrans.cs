@@ -2,12 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MinimapIcon : MonoBehaviour
+public class FollowTrans : MonoBehaviour
 {
 
-    [SerializeField] [Tooltip("플레이어 Transform")]
-    private Transform targetTrans;
-
+    [SerializeField] private Transform targetTrans;
 
     public float scaleMulti;
     public float height = 10f;

@@ -7,38 +7,15 @@ public class EnemyController : Stats
 {
     #region Convertible Variable
     [Header("스텟")]
-	[Tooltip("찾을 반경")] [SerializeField]
-	private float findRadius;
-
-	[Tooltip("찾을 각도")] [SerializeField]
-	private float findAngle; 
-
-	[Tooltip("공격 범위")] [SerializeField]
-	private float attackRange; 
-
-	[Tooltip("적으로 인식할 레이어")] [SerializeField]
-	private LayerMask playerMask;
-
-    [Tooltip("장애물로 인식할 레이어")] [SerializeField]
-    private LayerMask obstacleMask;
-
-	[Tooltip("플레이어 태그")] [SerializeField] 
-	private string playerTag;
-
 	[SerializeField] private EnemyState state;
 	[SerializeField] private StateIdle idle;
+	[SerializeField] private StateMeleeAtk atk;
+	[SerializeField] private EnemyAnimation anim;
 
     #endregion
 
-    private float distance;         // 자신과 적과의 거리
 
-
-    private bool isAtk;				// 공격 상태?
-
-    private Transform targetTrans; // 타겟의 transform
-	private Animation myAnim; // 적의 애니메이션
-
-	private List<string> stateList;
+    public Transform targetTrans; // 타겟의 transform
 
     private void Awake()
     {
@@ -51,35 +28,24 @@ public class EnemyController : Stats
 
 		base.GetComp();
 
-        myAnim = GetComponent<Animation>();
 		state = GetComponent<EnemyState>();
 		idle = GetComponent<StateIdle>();
+		atk = GetComponent<StateMeleeAtk>();
+		anim = GetComponent<EnemyAnimation>();
+
+		targetStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Stats>();
     }
 
     private void Start()
 	{
 
-		if (stateList == null) { stateList = new List<string>() { "0_idle", "1_walk", "2_attack", "3_attacked" }; }
-
 		idle.SetTotalWeight();
+
 		SetHp();
 
-		// 행동을 따로 하게 하기 위해 레이어 구분
-		// 빼면 모션 중 하나만 작동한다
-        for (int i = 0; i < stateList.Count; i++)
-		{
-			myAnim[stateList[i]].layer = i;
-		}
+        myWC.Attack += Attack;
 
-		myAnim.CrossFade(stateList[0], 0.2f);
-
-		if (findRadius < attackRange)
-		{
-			findRadius = attackRange;
-		}
-
-		// GameManager.instance.ChkEnemyCount();
-		GameManager.instance.huntingMission.ChangeTargetNum();
+        GameManager.instance.huntingMission.ChangeTargetNum();
 	}
 
 	void Update()
@@ -87,12 +53,40 @@ public class EnemyController : Stats
 		if (!deadBool)
 		{
 
-			state.ChkState(targetTrans);
+			state.ChkState(ref targetTrans);
 
 			FSM(state.GetState());
 
-			// GetDistance(); // 시야 안에 들어오는지 확인
-			// Action(); // 시야안에 들어올 경우 행동
+			Move(status.MoveSpd * Time.deltaTime);
+
+			if (moveDir == Vector3.zero && idle.actionBool && idle.moveBool)
+			{
+
+				idle.moveBool = false;
+				anim.ChkAnimation(1, false);
+			}
+
+			if (state.chkBool)
+			{
+
+				idle.actionBool = !idle.actionBool;
+				atk.actionBool = !idle.actionBool;
+
+				anim.ChkAnimation(2, atk.actionBool);
+				
+				if (atk.actionBool)
+				{
+
+					StartCoroutine(Attack());
+				}
+				else
+				{
+
+					StopAllCoroutines();
+					myWC.AtkColActive(false);
+				}
+
+			}
 		}
 	}
 
@@ -103,10 +97,19 @@ public class EnemyController : Stats
 		{
 
 			case EnemyState.State.idle:
-				idle.Action(myRd, status.MoveSpd);
+				idle.Action(ref moveDir);
+
+				// 움직이는 애니메이션 시작
+				if (idle.moveStartBool) 
+				{
+
+					idle.moveStartBool = false;
+					anim.ChkAnimation(1, true); 
+				}
 				break;
 
 			case EnemyState.State.attack:
+				atk.Action(ref moveDir, targetTrans);
 
 				break;
 
@@ -115,125 +118,23 @@ public class EnemyController : Stats
 		}
 	}
 
-
-	void GetDistance() 
-		// 적과의 거리 측정
-	{
-		Collider[] cols = Physics.OverlapSphere(transform.position, findRadius,
-												// LayerMask.GetMask("Player")|LayerMask.GetMask("Allies"));
-												playerMask);
-
-		if (cols.Length > 0)
-		{
-			if (Vector3.Angle(cols[0].gameObject.transform.position - transform.position, 
-							transform.forward) < findAngle * 0.5f) 
-			{
-				RaycastHit hit;
-
-				if (Physics.Raycast(transform.position, cols[0].gameObject.transform.position - transform.position, out hit, findRadius, playerMask | obstacleMask))
-				{
-
-					if (hit.transform.tag == playerTag)
-					{
-
-						distance = (cols[0].gameObject.transform.position - transform.position).magnitude;
-						targetTrans = cols[0].gameObject.transform;
-
-						moveDir = (targetTrans.position - transform.position);
-						moveDir.y = 0;
-						moveDir = moveDir.normalized;
-
-						return;
-					}
-				}
-			}
-		}
-
-		if (distance < findRadius)
-		{
-
-			distance = findRadius + 1;
-		}
-
-		targetTrans = null;
-		return;
-	}
-
-
-	void Action()
+    protected override IEnumerator Attack()
     {
-		if (targetTrans == null)				// 타겟 유무 판별
-		{
-			SelectAnimation(1, false);
-			return;
-		}
 
-		SelectAnimation(1, true);
-		Move(status.MoveSpd * Time.deltaTime);	// 타겟이 있으니 타겟으로 이동!
-		AttackAnimation();
+		while (true)
+		{
+
+			myWC.AtkColActive(true);
+			
+			yield return atkWaitTime;
+		}
     }
 
-
-	void SelectAnimation(int i, bool start = true)
+    protected override void Attack(object sender, Collider other)
 	{
-		if (i >= stateList.Count)
-		{
 
-			return;
-		}
-
-		if (start) 
-		{
-
-			myAnim.CrossFade(stateList[i], 0.1f);
-		}
-		else
-		{
-
-			myAnim.Stop(stateList[i]);
-		}
-	}
-
-	void AttackAnimation()
-	{
-		if (distance < attackRange)
-		{
-
-			SelectAnimation(2, true);
-			isAtk = true;
-			
-		}
-		else
-		{
-
-			SelectAnimation(2, false);
-			isAtk = false;
-		}
-	}
-
-	IEnumerator Attack(GameObject obj, float time)
-	{
-		WaitForSeconds waitTime = new WaitForSeconds(time);
-		// dmgCol.enabled = false;
-		
-        var controller = obj.GetComponent<PlayerController>();
-		// controller.ChangeColor(Color.red);
-		// controller.Damaged(status.Atk);
-        
-		yield return waitTime;
-
-		// controller.ChangeColor(Color.white);
-
-		// dmgCol.enabled = true;
-	}
-
-	private void OnTriggerEnter(Collider other)
-	{
-		if (other.CompareTag("Player") && isAtk) 
-		{
-
-			StartCoroutine(Attack(other.gameObject, 0.5f)) ;
-		}
+		targetStats.OnDamaged(status.Atk);
+		base.Attack(sender, other);
 	}
 
 	public override void OnDamaged(int _damage)
@@ -243,7 +144,7 @@ public class EnemyController : Stats
 			_damage *= 2;
 		}
 
-		SelectAnimation(3, true);
+		anim.ChkAnimation(3, true);
         
         base.OnDamaged(_damage);
 
@@ -254,13 +155,10 @@ public class EnemyController : Stats
 
 	protected override void Dead()
 	{
+		myWC.Attack -= Attack;
 		base.Dead();
 		StopAllCoroutines();
-		isAtk = false;
 		targetTrans = null;
 		GameManager.instance.ChkWin();
-		
 	}
-
-
 }

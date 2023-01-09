@@ -398,8 +398,8 @@ public class PlayerController : Stats
         SetTargetStats(other.gameObject);
         SetAtkParticle();
         hidden.ChkAtkSnd();
-        targetStatus?.OnDamaged(hidden.ChkAtk(status.Atk));
-        hidden.ChkKnockBack(targetStatus.myRd);
+        targetStats?.OnDamaged(hidden.ChkAtk(status.Atk));
+        hidden.ChkKnockBack(targetStats.myRd);
         if (!hidden.ChkAbility(Hidden.Ability.boomAttacker))
         {
 
@@ -432,7 +432,7 @@ public class PlayerController : Stats
     {
 
         Instantiate(hidden.ChkParticle(atkParticle), 
-            targetStatus.transform.position + targetStatus.transform.up, Quaternion.identity);
+            targetStats.transform.position + targetStats.transform.up, Quaternion.identity);
     }
 
     protected virtual void SetHammerSnd()

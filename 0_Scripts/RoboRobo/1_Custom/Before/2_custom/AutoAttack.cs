@@ -17,7 +17,7 @@ public class AutoAttack : Stats
     private Animation myAnim;
 
     public IObjectPool<AutoAttack> poolToReturn;
-
+    
 
     private void Awake()
     {

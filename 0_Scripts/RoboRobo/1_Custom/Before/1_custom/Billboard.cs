@@ -8,10 +8,14 @@ public class Billboard : MonoBehaviour
 
     private void Awake()
     {
-        cameraTrans = Camera.main.transform;
+        if (cameraTrans == null)
+        {
+
+            cameraTrans = Camera.main.transform;
+        }
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         transform.LookAt(cameraTrans.position);
     }

@@ -6,18 +6,31 @@ using UnityEngine;
 public class StateIdle : MonoBehaviour
 {
 
-    [SerializeField] public Action[] actions;   // 취할 행동
+    [SerializeField] public Action[] actions;               // 취할 행동
 
-    [SerializeField] private GameObject script; // 대사를 담고 있는 UI 오브젝트
+    [SerializeField] private GameObject script;             // 대사를 담고 있는 UI 오브젝트
 
-    private int actionNum;
+    [SerializeField] private float rotationRange;           // 회전 정도
+
+    [SerializeField] private MovablePos posScript;          // 방향 설정 스크립트
+
+    [SerializeField] private MessageScript messageScript;   // 대사 보조용
+    [SerializeField] private Talk[] talk;                   // 대사
+
+
+    private int actionNum;          // 행동 번호
 
     private int totalWeight;        // 행동들 가중치
     private float cntTime;          // 행동 진행 정도
 
     private Vector3 direction;      // 이동 방향
 
-    public bool actionBool;         
+    public bool actionBool;         // Idle 상태인지 확인
+
+
+    public bool moveStartBool;           // 애니메이션 변환 필요?
+    public bool moveBool;           // 이동 중인지 확인
+    public bool chatBool;           // 대화 중인지 확인
 
     /// <summary>
     /// 전체 가중치
@@ -34,31 +47,46 @@ public class StateIdle : MonoBehaviour
         }
     }
 
-    public void Action(Rigidbody myRd, float moveSpd)
+    /// <summary>
+    /// 행동 설정 및 행동
+    /// </summary>
+    /// <param name="moveDir">이동 방향</param>
+    public void Action(ref Vector3 moveDir)
     {
 
         actionNum = GetActionNum();
 
-        GetAction(actionNum, myRd, moveSpd);
+        GetAction(actionNum, ref moveDir);
 
         ChkTime();
+
     }
 
-    private void GetAction(int actionNum, Rigidbody myRd, float moveSpd)
+    /// <summary>
+    /// 행동 번호에 맞게 취할 행동
+    /// </summary>
+    /// <param name="actionNum">행동 번호</param>
+    /// <param name="moveDir">이동 방향</param>
+    private void GetAction(int actionNum, ref Vector3 moveDir)
     {
-
+        
         switch (actionNum)
         {
-
+            
+            // idle
             case 0:
-                Idle();
+                SetDir(ref moveDir, false);
                 break;
 
+            // wander
             case 1:
-                Wander(myRd, moveSpd);
+                moveStartBool = true;
+                Wander(ref moveDir);
                 break;
 
+            // chat
             case 2:
+                SetDir(ref moveDir, false);
                 Chat();
                 break;
 
@@ -76,7 +104,8 @@ public class StateIdle : MonoBehaviour
         if (actionBool) return actionNum;
 
         actionBool = true;
-        SetDir();
+        
+        SetPos();
 
         int _random = UnityEngine.Random.Range(1, totalWeight + 1);
 
@@ -85,8 +114,7 @@ public class StateIdle : MonoBehaviour
 
             if (_random <= actions[i].weight)
             {
-                Debug.LogError(actions[i].name);
-                Debug.LogError(_random);
+
                 return i;
             }
 
@@ -101,19 +129,11 @@ public class StateIdle : MonoBehaviour
     /// <summary>
     /// 해메이는 것
     /// </summary>
-    public void Wander(Rigidbody myRd, float moveSpd)
+    public void Wander(ref Vector3 moveDir)
     {
-
-        Move(myRd, moveSpd);
-        Rotation(myRd);
-    }
-
-    /// <summary>
-    /// 그냥 대기
-    /// </summary>
-    public void Idle()
-    {
-
+        moveBool = true;
+        SetDir(ref moveDir);
+        Rotation(moveDir);
     }
     
     /// <summary>
@@ -122,7 +142,10 @@ public class StateIdle : MonoBehaviour
     public void Chat()
     {
 
+        chatBool = true;
+        messageScript.SetTalk(talk);
 
+        messageScript.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -141,26 +164,62 @@ public class StateIdle : MonoBehaviour
         }
     }
 
-    private void SetDir()
+    /// <summary>
+    /// 이동할 좌표 설정
+    /// </summary>
+    private void SetPos()
     {
-
-        direction.Set(0f, UnityEngine.Random.Range(0f, 360f), 0f);
+        
+        direction = posScript.SetPos(0f);
     }
 
-    private void Move(Rigidbody myRd, float moveSpd)
+    /// <summary>
+    /// 이동 방향 설정
+    /// </summary>
+    /// <param name="moveDir">이동 방향</param>
+    /// <param name="wanderBool">이동 상태에서만 적용</param>
+    private void SetDir(ref Vector3 moveDir, bool wanderBool = true)
     {
 
-        myRd.MovePosition(transform.position + (transform.forward * moveSpd * Time.deltaTime));
+        if (wanderBool)
+        {
+
+            Vector3 _dir = direction - transform.position;
+
+            if (_dir.magnitude > 1)
+            {
+
+                _dir = _dir.normalized;
+            }
+
+            _dir.y = 0f;
+            moveDir = _dir;
+        }
+        else
+        {
+            
+            moveDir = Vector3.zero;
+        }
     }
 
-    private void Rotation(Rigidbody myRd)
+    /// <summary>
+    /// 바라볼 방향 설정
+    /// </summary>
+    /// <param name="moveDir">이동할 방향</param>
+    private void Rotation(Vector3 moveDir)
     {
 
-        Vector3 _rotation = Vector3.Lerp(transform.eulerAngles, direction, 0.01f);
-
-        myRd.MoveRotation(Quaternion.Euler(_rotation));
+        transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime);
     }
 
+    /// <summary>
+    /// 대사 중지
+    /// </summary>
+    public void StopChat()
+    {
+
+        messageScript.StopChat();
+    }
 }
 
 /// <summary>

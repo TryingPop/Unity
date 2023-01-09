@@ -5,6 +5,6 @@
 
 ## 수정 내역
 ### 코드 정리 진행 중
-#### Enemy HFSM 으로 작동하기 위해 FSM으로 코드 수정 중
-#### Idle State 의도한대로 작동
-#### 벽이 있으면 멈추는 로직이 필요!
+#### Enemy HFSM으로 Idle 상태 완료
+#### 현재 문제점 클래스의 bool 값 참조가 제대로 되지 않는 문제가 있다
+#### EnemyController 스크립트에 atk.actionBool, idle.actionBool 값 변환이 제대로 안된다
