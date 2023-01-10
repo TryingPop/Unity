@@ -59,22 +59,12 @@ public class EnemyController : Stats
 
 			Move(status.MoveSpd * Time.deltaTime);
 
-			if (moveDir == Vector3.zero && idle.actionBool && idle.moveBool)
-			{
-
-				idle.moveBool = false;
-				anim.ChkAnimation(1, false);
-			}
+			ChkAnimation();
 
 			if (state.chkBool)
 			{
-
-				idle.actionBool = !idle.actionBool;
-				atk.actionBool = !idle.actionBool;
-
-				anim.ChkAnimation(2, atk.actionBool);
 				
-				if (atk.actionBool)
+				if (atk.activeBool)
 				{
 
 					StartCoroutine(Attack());
@@ -93,28 +83,50 @@ public class EnemyController : Stats
 	private void FSM(EnemyState.State state)
 	{
 
+		SetStateActiveBool(state);
+
 		switch (state)
 		{
 
 			case EnemyState.State.idle:
 				idle.Action(ref moveDir);
-
-				// 움직이는 애니메이션 시작
-				if (idle.moveStartBool) 
-				{
-
-					idle.moveStartBool = false;
-					anim.ChkAnimation(1, true); 
-				}
 				break;
 
 			case EnemyState.State.attack:
 				atk.Action(ref moveDir, targetTrans);
-
-				break;
+                break;
 
 			default:
 				break;
+		}
+	}
+
+	private void SetStateActiveBool(EnemyState.State state)
+	{
+
+		idle.SetActiveBool(state);
+		atk.SetActiveBool(state);
+	}
+
+	private void ChkAnimation()
+	{
+
+		if (idle.moveBool || (!idle.moveBool && !idle.activeBool))
+		{
+
+			anim.ChkAnimation(1, true);
+		}
+
+		if (moveDir == Vector3.zero)
+		{
+
+			anim.ChkAnimation(1, false);
+		}
+
+		if (state.chkBool)
+		{
+
+			anim.ChkAnimation(2, atk.activeBool);
 		}
 	}
 

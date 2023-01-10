@@ -18,6 +18,17 @@ public class StateIdle : MonoBehaviour
     [SerializeField] private Talk[] talk;                   // 대사
 
 
+    public enum idleState
+    {
+        None = -1,
+        Idle,
+        Chat,
+        Wander,
+        
+    }
+
+    private idleState state;
+
     private int actionNum;          // 행동 번호
 
     private int totalWeight;        // 행동들 가중치
@@ -25,31 +36,43 @@ public class StateIdle : MonoBehaviour
 
     private Vector3 direction;      // 이동 방향
 
-    public bool actionBool;         // Idle 상태인지 확인
+    public bool activeBool;         // Idle 상태인지 확인
 
-
-    public bool moveStartBool;           // 애니메이션 변환 필요?
     public bool moveBool;           // 이동 중인지 확인
     public bool chatBool;           // 대화 중인지 확인
 
+    private bool actionBool;        // 행동 변화가 있는지 확인
+
+
+    public bool ChkState(idleState idleState)
+    {
+
+        if (state == idleState)
+        {
+
+            return true;
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// actionBool 값 설정 및 체크
     /// </summary>
     /// <param name="state">현재 행동</param>
     /// <returns>actionBool의 상태</returns>
-    public void SetActionBool(EnemyState.State state)
+    public void SetActiveBool(EnemyState.State state)
     {
 
         if (state == EnemyState.State.idle)
         {
-
-            actionBool = true;
+            this.state = idleState.None;
+            activeBool = true;
         }        
         else
         {
 
-            actionBool = false;
+            activeBool = false;
         }
     }
 
@@ -101,7 +124,7 @@ public class StateIdle : MonoBehaviour
 
             // wander
             case 1:
-                moveStartBool = true;
+                
                 Wander(ref moveDir);
                 break;
 
@@ -125,7 +148,7 @@ public class StateIdle : MonoBehaviour
         if (actionBool) return actionNum;
 
         actionBool = true;
-        
+        moveBool = false;
         SetPos();
 
         int _random = UnityEngine.Random.Range(1, totalWeight + 1);
@@ -135,7 +158,12 @@ public class StateIdle : MonoBehaviour
 
             if (_random <= actions[i].weight)
             {
+                if (i == 1)
+                {
 
+                    moveBool = true;
+                }
+                state = (idleState)i;
                 return i;
             }
 
@@ -152,7 +180,7 @@ public class StateIdle : MonoBehaviour
     /// </summary>
     public void Wander(ref Vector3 moveDir)
     {
-        moveBool = true;
+
         SetDir(ref moveDir);
         Rotation(moveDir);
     }

@@ -6,24 +6,24 @@ using UnityEngine;
 public class StateMeleeAtk : MonoBehaviour
 {
 
-    public bool actionBool;     // 활성화 여부
+    public bool activeBool;     // 활성화 여부
 
     /// <summary>
     /// actionBool 설정
     /// </summary>
     /// <param name="state">현재 상태</param>
-    public void SetActionBool(EnemyState.State state)
+    public void SetActiveBool(EnemyState.State state)
     {
 
         if(state == EnemyState.State.attack)
         {
 
-            actionBool = true;
+            activeBool = true;
         }
         else
         {
 
-            actionBool = false;
+            activeBool = false;
         }
     }
 
@@ -34,7 +34,7 @@ public class StateMeleeAtk : MonoBehaviour
     /// <param name="targetTrans">목표 대상</param>
     public void Action(ref Vector3 moveDir, Transform targetTrans)
     {
-        actionBool = true;
+        activeBool = true;
         SetDir(ref moveDir, targetTrans);
         transform.LookAt(transform.position + moveDir);
     }
@@ -53,4 +53,11 @@ public class StateMeleeAtk : MonoBehaviour
         transform.LookAt(transform.position + moveDir);
     }
 
+    /*
+    public void SizeUp()
+    {
+
+        transform.localScale = Vector3.one;
+    }
+    */
 }
