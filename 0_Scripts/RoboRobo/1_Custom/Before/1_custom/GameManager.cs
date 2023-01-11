@@ -195,7 +195,7 @@ public class GameManager : MonoBehaviour
     {
 
         // 버튼 이름 재시작
-        btnText.text = "Restart";
+        
 
         // 이긴 경우
         if (winBool)
@@ -203,12 +203,14 @@ public class GameManager : MonoBehaviour
 
             // 승리 
             informText.text = "WIN";
+            btnText.text = "Next";
         }
         else
         {
 
             // 패배
             informText.text = "LOSE";
+            btnText.text = "Restart";
         }
     }
 

@@ -21,9 +21,8 @@ public class StateIdle: MonoBehaviour
 
         None = -1,
         Idle,
-        Chat,
         Wander,
-        
+        Chat
     }
 
     private State myState;
