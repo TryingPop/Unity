@@ -12,17 +12,13 @@ public class HuntingMission : MonoBehaviour
     [Tooltip("남은 적 표시")]
     private Text remainEnemyCnt;
 
-    [SerializeField] [Tooltip("목표 수")] [Range(1, 999)]
-    private int setTargetNum;
-
-
     private int targetNum;
 
     private int destroyCnt;
 
     private int targetLength;
 
-    private void Start()
+    private void Awake()
     {
 
         if (instance == null)
@@ -35,6 +31,10 @@ public class HuntingMission : MonoBehaviour
 
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
 
         Reset(this, EventArgs.Empty);
         GameManager.instance.otherReset += Reset;
@@ -77,7 +77,6 @@ public class HuntingMission : MonoBehaviour
 
     public void Reset(object sender, EventArgs e)
     {
-        targetNum = setTargetNum;
         destroyCnt = 0;
 
         GetTargetLength();
@@ -88,8 +87,12 @@ public class HuntingMission : MonoBehaviour
 
     public void ChkRemainEnemyCnt()
     {
-        
-        if (targetNum == 1)
+        if (targetNum <= 0)
+        {
+
+            remainEnemyCnt.text = "";
+        }
+        else if (targetNum == 1)
         {
 
             remainEnemyCnt.text = $"BOSS";

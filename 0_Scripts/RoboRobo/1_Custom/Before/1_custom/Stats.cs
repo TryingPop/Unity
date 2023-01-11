@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Stats : MonoBehaviour
 {
+
     // 인스펙터에서 받아 올 컴포넌트나 게임오브젝트
 #region Variable 
     [Header("컴포넌트 or 오브젝트")]
@@ -18,8 +19,8 @@ public class Stats : MonoBehaviour
 
     [HideInInspector] public      Rigidbody       myRd;
 
-    protected   WaitForSeconds  atkWaitTime;    // 캐싱용
-    protected   Stats           targetStats;
+    protected   WaitForSeconds  atkWaitTime;    // 캐싱용 // 세분화 필요!
+    protected   Stats           targetStats;    // 세분화 필요!
     protected   Vector3         moveDir;        // 방향
 
     protected   int     nowHp;      // 현재 Hp
@@ -31,7 +32,7 @@ public class Stats : MonoBehaviour
     /// 초기화 함수 Hp 초기화
     /// 추후에 GameManager LoadScene에서 쓸꺼
     /// </summary>
-    protected virtual void Init()
+    public virtual void Init()
     {
 
         SetHp();
@@ -48,15 +49,8 @@ public class Stats : MonoBehaviour
         if (myAS == null) myAS = GetComponent<AudioScript>();
 
 
-        if (status.AtkInterval <= 0) 
-        { 
-            
-            atkWaitTime = null; 
-        }
-        else
-        { 
-            atkWaitTime = new WaitForSeconds(status.AtkInterval); 
-        }
+        if (status.AtkInterval <= 0) { atkWaitTime = null; }
+        else { atkWaitTime = new WaitForSeconds(status.AtkInterval); }
     }
 
     /// <summary>

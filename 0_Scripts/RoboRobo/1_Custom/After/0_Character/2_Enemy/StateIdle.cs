@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateIdle : MonoBehaviour
+public class StateIdle: MonoBehaviour
 {
 
     [SerializeField] public Action[] actions;               // 취할 행동
-
-    [SerializeField] private GameObject script;             // 대사를 담고 있는 UI 오브젝트
 
     [SerializeField] private float rotationRange;           // 회전 정도
 
@@ -18,8 +16,9 @@ public class StateIdle : MonoBehaviour
     [SerializeField] private Talk[] talk;                   // 대사
 
 
-    public enum idleState
+    public enum State
     {
+
         None = -1,
         Idle,
         Chat,
@@ -27,7 +26,7 @@ public class StateIdle : MonoBehaviour
         
     }
 
-    private idleState state;
+    private State myState;
 
     private int actionNum;          // 행동 번호
 
@@ -38,16 +37,16 @@ public class StateIdle : MonoBehaviour
 
     public bool activeBool;         // Idle 상태인지 확인
 
-    public bool moveBool;           // 이동 중인지 확인
-    public bool chatBool;           // 대화 중인지 확인
+    // public bool moveBool;           // 이동 중인지 확인
+    // public bool chatBool;           // 대화 중인지 확인
 
     private bool actionBool;        // 행동 변화가 있는지 확인
 
 
-    public bool ChkState(idleState idleState)
+    public bool ChkState(State state)
     {
 
-        if (state == idleState)
+        if (myState == state)
         {
 
             return true;
@@ -66,7 +65,8 @@ public class StateIdle : MonoBehaviour
 
         if (state == EnemyState.State.idle)
         {
-            this.state = idleState.None;
+
+            myState = State.None;
             activeBool = true;
         }        
         else
@@ -148,7 +148,7 @@ public class StateIdle : MonoBehaviour
         if (actionBool) return actionNum;
 
         actionBool = true;
-        moveBool = false;
+        // moveBool = false;
         SetPos();
 
         int _random = UnityEngine.Random.Range(1, totalWeight + 1);
@@ -158,12 +158,16 @@ public class StateIdle : MonoBehaviour
 
             if (_random <= actions[i].weight)
             {
+                
+                /*
                 if (i == 1)
                 {
 
                     moveBool = true;
                 }
-                state = (idleState)i;
+                */
+                
+                myState = (State)i;
                 return i;
             }
 
@@ -191,7 +195,9 @@ public class StateIdle : MonoBehaviour
     public void Chat()
     {
 
-        chatBool = true;
+        // chatBool = true;
+        myState = State.Chat;
+
         messageScript.SetTalk(talk);
 
         messageScript.gameObject.SetActive(true);

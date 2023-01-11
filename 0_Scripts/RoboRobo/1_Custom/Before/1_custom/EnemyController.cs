@@ -28,12 +28,11 @@ public class EnemyController : Stats
 
 		base.GetComp();
 
-		state = GetComponent<EnemyState>();
-		idle = GetComponent<StateIdle>();
-		atk = GetComponent<StateMeleeAtk>();
-		anim = GetComponent<EnemyAnimation>();
-
-		targetStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Stats>();
+		if (state == null) state = GetComponent<EnemyState>();
+		if (idle == null) idle = GetComponent<StateIdle>();
+		if (atk == null) atk = GetComponent<StateMeleeAtk>();
+		if (anim == null) anim = GetComponent<EnemyAnimation>();
+		if (targetStats == null) targetStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Stats>();
     }
 
     private void Start()
@@ -109,7 +108,7 @@ public class EnemyController : Stats
 	private void ChkAnimation()
 	{
 
-		if (idle.moveBool || (!idle.moveBool && !idle.activeBool))
+		if (idle.ChkState(StateIdle.State.Wander) || (!idle.ChkState(StateIdle.State.Wander) && atk.activeBool))
 		{
 
 			anim.ChkAnimation(1, true);

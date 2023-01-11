@@ -27,7 +27,6 @@ public class GameManager : MonoBehaviour
     [SerializeField, Tooltip("치트 모드 활성화 시 사용할 노래")] private AudioClip[] cheatSnd;
     [SerializeField, Tooltip("플레이어 애니메이터")] private PlayerController controller;
 
-
     [Tooltip("사냥 미션")] public HuntingMission huntingMission;
 
     [SerializeField] private AudioScript myAS;
@@ -37,26 +36,22 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 게임 상태
     /// </summary>
-    public enum GAMESTATE { 
-                            Play, // 진행 중
-                            Gameover // 게임 종료
-                          }
-
-
+    public enum GAMESTATE 
+    { 
+        Play, // 진행 중
+        Gameover // 게임 종료
+    }
     
     public GAMESTATE state;     // 현재 게임 상태
 
 
     public bool accBool;        // 가속 시간
 
-
     public bool uiBool;         // ui 상태 변수
-
 
     private bool beCheat;       // 치트 사용 유무
 
     private int stageNum;       // 현재 스테이지
-
 
     private void Awake()
     {
@@ -64,42 +59,32 @@ public class GameManager : MonoBehaviour
         // 싱글톤 할당
         // is null과 == null 차이 주의하기!
         if (instance == null) 
-                              
         {
+
             instance = this;
         }
         else
         {
+
             // 뒤에 추가되는 건 게임매니저가 사라짐
-            Destroy(this); 
+            Destroy(gameObject); 
         }
-        
+
+        if (huntingMission == null) huntingMission = FindObjectOfType<HuntingMission>(); 
+        if (controller == null) controller = FindObjectOfType<PlayerController>();
+        if (myAS == null) myAS = GetComponent<AudioScript>();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         // 초기 상태 
-        state = GAMESTATE.Play;
-        Time.timeScale = 1.0f;
-        
-
-
-        if (huntingMission == null)
-        {
-
-            huntingMission = FindObjectOfType<HuntingMission>();
-        }
-
-        if (controller == null)
-        {
-
-            controller = FindObjectOfType<PlayerController>();
-        }
+        Reset();
 
         beCheat = false;
-        if (myAS == null) { myAS = GetComponent<AudioScript>(); }
 
         myAS?.SetSnd(bgmSnd);
         myAS?.GetSnd(true);
     }
-
 
     private void Update()
     {
@@ -113,7 +98,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// 일시 정지 해야하는지 재개해야하는지 판별
     /// </summary>
@@ -126,8 +110,6 @@ public class GameManager : MonoBehaviour
 
             // 진행 중이면 일시 정지 및 일시 정지 ui 세팅
             case GAMESTATE.Play:
-
-                
                 ChkUI();
                 PauseText();
                 break;
@@ -148,34 +130,40 @@ public class GameManager : MonoBehaviour
     private void ChkUI()
     {
 
-        // ui를 끄는 경우
+        // 마우스 커서
+        SetCursor();
+
+        uiBool = !uiBool;
+
+        // result ui uiBool에 맞게 세팅
+        resultUI.SetActive(uiBool);
+    }
+
+    /// <summary>
+    /// 마우스 커서 세팅
+    /// </summary>
+    private void SetCursor()
+    {
+
+        if (stageNum == -1) return;
+
+
         if (uiBool)
         {
 
             // 마우스 커서 안보이고 중앙에 고정 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-
-            // 꺼짐 확인
-            uiBool = false;
         }
-
-        // ui를 켜는 경우
-        else 
+        else
         {
 
             // 마우스 커서 보이고 화면 밖에 못나가도록만 수정
-            Cursor.visible = true; 
-            Cursor.lockState = CursorLockMode.Confined; 
-
-            // ui 켜짐 확인
-            uiBool = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
-        // result ui uiBool에 맞게 세팅
-        resultUI.SetActive(uiBool);
     }
-
 
     /// <summary>
     /// 일시 정지 ui 텍스트 설정 메소드
@@ -199,19 +187,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// 게임 오버 ui 텍스트 설정 메소드
     /// </summary>
-    /// <param name="isWin">승패 확인용 변수</param>
-    private void GameOverText(bool isWin)
+    /// <param name="winBool">승패 확인용 변수</param>
+    private void GameOverText(bool winBool)
     {
 
         // 버튼 이름 재시작
         btnText.text = "Restart";
 
         // 이긴 경우
-        if (isWin)
+        if (winBool)
         {
 
             // 승리 
@@ -225,18 +212,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// 게임 오버 메소드
     /// </summary>
-    /// <param name="isWin">승패 확인</param>
-    public void GameOver(bool isWin)
+    /// <param name="winBool">승패 확인</param>
+    public void GameOver(bool winBool)
     {
 
         // 마우스 커서 보이고 화면 밖에 못나가게 제한
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
-
 
         // 게임 오버 상태
         state = GAMESTATE.Gameover;
@@ -245,17 +230,17 @@ public class GameManager : MonoBehaviour
         // accBool = 10f;
         Time.timeScale = 0.1f;
 
+        if (winBool)
+        {
+
+            AddStageNum();
+        }
+
         // resultUI 가 있으면 게임 오버 ui 띄우고 없으면 바로 다시 시작
         if (resultUI != null)
         {
 
-            GameOverText(isWin);
-
-            // 게임오버
-            // thirdPersonController.chrAnim.SetTrigger("GameOver");
-            // thirdPersonController.chrAnim.SetBool("isWin", isWin);
-            // thirdPersonController.hammerObj.SetActive(false);
-
+            GameOverText(winBool);
 
             ChkUI();
         }
@@ -266,7 +251,6 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
-
 
     /// <summary>
     /// 커스텀 로보로보 게임 스타트 메소드
@@ -283,12 +267,15 @@ public class GameManager : MonoBehaviour
         else if (state == GAMESTATE.Gameover)
         {
 
-            // 커스텀 로보로보 스타트
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
             Reset();
 
+            // 커스텀 로보로보 스타트
+            SceneManager.LoadScene(GetStageName());
+
+
             otherReset(this, EventArgs.Empty);
+            controller.Init();
 
             // accTime = 1f;
         }
@@ -299,6 +286,13 @@ public class GameManager : MonoBehaviour
 
         state = GAMESTATE.Play;
         Time.timeScale = 1.0f;
+        SetMission();
+
+        if (uiBool)
+        {
+
+            ChkUI();
+        }
     }
 
     private void AddStageNum()
@@ -313,6 +307,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private string GetStageName()
+    {
+
+        if (stageNum == -1)
+        {
+
+            return "0_title";
+        }
+        else
+        {
+
+            return stageInfo[stageNum].stageName;
+        }
+    }
+
+    private void SetMission()
+    {
+
+        if (stageNum != -1)
+        {
+
+            huntingMission.SetTargetNum(stageInfo[stageNum].targetNum);
+        }
+        else
+        {
+
+            huntingMission.SetTargetNum(0);
+        }
+    }
 
     /// <summary>
     /// 적 죽을 때 마다 적 카운트 감소 
@@ -343,15 +366,15 @@ public class GameManager : MonoBehaviour
             myAS?.GetSnd(true);
         }
     }
+
+    
 }
 
 
-[SerializeField]
+[Serializable]
 public class Stage
 {
 
-    private int targetNum;
-    private string stageName;
-
-    public Vector3 initPos;
+    public string stageName;
+    public int targetNum;
 }

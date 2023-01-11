@@ -5,11 +5,9 @@ using UnityEngine;
 
 public class PlayerController : Stats
 {
-    private static int num;
-    private int a;
 
-    [SerializeField] private Hidden             hidden;             // 히든 능력을 보유한 스크립트
     [SerializeField] private PlayerAnimator     animator;           // 캐릭터 애니메이터를 관리하는 스크립트
+    [SerializeField] private Hidden             hidden;             // 히든 능력을 보유한 스크립트
             
     [SerializeField] private AudioClip          atkSnd;             // 공격 사운드
     [SerializeField] private GameObject         hammerObj;          // 해머 오브젝트
@@ -43,21 +41,14 @@ public class PlayerController : Stats
     {
 
         GetComp();
-        
-
 
         hidden.SetAbility(0);
 
-
         myWC.Attack += Attack;
-        num++;
-        a = num;
     }
 
     private void Start()
     {
-
-        GameManager.instance.otherReset += Reset;
 
         Init();
     }
@@ -68,21 +59,7 @@ public class PlayerController : Stats
         Action();
     }
 
-    private void OnDisable()
-    {
-        Debug.Log($"{a}");
-    }
 
-    /// <summary>
-    /// 초기화 메소드
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void Reset(object sender, EventArgs e)
-    {
-        
-        Init();
-    }
 
     /// <summary>
     /// 가져올 컴포넌트 메소드
@@ -101,13 +78,15 @@ public class PlayerController : Stats
     /// <summary>
     /// 초기화 메소드
     /// </summary>
-    protected override void Init()
+    public override void Init()
     {
 
-
-        // 시작지점 중간으로
+        // 시작지점과 방향 초기화
         transform.position = Vector3.zero;
         transform.forward = Vector3.forward;
+        chrTrans.forward = Vector3.forward;
+        cameraBoxTrans.forward = Vector3.forward;
+
         // 각종 수치 초기화
         base.Init();
         nowStamina = maxStamina;
@@ -333,9 +312,10 @@ public class PlayerController : Stats
     {
 
         // 스테미나 변경 있는가 없는가 용도로 쓰인다
-        chkBool = false;
+        chkBool = true;
 
         // 스테미나 채울 조건
+        // 이동 중이거나 점프 중이면 채울 수 없고 이외는 채울 수 있다
         if (moveBool || !groundBool)
         {
            
@@ -347,9 +327,8 @@ public class PlayerController : Stats
             staminaBool = true;
         }
 
-
-        // 스테미나 채울 조건 넣기
-        if (moveBool && runBool && !staminaBool)
+        // 달리면서 이동 중일 때만 스테미나를 깎는다
+        if (moveBool && runBool)
         {
             
             nowStamina -= Time.deltaTime;
@@ -359,10 +338,8 @@ public class PlayerController : Stats
 
                 nowStamina = 0;
             }
-
-            chkBool = true;
         }
-        // 스테미나 채우는 경우
+        // 스테미나 채우는 부분
         else if (staminaBool)
         {
 
@@ -376,10 +353,15 @@ public class PlayerController : Stats
 
                     nowStamina = maxStamina;
                 }
-
-                chkBool = true;
             }
         }
+        // 스테미나 변동이 없다
+        else
+        {
+
+            chkBool = false;
+        }
+
 
         if (chkBool)
         {
@@ -474,6 +456,16 @@ public class PlayerController : Stats
 
             ChkDead();
         }
+    }
+
+    protected override void Dead()
+    {
+
+        base.Dead();
+
+        hammerObj.SetActive(false);
+        animator.SetDead();
+        GameManager.instance.GameOver(false);
     }
 
     public void SetUIAtk()

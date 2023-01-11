@@ -58,8 +58,15 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
+    public void SetDead()
+    {
+
+        chrAnim.SetTrigger("winTrigger");
+    }
+
     public void Reset()
     {
+
         chrAnim.Rebind();
 
         SetAnimSpd(2.0f, false);
