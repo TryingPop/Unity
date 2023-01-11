@@ -50,13 +50,11 @@ public class AutoAttack : Stats
         myAnim["1_walk"].layer = 1;
         myAnim["2_attack"].layer = 2;
         myAnim["3_attacked"].layer = 3;
-
     }
 
     private void Update()
     {
         Move();
-        myAnim.CrossFade("2_attack", 0.1f);
     }
 
     public void Reset()

@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class PlayerController : Stats
 {
-    
+    private static int num;
+    private int a;
+
     [SerializeField] private Hidden             hidden;             // 히든 능력을 보유한 스크립트
     [SerializeField] private PlayerAnimator     animator;           // 캐릭터 애니메이터를 관리하는 스크립트
             
@@ -46,11 +48,17 @@ public class PlayerController : Stats
 
         hidden.SetAbility(0);
 
+
         myWC.Attack += Attack;
+        num++;
+        a = num;
     }
 
     private void Start()
     {
+
+        GameManager.instance.otherReset += Reset;
+
         Init();
     }
 
@@ -58,6 +66,11 @@ public class PlayerController : Stats
     {
 
         Action();
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log($"{a}");
     }
 
     /// <summary>
@@ -91,9 +104,10 @@ public class PlayerController : Stats
     protected override void Init()
     {
 
+
         // 시작지점 중간으로
         transform.position = Vector3.zero;
-       
+        transform.forward = Vector3.forward;
         // 각종 수치 초기화
         base.Init();
         nowStamina = maxStamina;
@@ -232,7 +246,7 @@ public class PlayerController : Stats
 
             moveDir = (_lookForward * _moveInput.y + _lookRight * _moveInput.x).normalized;
 
-            chrTrans.forward = moveDir;
+            if (moveDir != Vector3.zero) chrTrans.forward = moveDir;
 
             Move(applySpd * hidden.ChkTime());
         }

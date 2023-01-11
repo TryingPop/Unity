@@ -44,8 +44,6 @@ public class EnemyController : Stats
 		SetHp();
 
         myWC.Attack += Attack;
-
-        GameManager.instance.huntingMission.ChangeTargetNum();
 	}
 
 	void Update()
@@ -117,7 +115,7 @@ public class EnemyController : Stats
 			anim.ChkAnimation(1, true);
 		}
 
-		if (moveDir == Vector3.zero)
+		if (moveDir == Vector3.zero || deadBool)
 		{
 
 			anim.ChkAnimation(1, false);
@@ -127,6 +125,13 @@ public class EnemyController : Stats
 		{
 
 			anim.ChkAnimation(2, atk.activeBool);
+		}
+		
+		if (deadBool)
+		{
+
+			anim.ChkAnimation(1, false);
+			anim.ChkAnimation(2, false);
 		}
 	}
 
@@ -168,7 +173,9 @@ public class EnemyController : Stats
 	protected override void Dead()
 	{
 		myWC.Attack -= Attack;
+		myWC.AtkColActive(false);
 		base.Dead();
+		ChkAnimation();
 		StopAllCoroutines();
 		targetTrans = null;
 		GameManager.instance.ChkWin();

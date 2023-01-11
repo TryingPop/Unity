@@ -15,28 +15,24 @@ public class GameManager : MonoBehaviour
 
     #region ResultUI
     [Header("결과 창")]
-    [SerializeField, Tooltip("결과창 UI")]
-    private GameObject resultUI; 
-
-    // 일시 정지, 패배, 승리 밖에 없다
+    [SerializeField, Tooltip("결과창 UI")] private GameObject resultUI; 
     [SerializeField, Tooltip("상황 설명 텍스트")] private Text informText; 
-
     [SerializeField, Tooltip("버튼 텍스트")] private Text btnText;
 
     #endregion
 
+    [SerializeField, Tooltip("스테이지 정보")] Stage[] stageInfo;
+
     [SerializeField, Tooltip("기본 브금")] private AudioClip bgmSnd;
-
     [SerializeField, Tooltip("치트 모드 활성화 시 사용할 노래")] private AudioClip[] cheatSnd;
-
-
     [SerializeField, Tooltip("플레이어 애니메이터")] private PlayerController controller;
+
 
     [Tooltip("사냥 미션")] public HuntingMission huntingMission;
 
     [SerializeField] private AudioScript myAS;
 
-    public event EventHandler Reset;
+    public event EventHandler otherReset;
 
     /// <summary>
     /// 게임 상태
@@ -47,22 +43,23 @@ public class GameManager : MonoBehaviour
                           }
 
 
-    // 현재 게임 상태
-    public GAMESTATE state;
+    
+    public GAMESTATE state;     // 현재 게임 상태
 
-    // 가속 시간
-    public bool accBool;
 
-    // ui 상태 변수
-    public bool uiBool;
+    public bool accBool;        // 가속 시간
 
-    // 치트 사용 유무
-    private bool beCheat;
+
+    public bool uiBool;         // ui 상태 변수
+
+
+    private bool beCheat;       // 치트 사용 유무
+
+    private int stageNum;       // 현재 스테이지
+
 
     private void Awake()
     {
-
-
 
         // 싱글톤 할당
         // is null과 == null 차이 주의하기!
@@ -115,8 +112,6 @@ public class GameManager : MonoBehaviour
             ChkState(); 
         }
     }
-
-
 
 
     /// <summary>
@@ -291,11 +286,30 @@ public class GameManager : MonoBehaviour
             // 커스텀 로보로보 스타트
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
-            Reset(this, EventArgs.Empty);
+            Reset();
 
-            state = GAMESTATE.Play;
-            Time.timeScale = 1.0f;
+            otherReset(this, EventArgs.Empty);
+
             // accTime = 1f;
+        }
+    }
+
+    private void Reset()
+    {
+
+        state = GAMESTATE.Play;
+        Time.timeScale = 1.0f;
+    }
+
+    private void AddStageNum()
+    {
+
+        stageNum++;
+
+        if (stageNum >= stageInfo.Length)
+        {
+
+            stageNum = -1;
         }
     }
 
@@ -307,8 +321,6 @@ public class GameManager : MonoBehaviour
     public void ChkWin()
     {
 
-        // 적 카운트 감소
-        // enemyCount--;
         huntingMission.ChangeDestroyCnt();
         huntingMission.ChkRemainEnemyCnt();
 
@@ -331,4 +343,15 @@ public class GameManager : MonoBehaviour
             myAS?.GetSnd(true);
         }
     }
+}
+
+
+[SerializeField]
+public class Stage
+{
+
+    private int targetNum;
+    private string stageName;
+
+    public Vector3 initPos;
 }

@@ -18,7 +18,7 @@ public class StatsUI : MonoBehaviour
 
     private WaitForSeconds hpTime;
     private int seeCnt;
-    
+
     private void Awake()
     {
 
@@ -56,7 +56,6 @@ public class StatsUI : MonoBehaviour
 
     public void SetEnemyHp(Stats targetStatus)
     {
-
         StartCoroutine(ActiveEnemyHp());
         EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * targetStatus.GetHpBar();
         EnemyHpTxt.text = targetStatus.GetHpBar() <= 0 ? "0%" : $"{100 * targetStatus.GetHpBar():F1}%";
@@ -64,7 +63,11 @@ public class StatsUI : MonoBehaviour
 
     private IEnumerator ActiveEnemyHp()
     {
-        EnemyHpGameObj.SetActive(true);
+        if (seeCnt == 0)
+        {
+
+            EnemyHpGameObj.SetActive(true);
+        }
         seeCnt++;
 
         yield return hpTime;
@@ -73,6 +76,7 @@ public class StatsUI : MonoBehaviour
 
         if (seeCnt == 0)
         {
+
             EnemyHpGameObj.SetActive(false);
         }
     }
