@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class IsCoverNode : Node
+public class IsCoveredNode : Node
 {
 
     private Transform target;
     private Transform origin;
 
-    public IsCoverNode(Transform target, Transform origin)
+    public IsCoveredNode(Transform target, Transform origin)
     {
 
         this.target = target;
