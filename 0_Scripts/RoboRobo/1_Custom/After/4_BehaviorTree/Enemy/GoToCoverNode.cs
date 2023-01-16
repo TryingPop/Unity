@@ -21,7 +21,7 @@ public class GoToCoverNode : Node
     public override NodeState Evaluate()
     {
 
-        Transform coverSpot = ai.GetBestCover();
+        Transform coverSpot = ai.GetBestCoverSpot();
         if (coverSpot == null)
         {
 

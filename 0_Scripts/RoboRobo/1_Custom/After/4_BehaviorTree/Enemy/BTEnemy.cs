@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -57,6 +58,7 @@ public class BTEnemy : MonoBehaviour
         {
 
             SetColor(Color.red);
+            agent.isStopped = true;
         }
         nowHp += Time.deltaTime * healthRestoreRate;
     }
@@ -96,7 +98,7 @@ public class BTEnemy : MonoBehaviour
         this.bestCoverSpot = bestCoverSpot;
     }
 
-    internal Transform GetBestCover()
+    internal Transform GetBestCoverSpot()
     {
 
         return bestCoverSpot;

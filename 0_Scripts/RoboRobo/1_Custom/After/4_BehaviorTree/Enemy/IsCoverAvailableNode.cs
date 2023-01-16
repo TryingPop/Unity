@@ -29,7 +29,15 @@ public class IsCoverAvailableNode : Node
 
     private Transform FindBestCoverSpot()
     {
+        if (ai.GetBestCoverSpot() != null)
+        {
 
+            if (CheckIfSpotIsValid(ai.GetBestCoverSpot()))
+            {
+
+                return ai.GetBestCoverSpot();
+            }
+        }
         float minAngle = 90;
         Transform bestSpot = null;
 
