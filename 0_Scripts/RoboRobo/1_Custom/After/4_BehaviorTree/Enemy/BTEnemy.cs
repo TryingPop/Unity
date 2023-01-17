@@ -38,7 +38,7 @@ public class BTEnemy : MonoBehaviour
     {
 
         agent = GetComponent<NavMeshAgent>();
-        material= GetComponent<Material>();
+        material= GetComponent<MeshRenderer>().material;
     }
 
 
@@ -52,6 +52,7 @@ public class BTEnemy : MonoBehaviour
 
     void Update()
     {
+        
         topNode.Evaluate();
 
         if (topNode.NodeState == NodeState.FAILURE)
@@ -60,15 +61,19 @@ public class BTEnemy : MonoBehaviour
             SetColor(Color.red);
             agent.isStopped = true;
         }
+        
         nowHp += Time.deltaTime * healthRestoreRate;
     }
 
+    /// <summary>
+    /// 노드 그려서 해석해보기
+    /// </summary>
     private void ConstructBehaviorTree()
     {
 
-        IsCoverAvailableNode coverAvailableNode = new IsCoverAvailableNode(availableCovers, playerTrans, this);
-        GoToCoverNode gotoCoverNode = new GoToCoverNode(agent, this);
         HealthNode healthNode = new HealthNode(this, lowHealthThreshold);
+        IsCoverAvailableNode coverAvailableNode = new IsCoverAvailableNode(availableCovers, playerTrans, this);
+        GoToCoverNode goToCoverNode = new GoToCoverNode(agent, this);
         IsCoveredNode isCoveredNode = new IsCoveredNode(playerTrans, transform);
         ChaseNode chaseNode = new ChaseNode(playerTrans, agent, this);
         RangeNode chasingRangeNode = new RangeNode(chasingRange, playerTrans, transform);
@@ -78,9 +83,8 @@ public class BTEnemy : MonoBehaviour
         Sequence chaseSequence = new Sequence(new List<Node> { chasingRangeNode, chaseNode, });
         Sequence shootSequence = new Sequence(new List<Node> { shootingRangeNode, shootNode });
 
-        Sequence goToCoverSequence = new Sequence(new List<Node> { coverAvailableNode, gotoCoverNode });
-        Selector findCoverSelector = new Selector(new List<Node> { goToCoverSequence, chaseNode });
-        Selector tryToTakeCoverSelector = new Selector(new List<Node> { isCoveredNode, findCoverSelector });
+        Sequence goToCoverSequence = new Sequence(new List<Node> { coverAvailableNode, goToCoverNode });
+        Selector tryToTakeCoverSelector = new Selector(new List<Node> { isCoveredNode, goToCoverSequence });
         Sequence mainCoverSequence = new Sequence(new List<Node> { healthNode, tryToTakeCoverSelector });
 
         topNode = new Selector(new List<Node> { mainCoverSequence, shootSequence, chaseSequence });

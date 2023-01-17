@@ -20,7 +20,7 @@ public class GoToCoverNode : Node
 
     public override NodeState Evaluate()
     {
-
+        
         Transform coverSpot = ai.GetBestCoverSpot();
         if (coverSpot == null)
         {
@@ -28,7 +28,7 @@ public class GoToCoverNode : Node
             return NodeState.FAILURE;
         }
 
-        ai.SetColor(Color.yellow);
+        ai.SetColor(Color.blue);
 
         float distance = Vector3.Distance(coverSpot.position, agent.transform.position);
 

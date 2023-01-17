@@ -14,5 +14,5 @@ resetZone과 충돌 시 데미지를 입고 지정한 좌표 중 랜덤으로 �
 ### 체력바
 UI의 Slider 컴포넌트 이용해보기! 
 
-### 3_custom 맵 만들기
-3_custom Enemy는 Behavior Tree 영상 보면서 따라 만드는 중
+### 3_custom
+정한 트리대로 BT 만들어보기

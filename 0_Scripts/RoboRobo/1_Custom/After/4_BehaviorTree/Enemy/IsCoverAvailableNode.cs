@@ -29,6 +29,8 @@ public class IsCoverAvailableNode : Node
 
     private Transform FindBestCoverSpot()
     {
+
+        // 숨을 장소를 먼저 정했고 적당한지 확인
         if (ai.GetBestCoverSpot() != null)
         {
 
@@ -38,6 +40,7 @@ public class IsCoverAvailableNode : Node
                 return ai.GetBestCoverSpot();
             }
         }
+        
         float minAngle = 90;
         Transform bestSpot = null;
 
@@ -55,6 +58,14 @@ public class IsCoverAvailableNode : Node
         return bestSpot;
     }
 
+    /// <summary>
+    /// Cover 중 숨을 장소 찾기
+    /// 타겟과 벽하나 끼고 
+    /// minAngle보다 적은 각도에 한해서만 찾는다
+    /// </summary>
+    /// <param name="cover">숨을 장소</param>
+    /// <param name="minAngle">이 각도 보다 적은 경우에만 허용</param>
+    /// <returns></returns>
     private Transform FindBestSpotInCover(Cover cover, ref float minAngle)
     {
 
@@ -84,6 +95,11 @@ public class IsCoverAvailableNode : Node
         return bestSpot;
     }
 
+    /// <summary>
+    /// 숨을 장소랑 타겟 사이에 장애물이 있는지 확인
+    /// </summary>
+    /// <param name="spot">숨을 장소</param>
+    /// <returns>장애물이 있다</returns>
     private bool CheckIfSpotIsValid(Transform spot)
     {
 
