@@ -3,7 +3,7 @@
 ## 0_scripts
 영상보고 만든 스크립트들
 
-#index
+# 목차
 ## 1. Behavior Tree
 AI 행동 패턴
 ### 장점
