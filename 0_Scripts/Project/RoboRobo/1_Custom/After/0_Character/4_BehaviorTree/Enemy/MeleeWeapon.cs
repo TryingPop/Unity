@@ -1,23 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class MeleeWeapon : MonoBehaviour
 {
 
     public WaitForSeconds atkTime;
-    private int dmg;
+    private int atk;
     private bool activeBool;
-
-    private Collider col;
+    private string targetTag;
     
-
-    private void Awake()
-    {
-
-        // col = GetComponent<Collider>();
-    }
 
     private void OnEnable()
     {
@@ -33,6 +27,15 @@ public class MeleeWeapon : MonoBehaviour
         activeBool = false;
     }
 
+    public void SetVari(int atk, string targetTag, float time)
+    {
+
+        this.atk = atk;
+        this.targetTag = targetTag;
+
+        atkTime = new WaitForSeconds(time);
+    }
+
     IEnumerator Attack()
     {
 
@@ -41,13 +44,20 @@ public class MeleeWeapon : MonoBehaviour
         this.enabled = false;
     }
 
-    internal bool ChkRun()
+    internal bool ChkActive()
     {
         return activeBool;
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
         
+        if (other.tag == targetTag)
+        {
+
+            other.gameObject.GetComponent<Stats>().OnDamaged(atk);
+            this.enabled = false;
+        }
     }
 }

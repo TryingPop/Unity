@@ -24,6 +24,8 @@ public class ChaseNode : Node
         if (targetTrans == null) return NodeState.FAILURE;
 
         float distance = Vector3.Distance(targetTrans.position, agent.transform.position);
+        Debug.Log("ÃßÀû Áß");
+
 
         if (distance > 0.2f)
         {

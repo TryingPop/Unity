@@ -8,6 +8,8 @@ public class BTBoss : MonoBehaviour
 
     private static Transform playerTrans;
 
+    [SerializeField] private MeleeWeapon weapon;
+
     [SerializeField] private GameObject[] missiles;
 
     [SerializeField] private NavMeshAgent agent;
@@ -21,12 +23,12 @@ public class BTBoss : MonoBehaviour
     private int _nowHp;
     public int maxHp;
 
-    public int nowHp { get { return _nowHp; } }
+    public int nowHp { get { return _nowHp; } set { _nowHp = value; } }
 
 
     // 추적
-    private float _chaseRadius;
-    private float _chaseAngle;
+    private float _chaseRadius = 10;
+    private float _chaseAngle = 90;
 
     public float chaseRadius { get { return _chaseRadius; } }
     public float chaseAngle { get { return _chaseAngle; } }
@@ -34,25 +36,25 @@ public class BTBoss : MonoBehaviour
 
     // 밀리 공격
     private int _meleeAtk;
-    private float _meleeAtkRadius;
-    private float _meleeAtkAngle;
-
+    private float _meleeAtkRadius = 3;
+    private float _meleeAtkAngle = 360;
+    private float _meleeAtkTime = 0.3f;
     public int meleeAtk { get { return _meleeAtk; } }
     public float meleeRadius { get { return _meleeAtkRadius; } }
     public float meleeAngle { get { return _meleeAtkAngle; } }
-
+    public float meleeAtkTime { get { return _meleeAtkTime; } }
 
     // 원거리 공격
-    private int _rangeAtk;
-    private float _rangeAtkRadius;
-    private float _rangeAtkAngle;
-    public int bulletNum;
+    private int _rangeAtk = 5;
+    private float _rangeAtkRadius = 6;
+    private float _rangeAtkAngle = 60;
+    public int bulletNum = 6;
 
     public int rangeAtk { get { return _rangeAtk; } }
     public float rangeRadius { get { return _rangeAtkRadius; } }
     public float rangeAngle { get { return _rangeAtkAngle; } }
 
-    private float phaseHp;
+    private int phaseHp = 6;
 
 
     private Node topNode;
@@ -60,10 +62,18 @@ public class BTBoss : MonoBehaviour
     private void Awake()
     {
         if (playerTrans == null) playerTrans = GameObject.FindWithTag("Player").transform;
+        
         if (agent == null) agent = GetComponent<NavMeshAgent>();
+
+        if (weapon == null) weapon = GetComponentInChildren<MeleeWeapon>();
 
         SetHp();
         ConstructBehaviorTree();
+    }
+
+    private void Start()
+    {
+        StartCoroutine(Action());
     }
 
 
@@ -77,7 +87,7 @@ public class BTBoss : MonoBehaviour
     {
         
         FindNode meleeFind = new FindNode(meleeRadius, meleeAngle, this.transform, ref targetTrans, targetLayer, obstacleLayer, targetTag);
-        // MeleeAtkNode meleeAtk = new MeleeAtkNode();
+        MeleeAtkNode meleeAtkNode = new MeleeAtkNode(agent, weapon, meleeAtk, targetTag, meleeAtkTime);
 
         FindNode chaseFind = new FindNode(chaseRadius, chaseAngle, this.transform, ref targetTrans, targetLayer, obstacleLayer, targetTag);
         ChaseNode chaseTarget = new ChaseNode(targetTrans, agent);
@@ -85,17 +95,26 @@ public class BTBoss : MonoBehaviour
         HealthNode chkPhase = new HealthNode(this, phaseHp);
         
         FindNode rangeFind = new FindNode(rangeRadius, rangeAngle, this.transform, ref targetTrans, targetLayer, obstacleLayer, targetTag);
-        RangeAtkNode rangeAtkNode = new RangeAtkNode(transform, missiles, rangeAtk, ref bulletNum, targetTag);
+        RangeAtkNode rangeAtkNode = new RangeAtkNode(agent, transform, missiles, rangeAtk, ref bulletNum, targetTag);
 
-        Sequence melee = new Sequence(new List<Node> { meleeFind,  });
+        Sequence melee = new Sequence(new List<Node> { meleeFind, meleeAtkNode });
         Sequence range = new Sequence(new List<Node> { rangeFind, rangeAtkNode });
         Sequence chase = new Sequence(new List<Node> { chaseFind, chaseTarget });
 
-        // Selector action1 = new Selector(new List<Node> { meleeAtk, chase});
-        // Selector action2 = new Selector(new List<Node> { range, meleeAtk, new ChaseNode(playerTrans, agent) });
+        Selector action1 = new Selector(new List<Node> { melee, chase});
+        Selector action2 = new Selector(new List<Node> { range, melee, new ChaseNode(playerTrans, agent) });
 
-        // Sequence phase2 = new Sequence(new List<Node> { chkPhase, action2 });
+        Sequence phase2 = new Sequence(new List<Node> { chkPhase, action2 });
 
-        // topNode = new Selector(new List<Node> { phase2, action1 });
+        topNode = new Selector(new List<Node> { phase2, action1 });
+    }
+
+    private IEnumerator Action()
+    {
+        while (true)
+        {
+            topNode.Evaluate();
+            yield return new WaitForSeconds(0.3f);
+        }
     }
 }

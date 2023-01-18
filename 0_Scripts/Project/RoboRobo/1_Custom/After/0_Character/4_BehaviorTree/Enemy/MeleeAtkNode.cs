@@ -1,29 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MeleeAtkNode : Node
 {
 
-    private int dmg;
     private MeleeWeapon weapon;
+    private NavMeshAgent agent;
+    private int atk;
+    private string targetTag;
+    private float time;
 
-    private WaitForSeconds atkTime;
+    public bool setBool = true;
 
-
-    public MeleeAtkNode(int dmg, MeleeWeapon weapon, float time)
+    public MeleeAtkNode(NavMeshAgent agent, MeleeWeapon weapon, int atk, string targetTag, float time)
     {
 
-        this.dmg = dmg;
         this.weapon = weapon;
+        this.agent= agent;
+        this.atk = atk;
+        this.targetTag = targetTag;
+        this.time = time;
 
-        this.atkTime = new WaitForSeconds(time);
+
     }
 
     public override NodeState Evaluate()
     {
+        if (setBool)
+        {
 
-        if (weapon.ChkRun()) return NodeState.RUNNING;
+            setBool = true;
+            weapon.SetVari(atk, targetTag, time);
+        }
+
+        agent.enabled = true;
+
+        if (weapon.ChkActive())
+        {
+
+            return NodeState.RUNNING;
+        }
+
+        Debug.Log("밀리 공격");
+        weapon.enabled = true;
 
         return NodeState.SUCCESS;    
     }

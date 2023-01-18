@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class RangeAtkNode : Node
 {
@@ -8,13 +9,18 @@ public class RangeAtkNode : Node
     private Transform genTrans;
     private GameObject[] missiles;
 
+    private NavMeshAgent agent;
+
     private int dmg;
     private string targetTag;
     private int bulletsNum;
 
-    public RangeAtkNode(Transform genPos, GameObject[] missiles, int rangeAtk, ref int bulletsNum, string targetTag)
+    public bool setBool = true;
+
+    public RangeAtkNode(NavMeshAgent agent, Transform genPos, GameObject[] missiles, int rangeAtk, ref int bulletsNum, string targetTag)
     {
 
+        this.agent = agent;
         this.genTrans = genPos;
         this.missiles = missiles;
         this.dmg = rangeAtk;
@@ -26,9 +32,9 @@ public class RangeAtkNode : Node
     {
         
         if (ChkBulletEmpty()) return NodeState.FAILURE;
-
+        agent.enabled = false;
         Shoot();
-
+        Debug.Log("원거리 공격");
         return NodeState.SUCCESS;
     }
 
@@ -56,8 +62,13 @@ public class RangeAtkNode : Node
     private void Shoot()
     {
 
+        if (setBool)
+        {
+
+            setBool = false;
+            EnemyMissile.SetVar(dmg, targetTag);
+        } 
         GameObject missile = Object.Instantiate(SetMissile(), genTrans.position + genTrans.forward, genTrans.rotation);
         bulletsNum--;
-        missile.GetComponent<Missile>().Set(dmg, targetTag);
     }
 }

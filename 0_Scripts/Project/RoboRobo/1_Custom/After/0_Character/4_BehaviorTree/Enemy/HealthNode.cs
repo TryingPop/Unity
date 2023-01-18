@@ -6,9 +6,9 @@ public class HealthNode : Node
 {
 
     private BTBoss ai;
-    private float threshold;
+    private int threshold;
 
-    public HealthNode(BTBoss ai, float threshold)
+    public HealthNode(BTBoss ai, int threshold)
     {
 
         this.ai = ai;
