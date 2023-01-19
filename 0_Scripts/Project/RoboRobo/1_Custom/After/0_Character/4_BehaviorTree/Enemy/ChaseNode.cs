@@ -7,38 +7,30 @@ using UnityEngine.AI;
 public class ChaseNode : Node
 {
 
-    private Transform targetTrans;
-    private NavMeshAgent agent;
+    private BTBoss ai;
 
-
-    public ChaseNode(Transform targetTrans, NavMeshAgent agent)
+    public ChaseNode(BTBoss ai)
     {
 
-        this.targetTrans = targetTrans;
-        this.agent = agent;
+        this.ai = ai;
     }
 
     public override NodeState Evaluate()
     {
 
-        if (targetTrans == null) return NodeState.FAILURE;
+        if (ai.targetTrans == null && ai.phase == BTBoss.Phase.first) return NodeState.FAILURE;
 
-        float distance = Vector3.Distance(targetTrans.position, agent.transform.position);
-        Debug.Log("ÃßÀû Áß");
-
-
-        if (distance > 0.2f)
+        ai.agent.enabled = true;
+        if (ai.phase == BTBoss.Phase.first)
         {
-
-            agent.enabled = true;
-            agent.destination = targetTrans.position;
-            return NodeState.RUNNING;
+            ai.agent.destination = ai.targetTrans.position;
         }
         else
         {
 
-            agent.enabled = false;
-            return NodeState.SUCCESS;
+            ai.agent.destination = BTBoss.playerTrans.position;
         }
+
+        return NodeState.RUNNING;
     }
 }

@@ -6,24 +6,21 @@ using UnityEngine.AI;
 public class MeleeAtkNode : Node
 {
 
-    private MeleeWeapon weapon;
-    private NavMeshAgent agent;
+    private BTBoss ai;
+
     private int atk;
     private string targetTag;
     private float time;
 
     public bool setBool = true;
 
-    public MeleeAtkNode(NavMeshAgent agent, MeleeWeapon weapon, int atk, string targetTag, float time)
+    public MeleeAtkNode(BTBoss ai, int atk, string targetTag, float time)
     {
 
-        this.weapon = weapon;
-        this.agent= agent;
+        this.ai = ai;
         this.atk = atk;
         this.targetTag = targetTag;
         this.time = time;
-
-
     }
 
     public override NodeState Evaluate()
@@ -32,19 +29,19 @@ public class MeleeAtkNode : Node
         {
 
             setBool = true;
-            weapon.SetVari(atk, targetTag, time);
+            ai.weapon.SetVari(atk, targetTag, time);
         }
 
-        agent.enabled = true;
+        ai.agent.enabled = false;
 
-        if (weapon.ChkActive())
+        if (ai.weapon.ChkActive())
         {
 
             return NodeState.RUNNING;
         }
 
         Debug.Log("밀리 공격");
-        weapon.enabled = true;
+        ai.weapon.enabled = true;
 
         return NodeState.SUCCESS;    
     }

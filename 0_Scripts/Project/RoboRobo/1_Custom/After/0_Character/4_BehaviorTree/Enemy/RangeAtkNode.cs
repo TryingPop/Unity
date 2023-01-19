@@ -6,53 +6,46 @@ using UnityEngine.AI;
 public class RangeAtkNode : Node
 {
 
-    private Transform genTrans;
-    private GameObject[] missiles;
-
-    private NavMeshAgent agent;
+    private BTBoss ai;
 
     private int dmg;
-    private string targetTag;
-    private int bulletsNum;
 
     public bool setBool = true;
 
-    public RangeAtkNode(NavMeshAgent agent, Transform genPos, GameObject[] missiles, int rangeAtk, ref int bulletsNum, string targetTag)
+    public RangeAtkNode(BTBoss ai, int rangeAtk)
     {
 
-        this.agent = agent;
-        this.genTrans = genPos;
-        this.missiles = missiles;
+        this.ai = ai;
         this.dmg = rangeAtk;
-        this.bulletsNum = bulletsNum;
-        this.targetTag = targetTag;
     }
 
     public override NodeState Evaluate()
     {
         
         if (ChkBulletEmpty()) return NodeState.FAILURE;
-        agent.enabled = false;
+        ai.agent.enabled = false;
         Shoot();
+
         Debug.Log("원거리 공격");
+
         return NodeState.SUCCESS;
     }
 
     private GameObject SetMissile()
     {
 
-        int num = Random.Range(0, missiles.Length);
+        int num = Random.Range(0, ai.missiles.Length);
         
-        return missiles[num];
+        return ai.missiles[num];
     }
 
     private bool ChkBulletEmpty()
     {
 
-        if (bulletsNum <= 0)
+        if (ai.bulletNum <= 0)
         {
 
-            bulletsNum = 0;
+            ai.bulletNum = 0;
             return true;
         }
         
@@ -66,9 +59,14 @@ public class RangeAtkNode : Node
         {
 
             setBool = false;
-            EnemyMissile.SetVar(dmg, targetTag);
+            EnemyMissile.SetVar(dmg);
         } 
-        GameObject missile = Object.Instantiate(SetMissile(), genTrans.position + genTrans.forward, genTrans.rotation);
-        bulletsNum--;
+
+        ai.bulletNum--;
+        GameObject missile = Object.Instantiate(SetMissile(), ai.transform.position + ai.transform.forward, ai.transform.rotation);
+        missile.GetComponent<EnemyMissile>().Set(2f, 40f, ai.targetTrans);
+        
+
+        Object.Destroy(missile, 5f);
     }
 }

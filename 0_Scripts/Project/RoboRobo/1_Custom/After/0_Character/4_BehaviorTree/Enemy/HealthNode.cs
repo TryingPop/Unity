@@ -6,19 +6,19 @@ public class HealthNode : Node
 {
 
     private BTBoss ai;
-    private int threshold;
+    BTBoss.Phase phase;
 
-    public HealthNode(BTBoss ai, int threshold)
+    public HealthNode(BTBoss ai, BTBoss.Phase phase )
     {
 
         this.ai = ai;
-        this.threshold = threshold;
+        this.phase = phase;
     }
 
 
     public override NodeState Evaluate()
     {
 
-        return ai.nowHp <= threshold ? NodeState.SUCCESS : NodeState.FAILURE;
+        return ai.phase == phase ? NodeState.SUCCESS : NodeState.FAILURE;
     }
 }

@@ -8,7 +8,6 @@ public class IdleNode : Node
     public override NodeState Evaluate()
     {
 
-        Debug.Log("노는 중이에용");
         return NodeState.SUCCESS;
     }
 }

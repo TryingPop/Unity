@@ -6,30 +6,18 @@ using UnityEngine;
 public class FindNode : Node
 {
 
+    private BTBoss ai;
+
     private float radius;
     private float angle;
 
-    private LayerMask targetLayer;
-    private LayerMask obstacleLayer;
-
-    private string targetTag;
-
-    private Transform originTrans;
-    private Transform targetTrans;
-
-    public FindNode(float radius, float angle,
-                    Transform originTrans, ref Transform targetTrans,
-                    LayerMask targetLayer, LayerMask obstacleLayer,
-                    string targetTag)
+    public FindNode(BTBoss ai, float radius, float angle)
     {
 
+        this.ai = ai;
         this.radius = radius;
         this.angle = angle;
-        this.originTrans = originTrans;
-        this.targetTrans = targetTrans;
-        this.targetLayer = targetLayer;
-        this.obstacleLayer = obstacleLayer;
-        this.targetTag = targetTag;
+
     }
 
     public override NodeState Evaluate()
@@ -52,26 +40,27 @@ public class FindNode : Node
                 if (ChkAngle(targetCols[i].transform) && ChkObstacle(targetCols[i].transform))
                 {
 
-                    targetTrans = targetCols[i].transform;
+                    ai.targetTrans = targetCols[i].transform;
+
                     return true;
                 }
             }
         }
 
-        targetTrans = null;
+        ai.targetTrans = null;
         return false;
     }
 
     private Collider[] ChkRadius()
     {
 
-        return Physics.OverlapSphere(originTrans.position, radius, targetLayer);
+        return Physics.OverlapSphere(ai.transform.position, radius, ai.targetLayer);
     }
 
-    private bool ChkAngle(Transform transform)
+    private bool ChkAngle(Transform targetTrans)
     {
 
-        if (Vector3.Angle(transform.position - originTrans.position, originTrans.forward)
+        if (Vector3.Angle(targetTrans.position - ai.transform.position, ai.transform.forward)
             < 0.5 * angle)
         {
 
@@ -81,16 +70,16 @@ public class FindNode : Node
         return false;
     }
     
-    private bool ChkObstacle(Transform transform)
+    private bool ChkObstacle(Transform targetTrans)
     {
 
         RaycastHit hit;
 
-        if (Physics.Raycast(originTrans.position, transform.position - originTrans.position, 
-            out hit, radius, targetLayer | obstacleLayer))
+        if (Physics.Raycast(ai.transform.position, targetTrans.position - ai.transform.position, 
+            out hit, radius, ai.targetLayer | ai.obstacleLayer))
         {
 
-            if (hit.transform.tag == targetTag)
+            if (hit.transform.tag == ai.targetTag)
             {
 
                 return true;

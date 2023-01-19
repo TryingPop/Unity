@@ -6,36 +6,55 @@ using UnityEngine.AI;
 
 public class EnemyMissile : MonoBehaviour
 {
-    private static int dmg;
-    private static string targetTag;
-    private NavMeshAgent agent;
+
+    private static int atk;
+    private float spd;
+    private float turn;
+
+    private Rigidbody rd;
+    private Transform targetTrans;
 
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.destination = GameObject.FindGameObjectWithTag(targetTag).transform.position;
 
+        rd = GetComponent<Rigidbody>();
     }
 
-    public static void SetVar(int dmg, string targetTag)
+    private void FixedUpdate()
     {
 
-        EnemyMissile.dmg = dmg;
-        EnemyMissile.targetTag = targetTag;
+        rd.velocity = transform.forward * spd;
+
+        var targetRotation = Quaternion.LookRotation(targetTrans.position - transform.position);
+        rd.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetRotation, turn));
+    }
+
+
+    public static void SetVar(int atk)
+    {
+
+        EnemyMissile.atk = atk;
+    }
+
+    public void Set(float spd, float turn, Transform targetTrans)
+    {
+        this.spd = spd;
+        this.turn = turn;
+        this.targetTrans = targetTrans;
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
         
-        if (other.tag == targetTag)
+        if (other.tag == targetTrans.tag)
         {
 
             // other.GetComponent<Stats>().OnDamaged(dmg);
-            Debug.Log("오태크!");
+            Debug.Log("어태크!");
         }
 
-        // Destroy(gameObject);
+        Destroy(gameObject);
     }
 
 }
