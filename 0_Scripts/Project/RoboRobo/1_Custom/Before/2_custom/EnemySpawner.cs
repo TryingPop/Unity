@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -12,8 +11,8 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float spawnMaxTime;
     [SerializeField] private ObjCreator createScript;
 
-    [SerializeField, Range(0, 5)] private int spawnMinNum;
-    [SerializeField, Range(5, 9)] private int spawnMaxNum;
+    [SerializeField, Range(0, 9)] private int spawnMinNum;
+    [SerializeField, Range(0, 9)] private int spawnMaxNum;
 
     public Transform[] spawnersTrans;
 
@@ -77,6 +76,11 @@ public class EnemySpawner : MonoBehaviour
     /// </summary>
     void SetSpawnNum()
     {
+        if (spawnMinNum > spawnMaxNum)
+        {
+
+            Swap(ref spawnMinNum, ref spawnMaxNum);
+        }
 
         spawnCnt = Random.Range(Mathf.Min(spawnMinNum, spawnersTrans.Length), 
                                 Mathf.Min(spawnMaxNum, spawnersTrans.Length) + 1
@@ -96,6 +100,8 @@ public class EnemySpawner : MonoBehaviour
 
             int num = Random.Range(0, spawnersTrans.Length);
 
+            // SetSpawnNum에서 spawnerTrans 값을 넘길 수 없도록 세팅해서
+            // 1마리씩 생성되게 가능
             if (!spawnerNum.Contains(num))
             {
 
@@ -124,7 +130,34 @@ public class EnemySpawner : MonoBehaviour
     /// </summary>
     void SetSpawnTime()
     {
+        if (spawnMinTime > spawnMaxTime)
+        {
 
-        spawnTime = Random.Range(Mathf.Max(spawnMinTime, 0.1f), Mathf.Max(spawnMaxTime,0.1f));
+            Swap(ref spawnMinTime, ref spawnMaxTime);
+        }
+
+        if (spawnMinTime == spawnMaxTime)
+        {
+
+            spawnTime = spawnMinTime;
+        }
+        else
+        {
+
+            spawnTime = Random.Range(Mathf.Max(spawnMinTime, 0.1f), Mathf.Max(spawnMaxTime, 0.1f));
+        }
+    }
+
+    /// <summary>
+    /// T(템플릿)을 이용해 a과 b의 값을 서로 교환
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    static void Swap<T>(ref T a,  ref T b)
+    {
+
+        T temp = a;
+        a = b;
+        b = temp;
     }
 }
