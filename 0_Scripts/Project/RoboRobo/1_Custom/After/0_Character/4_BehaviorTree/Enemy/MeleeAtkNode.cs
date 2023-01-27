@@ -32,7 +32,8 @@ public class MeleeAtkNode : Node
             ai.weapon.SetVari(atk, targetTag, time);
         }
 
-        ai.agent.enabled = false;
+        ai.WalkAnim(false);
+        ai.AtkAnim(true);
 
         if (ai.weapon.ChkActive())
         {

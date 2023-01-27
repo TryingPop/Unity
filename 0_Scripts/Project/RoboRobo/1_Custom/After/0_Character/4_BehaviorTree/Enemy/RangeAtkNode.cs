@@ -23,7 +23,8 @@ public class RangeAtkNode : Node
     {
         
         if (ChkBulletEmpty()) return NodeState.FAILURE;
-        ai.agent.enabled = false;
+
+        ai.WalkAnim(false);
         Shoot();
 
         Debug.Log("원거리 공격");

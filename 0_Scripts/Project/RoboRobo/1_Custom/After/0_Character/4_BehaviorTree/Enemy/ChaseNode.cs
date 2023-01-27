@@ -20,7 +20,8 @@ public class ChaseNode : Node
 
         if (ai.targetTrans == null && ai.phase == BTBoss.Phase.first) return NodeState.FAILURE;
 
-        ai.agent.enabled = true;
+        ai.WalkAnim(true);
+
         if (ai.phase == BTBoss.Phase.first)
         {
             ai.agent.destination = ai.targetTrans.position;
