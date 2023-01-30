@@ -11,8 +11,10 @@ public class BTBoss : MonoBehaviour
     public static Transform playerTrans;
 
     public MeleeWeapon weapon;
+    public EnemyAnimation anim;
 
-    public GameObject[] missiles;
+    public GameObject[] missiles;   // 원거리 공격 투사체
+    public GameObject[] summoners;    // 소환수 목록
 
     public NavMeshAgent agent;
     public Transform targetTrans;
@@ -27,7 +29,33 @@ public class BTBoss : MonoBehaviour
     private int _nowHp;
     public int maxHp;
 
-    public int nowHp { get { return _nowHp; } set { _nowHp = value; } }
+    private bool deadBool;
+
+    public bool nowIdleBool;
+    private bool beforIdleBool;
+
+    public int nowHp 
+    { 
+        get { return _nowHp; } 
+        set 
+        {
+
+            _nowHp = value;
+            if (_nowHp < 0)
+            {
+
+                _nowHp = 0;
+            }
+            else if (_nowHp > maxHp)
+            {
+
+                _nowHp = maxHp;
+
+                // 사망 
+                deadBool = true;
+            }
+        } 
+    }
 
     [SerializeField] private int phaseHp = 6;
 
@@ -37,7 +65,6 @@ public class BTBoss : MonoBehaviour
 
     public float chaseRadius { get { return _chaseRadius; } }
     public float chaseAngle { get { return _chaseAngle; } }
-
 
     // 밀리 공격
     [SerializeField] private int _meleeAtk;
@@ -59,15 +86,11 @@ public class BTBoss : MonoBehaviour
     public float rangeRadius { get { return _rangeAtkRadius; } }
     public float rangeAngle { get { return _rangeAtkAngle; } }
 
-
-
     private Node topNode;
-
-
 
     private void Awake()
     {
-        if (playerTrans == null) playerTrans = GameObject.FindWithTag("Player").transform;
+        if (playerTrans == null) playerTrans = GameObject.FindWithTag("Player")?.transform;
 
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         if (weapon == null) weapon = GetComponentInChildren<MeleeWeapon>();
@@ -91,7 +114,7 @@ public class BTBoss : MonoBehaviour
     private void ConstructBehaviorTree()
     {
 
-        IdleNode idleNode = new IdleNode();
+        IdleNode idleNode = new IdleNode(this);
 
         FindNode meleeFind = new FindNode(this, meleeRadius, meleeAngle);
         MeleeAtkNode meleeAtkNode = new MeleeAtkNode(this, meleeAtk, targetTag, meleeAtkTime);
@@ -108,8 +131,8 @@ public class BTBoss : MonoBehaviour
         Sequence range = new Sequence(new List<Node> { rangeFind, rangeAtkNode });
         Sequence chase = new Sequence(new List<Node> { chaseFind, chaseTarget });
 
-        Selector action1 = new Selector(new List<Node> { melee, chase});
-        Selector action2 = new Selector(new List<Node> {  melee, range, new ChaseNode(this) });
+        Selector action1 = new Selector(new List<Node> { melee, chase, idleNode });
+        Selector action2 = new Selector(new List<Node> { melee, range, new ChaseNode(this) });
 
         Sequence phase2 = new Sequence(new List<Node> { chkPhase, action2 });
 
@@ -121,8 +144,65 @@ public class BTBoss : MonoBehaviour
         while (true)
         {
 
+            ResetIdleBool();
             topNode.Evaluate();
             yield return new WaitForSeconds(0.3f);
+        }
+    }
+
+    /// <summary>
+    /// idle 체크
+    /// </summary>
+    private void ResetIdleBool()
+    {
+
+        beforIdleBool = nowIdleBool;
+        nowIdleBool = false;
+    }
+
+    /// <summary>
+    /// idle에 첫 진입인지 확인
+    /// </summary>
+    /// <returns>첫 진입 여부</returns>
+    public bool ChkIdle()
+    {
+
+        if (!beforIdleBool && nowIdleBool)
+        {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void WalkAnim(bool start)
+    {
+
+        agent.enabled = start;
+        anim?.ChkAnimation(1, start);
+    }
+
+    public void AtkAnim(bool start)
+    {
+
+        anim?.ChkAnimation(2, start);
+    }
+
+    public void OnDamaged(int atk)
+    {
+
+        nowHp -= atk;
+
+        if (nowHp < phaseHp)
+        {
+
+            phase = Phase.second;
+        }
+        else
+        {
+
+            phase = Phase.first;
         }
     }
 }
