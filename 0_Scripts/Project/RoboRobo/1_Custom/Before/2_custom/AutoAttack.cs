@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -36,20 +35,18 @@ public class AutoAttack : Stats
 
         myAnim = GetComponent<Animation>();
 
-
-        myWC.Attack += Attack;
-    }
-
-
-    private void Start()
-    {
-
-        Reset();
-
         myAnim["0_idle"].layer = 0;
         myAnim["1_walk"].layer = 1;
         myAnim["2_attack"].layer = 2;
         myAnim["3_attacked"].layer = 3;
+
+        myWC.Attack += Attack;
+    }
+
+    private void OnEnable()
+    {
+
+        Reset();
     }
 
     private void Update()
@@ -65,8 +62,6 @@ public class AutoAttack : Stats
         myAnim.CrossFade("0_idle", 0.2f);
         myAnim.CrossFade("1_walk", 0.1f);
         myAnim.CrossFade("2_attack", 0.1f);
-
-        
 
         StartCoroutine(Attack());
     }
@@ -118,8 +113,6 @@ public class AutoAttack : Stats
     {
         base.Dead();
         StopAllCoroutines();
-
-        // event 해제
 
         // 점수 메소드
         GameManager.instance.ChkWin();

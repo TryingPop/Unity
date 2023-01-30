@@ -12,7 +12,7 @@ public class ObjCreator : MonoBehaviour
 
     public ObjectPool<AutoAttack> objPool;
 
-    private void OnEnable()
+    private void Awake()
     {
 
         objPool = new ObjectPool<AutoAttack>
@@ -31,7 +31,6 @@ public class ObjCreator : MonoBehaviour
             {
 
                 poolObj.gameObject.SetActive(true);
-                poolObj.Reset();
             },
 
             actionOnRelease: (poolObj) =>
