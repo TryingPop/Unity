@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : Stats
+public class PlayerController : Unit
 {
 
-    [SerializeField] private PlayerAnimator     animator;           // 캐릭터 애니메이터를 관리하는 스크립트
-    [SerializeField] private Hidden             hidden;             // 히든 능력을 보유한 스크립트
-            
-    [SerializeField] private AudioClip          atkSnd;             // 공격 사운드
-    [SerializeField] private GameObject         hammerObj;          // 해머 오브젝트
+    [SerializeField] private PlayerAnimator animator;           // 캐릭터 애니메이터를 관리하는 스크립트
+    [SerializeField] private Hidden hidden;             // 히든 능력을 보유한 스크립트
 
-    [SerializeField] private Transform          chrTrans;           // 캐릭터 좌표
-    [SerializeField] private Transform          cameraBoxTrans;     // 카메라 좌표
+    [SerializeField] private AudioClip atkSnd;             // 공격 사운드
+    [SerializeField] private GameObject hammerObj;          // 해머 오브젝트
+
+    [SerializeField] private Transform chrTrans;           // 캐릭터 좌표
+    [SerializeField] private Transform cameraBoxTrans;     // 카메라 좌표
 
     [SerializeField] private float runSpd;                          // 이동 속도
     [SerializeField] private float jumpForce;                       // 점프 파워
@@ -24,7 +24,7 @@ public class PlayerController : Stats
     [SerializeField] private float fallDmgRatio;                    // 낙하 데미지 비율
 
     public PlayerColor playerColor;                                 // 플레이어 색상
-        
+
     private CapsuleCollider myCollider;                             // 지면 체크를 위한 콜라이더
 
     private bool groundBool;        // 지면에 닿았는가?
@@ -33,9 +33,11 @@ public class PlayerController : Stats
     private bool staminaBool;       // 스테미나 회복 가능한 상태인가?
     private bool chkBool;           // 변화 감지용 변수
 
+    private bool ladderBool;        // 사다리에 있는지?
+
     private float nowStamina;       // 현재 스테미나
     private float applySpd;         // 적용 속도
-    
+
 
     private void Awake()
     {
@@ -66,7 +68,7 @@ public class PlayerController : Stats
     /// </summary>
     protected override void GetComp()
     {
-        
+
         base.GetComp();
 
         playerColor = GetComponent<PlayerColor>();
@@ -168,7 +170,7 @@ public class PlayerController : Stats
     /// </summary>
     private void ChkRun()
     {
-        
+
         // 걷다가 달리는지 변화 하는 상태 체크
         chkBool = runBool;
 
@@ -178,7 +180,7 @@ public class PlayerController : Stats
 
             // 달리는 상태
             runBool = true;
-            
+
             applySpd = runSpd;
 
             // HealthMan이면 이속 2배
@@ -212,7 +214,7 @@ public class PlayerController : Stats
 
         // 애니메이션 무브를 실행 해야하는가 용도로 쓰임
         chkBool = moveBool;
-        
+
         // 방향 벡터
         Vector2 _moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         moveBool = (_moveInput != Vector2.zero);
@@ -235,7 +237,7 @@ public class PlayerController : Stats
 
             animator.SetMove(moveBool);
         }
-        
+
     }
 
     /// <summary>
@@ -245,7 +247,7 @@ public class PlayerController : Stats
     {
 
         // 지면에 닿았고 점프 키를 누른 경우
-        if (groundBool && Input.GetKeyDown(KeyCode.Space))
+        if ((groundBool || ladderBool) && Input.GetKeyDown(KeyCode.Space))
         {
 
             myRd.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -293,13 +295,13 @@ public class PlayerController : Stats
 
             if (hidden.ChkAbility(Hidden.Ability.ContinuousAttacker))
             {
-                
+
                 myWC.AtkColActive(true);
                 animator.SetAtk();
             }
             else
             {
-                
+
                 StartCoroutine(Attack());
             }
         }
@@ -318,19 +320,19 @@ public class PlayerController : Stats
         // 이동 중이거나 점프 중이면 채울 수 없고 이외는 채울 수 있다
         if (moveBool || !groundBool)
         {
-           
+
             staminaBool = false;
         }
         else
         {
-            
+
             staminaBool = true;
         }
 
         // 달리면서 이동 중일 때만 스테미나를 깎는다
         if (moveBool && runBool)
         {
-            
+
             nowStamina -= Time.deltaTime;
 
             if (nowStamina < 0)
@@ -390,7 +392,7 @@ public class PlayerController : Stats
     /// <param name="other">target Collider</param>
     protected override void Attack(object sender, Collider other)
     {
-        
+
         SetTargetStats(other.gameObject);
         SetAtkParticle();
         hidden.ChkAtkSnd();
@@ -427,7 +429,7 @@ public class PlayerController : Stats
     protected override void SetAtkParticle()
     {
 
-        Instantiate(hidden.ChkParticle(atkParticle), 
+        Instantiate(hidden.ChkParticle(atkParticle),
             targetStats.transform.position + targetStats.transform.up, Quaternion.identity);
     }
 
@@ -472,5 +474,10 @@ public class PlayerController : Stats
     {
 
         StatsUI.instance.SetAtk(hidden.ChkAtk(status.Atk));
+    }
+
+    public void ChkLadder(bool chkBool)
+    {
+        ladderBool = chkBool;
     }
 }

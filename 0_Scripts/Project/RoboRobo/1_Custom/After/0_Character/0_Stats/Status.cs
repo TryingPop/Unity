@@ -23,3 +23,4 @@ public class Status : ScriptableObject
     [SerializeField] private float atkInterval;
     public float AtkInterval { get { return atkInterval; } }
 }
+

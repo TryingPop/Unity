@@ -9,18 +9,14 @@ public class MeleeAtkNode : Node
     private BTBoss ai;
 
     private int atk;
-    private string targetTag;
-    private float time;
 
     public bool setBool = true;
 
-    public MeleeAtkNode(BTBoss ai, int atk, string targetTag, float time)
+    public MeleeAtkNode(BTBoss ai, int atk)
     {
 
         this.ai = ai;
         this.atk = atk;
-        this.targetTag = targetTag;
-        this.time = time;
     }
 
     public override NodeState Evaluate()
@@ -28,22 +24,13 @@ public class MeleeAtkNode : Node
         if (setBool)
         {
 
-            setBool = true;
-            ai.weapon.SetVari(atk, targetTag, time);
+            setBool = false;
+            
         }
 
         ai.WalkAnim(false);
-        ai.AtkAnim(true);
 
-        if (ai.weapon.ChkActive())
-        {
-
-            return NodeState.RUNNING;
-        }
-
-        Debug.Log("밀리 공격");
-        ai.weapon.enabled = true;
-
+        ai.ActiveWeapon();
         return NodeState.SUCCESS;    
     }
 }

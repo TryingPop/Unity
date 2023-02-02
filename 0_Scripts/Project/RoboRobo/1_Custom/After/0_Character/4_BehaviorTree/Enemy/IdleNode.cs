@@ -59,16 +59,17 @@ public class IdleNode : Node
     {
 
         if (actCnt != 0) return;
-        if (ai.nowHp < ai.maxHp) { state = STATE.Heal; return; };
+
+        if (ai.ChkHeal()) { state = STATE.Heal; return; };
         int num = Random.Range(0, 10);
         // 행동 설정
 
-        if (num < 3)
+        if (false)
         {
 
             state = STATE.Idle;
         }
-        else if (num < 4)
+        else if (false)
         {
 
             state = STATE.Summon;
@@ -161,12 +162,24 @@ public class IdleNode : Node
         {
 
             destination = SetDestination(10f); 
+            if (destination == Vector3.positiveInfinity)
+            {
+
+                destination = ai.transform.position;
+            }
+            else
+            {
+                destination += Vector3.up * 0.5f;
+            }
+
+
+            
             ai.WalkAnim(true);
             ai.agent.destination = destination;
             actCnt++;
         };
 
-        if (Vector3.Distance(ai.transform.position, destination) <= 0.2f) 
+        if (Vector3.Distance(ai.transform.position, destination) <= 1f) 
         {
 
             ai.WalkAnim(false);
@@ -182,18 +195,10 @@ public class IdleNode : Node
     {
         
         NavMeshHit hit;
-        NavMesh.SamplePosition(ai.transform.position + Random.insideUnitSphere * distance, out hit, distance, NavMesh.AllAreas);
-        if (hit.position == Vector3.positiveInfinity || hit.position == Vector3.negativeInfinity)
-        {
+        NavMesh.SamplePosition(ai.transform.position + Random.insideUnitSphere * distance, out hit, distance, 1) ;
+        
 
-            hit.position = ai.transform.position;
-        }
-        else
-        {
-
-            hit.position += Vector3.up * 0.5f;
-        }
-
+        Debug.Log(hit.position);
         return hit.position;
     }
 
@@ -208,7 +213,7 @@ public class IdleNode : Node
         if (actCnt >= (byte)state)
         {
 
-            ai.nowHp += 10;
+            ai.NowHp += 10;
             actCnt = 0;
         }
     }

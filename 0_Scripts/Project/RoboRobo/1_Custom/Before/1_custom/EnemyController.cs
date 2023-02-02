@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyController : Stats
+public class EnemyController : Unit
 {
     #region Convertible Variable
     [Header("½ºÅÝ")]
@@ -36,7 +36,7 @@ public class EnemyController : Stats
 		if (idle == null) idle = GetComponent<StateIdle>();
 		if (atk == null) atk = GetComponent<StateMeleeAtk>();
 		if (anim == null) anim = GetComponent<EnemyAnimation>();
-		if (targetStats == null) targetStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Stats>();
+		if (targetStats == null) targetStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Unit>();
     }
 
     private void Start()
@@ -192,6 +192,7 @@ public class EnemyController : Stats
 
 	protected override void Dead()
 	{
+
 		myWC.Attack -= Attack;
 		myWC.AtkColActive(false);
 		base.Dead();

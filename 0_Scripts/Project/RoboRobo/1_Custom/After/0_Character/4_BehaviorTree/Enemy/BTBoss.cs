@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BTBoss : MonoBehaviour
+public class BTBoss : Stat
 {
 
     public enum Phase { first, second }
 
     public static Transform playerTrans;
 
-    public MeleeWeapon weapon;
+    public Transform missileTransform;
+
     public EnemyAnimation anim;
 
     public GameObject[] missiles;   // 원거리 공격 투사체
@@ -26,76 +27,44 @@ public class BTBoss : MonoBehaviour
 
     public string targetTag;
 
-    private int _nowHp;
-    public int maxHp;
-
-    private bool deadBool;
-
     public bool nowIdleBool;
     private bool beforIdleBool;
 
-    public int nowHp 
-    { 
-        get { return _nowHp; } 
+    public int NowHp { 
+        get 
+        { 
+
+            return nowHp; 
+        } 
         set 
-        {
+        { 
 
-            _nowHp = value;
-            if (_nowHp < 0)
-            {
-
-                _nowHp = 0;
-            }
-            else if (_nowHp > maxHp)
-            {
-
-                _nowHp = maxHp;
-
-                // 사망 
-                deadBool = true;
-            }
+            nowHp += value;
+            if (nowHp < 0) { nowHp = 0; }
+            else if (nowHp > status.Hp) { nowHp = status.Hp; }
         } 
     }
 
     [SerializeField] private int phaseHp = 6;
 
-    // 추적
-    [SerializeField] private float _chaseRadius = 10;
-    [SerializeField] private float _chaseAngle = 90;
+    [SerializeField] private RangedStatus chase;
+    [SerializeField] private RangedStatus melee;
+    [SerializeField] private RangedStatus ranged;
 
-    public float chaseRadius { get { return _chaseRadius; } }
-    public float chaseAngle { get { return _chaseAngle; } }
-
-    // 밀리 공격
-    [SerializeField] private int _meleeAtk;
-    [SerializeField] private float _meleeAtkRadius = 3;
-    [SerializeField] private float _meleeAtkAngle = 360;
-    [SerializeField] private float _meleeAtkTime = 0.3f;
-    public int meleeAtk { get { return _meleeAtk; } }
-    public float meleeRadius { get { return _meleeAtkRadius; } }
-    public float meleeAngle { get { return _meleeAtkAngle; } }
-    public float meleeAtkTime { get { return _meleeAtkTime; } }
-
-    // 원거리 공격
-    [SerializeField] private int _rangeAtk = 5;
-    [SerializeField] private float _rangeAtkRadius = 6;
-    [SerializeField] private float _rangeAtkAngle = 60;
-    public int bulletNum = 6;
-
-    public int rangeAtk { get { return _rangeAtk; } }
-    public float rangeRadius { get { return _rangeAtkRadius; } }
-    public float rangeAngle { get { return _rangeAtkAngle; } }
+    public int bulletNum = 6;       // 탄약 수
 
     private Node topNode;
 
     private void Awake()
     {
         if (playerTrans == null) playerTrans = GameObject.FindWithTag("Player")?.transform;
-
+        if (anim == null) anim = GetComponent<EnemyAnimation>();
         if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (weapon == null) weapon = GetComponentInChildren<MeleeWeapon>();
+        GetComp();
+        
+        myWC.Attack += Attack;
+        Init();
 
-        SetHp();
         ConstructBehaviorTree();
     }
 
@@ -103,29 +72,22 @@ public class BTBoss : MonoBehaviour
     {
         StartCoroutine(Action());
     }
-
-
-    private void SetHp()
-    {
-
-        _nowHp = maxHp;
-    }
-
+    
     private void ConstructBehaviorTree()
     {
 
         IdleNode idleNode = new IdleNode(this);
 
-        FindNode meleeFind = new FindNode(this, meleeRadius, meleeAngle);
-        MeleeAtkNode meleeAtkNode = new MeleeAtkNode(this, meleeAtk, targetTag, meleeAtkTime);
+        FindNode meleeFind = new FindNode(this, this.melee.RangeRadius, this.melee.RangeAngle);
+        MeleeAtkNode meleeAtkNode = new MeleeAtkNode(this, status.Atk);
 
-        FindNode chaseFind = new FindNode(this, chaseRadius, chaseAngle);
+        FindNode chaseFind = new FindNode(this, this.chase.RangeRadius, this.chase.RangeAngle);
         ChaseNode chaseTarget = new ChaseNode(this);
 
         HealthNode chkPhase = new HealthNode(this, Phase.second);
         
-        FindNode rangeFind = new FindNode(this, rangeRadius, rangeAngle);
-        RangeAtkNode rangeAtkNode = new RangeAtkNode(this, rangeAtk);
+        FindNode rangeFind = new FindNode(this, ranged.RangeRadius, ranged.RangeAngle);
+        RangeAtkNode rangeAtkNode = new RangeAtkNode(this, status.Atk);
 
         Sequence melee = new Sequence(new List<Node> { meleeFind, meleeAtkNode });
         Sequence range = new Sequence(new List<Node> { rangeFind, rangeAtkNode });
@@ -141,7 +103,7 @@ public class BTBoss : MonoBehaviour
 
     private IEnumerator Action()
     {
-        while (true)
+        while (!deadBool)
         {
 
             ResetIdleBool();
@@ -189,10 +151,10 @@ public class BTBoss : MonoBehaviour
         anim?.ChkAnimation(2, start);
     }
 
-    public void OnDamaged(int atk)
+    public override void OnDamaged(int atk)
     {
 
-        nowHp -= atk;
+        base.OnDamaged(atk);
 
         if (nowHp < phaseHp)
         {
@@ -204,6 +166,35 @@ public class BTBoss : MonoBehaviour
 
             phase = Phase.first;
         }
+    }
+
+    public void ActiveWeapon()
+    {
+
+        if (!atkBool) 
+        {
+            StartCoroutine(Attack());
+            AtkAnim(true);
+        }
+    }
+
+    protected override void Attack(object sender, Collider other)
+    {
+
+        other.GetComponent<Stat>().OnDamaged(status.Atk);
+        base.Attack(sender, other);
+    }
+
+    public bool ChkHeal()
+    {
+
+        if (NowHp < status.Hp)
+        {
+
+            return true;
+        }
+
+        return false;
     }
 }
 

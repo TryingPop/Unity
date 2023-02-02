@@ -29,7 +29,7 @@ public class ResetScript : MonoBehaviour
                 other.transform.position = Vector3.zero;
             }
             
-            Stats stats = other.gameObject.GetComponent<Stats>();
+            Unit stats = other.gameObject.GetComponent<Unit>();
             stats.OnDamaged(damage);
 
             if (other.tag == "Player")
@@ -40,7 +40,7 @@ public class ResetScript : MonoBehaviour
         }
         else
         {
-            other.gameObject.GetComponent<Stats>()?.OnDamaged(100000000);
+            other.gameObject.GetComponent<Unit>()?.OnDamaged(100000000);
             Destroy(other.gameObject, 2f);
         }
     }

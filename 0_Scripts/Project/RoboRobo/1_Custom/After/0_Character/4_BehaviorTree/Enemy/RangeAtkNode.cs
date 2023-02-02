@@ -10,6 +10,9 @@ public class RangeAtkNode : Node
 
     private int dmg;
 
+    private float moveSpd = 8f;
+    private float turnSpd = 0.5f;
+
     public bool setBool = true;
 
     public RangeAtkNode(BTBoss ai, int rangeAtk)
@@ -60,12 +63,13 @@ public class RangeAtkNode : Node
         {
 
             setBool = false;
-            EnemyMissile.SetVar(dmg);
+            EnemyMissile.SetVar(dmg, moveSpd, turnSpd);
         } 
 
         ai.bulletNum--;
-        GameObject missile = Object.Instantiate(SetMissile(), ai.transform.position + ai.transform.forward, ai.transform.rotation);
-        missile.GetComponent<EnemyMissile>().Set(2f, 40f, ai.targetTrans);
+        ai.transform.LookAt(ai.targetTrans.position);
+        GameObject missile = Object.Instantiate(SetMissile(), ai.missileTransform.position, ai.missileTransform.rotation);
+        missile.GetComponent<EnemyMissile>().Set(ai.targetTrans);
         
 
         Object.Destroy(missile, 5f);

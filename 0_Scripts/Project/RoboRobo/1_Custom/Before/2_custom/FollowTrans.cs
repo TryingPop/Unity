@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class FollowTrans : MonoBehaviour
@@ -7,12 +8,10 @@ public class FollowTrans : MonoBehaviour
 
     [SerializeField] private Transform targetTrans;
 
-    public float scaleMulti;
-    public float height = 10f;
-    public bool onlyPosY;
+    public float scaleMulti;        // 미니맵 크기 확대
+    public float height = 10f;      // 높이
 
     private Vector3 pos;
-
 
     private void Start()
     {
@@ -43,23 +42,16 @@ public class FollowTrans : MonoBehaviour
 
     private void SetPosition()
     {
-        if (!onlyPosY)
-        {
-            pos.x = targetTrans.position.x;
-            pos.z = targetTrans.position.z;
-        }
-        else
-        {
-            pos.x = transform.position.x;
-            pos.z = transform.position.z;
-        }
-        pos.y = height;
 
+        pos.x = targetTrans.position.x;
+        pos.z = targetTrans.position.z;
+        pos.y = targetTrans.position.y + height;
         transform.position = pos;
     }
 
     public void SetTarget(Transform targetTrans)
     {
+
         this.targetTrans = targetTrans;
     }
 }

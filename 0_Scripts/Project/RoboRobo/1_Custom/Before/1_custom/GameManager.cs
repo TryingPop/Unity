@@ -25,11 +25,13 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, Tooltip("기본 브금")] private AudioClip bgmSnd;
     [SerializeField, Tooltip("치트 모드 활성화 시 사용할 노래")] private AudioClip[] cheatSnd;
-    [SerializeField, Tooltip("플레이어 애니메이터")] private PlayerController controller;
+    public PlayerController controller;
 
     [Tooltip("사냥 미션")] public HuntingMission huntingMission;
 
     [SerializeField] private AudioScript myAS;
+
+    [SerializeField] private Camera mainCam;
 
     public event EventHandler otherReset;
 
@@ -73,7 +75,7 @@ public class GameManager : MonoBehaviour
         if (huntingMission == null) huntingMission = FindObjectOfType<HuntingMission>(); 
         if (controller == null) controller = FindObjectOfType<PlayerController>();
         if (myAS == null) myAS = GetComponent<AudioScript>();
-
+        if (mainCam == null) mainCam = Camera.main;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -145,6 +147,7 @@ public class GameManager : MonoBehaviour
     private void SetCursor()
     {
 
+        // -1판이면 하지 않는다
         if (stageNum == -1) return;
 
 
@@ -232,6 +235,7 @@ public class GameManager : MonoBehaviour
         // accBool = 10f;
         Time.timeScale = 0.1f;
 
+        // 승리할 경우 스테이지 증가
         if (winBool)
         {
 
@@ -272,6 +276,7 @@ public class GameManager : MonoBehaviour
 
             Reset();
 
+            ChangeClearFlags();
             // 커스텀 로보로보 스타트
             SceneManager.LoadScene(GetStageName());
 
@@ -283,6 +288,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 초기화
+    /// </summary>
     private void Reset()
     {
 
@@ -297,11 +305,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 스테이지 번호 추가
+    /// </summary>
     private void AddStageNum()
     {
 
         stageNum++;
-
+        
+        // 모든 스테이지 클리어한 경우
         if (stageNum >= stageInfo.Length)
         {
 
@@ -309,9 +321,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 스테이지 번호로 씬 이름 가져오기
+    /// </summary>
+    /// <returns></returns>
     private string GetStageName()
     {
-
+        
         if (stageNum == -1)
         {
 
@@ -324,6 +340,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 잡을 목표 수 설정
+    /// </summary>
     private void SetMission()
     {
 
@@ -367,9 +386,28 @@ public class GameManager : MonoBehaviour
             myAS?.SetSnd(cheatSnd[UnityEngine.Random.Range(0, cheatSnd.Length)]);
             myAS?.GetSnd(true);
         }
-    }
+    }   
 
-    
+    /// <summary>
+    /// 화면 변경
+    /// 3번 스테이지만(보스판) 스카이박스 해제 
+    /// </summary>
+    private void ChangeClearFlags()
+    {
+
+        if (stageNum == 2)
+        {
+
+            mainCam.clearFlags = CameraClearFlags.SolidColor;
+            mainCam.backgroundColor = Color.black;
+        }
+        else
+        {
+
+            mainCam.clearFlags = CameraClearFlags.Skybox;
+            mainCam.backgroundColor = Color.white;
+        }
+    }
 }
 
 

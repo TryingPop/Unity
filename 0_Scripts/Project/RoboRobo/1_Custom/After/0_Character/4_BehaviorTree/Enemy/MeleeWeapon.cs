@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class MeleeWeapon : MonoBehaviour
@@ -39,6 +38,7 @@ public class MeleeWeapon : MonoBehaviour
     IEnumerator Attack()
     {
 
+       
         yield return atkTime;
 
         this.enabled = false;
@@ -56,7 +56,7 @@ public class MeleeWeapon : MonoBehaviour
         if (other.tag == targetTag)
         {
 
-            other.gameObject.GetComponent<Stats>().OnDamaged(atk);
+            other.gameObject.GetComponent<Unit>().OnDamaged(atk);
             this.enabled = false;
         }
     }

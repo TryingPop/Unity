@@ -1,19 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class EnemyMissile : MonoBehaviour
+public class EnemyGuideMissile : EnemyMissile
 {
-
-    protected static int atk;
-    protected static float spd;
-    protected static float turn;
-
-    protected Rigidbody rd;
-    protected Transform targetTrans;
-
     private void Awake()
     {
 
@@ -26,37 +16,22 @@ public class EnemyMissile : MonoBehaviour
 
         rd.velocity = transform.forward * spd;
 
+        // 유도
         var targetRotation = Quaternion.LookRotation(targetTrans.position - transform.position);
         rd.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetRotation, turn));
     }
 
-
-    public static void SetVar(int atk, float spd, float turn)
-    {
-
-        EnemyMissile.atk = atk;
-        EnemyMissile.spd = spd;
-        EnemyMissile.turn = turn;
-    }
-
-    public void Set(Transform targetTrans)
-    {
-
-        this.targetTrans = targetTrans;
-    }
-
-
     private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.tag == "Enemy") return;
+
         if (other.tag == targetTrans.tag)
         {
 
             // other.GetComponent<Stat>().OnDamaged(dmg);
             Debug.Log("어태크!");
+            Destroy(gameObject);
         }
 
-        Destroy(gameObject);
     }
-
 }

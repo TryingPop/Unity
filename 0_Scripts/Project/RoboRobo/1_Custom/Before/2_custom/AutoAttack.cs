@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class AutoAttack : Stats
+public class AutoAttack : Unit
 {
 
     private static Transform targetTrans;
