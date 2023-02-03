@@ -13,6 +13,7 @@ public class TitleManager : MonoBehaviour
 
         // 게임화면에서 타이틀로 올 때 DontDestroyObject이므로 파괴안되어서 직접 파괴
         if (DontDestroyObj.instance != null) Destroy(DontDestroyObj.instance.gameObject);
+        Time.timeScale = 1.0f;
     }
 
     public void OnStart()

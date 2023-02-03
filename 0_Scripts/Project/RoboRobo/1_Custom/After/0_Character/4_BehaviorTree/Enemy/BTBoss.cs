@@ -17,6 +17,8 @@ public class BTBoss : Stat
     public GameObject[] missiles;   // 원거리 공격 투사체
     public GameObject[] summoners;    // 소환수 목록
 
+    [SerializeField] private GameObject atkZone;
+
     public NavMeshAgent agent;
     public Transform targetTrans;
 
@@ -112,6 +114,27 @@ public class BTBoss : Stat
         }
     }
 
+    protected override IEnumerator Attack()
+    {
+
+        atkBool = true;
+        atkZone.SetActive(true);
+        // 1초간 공격 범위 보여주기
+        yield return atkWaitTime;
+        yield return atkWaitTime;
+
+        myWC.AtkColActive(true);
+        
+        // 1초동안 데미지 콜라이더 활성화
+        yield return atkWaitTime;
+        yield return atkWaitTime;
+        atkZone.SetActive(false);
+        myWC.AtkColActive(false);
+        yield return atkWaitTime;
+        atkBool = false;
+    }
+
+
     /// <summary>
     /// idle 체크
     /// </summary>
@@ -121,6 +144,8 @@ public class BTBoss : Stat
         beforIdleBool = nowIdleBool;
         nowIdleBool = false;
     }
+
+
 
     /// <summary>
     /// idle에 첫 진입인지 확인
@@ -166,6 +191,8 @@ public class BTBoss : Stat
 
             phase = Phase.first;
         }
+
+        ChkDead();
     }
 
     public void ActiveWeapon()
@@ -173,6 +200,8 @@ public class BTBoss : Stat
 
         if (!atkBool) 
         {
+
+            WalkAnim(false);
             StartCoroutine(Attack());
             AtkAnim(true);
         }
@@ -182,6 +211,7 @@ public class BTBoss : Stat
     {
 
         other.GetComponent<Stat>().OnDamaged(status.Atk);
+        atkZone.SetActive(false);
         base.Attack(sender, other);
     }
 

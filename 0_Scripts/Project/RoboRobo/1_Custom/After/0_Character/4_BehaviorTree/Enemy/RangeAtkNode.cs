@@ -8,12 +8,16 @@ public class RangeAtkNode : Node
 
     private BTBoss ai;
 
+    private Vector3 dir;
+
     private int dmg;
 
     private float moveSpd = 8f;
     private float turnSpd = 0.5f;
 
     public bool setBool = true;
+
+    
 
     public RangeAtkNode(BTBoss ai, int rangeAtk)
     {
@@ -43,6 +47,10 @@ public class RangeAtkNode : Node
         return ai.missiles[num];
     }
 
+    /// <summary>
+    /// 탄창 비었는지 확인
+    /// </summary>
+    /// <returns></returns>
     private bool ChkBulletEmpty()
     {
 
@@ -56,6 +64,9 @@ public class RangeAtkNode : Node
         return false;
     }
 
+    /// <summary>
+    /// 미사일 발사 및 보는 방향 설정
+    /// </summary>
     private void Shoot()
     {
 
@@ -67,11 +78,22 @@ public class RangeAtkNode : Node
         } 
 
         ai.bulletNum--;
-        ai.transform.LookAt(ai.targetTrans.position);
+        SetDir();
+        ai.transform.LookAt(dir);
         GameObject missile = Object.Instantiate(SetMissile(), ai.missileTransform.position, ai.missileTransform.rotation);
         missile.GetComponent<EnemyMissile>().Set(ai.targetTrans);
         
 
         Object.Destroy(missile, 5f);
+    }
+
+    /// <summary>
+    /// 방향 설정
+    /// </summary>
+    private void SetDir()
+    {
+
+        dir = ai.targetTrans.transform.position;
+        dir.y = ai.transform.position.y;
     }
 }

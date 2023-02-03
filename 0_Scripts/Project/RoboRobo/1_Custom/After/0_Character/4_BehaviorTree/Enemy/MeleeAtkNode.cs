@@ -10,8 +10,6 @@ public class MeleeAtkNode : Node
 
     private int atk;
 
-    public bool setBool = true;
-
     public MeleeAtkNode(BTBoss ai, int atk)
     {
 
@@ -21,14 +19,6 @@ public class MeleeAtkNode : Node
 
     public override NodeState Evaluate()
     {
-        if (setBool)
-        {
-
-            setBool = false;
-            
-        }
-
-        ai.WalkAnim(false);
 
         ai.ActiveWeapon();
         return NodeState.SUCCESS;    

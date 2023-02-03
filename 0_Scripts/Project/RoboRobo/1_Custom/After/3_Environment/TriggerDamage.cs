@@ -11,11 +11,13 @@ public class TriggerDamage : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (other.tag != "Player" && other.tag != "Enemy") return;
+
         if (!objs.Contains(other.gameObject))
         {
 
             objs.Add(other.gameObject);
-            other.gameObject.GetComponent<Stats>().OnDamaged(dmg);
+            other.gameObject.GetComponent<Unit>()?.OnDamaged(dmg);
             StartCoroutine(Timer(other.gameObject));
         }
     }

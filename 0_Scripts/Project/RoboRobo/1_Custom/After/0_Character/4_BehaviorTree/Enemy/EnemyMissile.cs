@@ -45,11 +45,10 @@ public class EnemyMissile : MonoBehaviour
         this.targetTrans = targetTrans;
     }
 
-
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        
-        if (other.tag == targetTrans.tag)
+
+        if (collision.gameObject.tag == targetTrans.tag)
         {
 
             // other.GetComponent<Stat>().OnDamaged(dmg);
@@ -58,5 +57,4 @@ public class EnemyMissile : MonoBehaviour
 
         Destroy(gameObject);
     }
-
 }
