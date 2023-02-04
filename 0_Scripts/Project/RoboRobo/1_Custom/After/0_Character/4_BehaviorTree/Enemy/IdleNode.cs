@@ -24,7 +24,7 @@ public class IdleNode : Node
     private Vector3 destination;
 
     private byte actCnt;
-
+    private bool smBool = true;
     // 持失切
     public IdleNode(BTBoss ai)
     {
@@ -69,7 +69,7 @@ public class IdleNode : Node
 
             state = STATE.Idle;
         }
-        else if (false)
+        else if (true && objPooling.instance.ChkSummon())
         {
 
             state = STATE.Summon;
@@ -130,6 +130,7 @@ public class IdleNode : Node
             {
                 // 社発
                 int num = Random.Range(0, ai.summoners.Length);
+
                 do
                 {
                     destination = SetDestination(5f);
@@ -140,7 +141,16 @@ public class IdleNode : Node
                     destination = SetDestination(5f);
                 }
 
-                GameObject.Instantiate(ai.summoners[num], destination, Quaternion.Euler(ai.transform.forward));
+                if (smBool)
+                {
+
+                    smBool = false;
+                    objPooling.instance.SetPrefabs(ai.summoners);
+                }
+
+                int idx = Random.Range(0, ai.summoners.Length);
+                GameObject obj = objPooling.instance.CreateObj(idx);
+                obj.transform.position = destination;
             }
 
             else

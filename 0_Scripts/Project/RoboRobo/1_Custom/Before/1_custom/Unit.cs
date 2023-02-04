@@ -8,7 +8,6 @@ public class Unit : Stat
     // 인스펙터에서 받아 올 컴포넌트나 게임오브젝트
 #region Variable 
     [Header("컴포넌트 or 오브젝트")]
-    [SerializeField] private    ParticleSystem      damagedParticle;    // 피격 시 생기는 파티클
     [SerializeField] protected  GameObject          damagedText;        // 데미지 수치 UI
     
     

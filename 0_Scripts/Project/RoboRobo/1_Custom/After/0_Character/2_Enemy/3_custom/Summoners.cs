@@ -1,50 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 
-public class AutoAttack : Unit
+public class Summoners : Stat
 {
 
     private static Transform targetTrans;
     private static PlayerController controller;
 
+    [SerializeField] private EnemyAnimation anim;
     private Vector3 dir;
-
-    private Animation myAnim;
-
-    public IObjectPool<AutoAttack> poolToReturn;
-    
 
     private void Awake()
     {
-        if (targetTrans == null)
-        {
 
-            targetTrans = GameObject.FindGameObjectWithTag("Player").transform;
-        }
         if (controller == null)
         {
 
-            controller = targetTrans.GetComponent<PlayerController>();
+            controller = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+            targetTrans = controller.transform;
         }
 
+        if(anim == null)
+        {
+
+            anim = GetComponent<EnemyAnimation>();
+        }
         GetComp();
 
-        myAnim = GetComponent<Animation>();
-
-        myAnim["0_idle"].layer = 0;
-        myAnim["1_walk"].layer = 1;
-        myAnim["2_attack"].layer = 2;
-        myAnim["3_attacked"].layer = 3;
-
         myWC.Attack += Attack;
+    }
+    private void Start()
+    {
+
+        Init();
     }
 
     private void OnEnable()
     {
 
-        Reset();
+        Init();
     }
 
     private void Update()
@@ -52,21 +47,21 @@ public class AutoAttack : Unit
         Move();
     }
 
-    public void Reset()
+    public override void Init()
     {
-        Init();
 
-        // dmgCol.enabled = true;
-        myAnim.CrossFade("0_idle", 0.2f);
-        myAnim.CrossFade("1_walk", 0.1f);
-        myAnim.CrossFade("2_attack", 0.1f);
+        base.Init();
+
+        anim.ChkAnimation(0, true);
+        anim.ChkAnimation(1, true);
+        anim.ChkAnimation(2, true);
 
         StartCoroutine(Attack());
     }
 
-
     private void Move()
     {
+
         dir = targetTrans.position - transform.position;
         dir.y = 0;
         dir = dir.normalized;
@@ -75,26 +70,13 @@ public class AutoAttack : Unit
         transform.LookAt(transform.position + dir);
     }
 
-
-
-
-    public override void OnDamaged(int atk)
-    {
-
-        base.OnDamaged(atk);
-
-        StatsUI.instance.SetEnemyHp(this);
-
-        ChkDead();
-    }
-
-
     protected override IEnumerator Attack()
     {
+        
         while (!deadBool)
         {
-            myWC.AtkColActive(true);
 
+            myWC.AtkColActive(true);
             yield return atkWaitTime;
         }
     }
@@ -103,7 +85,6 @@ public class AutoAttack : Unit
     {
 
         controller.OnDamaged(status.Atk);
-
         base.Attack(sender, other);
     }
 
@@ -112,9 +93,13 @@ public class AutoAttack : Unit
         base.Dead();
         StopAllCoroutines();
 
-        // 점수 메소드
-        GameManager.instance.ChkWin();
+        gameObject.SetActive(false);
+    }
 
-        poolToReturn.Release(element: this);
+    public override void OnDamaged(int atk)
+    {
+        base.OnDamaged(atk);
+
+        ChkDead();
     }
 }

@@ -17,7 +17,7 @@ public class TriggerDamage : MonoBehaviour
         {
 
             objs.Add(other.gameObject);
-            other.gameObject.GetComponent<Unit>()?.OnDamaged(dmg);
+            other.gameObject.GetComponent<Stat>()?.OnDamaged(dmg);
             StartCoroutine(Timer(other.gameObject));
         }
     }

@@ -17,7 +17,12 @@ public class BTBoss : Stat
     public GameObject[] missiles;   // 원거리 공격 투사체
     public GameObject[] summoners;    // 소환수 목록
 
-    [SerializeField] private GameObject atkZone;
+    [SerializeField] private GameObject atkZone;            // 공격 존 보여주는 오브젝트
+    [SerializeField] private GameObject damagedText;        // 데미지 수치 UI
+
+    [SerializeField] private AudioClip damagedSnd;          // 피격 사운드
+    [SerializeField] protected AudioScript myAS;            // 소리 컨트롤러        
+
 
     public NavMeshAgent agent;
     public Transform targetTrans;
@@ -31,6 +36,7 @@ public class BTBoss : Stat
 
     public bool nowIdleBool;
     private bool beforIdleBool;
+
 
     public int NowHp { 
         get 
@@ -179,6 +185,9 @@ public class BTBoss : Stat
     public override void OnDamaged(int atk)
     {
 
+        myAS.SetSnd(damagedSnd);
+        myAS.GetSnd(false);
+
         base.OnDamaged(atk);
 
         if (nowHp < phaseHp)
@@ -190,6 +199,13 @@ public class BTBoss : Stat
         {
 
             phase = Phase.first;
+        }
+
+        if (damagedText != null)
+        {
+
+            GameObject obj = Instantiate(damagedText, transform);
+            obj.GetComponent<DamageScript>()?.SetTxt(atk.ToString());
         }
 
         ChkDead();

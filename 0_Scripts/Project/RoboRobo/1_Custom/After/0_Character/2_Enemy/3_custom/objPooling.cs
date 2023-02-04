@@ -41,8 +41,8 @@ public class objPooling : MonoBehaviour
         // 먼저 비활성화 오브젝트 확인
         if (chk != -1)
         {
-
-            return objs[idx][chk];
+            objs[idx][chk].SetActive(true);
+            return  objs[idx][chk];
         }
         // 풀에 여유분이 있는지 확인
         else if (GetObjNum(idx) < objMaxNum) 
@@ -84,6 +84,11 @@ public class objPooling : MonoBehaviour
     /// <returns>개체 수</returns>
     public int GetObjNum(int idx)
     {
+        if (objs[idx] == null)
+        {
+
+            objs[idx] = new List<GameObject>();
+        }
 
         return objs[idx].Count;
     }
@@ -107,6 +112,28 @@ public class objPooling : MonoBehaviour
         objs = new List<GameObject>[prefabs.Length];
     }
     
+    public bool ChkSummon()
+    {
+
+        if (GetObjsNum() < objMaxNum)
+        {
+
+            return true;
+        }
+        
+        for (int i = 0; i < objs.Length; i++)
+        {
+
+            if (ChkInActiveObj(i) != -1)
+            {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// 특정 프리팹의 비활성화 번호 알아내기
     /// </summary>
