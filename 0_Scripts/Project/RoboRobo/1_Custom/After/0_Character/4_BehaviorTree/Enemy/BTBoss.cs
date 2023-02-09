@@ -37,6 +37,7 @@ public class BTBoss : Stat
     public bool nowIdleBool;
     private bool beforIdleBool;
 
+    public bool damagedBool;
 
     public int NowHp { 
         get 
@@ -117,6 +118,8 @@ public class BTBoss : Stat
             ResetIdleBool();
             topNode.Evaluate();
             yield return new WaitForSeconds(0.3f);
+
+            damagedBool = false;
         }
     }
 
@@ -185,10 +188,15 @@ public class BTBoss : Stat
     public override void OnDamaged(int atk)
     {
 
+        damagedBool = true;
+
         myAS.SetSnd(damagedSnd);
         myAS.GetSnd(false);
 
         base.OnDamaged(atk);
+
+        float hp = (float)nowHp / status.Hp;
+        StatsUI.instance.SetEnemyHp(hp);
 
         if (nowHp < phaseHp)
         {
@@ -209,6 +217,14 @@ public class BTBoss : Stat
         }
 
         ChkDead();
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+            
+        GameManager.instance.ChkWin();
+        StopAllCoroutines();
     }
 
     public void ActiveWeapon()

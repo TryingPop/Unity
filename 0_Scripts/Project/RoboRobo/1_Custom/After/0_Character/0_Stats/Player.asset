@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   atk: 5
   def: 0
-  hp: 10000
+  hp: 100
   moveSpd: 12
   atkInterval: 0.5

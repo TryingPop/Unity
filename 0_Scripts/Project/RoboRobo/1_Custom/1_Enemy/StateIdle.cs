@@ -158,14 +158,6 @@ public class StateIdle: MonoBehaviour
             if (_random <= actions[i].weight)
             {
                 
-                /*
-                if (i == 1)
-                {
-
-                    moveBool = true;
-                }
-                */
-                
                 myState = (State)i;
                 return i;
             }

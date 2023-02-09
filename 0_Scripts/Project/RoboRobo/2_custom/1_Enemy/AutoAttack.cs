@@ -82,8 +82,8 @@ public class AutoAttack : Unit
     {
 
         base.OnDamaged(atk);
-
-        StatsUI.instance.SetEnemyHp(this);
+        float hp = (float)nowHp / status.Hp;
+        StatsUI.instance.SetEnemyHp(hp);
 
         ChkDead();
     }

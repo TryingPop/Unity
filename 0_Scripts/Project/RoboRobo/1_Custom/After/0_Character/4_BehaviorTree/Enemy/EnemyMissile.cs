@@ -51,8 +51,7 @@ public class EnemyMissile : MonoBehaviour
         if (collision.gameObject.tag == targetTrans.tag)
         {
 
-            // other.GetComponent<Stat>().OnDamaged(dmg);
-            Debug.Log("╬Небе╘!");
+            collision.gameObject.GetComponent<Stat>().OnDamaged(atk);
         }
 
         Destroy(gameObject);

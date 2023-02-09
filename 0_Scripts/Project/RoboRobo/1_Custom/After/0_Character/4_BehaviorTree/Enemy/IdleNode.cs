@@ -11,7 +11,7 @@ public class IdleNode : Node
 
         None = 1,
         Heal = 3,
-        Summon = 50,
+        Summon = 20,
         Idle = 10,
         Wander = -1,
     }
@@ -119,6 +119,13 @@ public class IdleNode : Node
     {
 
         actCnt++;
+
+        if (ai.damagedBool) 
+        {
+
+            actCnt = 0; 
+            return; 
+        }
 
         if (actCnt >= (byte)state)
         {

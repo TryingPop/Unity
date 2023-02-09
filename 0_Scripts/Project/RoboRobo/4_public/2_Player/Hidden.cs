@@ -5,9 +5,9 @@ using UnityEngine;
 public class Hidden : MonoBehaviour
 {
 
-    [SerializeField] private int boomRatio;
-    [SerializeField] private float timeConquerorRatio = 2f;
-    [SerializeField] private float forcePow;
+    [SerializeField] private int boomRatio;     // boomAttacker 공격력 추가 비율
+    [SerializeField] private float timeConquerorRatio = 2f; // 시간 비율
+    [SerializeField] private float forcePow;    // 홈런 파워
 
     [SerializeField] private AudioScript hiddenSnd;
 

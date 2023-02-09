@@ -54,11 +54,11 @@ public class StatsUI : MonoBehaviour
         atkText.text = $"{atk}";
     }
 
-    public void SetEnemyHp(Unit targetStatus)
+    public void SetEnemyHp(float hp)
     {
         StartCoroutine(ActiveEnemyHp());
-        EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * targetStatus.GetHpBar();
-        EnemyHpTxt.text = targetStatus.GetHpBar() <= 0 ? "0%" : $"{100 * targetStatus.GetHpBar():F1}%";
+        EnemyHpBar.localScale = Vector3.forward + Vector3.up + Vector3.right * hp;
+        EnemyHpTxt.text = hp <= 0 ? "0%" : $"{100 * hp:F1}%";
     }
 
     private IEnumerator ActiveEnemyHp()

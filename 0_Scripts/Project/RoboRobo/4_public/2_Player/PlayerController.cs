@@ -305,6 +305,11 @@ public class PlayerController : Unit
                 StartCoroutine(Attack());
             }
         }
+        else if (hidden.ChkAbility(Hidden.Ability.ContinuousAttacker))
+        {
+
+            myWC.AtkColActive(false);
+        }
     }
 
     /// <summary>
@@ -453,7 +458,8 @@ public class PlayerController : Unit
 
         StatsUI.instance.SetHp(nowHp);
 
-        if (!hidden.ChkAbility(Hidden.Ability.Immortality))
+        if (!hidden.ChkAbility(Hidden.Ability.Immortality) 
+            && GameManager.instance.state == GameManager.GAMESTATE.Play)
         {
 
             ChkDead();

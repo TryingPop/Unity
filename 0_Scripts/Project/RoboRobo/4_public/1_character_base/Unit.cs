@@ -101,14 +101,5 @@ public class Unit : Stat
         Instantiate(atkParticle, targetStats.transform.position, Quaternion.identity);
     }
 
-    /// <summary>
-    /// 현재 체력 %
-    /// Enemy 쪽에서만 쓸꺼
-    /// </summary>
-    /// <returns>현재 체력 %</returns>
-    public float GetHpBar()
-    {
 
-        return (float)nowHp / status.Hp;
-    }
 }

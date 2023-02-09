@@ -185,7 +185,8 @@ public class EnemyController : Unit
         
         base.OnDamaged(_damage);
 
-        StatsUI.instance.SetEnemyHp(this);
+		float hp = (float)nowHp / status.Hp;
+		StatsUI.instance.SetEnemyHp(hp);
 
 		ChkDead();
 	}

@@ -34,8 +34,6 @@ public class RangeAtkNode : Node
         ai.WalkAnim(false);
         Shoot();
 
-        Debug.Log("원거리 공격");
-
         return NodeState.SUCCESS;
     }
 
@@ -69,6 +67,7 @@ public class RangeAtkNode : Node
     /// </summary>
     private void Shoot()
     {
+        if (ai.damagedBool) return;
 
         if (setBool)
         {

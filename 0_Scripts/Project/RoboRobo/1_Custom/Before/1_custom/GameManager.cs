@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, Tooltip("스테이지 정보")] Stage[] stageInfo;
 
-    [SerializeField, Tooltip("기본 브금")] private AudioClip bgmSnd;
+    [SerializeField, Tooltip("기본 브금")] private AudioClip[] bgmSnd;
     [SerializeField, Tooltip("치트 모드 활성화 시 사용할 노래")] private AudioClip[] cheatSnd;
     public PlayerController controller;
 
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
 
         beCheat = false;
 
-        myAS?.SetSnd(bgmSnd);
+        myAS?.SetSnd(bgmSnd[0]);
         myAS?.GetSnd(true);
     }
 
@@ -240,6 +240,21 @@ public class GameManager : MonoBehaviour
         {
 
             AddStageNum();
+            if (stageNum == 2)
+            {
+
+                if (!beCheat) 
+                {
+
+                    myAS.SetSnd(bgmSnd[1]);
+                }
+                else
+                {
+
+                    myAS.SetSnd(cheatSnd[2]);
+                }
+                myAS.GetSnd(true);
+            }
         }
 
         // resultUI 가 있으면 게임 오버 ui 띄우고 없으면 바로 다시 시작
@@ -272,7 +287,6 @@ public class GameManager : MonoBehaviour
         }
         else if (state == GAMESTATE.Gameover)
         {
-
 
             Reset();
 
@@ -383,7 +397,7 @@ public class GameManager : MonoBehaviour
         {
 
             beCheat = true;
-            myAS?.SetSnd(cheatSnd[UnityEngine.Random.Range(0, cheatSnd.Length)]);
+            myAS?.SetSnd(cheatSnd[UnityEngine.Random.Range(0, 2)]);
             myAS?.GetSnd(true);
         }
     }   
