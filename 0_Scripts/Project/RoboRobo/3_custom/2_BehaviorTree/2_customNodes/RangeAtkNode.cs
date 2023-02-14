@@ -8,14 +8,14 @@ public class RangeAtkNode : Node
 
     private BTBoss ai;
 
-    private Vector3 dir;
+    private Vector3 dir;            // 방향
 
-    private int dmg;
+    private int dmg;                // 데미지
 
-    private float moveSpd = 8f;
-    private float turnSpd = 0.5f;
+    private float moveSpd = 8f;     // 미사일 속도
+    private float turnSpd = 0.5f;   // 미사일 회전율 (유도탄)
 
-    public bool setBool = true;
+    public bool setBool = true;     // 처음인지 확인
 
     
 
@@ -29,14 +29,20 @@ public class RangeAtkNode : Node
     public override NodeState Evaluate()
     {
         
+        // 탄약 있는지 확인
         if (ChkBulletEmpty()) return NodeState.FAILURE;
 
+        // 걷기 멈추고 쏘기
         ai.WalkAnim(false);
         Shoot();
 
         return NodeState.SUCCESS;
     }
 
+    /// <summary>
+    /// 미사일 설정
+    /// </summary>
+    /// <returns></returns>
     private GameObject SetMissile()
     {
 
@@ -52,6 +58,7 @@ public class RangeAtkNode : Node
     private bool ChkBulletEmpty()
     {
 
+        // 탄약이 있는지 확인
         if (ai.bulletNum <= 0)
         {
 
@@ -67,8 +74,8 @@ public class RangeAtkNode : Node
     /// </summary>
     private void Shoot()
     {
-        if (ai.damagedBool) return;
 
+        // 탄 데미지 설정
         if (setBool)
         {
 
@@ -76,18 +83,20 @@ public class RangeAtkNode : Node
             EnemyMissile.SetVar(dmg, moveSpd, turnSpd);
         } 
 
+        // 탄피 감소 및 바라보는 방향 설정
         ai.bulletNum--;
         SetDir();
         ai.transform.LookAt(dir);
-        GameObject missile = Object.Instantiate(SetMissile(), ai.missileTransform.position, ai.missileTransform.rotation);
-        missile.GetComponent<EnemyMissile>().Set(ai.targetTrans);
-        
 
-        Object.Destroy(missile, 5f);
+        // 미사일 선택
+        GameObject missile = Object.Instantiate(SetMissile(), ai.missileTransform.position, ai.missileTransform.rotation);
+
+        // 타겟 방향 선택
+        missile.GetComponent<EnemyMissile>().Set(ai.targetTrans);
     }
 
     /// <summary>
-    /// 방향 설정
+    /// 바라보는 방향 설정
     /// </summary>
     private void SetDir()
     {

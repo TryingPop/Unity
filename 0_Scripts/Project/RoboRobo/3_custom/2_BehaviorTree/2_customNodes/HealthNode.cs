@@ -19,6 +19,7 @@ public class HealthNode : Node
     public override NodeState Evaluate()
     {
 
+        // 페이즈 확인
         return ai.phase == phase ? NodeState.SUCCESS : NodeState.FAILURE;
     }
 }

@@ -20,6 +20,7 @@ public class MeleeAtkNode : Node
     public override NodeState Evaluate()
     {
 
+        // 밀리 공격 활성화
         ai.ActiveWeapon();
         return NodeState.SUCCESS;    
     }

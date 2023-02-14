@@ -5,24 +5,22 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
 
-    public static EnemySpawner instance;
+    public static EnemySpawner instance;                    // 싱글톤
 
-    [SerializeField] private float spawnMinTime;
-    [SerializeField] private float spawnMaxTime;
-    [SerializeField] private ObjCreator createScript;
+    [SerializeField] private float spawnMinTime;            // 최소 스폰시간
+    [SerializeField] private float spawnMaxTime;            // 최대 스폰시간
+    [SerializeField] private ObjCreator createScript;       // ObjCreator에서 생성하므로 가져온다
 
-    [SerializeField, Range(0, 9)] private int spawnMinNum;
-    [SerializeField, Range(0, 9)] private int spawnMaxNum;
+    [SerializeField, Range(0, 9)] private int spawnMinNum;  // 최소 스폰 수
+    [SerializeField, Range(0, 9)] private int spawnMaxNum;  // 최대 스폰 수
 
-    public Transform[] spawnersTrans;
+    public Transform[] spawnersTrans;                       // 스폰 위치
 
-    public Transform poolTrans;
+    public Transform poolTrans;                             // 하이라키에서 생성 될 장소 
 
-    public int maxNum;
-
-    private List<int> spawnerNum;
-    private float spawnTime;
-    private int spawnCnt;
+    private List<int> spawnerNum;                           // 생성 시에 사용할 리스트
+    private float spawnTime;                                // 스폰 시간
+    private int spawnCnt;                                   // 스폰 수
 
     private void Awake()
     {
@@ -39,13 +37,16 @@ public class EnemySpawner : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // 컴포넌트 가져오기
         createScript = GetComponent<ObjCreator>();
+        spawnerNum = new List<int>();
     }
 
 
     private void Start()
     {
 
+        // 자동으로 생성 시작
         StartCoroutine(StartCreating());
     }
 
@@ -55,16 +56,24 @@ public class EnemySpawner : MonoBehaviour
     /// <returns></returns>
     private IEnumerator StartCreating()
     {
+
+        // 실행 중에만 생성
         while (GameManager.instance.state == GameManager.GAMESTATE.Play)
         {
+
+            // 생성될 유닛 수 설정
             SetSpawnNum();
 
+            // 생성될 유닛 수에 맞춰 생성 장소 설정
             SetSpawners();
 
+            // 적 생성
             Spawning();
 
+            // 대기 시간 설정
             SetSpawnTime();
 
+            // 설정된 대기 시간동안 대기
             yield return new WaitForSeconds(spawnTime);
         }
     }
@@ -72,16 +81,20 @@ public class EnemySpawner : MonoBehaviour
 
 
     /// <summary>
-    /// 스폰 수 설정
+    /// 생성될 유닛 수 설정
     /// </summary>
     void SetSpawnNum()
     {
+
+        // 최소 수가 최대 수보다 많은 경우 서로 값 바꾼다
         if (spawnMinNum > spawnMaxNum)
         {
 
             Swap(ref spawnMinNum, ref spawnMaxNum);
         }
 
+        // 최소 값과 최대 값 사이의 랜덤값
+        // spawnCnt는 생성 장소보다 항상 적거나 같다
         spawnCnt = Random.Range(Mathf.Min(spawnMinNum, spawnersTrans.Length), 
                                 Mathf.Min(spawnMaxNum, spawnersTrans.Length) + 1
                                 );
@@ -93,15 +106,19 @@ public class EnemySpawner : MonoBehaviour
     void SetSpawners()
     {
 
-        spawnerNum = new List<int>();
+        // 리스트 비우기
+        spawnerNum.Clear();
 
+        // spawnCnt가 생성 장소보다 항상 적거나 같기에 무한루프에 걸릴 가능성은 없다
         while (spawnerNum.Count < spawnCnt)
         {
 
+            // 임의 번호 선택
             int num = Random.Range(0, spawnersTrans.Length);
 
-            // SetSpawnNum에서 spawnerTrans 값을 넘길 수 없도록 세팅해서
-            // 1마리씩 생성되게 가능
+            // 중복 값 확인을 list로 해서 중복값인지 확인하고
+            // 리스트에 추가
+            // set 자료구조 이용하면 바로 add하면 된다
             if (!spawnerNum.Contains(num))
             {
 
@@ -116,9 +133,11 @@ public class EnemySpawner : MonoBehaviour
     private void Spawning()
     {
 
+        // 앞에서 설정된 좌표에 생성
         for (int i = 0; i < spawnerNum.Count; i++)
         {
 
+            // 유닛 생성
             createScript.CreateObj(spawnersTrans[spawnerNum[i]].position);
         }
     }
@@ -130,16 +149,19 @@ public class EnemySpawner : MonoBehaviour
     /// </summary>
     void SetSpawnTime()
     {
+
+        // 최소 시간이 최대 시간 보다 큰 경우 값을 바꾼다
         if (spawnMinTime > spawnMaxTime)
         {
 
             Swap(ref spawnMinTime, ref spawnMaxTime);
         }
 
+        // 최소 시간 0.1f
         if (spawnMinTime == spawnMaxTime)
         {
 
-            spawnTime = spawnMinTime;
+            spawnTime = Mathf.Max(spawnMinTime, 0.1f);
         }
         else
         {
