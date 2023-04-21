@@ -8,8 +8,10 @@ public class Player_Physics2D : MonoBehaviour
 
     // 선언
     // Inspector에서 조정하기 위한 속성
-    public float speed = 12.0f;         // 플레이어 캐릭터의 속도
+    public float speed = 3.0f;         // 플레이어 캐릭터의 속도
+    // public float speed = 12.0f;         
     public float jumpPower = 500.0f;    // 플레이어 캐릭터의 점프시켰을 때의 파워
+    // public float jumpPower = 500.0f;    
     public Sprite[] run;                // 플레이어 캐릭터의 달리기 스프라이트
     public Sprite[] jump;               // 플레이어 캐릭터의 점프 스프라이트
 
@@ -140,6 +142,7 @@ public class Player_Physics2D : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
+        /*
         // 메뉴로 돌아간다
         if(GUI.Button(new Rect(10, 110, 100, 20), "메뉴"))
         {
@@ -147,6 +150,7 @@ public class Player_Physics2D : MonoBehaviour
             // Application.LoadLevel("SelectMenu");
             SceneManager.LoadScene("SelectMenu");
         }
+        */
     }
 }
 
