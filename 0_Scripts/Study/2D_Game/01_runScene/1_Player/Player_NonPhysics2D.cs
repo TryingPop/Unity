@@ -18,7 +18,7 @@ public class Player_NonPhysics2D : MonoBehaviour
     bool goalCheck;                 // 골인했는지 체크
 
     GameObject goCam;               // 추가된 변수 메인 카메라
-
+    SpriteRenderer image;           // 추가된 변수 캐릭터 이미지
     // 메시지에 대응한 코드
 
     // 컴포넌트 실행 시작
@@ -31,6 +31,7 @@ public class Player_NonPhysics2D : MonoBehaviour
         goalCheck = false;
 
         goCam = GameObject.Find("Main Camera");
+        image = GetComponent<SpriteRenderer>();
     }
 
     // 플레이어 캐릭터에 적용된 충돌 판정 영역에 다른 게임 오브젝트의 충돌 판정 영역이 겹쳤다
@@ -82,7 +83,8 @@ public class Player_NonPhysics2D : MonoBehaviour
                 // jumpVy = +1.3f;  // 금방 땅에 닿는다
 
                 // 점프 스프라이트 이미지로 전환
-                GetComponent<SpriteRenderer>().sprite = jump[0];
+                // GetComponent<SpriteRenderer>().sprite = jump[0];
+                image.sprite = jump[0];
             }
             else
             {
@@ -96,7 +98,8 @@ public class Player_NonPhysics2D : MonoBehaviour
                 }
 
                 // 달리기 스프라이트 이미지로 전환
-                GetComponent<SpriteRenderer>().sprite = run[animIndex];
+                // GetComponent<SpriteRenderer>().sprite = run[animIndex];
+                image.sprite = run[animIndex];
             }
         }
         else
