@@ -17,6 +17,7 @@ public class BaseCharacterController : MonoBehaviour
     [HideInInspector] public float speed = 6.0f;
     [HideInInspector] public float basScaleX = 1.0f;
     [HideInInspector] public bool activeSts = false;
+    [HideInInspector] public bool jumped = false;
     [HideInInspector] public bool grounded = false;
     [HideInInspector] public bool groundedPrev = false;
 
@@ -65,7 +66,7 @@ public class BaseCharacterController : MonoBehaviour
     {
 
         // 낙하 체크
-        if (transform.position.y < -30.0f)
+        if (transform.position.y < -30.0f)  
         {
 
             Dead(false);    // 사망
@@ -75,14 +76,15 @@ public class BaseCharacterController : MonoBehaviour
         groundedPrev = grounded;
         grounded = false;
 
+        // 초기화
         groundCheck_OnRoadObject = null;
         groundCheck_OnMoveObject = null;
         groundCheck_OnEnemyObject = null;
 
         Collider2D[][] groundCheckCollider = new Collider2D[3][];
-        groundCheckCollider[0] = Physics2D.OverlapPointAll(groundCheck_L.position);
-        groundCheckCollider[1] = Physics2D.OverlapPointAll(groundCheck_C.position);
-        groundCheckCollider[2] = Physics2D.OverlapPointAll(groundCheck_R.position);
+        groundCheckCollider[0] = Physics2D.OverlapPointAll(groundCheck_L.position); // 왼쪽 접지 콜라이더와 충돌한 모든 콜라이더 가져온다
+        groundCheckCollider[1] = Physics2D.OverlapPointAll(groundCheck_C.position); // 중간 접지 콜라이더와 충돌한 모든 콜라이더 가져온다
+        groundCheckCollider[2] = Physics2D.OverlapPointAll(groundCheck_R.position); // 우측 접지 콜라이더와 충돌한 모든 콜라이더 가져온다
 
         foreach (Collider2D[] groundCheckList in groundCheckCollider)
         {
@@ -90,21 +92,22 @@ public class BaseCharacterController : MonoBehaviour
             foreach(Collider2D groundCheck in groundCheckList)
             {
 
+                // isTrigger 체크가 안되어져 잇는 경우
                 if (!groundCheck.isTrigger)
                 {
 
-                    grounded = true;
-                    if (groundCheck.tag == "Road")
+                    grounded = true;    // 아래 발판이 있다고 판정
+                    if (groundCheck.tag == "Road")  // 길인 경우
                     {
 
                         groundCheck_OnRoadObject = groundCheck.gameObject;
                     }
-                    else if(groundCheck.tag == "MoveObject") 
+                    else if(groundCheck.tag == "MoveObject")   // MoveObject인 경우
                     {
 
                         groundCheck_OnMoveObject = groundCheck.gameObject;
                     }
-                    else if (groundCheck.tag == "Enemy")
+                    else if (groundCheck.tag == "Enemy")    // 적인 경우
                     {
 
                         groundCheck_OnEnemyObject = groundCheck.gameObject;
@@ -114,7 +117,7 @@ public class BaseCharacterController : MonoBehaviour
         }
 
         // 캐릭터 개별 처리
-        FixedUpdateCharacter();
+        FixedUpdateCharacter(); // 플레이어는 여기서 착지 여부, 방향, 감속여부, 카메라 좌표 순으로 처리한다
 
         // 이동 계산
         rigidbody2D.velocity = new Vector2(speedVx, rigidbody2D.velocity.y);
