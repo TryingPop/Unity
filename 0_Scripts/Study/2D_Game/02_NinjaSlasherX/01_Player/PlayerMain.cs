@@ -20,21 +20,22 @@ public class PlayerMain : MonoBehaviour
     {
         
         // 조작이 가능한가?
-        if (playerCtrl.activeSts)
+        if (!playerCtrl.activeSts)
         {
 
             return;
         }
 
         // 패드 처리
-        float joyMv = Input.GetAxis("Horizontal");
-        playerCtrl.ActionMove(joyMv);
+        float joyMv = Input.GetAxis("Horizontal");  // 좌우 키 입력 여부 확인
+        playerCtrl.ActionMove(joyMv);               // 이동 변수 세팅 및 애니메이션 설정
 
         // 점프
         if (Input.GetButtonDown("Jump"))
         {
 
-            playerCtrl.ActionJump();
+            playerCtrl.ActionJump();                // 점프 실행
         }
     }
 }
+
