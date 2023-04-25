@@ -11,8 +11,32 @@ public class PlayerController : BaseCharacterController
 
     // 내부 파라미터
     int jumpCount = 0;
+
+    volatile bool atkInputEnabled = false;              // 멀티스레드 프로그램에서 컴파일러로 변수 대입 처리를 생략하는 최적화를 하지 않는다는 것
+    volatile bool atkInputNow = false;
+
     bool breakEnabled = true;
     float groundFriction = 0.0f;
+
+    // 외부 파라미터
+    public readonly static int ANISTS_IDLE =
+        Animator.StringToHash("Base Layer.Player_Idle");
+    public readonly static int ANISTS_Walk =
+        Animator.StringToHash("Base Layer.Player_Walk");
+    public readonly static int ANISTS_Run =
+        Animator.StringToHash("Base Layer.Player_Run");
+    public readonly static int ANISTS_Jump =
+        Animator.StringToHash("Base Layer.Player_Jump");
+    public readonly static int ANISTS_ATTACK_A =
+        Animator.StringToHash("Base Layer.Player_ATK_A");
+    public readonly static int ANISTS_ATTACK_B =
+        Animator.StringToHash("Base Layer.Player_ATK_B");
+    public readonly static int ANISTS_ATTACK_C =
+        Animator.StringToHash("Base Layer.Player_ATK_C");
+    public readonly static int ANISTS_ATTACKJUMP_A =
+        Animator.StringToHash("Base Layer.Player_ATKJUMP_A");
+    public readonly static int ANISTS_ATTACKJUMP_B =
+        Animator.StringToHash("Base Layer.Player_ATKJUMP_B");
 
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
@@ -26,6 +50,9 @@ public class PlayerController : BaseCharacterController
 
     protected override void FixedUpdateCharacter()
     {
+
+        // 현재 스테이트 가져오기
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);  // 애니메이터에서 맨 위에 있는 Default Layer의 정보 가져온다
 
         // 착지 검사
         if (jumped)     // 점프 중인 경우
@@ -48,6 +75,18 @@ public class PlayerController : BaseCharacterController
             jumpCount = 0;
         }
         
+        // 공격 중인지 확인   
+        // nameHash는 더 이상 사용안되고 fullPathHash 이용하라고 한다
+        if(stateInfo.fullPathHash == ANISTS_ATTACK_A ||     
+            stateInfo.fullPathHash == ANISTS_ATTACK_B ||
+            stateInfo.fullPathHash == ANISTS_ATTACK_C ||
+            stateInfo.fullPathHash == ANISTS_ATTACKJUMP_A ||
+            stateInfo.fullPathHash == ANISTS_ATTACKJUMP_B)
+        {
+
+            // 이동 정지
+            speedVx = 0;
+        }
 
         // 캐릭터 방향
         transform.localScale = new Vector3(     // 크기 설정으로 캐릭터 바라보는 방향 설정
@@ -76,6 +115,28 @@ public class PlayerController : BaseCharacterController
 
         // 카메라
         Camera.main.transform.position = transform.position - Vector3.forward;  // 메인 카메라 태그로 등록된 카메라의 위치는 캐릭터에 -1 좌표 위치
+    }
+
+    // 코드 (애니메이션 이벤트용 코드)
+    public void EnableAttackInput()
+    {
+
+        atkInputEnabled = true;
+    }
+
+    public void SetNextAttack(string name)
+    {
+
+        if (atkInputNow == true)
+        {
+
+            atkInputNow = false;
+            animator.Play(name);
+        }
+
+        // 추가한 코드
+        atkInputEnabled = false;    // 앞번 공격에서 팔로우 스루 때 공격 버튼을 누르면
+                                    // 다음 공격 시 2단 공격이 나가서 이를 방지하고자 추가
     }
 
     // 코드 (기본 액션)
@@ -156,7 +217,25 @@ public class PlayerController : BaseCharacterController
 
     public void ActionAttack()
     {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.fullPathHash != ANISTS_ATTACK_A)
+        {
 
-        animator.SetTrigger("Attack_A");
+            animator.SetTrigger("Attack_A");
+        }
+        else
+        {
+
+            // animator.SetTrigger("Attack_B"); // 이 방법 이용 시 메카님은 다른 스레드로 애니메이션을 처리하고 잇어서
+                                                // 현재 스테이트를 하고 다음 스테이트를 시행하려고 하면 재생 중인 애니메이션과 취득한 스테이트 정보 사이에 타이밍이
+                                                // 어긋나게 되어 예상치 못한 상황이 발생할 수 있다
+            if (atkInputEnabled)
+            {
+
+                atkInputEnabled = false;
+                atkInputNow = true;
+            }
+
+        }
     }
 }
