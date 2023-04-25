@@ -35,6 +35,15 @@ public class PlayerMain : MonoBehaviour
         {
 
             playerCtrl.ActionJump();                // 점프 실행
+            return;                                 // 점프 후 바로 공격할 수 없게 처리를 정지시킨다
+        }
+
+        // 공격
+        if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2") 
+            || Input.GetButtonDown("Fire3"))
+        {
+
+            playerCtrl.ActionAttack();
         }
     }
 }
