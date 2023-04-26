@@ -19,7 +19,7 @@ public class PlayerController : BaseCharacterController
     float groundFriction = 0.0f;
 
     // 외부 파라미터
-    public readonly static int ANISTS_IDLE =
+    public readonly static int ANISTS_Idle =
         Animator.StringToHash("Base Layer.Player_Idle");
     public readonly static int ANISTS_Walk =
         Animator.StringToHash("Base Layer.Player_Walk");
@@ -66,6 +66,19 @@ public class PlayerController : BaseCharacterController
                 animator.SetTrigger("Idle");    // 탈출 애니메이션
                 jumped = false;
                 jumpCount = 0;
+                rigidbody2D.gravityScale = gravityScale;
+            }
+            if (Time.fixedTime > jumpStartTime + 1.0f)
+            {
+
+                if (stateInfo.fullPathHash == ANISTS_Idle ||
+                    stateInfo.fullPathHash == ANISTS_Walk ||
+                    stateInfo.fullPathHash == ANISTS_Run ||
+                    stateInfo.fullPathHash == ANISTS_Jump)
+                {
+
+                    rigidbody2D.gravityScale = gravityScale;
+                }
             }
         }
         // if (!jumped)
@@ -73,6 +86,7 @@ public class PlayerController : BaseCharacterController
         {
 
             jumpCount = 0;
+            rigidbody2D.gravityScale = gravityScale;
         }
         
         // 공격 중인지 확인   
@@ -93,7 +107,7 @@ public class PlayerController : BaseCharacterController
             basScaleX * dir, transform.localScale.y, transform.localScale.z);
 
         // 점프 도중에 가로 이동 감속
-        if (jumped && grounded)         // 점프 시작 시
+        if (jumped && !grounded && groundCheck_OnMoveObject == null)         // 점프 시작 시
         {
 
             if (breakEnabled)
@@ -185,57 +199,90 @@ public class PlayerController : BaseCharacterController
 
     public void ActionJump()
     {
-
-        switch (jumpCount)
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.fullPathHash == ANISTS_Idle ||
+            stateInfo.fullPathHash == ANISTS_Walk ||
+            stateInfo.fullPathHash == ANISTS_Run ||
+            (stateInfo.fullPathHash == ANISTS_Jump &&
+            rigidbody2D.gravityScale >= gravityScale))
         {
+            switch (jumpCount)
+            {
 
-            case 0:     // 첫 점프인 경우
-                if (grounded)
-                {
+                case 0:     // 첫 점프인 경우
+                    if (grounded)
+                    {
 
-                    animator.SetTrigger("Jump");                // 애니메이션 실행
-                    rigidbody2D.velocity = Vector2.up * 30.0f;  // 위로 30 속도 이동
-                    jumpStartTime = Time.fixedTime;             // 점프 시작 시간 저장
-                    jumped = true;                              // 점프 상태 
-                    jumpCount++;                                // 현재 몇단 점프인지 확인
-                }
-                break;
+                        animator.SetTrigger("Jump");                // 애니메이션 실행
+                        rigidbody2D.velocity = Vector2.up * 30.0f;  // 위로 30 속도 이동
+                        jumpStartTime = Time.fixedTime;             // 점프 시작 시간 저장
+                        jumped = true;                              // 점프 상태 
+                        jumpCount++;                                // 현재 몇단 점프인지 확인
+                    }
+                    break;
 
-            case 1:     // 이단 점프 하는지 체크
-                if (!grounded)
-                {
+                case 1:     // 이단 점프 하는지 체크
+                    if (!grounded)
+                    {
 
-                    animator.Play("Player_Jump", 0, 0.0f);       // 점프 애니메이션 시작
-                    rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 20.0f);  // 위로 20만큼만
-                    jumped = true;                              // 점프 상태 true
-                    jumpCount++;                                // 점프 카운트 업
-                }
-                break;
+                        animator.Play("Player_Jump", 0, 0.0f);       // 점프 애니메이션 시작
+                        rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 20.0f);  // 위로 20만큼만
+                        jumped = true;                              // 점프 상태 true
+                        jumpCount++;                                // 점프 카운트 업
+                    }
+                    break;
+            }
         }
-
     }
 
     public void ActionAttack()
     {
+
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.fullPathHash != ANISTS_ATTACK_A)
+
+        if (stateInfo.fullPathHash == ANISTS_Idle ||
+            stateInfo.fullPathHash == ANISTS_Walk ||
+            stateInfo.fullPathHash == ANISTS_Run ||
+            stateInfo.fullPathHash == ANISTS_Jump ||
+            stateInfo.fullPathHash == ANISTS_ATTACK_C)
         {
 
             animator.SetTrigger("Attack_A");
+            if (stateInfo.fullPathHash == ANISTS_Jump ||
+                stateInfo.fullPathHash == ANISTS_ATTACK_C)
+            {
+
+                rigidbody2D.velocity = Vector2.zero;
+                rigidbody2D.gravityScale = 0.1f;
+            }
+        }
+    }
+
+    public void ActionAttackJump()
+    {
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (grounded &&
+            (stateInfo.fullPathHash == ANISTS_Idle ||
+            stateInfo.fullPathHash == ANISTS_Walk ||
+            stateInfo.fullPathHash == ANISTS_Run ||
+            stateInfo.fullPathHash == ANISTS_ATTACK_A ||
+            stateInfo.fullPathHash == ANISTS_ATTACK_B))
+        {
+
+            animator.SetTrigger("Attack_C");
+            jumpCount = 2;
         }
         else
         {
 
-            // animator.SetTrigger("Attack_B"); // 이 방법 이용 시 메카님은 다른 스레드로 애니메이션을 처리하고 잇어서
-                                                // 현재 스테이트를 하고 다음 스테이트를 시행하려고 하면 재생 중인 애니메이션과 취득한 스테이트 정보 사이에 타이밍이
-                                                // 어긋나게 되어 예상치 못한 상황이 발생할 수 있다
             if (atkInputEnabled)
             {
 
                 atkInputEnabled = false;
                 atkInputNow = true;
             }
-
         }
     }
 }

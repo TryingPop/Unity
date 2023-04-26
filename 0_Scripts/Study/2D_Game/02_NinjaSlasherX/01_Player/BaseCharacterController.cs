@@ -37,6 +37,18 @@ public class BaseCharacterController : MonoBehaviour
     protected GameObject groundCheck_OnMoveObject;
     protected GameObject groundCheck_OnEnemyObject;
 
+    protected bool addForceVxEnabled = false;
+    protected float addForceVxStartTime = 0.0f;
+
+    protected bool addVelocityEnabled = false;
+    protected float addVelocityVx = 0.0f;
+    protected float addVelocityVy = 0.0f;
+
+    protected bool setVelocityVxEnabled = false;
+    protected bool setVelocityVyEnabled = false;
+    protected float setVelocityVx = 0.0f;
+    protected float setVelocityVy = 0.0f;
+
     protected Rigidbody2D rigidbody2D;
 
     // 코드 (MonoBehaviour 기본 기능 구현)
@@ -55,7 +67,7 @@ public class BaseCharacterController : MonoBehaviour
 
         activeSts = true;
         rigidbody2D = GetComponent<Rigidbody2D>();
-        gravityScale = rigidbody2D.gravityScale;
+        rigidbody2D.gravityScale = gravityScale;
     }
 
     protected virtual void Start() { }
@@ -120,7 +132,50 @@ public class BaseCharacterController : MonoBehaviour
         FixedUpdateCharacter(); // 플레이어는 여기서 착지 여부, 방향, 감속여부, 카메라 좌표 순으로 처리한다
 
         // 이동 계산
-        rigidbody2D.velocity = new Vector2(speedVx, rigidbody2D.velocity.y);
+        if (addForceVxEnabled)
+        {
+
+            // 이동 계산은 물리 연산에 맡긴다
+            if (Time.fixedTime - addForceVxStartTime > 0.5f)
+            {
+
+                addForceVxEnabled = false;
+            }
+        }
+        else
+        {
+
+            // 이동 계산
+            // Debug.Log(">>>> " + string.Format("speedVx {0} y {1} g{2}",
+            //     speedVx, rigidbody2D.velocity.y, grounded);
+            rigidbody2D.velocity = new Vector2(
+                speedVx + speedVxAddPower, rigidbody2D.velocity.y);
+        }
+        
+        // 최종 Velocity 계산
+        if (addVelocityEnabled)
+        {
+
+            addVelocityEnabled = false;
+            rigidbody2D.velocity = new Vector2(
+                rigidbody2D.velocity.x + addVelocityVx,
+                rigidbody2D.velocity.y + addVelocityVy);
+        }
+
+        // 강제로 Velocity 값을 설정
+        if (setVelocityVxEnabled)
+        {
+
+            setVelocityVxEnabled = false;
+            rigidbody2D.velocity = new Vector2(setVelocityVx, rigidbody2D.velocity.y);
+        }
+
+        if (setVelocityVyEnabled)
+        {
+
+            setVelocityVyEnabled = false;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, setVelocityVy);
+        }
 
         // Velocity 값 체크
         float vx = Mathf.Clamp(rigidbody2D.velocity.x, velocityMin.x, velocityMax.x);
@@ -129,6 +184,73 @@ public class BaseCharacterController : MonoBehaviour
     }
 
     protected virtual void FixedUpdateCharacter() { }
+
+    // 코드 (애니메이션 이벤트용 코드)
+    public virtual void AddForceAnimatorVx(float vx)
+    {
+
+        // Debug.Log(string.Format("--- AddForceAnimatorVx {0} ---------------", vx));
+        if (vx != 0.0f)
+        {
+
+            rigidbody2D.AddForce(new Vector2(vx * dir, 0.0f));
+            addForceVxEnabled = true;
+            addForceVxStartTime = Time.fixedTime;
+        }
+    }
+
+    public virtual void AddForceAnimatorVy(float vy)
+    {
+
+        // Debug.Log(string.Format("--- AddForceAnimatorVy {0} ---------------", vy));
+        if (vy != 0.0f)
+        {
+
+            rigidbody2D.AddForce(new Vector2(0.0f, vy));
+            jumped = true;
+            jumpStartTime = Time.fixedTime;
+        }
+    }
+
+    public virtual void AddVelocityVx(float vx)
+    {
+
+        // Debug.Log(string.Format("--- AddVelocityVx {0} ---------------", vx));
+        addVelocityEnabled = true;
+        addVelocityVx = vx * dir;
+    }
+
+    public virtual void AddVelocityVy(float vy)
+    {
+
+        // Debug.Log(string.Format("--- AddVelocityVy {0} ---------------", vy));
+        addVelocityEnabled = true;
+        addVelocityVy = vy;
+    }
+
+    public virtual void SetVelocityVx(float vx)
+    {
+
+        // Debug.Log(string.Format("--- setVelocityVx {0} ---------------", vx));
+        setVelocityVxEnabled = true;
+        setVelocityVx = vx * dir;
+    }
+
+    public virtual void SetVelocityVy(float vy)
+    {
+
+        // Debug.Log(string.Format("--- setVelocityVy {0} ---------------", vy));
+        setVelocityVyEnabled = true;
+        setVelocityVy = vy;
+    }
+
+    public virtual void SetLightGravity()
+    {
+
+        // Debug.Log(string.Format("--- SetLightGravity ---------------", vx));
+        rigidbody2D.velocity = new Vector2(0.0f, 0.0f);
+        rigidbody2D.gravityScale = 0.1f;
+    }
 
     // 코드 (기본 액션)
     public virtual void ActionMove(float n)
