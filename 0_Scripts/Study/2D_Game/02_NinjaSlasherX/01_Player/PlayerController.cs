@@ -9,6 +9,9 @@ public class PlayerController : BaseCharacterController
     public float initHpMax = 20.0f;
     [Range(0.1f, 100.0f)] public float initSpeed = 12.0f;
 
+    // 저장 데이터 파라미터
+    public static int score = 0;
+
     // 내부 파라미터
     int jumpCount = 0;
 
@@ -41,6 +44,7 @@ public class PlayerController : BaseCharacterController
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
     {
+
         base.Awake();
 
         // 파라미터 초기화
@@ -295,5 +299,30 @@ public class PlayerController : BaseCharacterController
                 atkInputNow = true;
             }
         }
+    }
+
+    // 코드 (지원 함수)   - Player 게임 오브젝트가 반드시 생성됭어 있고 씬에 하나밖에 없다는 것을 전제로 한다
+    public static GameObject GetGameObject()
+    {
+
+        return GameObject.FindGameObjectWithTag("Player");
+    }
+
+    public static Transform GetTransform()
+    {
+
+        return GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    public static PlayerController GetController()
+    {
+
+        return GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+    }
+
+    public static Animator GetAnimator()
+    {
+
+        return GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
     }
 }
