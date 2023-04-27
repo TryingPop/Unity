@@ -42,6 +42,7 @@ public class PlayerMain : MonoBehaviour
         if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2") 
             || Input.GetButtonDown("Fire3"))
         {
+
             if (Input.GetAxisRaw("Vertical") < 0.5f)
             {
 

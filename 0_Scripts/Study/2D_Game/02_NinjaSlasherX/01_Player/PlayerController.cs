@@ -148,6 +148,7 @@ public class PlayerController : BaseCharacterController
             animator.Play(name);
         }
 
+        
         // 추가한 코드
         atkInputEnabled = false;    // 앞번 공격에서 팔로우 스루 때 공격 버튼을 누르면
                                     // 다음 공격 시 2단 공격이 나가서 이를 방지하고자 추가
@@ -254,6 +255,16 @@ public class PlayerController : BaseCharacterController
 
                 rigidbody2D.velocity = Vector2.zero;
                 rigidbody2D.gravityScale = 0.1f;
+            }
+        }
+        else
+        {
+
+            if (atkInputEnabled)
+            {
+
+                atkInputEnabled = false;
+                atkInputNow = true;
             }
         }
     }
