@@ -7,7 +7,10 @@ public class BaseCharacterController : MonoBehaviour
 
     // 외부 파라미터(inspector 표시)
     public Vector2 velocityMin = new Vector2(-100.0f, -100.0f);
-    public Vector2 velocityMax = new Vector2(+100.0f, +100.0f);
+    public Vector2 velocityMax = new Vector2(+100.0f, +50.0f);
+
+    public bool superArmor = false;
+    public bool superArmor_jumpAttackDmg = true;
 
     // 외부 파라미터
     // [System.NonSerialized]   // 인스펙트 창에서만 안보이면 되므로 unity에서 제공하는 HideInInspector 어트리뷰트 이용
@@ -49,7 +52,7 @@ public class BaseCharacterController : MonoBehaviour
     protected float setVelocityVx = 0.0f;
     protected float setVelocityVy = 0.0f;
 
-    protected Rigidbody2D rigidbody2D;
+    public Rigidbody2D rigidbody2D;
 
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected virtual void Awake()
@@ -252,6 +255,20 @@ public class BaseCharacterController : MonoBehaviour
         rigidbody2D.gravityScale = 0.1f;
     }
 
+    public void EnableSuperArmor()
+    {
+
+        // Debug.Log("--- EnableSuperArmor ----------------");
+        superArmor = true;
+    }
+
+    public void DisableSuperArmor()
+    {
+
+        // Debug.Log("--- DisableSuperArmor ----------------");
+        superArmor = false;
+    }
+
     // 코드 (기본 액션)
     public virtual void ActionMove(float n)
     {
@@ -269,6 +286,45 @@ public class BaseCharacterController : MonoBehaviour
             speedVx = 0;
             animator.SetTrigger("Idle");
         }
+    }
+
+    public bool ActionLookup(GameObject go, float near)
+    {
+
+        if (Vector3.Distance(transform.position, go.transform.position) > near)
+        {
+
+            dir = (transform.position.x < go.transform.position.x) ? +1 : -1;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool ActionMoveToNear(GameObject go, float near)
+    {
+
+        if (Vector3.Distance(transform.position, go.transform.position) > near)
+        {
+
+            ActionMove((transform.position.x < go.transform.position.x) ? +1.0f : -1.0f);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool ActionMoveToFar(GameObject go, float far)
+    {
+
+        if (Vector3.Distance(transform.position, go.transform.position) < far)
+        {
+
+            ActionMove((transform.position.x > go.transform.position.x)? +1.0f : -1.0f);
+            return true;
+        }
+
+        return false;
     }
 
     // 코드 (그 외)
