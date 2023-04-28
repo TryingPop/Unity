@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : BaseCharacterController
 {
@@ -10,6 +11,8 @@ public class PlayerController : BaseCharacterController
     [Range(0.1f, 100.0f)] public float initSpeed = 12.0f;
 
     // 저장 데이터 파라미터
+    public static float nowHpMax = 0;
+    public static float nowHp = 0;
     public static int score = 0;
 
     // 내부 파라미터
@@ -40,6 +43,8 @@ public class PlayerController : BaseCharacterController
         Animator.StringToHash("Base Layer.Player_ATKJUMP_A");
     public readonly static int ANISTS_ATTACKJUMP_B =
         Animator.StringToHash("Base Layer.Player_ATKJUMP_B");
+    public readonly static int ANISTS_DEAD =
+        Animator.StringToHash("Base Layer.Player_Dead");
 
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
@@ -301,6 +306,32 @@ public class PlayerController : BaseCharacterController
         }
     }
 
+    public void Actiondamage(float damage)
+    {
+
+        if (!activeSts)
+        {
+
+            return;
+        }
+
+        animator.SetTrigger("DMG_A");
+        speedVx = 0;
+        rigidbody2D.gravityScale = gravityScale;
+
+        if (jumped)
+        {
+
+            damage *= 1.5f;
+        }
+
+        if (SetHp(hp - damage, hpMax))
+        {
+
+            Dead(true);     // 사망
+        }
+    }
+
     // 코드 (지원 함수)   - Player 게임 오브젝트가 반드시 생성됭어 있고 씬에 하나밖에 없다는 것을 전제로 한다
     public static GameObject GetGameObject()
     {
@@ -324,5 +355,44 @@ public class PlayerController : BaseCharacterController
     {
 
         return GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
+    }
+
+    // 코드 (그 외)
+    public override void Dead(bool gameOver)
+    {
+
+        // 사망 처리해도 되는가?
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (!activeSts || stateInfo.fullPathHash == ANISTS_DEAD)
+        {
+
+            return;
+        }
+
+        base.Dead(gameOver);
+
+        SetHp(0, hpMax);
+        Invoke("GameOver", 3.0f);
+    }
+
+    public void GameOver()
+    {
+
+        PlayerController.score = 0;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public override bool SetHp(float _hp, float _hpMax)
+    {
+        if (_hp > _hpMax)
+        {
+
+            _hp = _hpMax;
+        }
+
+        nowHp = _hp;
+        nowHpMax = _hpMax;
+
+        return base.SetHp(_hp, _hpMax);
     }
 }
