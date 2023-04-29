@@ -34,5 +34,21 @@ public class PlayerBodyCollider : MonoBehaviour
                 playerCtrl.Actiondamage(enemyCtrl.attackDamage);
             }
         }
+        else if (collision.tag == "EnemyArmBullet")
+        {
+
+            FireBullet fireBullet = collision.transform.GetComponent<FireBullet>();
+            if (fireBullet.attackEnabled)
+            {
+
+                fireBullet.attackEnabled = false;
+                playerCtrl.dir = (playerCtrl.transform.position.x <
+                    fireBullet.transform.position.x) ? +1 : -1;
+                playerCtrl.AddForceAnimatorVx(-fireBullet.attackNockBackVector.x);
+                playerCtrl.AddForceAnimatorVy(-fireBullet.attackNockBackVector.y);
+                playerCtrl.Actiondamage(fireBullet.attackDamage);
+                Destroy(collision.gameObject);
+            }
+        }
     }
 }

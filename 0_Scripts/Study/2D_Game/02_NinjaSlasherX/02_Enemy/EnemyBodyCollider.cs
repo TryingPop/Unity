@@ -32,6 +32,12 @@ public class EnemyBodyCollider : MonoBehaviour
                 enemyCtrl.ActionDamage();
             }
         }
+        else if (collision.tag == "PlayerArmBullet")
+        {
+
+            Destroy(collision.gameObject);
+            enemyCtrl.ActionDamage();
+        }
     }
 
     private void Update()

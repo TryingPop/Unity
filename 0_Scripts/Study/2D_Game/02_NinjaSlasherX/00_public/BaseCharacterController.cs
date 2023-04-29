@@ -12,6 +12,8 @@ public class BaseCharacterController : MonoBehaviour
     public bool superArmor = false;
     public bool superArmor_jumpAttackDmg = true;
 
+    public GameObject[] fireObjectList;
+
     // 외부 파라미터
     // [System.NonSerialized]   // 인스펙트 창에서만 안보이면 되므로 unity에서 제공하는 HideInInspector 어트리뷰트 이용
     [HideInInspector] public float hpMax = 10.0f;
@@ -285,6 +287,18 @@ public class BaseCharacterController : MonoBehaviour
 
             speedVx = 0;
             animator.SetTrigger("Idle");
+        }
+    }
+
+    public void ActionFire()
+    {
+
+        Transform goFire = transform.Find("Muzzle");
+        foreach(GameObject fireObject in fireObjectList)
+        {
+
+            GameObject go = Instantiate(fireObject, goFire.position, Quaternion.identity) as GameObject;
+            go.GetComponent<FireBullet>().owner = transform;
         }
     }
 
