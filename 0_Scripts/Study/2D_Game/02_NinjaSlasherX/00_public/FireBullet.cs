@@ -79,6 +79,7 @@ public class FireBullet : MonoBehaviour
                 homingRotate = Quaternion.LookRotation(posTarget - transform.position);
                 break;
             case FIREBULLET.HOMING_Z:
+                angle = (owner.localScale.x < 0.0f) ? Mathf.DeltaAngle(angle, 180) : angle;
                 speed = speedV;
                 break;
         }
