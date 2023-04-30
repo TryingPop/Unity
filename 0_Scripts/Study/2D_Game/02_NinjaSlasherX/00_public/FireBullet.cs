@@ -24,7 +24,7 @@ public class FireBullet : MonoBehaviour
     public float lifeTime = 3.0f;
     public float speedV = 10.0f;
     public float speedA = 0.0f;
-    public float angle = 0.0f;
+    public float angle = 0.0f;              // 쏘는 방향
     public float homingTime = 0.0f;
     public float homingAngleV = 180.0f;
     public float homingAngleA = 20.0f;
@@ -151,6 +151,8 @@ public class FireBullet : MonoBehaviour
                 break;
 
             case FIREBULLET.HOMING: // 완전 호밍
+
+                // 유도 시간인 경우 현재 위치에서 타겟 위치의 방향으로 향하는 쿼터니온 생성
                 if (homing)
                 {
 
@@ -158,30 +160,35 @@ public class FireBullet : MonoBehaviour
                         posTarget - transform.position);
                 }
 
-                Vector3 vecMove = (homingRotate * Vector3.forward) * speed;
+                // 설정한 방향으로 이동
+                Vector3 vecMove = (homingRotate * Vector3.forward) * speed;             
                 rigidbody2D.velocity = Quaternion.Euler(0.0f, 0.0f, angle) * vecMove;
                 break;
 
+            // 지정 각도 차이만큼 호밍이 되게 하는 코드
+            // 현재 시작 각을 잘못 설정해서 수정이 필수!
             case FIREBULLET.HOMING_Z:  // 지정한 각도 범위 안에서 호밍
                 if (homing)
                 {
+
                     float targetAngle = Mathf.Atan2(
                         posTarget.y - transform.position.y,
-                        posTarget.x - transform.position.x) * Mathf.Rad2Deg;
+                        posTarget.x - transform.position.x) * Mathf.Rad2Deg;        // 투사체와 타겟과의 각도를 구한다 단위는 도
 
-                    float deltaAngle = Mathf.DeltaAngle(targetAngle, homingAngle);
-                    float deltaHomingAngle = homingAngleV * Time.fixedDeltaTime;
-                    if (Mathf.Abs(deltaAngle) >= deltaHomingAngle)
+                    float deltaAngle = Mathf.DeltaAngle(targetAngle, homingAngle);  // 앞에서 뒤에 각도 차이를 구한다 (-180 ~ 180] 범위의 값을 반환하고 단위는 도
+                    float deltaHomingAngle = homingAngleV * Time.fixedDeltaTime;    // 각도에 변화를 줄 지정 각도 설정
+                                                                                    // fixedDeltaTime 값이 커지면 매우 이상한 결과를 내놓는 코드로 변한다
+                    if (Mathf.Abs(deltaAngle) >= deltaHomingAngle)                  // 두각의 차이가 지정 각도 차이를 넘어가는 경우
                     {
 
-                        homingAngle += (deltaAngle < 0.0f) ?
-                            +deltaHomingAngle : -deltaHomingAngle;
+                        homingAngle += (deltaAngle < 0.0f) ?                        
+                            +deltaHomingAngle : -deltaHomingAngle;                  // 호밍 갹도에 변화를 준다
                     }
                     homingAngleV += (homingAngleA * Time.fixedDeltaTime);
-                    homingRotate = Quaternion.Euler(0.0f, 0.0f, homingAngle);
+                    homingRotate = Quaternion.Euler(0.0f, 0.0f, homingAngle);       // HomingAngle만큼 회전
                 }
 
-                rigidbody2D.velocity = (homingRotate * Vector3.right) * speed;
+                rigidbody2D.velocity = (homingRotate * Vector3.right) * speed;  // homingrotate 방향으로 회전 이동
                 break;
         }
 
