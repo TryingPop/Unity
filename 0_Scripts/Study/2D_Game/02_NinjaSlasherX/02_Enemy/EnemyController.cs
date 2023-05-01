@@ -13,6 +13,7 @@ public class EnemyController : BaseCharacterController
     public int addScore = 500;
 
     // 외부 파라미터
+    [HideInInspector] public bool cameraRendered = false;
     [HideInInspector] public bool attackEnabled = false;
     [HideInInspector] public int attackDamage = 1;
     [HideInInspector] public Vector2 attackNockBackVector = Vector3.zero;
@@ -53,6 +54,12 @@ public class EnemyController : BaseCharacterController
 
     protected override void FixedUpdateCharacter()
     {
+
+        if (!cameraRendered)
+        {
+
+            return;
+        }
 
         // 점프했는지 검사
         if (jumped)

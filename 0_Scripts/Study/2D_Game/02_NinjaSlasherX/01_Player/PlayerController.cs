@@ -10,11 +10,6 @@ public class PlayerController : BaseCharacterController
     public float initHpMax = 20.0f;
     [Range(0.1f, 100.0f)] public float initSpeed = 12.0f;
 
-    // 저장 데이터 파라미터
-    public static float nowHpMax = 0;
-    public static float nowHp = 0;
-    public static int score = 0;
-
     // 내부 파라미터
     int jumpCount = 0;
 
@@ -46,6 +41,15 @@ public class PlayerController : BaseCharacterController
     public readonly static int ANISTS_DEAD =
         Animator.StringToHash("Base Layer.Player_Dead");
 
+    // 저장 데이터 파라미터
+    public static float nowHpMax = 0;
+    public static float nowHp = 0;
+    public static int score = 0;
+
+    // 기본 파라미터
+    [HideInInspector] public Vector3 enemyActiveZonePointA;
+    [HideInInspector] public Vector3 enemyActiveZonePointB;
+
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
     {
@@ -55,6 +59,18 @@ public class PlayerController : BaseCharacterController
         // 파라미터 초기화
         speed = initSpeed;
         SetHp(initHpMax, initHpMax);
+
+        // BoxCollider2D에서 활성 영역을 가져온다
+        BoxCollider2D boxCol2D = transform.Find
+            ("Collider_EnemyActiveZone").GetComponent<BoxCollider2D>();
+        enemyActiveZonePointA = new Vector3
+            (boxCol2D.offset.x - boxCol2D.size.x / 2.0f, boxCol2D.offset.y - boxCol2D.size.y / 2.0f);
+            // (boxCol2D.center.x - boxCol2D.size.x / 2.0f, boxCol2D.center.y - boxCol2D.size.y / 2.0f);    // 버전 바뀌면서 사용안된다
+
+        enemyActiveZonePointB = new Vector3
+            (boxCol2D.offset.x + boxCol2D.size.x / 2.0f, boxCol2D.offset.y + boxCol2D.size.y / 2.0f);
+
+        boxCol2D.transform.gameObject.SetActive(false);
     }
 
     protected override void FixedUpdateCharacter()

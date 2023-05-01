@@ -20,9 +20,14 @@ public class EnemyMain : MonoBehaviour
 {
 
     // 외부 파라미터(Inspector 표시)
+    public bool cameraSwitch = true;
+    public bool inActiveZoneSwitch = false;
+
     public int debug_SelectRandomAIState = -1;
 
     // 외부 파라미터
+    [HideInInspector] public bool cameraEnabled = false;
+    [HideInInspector] public bool inActiveZone = false;
     [HideInInspector] public ENEMYAISTS aiState = ENEMYAISTS.ACTIONSELECT;
 
     // 캐시
@@ -47,7 +52,45 @@ public class EnemyMain : MonoBehaviour
 
     // public virtual void Start() { }
 
-    // public virtual void Update() { }
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        
+        // 상태 검사
+        if (enemyCtrl.grounded && CheckAction())
+        {
+
+            //Debug.Log("Enemy OnTriggerStay2D: " + collision.name);
+            if (collision.name == "EnemyJumpTrigger_L")
+            {
+
+                if (enemyCtrl.ActionJump())
+                {
+
+                    enemyCtrl.ActionMove(-1.0f);
+                }
+            }
+            else if (collision.name == "EnemyJumpTrigger_R")
+            {
+
+                if (enemyCtrl.ActionJump())
+                {
+
+                    enemyCtrl.ActionMove(+1.0f);
+                }
+            }
+            else if (collision.name == "EnemyJumpTrigger")
+            {
+
+                enemyCtrl.ActionJump();
+            }
+        }
+    }
+
+    public virtual void Update() 
+    {
+
+        cameraEnabled = false;
+    }
 
     public virtual void FixedUpdate()
     {
@@ -73,7 +116,43 @@ public class EnemyMain : MonoBehaviour
             return false;
         }
 
+        // 활성 영역에 들어와 있는지 확인
+        if (inActiveZoneSwitch)
+        {
+
+            inActiveZone = false;
+            Vector3 vecA = player.transform.position +
+                playerCtrl.enemyActiveZonePointA;
+            Vector3 vecB = player.transform.position +
+                playerCtrl.enemyActiveZonePointB;
+
+            if (transform.position.x > vecA.x && transform.position.x < vecB.x &&
+                transform.position.y > vecA.y && transform.position.y < vecB.y)
+            {
+
+                inActiveZone = true;
+            }
+        }
+
+        // 공중에서는 강제 실행(공중 설치 적, 광범위 대응)
+        if (enemyCtrl.grounded)
+        {
+
+            // 카메라 안에 들어와 있는지 확인
+            if(cameraSwitch && !cameraEnabled && !inActiveZone)
+            {
+
+                // 카메라에 비쳐지고 있지 않다
+                enemyCtrl.ActionMove(0.0f);
+                enemyCtrl.cameraRendered = false;
+                enemyCtrl.animator.enabled = false;
+                enemyCtrl.rigidbody2D.Sleep();
+                return false;
+            }
+        }
+
         enemyCtrl.animator.enabled = true;
+        enemyCtrl.cameraRendered = true;
 
         // 상태 검사
         if (!CheckAction())
