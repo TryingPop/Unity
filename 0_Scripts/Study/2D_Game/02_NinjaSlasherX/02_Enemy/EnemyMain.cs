@@ -12,6 +12,7 @@ public enum ENEMYAISTS  // 적 AI 상태
     RUNTOPLAYER,        // 달려서 플레이어에 가까이 간다
     JUMPTOPLAYER,       // 점프해서 플레이어에 가까이 간다
     ESCAPE,             // 플레이어에게서 도망친다
+    RETURNTODOGPILE,    // 도그 파일로 돌아온다
     ATTACKONSIGHT,      // 그 자리에서 이동하지 않고 공격한다 (원거리 공격용)
     FREEZ,              // 행동 정지 (단, 이동처리는 계속한다)
 }
@@ -22,6 +23,8 @@ public class EnemyMain : MonoBehaviour
     // 외부 파라미터(Inspector 표시)
     public bool cameraSwitch = true;
     public bool inActiveZoneSwitch = false;
+    public bool combatAIOrder = true;
+    public float dogPileReturnLength = 10.0f;
 
     public int debug_SelectRandomAIState = -1;
 
@@ -29,6 +32,7 @@ public class EnemyMain : MonoBehaviour
     [HideInInspector] public bool cameraEnabled = false;
     [HideInInspector] public bool inActiveZone = false;
     [HideInInspector] public ENEMYAISTS aiState = ENEMYAISTS.ACTIONSELECT;
+    [HideInInspector] public GameObject dogPile;
 
     // 캐시
     protected EnemyController enemyCtrl;
@@ -50,7 +54,28 @@ public class EnemyMain : MonoBehaviour
         playerCtrl = player.GetComponent<PlayerController>();
     }
 
-    // public virtual void Start() { }
+    public virtual void Start() 
+    {
+
+        // Dog Pile Set
+        StageObject_DogPile[] dogPileList =
+            GameObject.FindObjectsOfType<StageObject_DogPile>();
+
+        foreach(StageObject_DogPile findDogPile in dogPileList)
+        {
+
+            foreach(GameObject go in findDogPile.enemyList)
+            {
+
+                if (gameObject == go)
+                {
+
+                    dogPile = findDogPile.gameObject;
+                    break;
+                }
+            }
+        }
+    }
 
     void OnTriggerStay2D(Collider2D collision)
     {
@@ -161,6 +186,17 @@ public class EnemyMain : MonoBehaviour
             return false;
         }
 
+        // 도그 파일
+        if (dogPile != null)
+        {
+
+            if (GetDistanceDogPile() > dogPileReturnLength)
+            {
+
+                aiState = ENEMYAISTS.RETURNTODOGPILE;
+            }
+        }
+
         return true;
     }
 
@@ -261,6 +297,10 @@ public class EnemyMain : MonoBehaviour
         posB.x = 0; posB.z = 0;
         return Vector3.Distance(posA, posB);
     }
+
+    public float GetDistanceDogPile()
+    {
+
+        return Vector3.Distance(transform.position, dogPile.transform.position);
+    }
 }
-
-

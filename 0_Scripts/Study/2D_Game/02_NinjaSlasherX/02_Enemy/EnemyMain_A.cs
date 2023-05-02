@@ -9,6 +9,7 @@ public class EnemyMain_A : EnemyMain
     public int aiIfRUNTOPLAYER = 20;
     public int aiIfJUMPTOPLAYER = 30;
     public int aiIfESCAPE = 10;
+    public int aiIfRETURNTODOGPILE = 10;
 
     public int damageAttack_A = 1;
 
@@ -39,6 +40,16 @@ public class EnemyMain_A : EnemyMain
 
                     SetAIState(ENEMYAISTS.ESCAPE, Random.Range(2.0f, 5.0f));
                 }
+                else if (n < aiIfRUNTOPLAYER + aiIfJUMPTOPLAYER + aiIfESCAPE)
+                {
+
+                    if (dogPile != null)
+                    {
+
+                        SetAIState(ENEMYAISTS.RETURNTODOGPILE, 3.0f);
+                    }
+                }
+
                 else
                 {
 
@@ -84,6 +95,23 @@ public class EnemyMain_A : EnemyMain
                     SetAIState(ENEMYAISTS.ACTIONSELECT, 1.0f);
                 }
                 break;
+
+            case ENEMYAISTS.RETURNTODOGPILE:    // 도그파일로 돌아온다
+                if (enemyCtrl.ActionMoveToNear(dogPile, 2.0f))
+                {
+
+                    if (GetDistancePlayer() < 2.0f)
+                    {
+
+                        Attack_A();
+                    }
+                    else
+                    {
+
+                        SetAIState(ENEMYAISTS.ACTIONSELECT, 1.0f);
+                    }
+                }
+                break;
         }
     }
 
@@ -95,5 +123,23 @@ public class EnemyMain_A : EnemyMain
         enemyCtrl.ActionMove(0.0f);
         enemyCtrl.ActionAttack("Attack_A", damageAttack_A);
         SetAIState(ENEMYAISTS.WAIT, 2.0f);
+    }
+
+    // 코드 (COMBAT AI 관련 처리)
+    public override void SetCombatAIState(ENEMYAISTS sts)
+    {
+        base.SetCombatAIState(sts);
+        switch (aiState)
+        {
+
+            case ENEMYAISTS.ACTIONSELECT: break;
+            case ENEMYAISTS.WAIT:
+                aiActionTimeLength = 1.0f + Random.Range(0.0f, 1.0f); break;
+            case ENEMYAISTS.RUNTOPLAYER: aiActionTimeLength = 3.0f; break;
+            case ENEMYAISTS.JUMPTOPLAYER: aiActionTimeLength = 1.0f; break;
+            case ENEMYAISTS.ESCAPE:
+                aiActionTimeLength = Random.Range(2.0f, 5.0f); break;
+            case ENEMYAISTS.RETURNTODOGPILE: aiActionTimeLength = 3.0f; break;
+        }
     }
 }

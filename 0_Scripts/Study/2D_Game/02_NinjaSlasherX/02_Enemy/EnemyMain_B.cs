@@ -8,6 +8,7 @@ public class EnemyMain_B : EnemyMain
     // 외부 파라미터
     public int aiIfRUNTOPLAYER = 30;
     public int aiIfESCAPE = 20;
+    public int aiIfRETURNTODOGPILE = 10;
 
     public int damageAttack_A = 1;
     public int damageAttack_B = 2;
@@ -35,6 +36,15 @@ public class EnemyMain_B : EnemyMain
                 {
 
                     SetAIState(ENEMYAISTS.ESCAPE, Random.Range(2.0f, 5.0f));
+                }
+                else if (n < aiIfRUNTOPLAYER + aiIfESCAPE + aiIfRETURNTODOGPILE)
+                {
+
+                    if (dogPile != null)
+                    {
+
+                        SetAIState(ENEMYAISTS.RETURNTODOGPILE, 3.0f);
+                    }
                 }
                 else
                 {
@@ -77,6 +87,14 @@ public class EnemyMain_B : EnemyMain
                     Attack_B();
                 }
                 break;
+
+            case ENEMYAISTS.RETURNTODOGPILE:    // 도그 파일로 돌아온다
+                if (!enemyCtrl.ActionMoveToNear(dogPile, 2.0f))
+                {
+
+                    SetAIState(ENEMYAISTS.ACTIONSELECT, 1.0f);
+                }
+                break;
         }
     }
 
@@ -99,5 +117,23 @@ public class EnemyMain_B : EnemyMain
         enemyCtrl.ActionAttack("Attack_B", damageAttack_B);
         enemyCtrl.attackNockBackVector = new Vector2(500.0f, 1000.0f);
         SetAIState(ENEMYAISTS.FREEZ, 5.0f);
+    }
+
+    // 코드 (COMBAT AI 관련 처리)
+    public override void SetCombatAIState(ENEMYAISTS sts)
+    {
+        base.SetCombatAIState(sts);
+        switch (aiState)
+        {
+
+            case ENEMYAISTS.ACTIONSELECT: break;
+            case ENEMYAISTS.WAIT:
+                aiActionTimeLength = 1.0f + Random.Range(0.0f, 1.0f); break;
+            case ENEMYAISTS.RUNTOPLAYER: aiActionTimeLength = 3.0f; break;
+            case ENEMYAISTS.JUMPTOPLAYER: aiActionTimeLength = 1.0f; break;
+            case ENEMYAISTS.ESCAPE:
+                aiActionTimeLength = Random.Range(2.0f, 5.0f); break;
+            case ENEMYAISTS.RETURNTODOGPILE: aiActionTimeLength = 3.0f; break;
+        }
     }
 }
