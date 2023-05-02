@@ -196,6 +196,8 @@ public class EnemyController : BaseCharacterController
             addScoreV = (int)((float)addScore * (grounded? 1.0 : 1.5f));
             PlayerController.score += addScoreV;
         }
+
+        playerCtrl.AddCombo();
     }
 
     // 코드 (그 외)

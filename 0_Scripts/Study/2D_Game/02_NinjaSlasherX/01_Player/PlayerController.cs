@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : BaseCharacterController
 {
@@ -18,6 +19,8 @@ public class PlayerController : BaseCharacterController
 
     bool breakEnabled = true;
     float groundFriction = 0.0f;
+
+    float comboTimer = 0.0f;
 
     // 외부 파라미터
     public readonly static int ANISTS_Idle =
@@ -51,11 +54,26 @@ public class PlayerController : BaseCharacterController
     [HideInInspector] public Vector3 enemyActiveZonePointB;
     [HideInInspector] public float groundY = 0.0f;
 
+    [HideInInspector] public int comboCount = 0;
+
+    // 캐시
+    // LineRenderer hudHpBar;   // 버전이 달라서 현 상황에 맞게 수정
+    // TextMesh hudScore;
+    // TextMesh hudCombo;
+    GameObject hudHpBar;
+    Text hudScore;
+    Text hudCombo;
+
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
     {
 
         base.Awake();
+
+        // 캐시
+        hudHpBar = GameObject.Find("HUD_HPBAR");
+        hudScore = GameObject.Find("HUD_Score").GetComponent<Text>();
+        hudCombo = GameObject.Find("HUD_Combo").GetComponent<Text>();
 
         // 파라미터 초기화
         speed = initSpeed;
@@ -72,6 +90,37 @@ public class PlayerController : BaseCharacterController
             (boxCol2D.offset.x + boxCol2D.size.x / 2.0f, boxCol2D.offset.y + boxCol2D.size.y / 2.0f);
 
         boxCol2D.transform.gameObject.SetActive(false);
+    }
+
+    protected override void Update()
+    {
+
+        base.Update();
+
+        // 상태 표시
+        hudHpBar.transform.localScale = new Vector3(((float)hp / hpMax), 1.0f, 1.0f);
+        hudScore.text = string.Format("Score {0, 8}", score);
+
+        if (comboTimer <= 0.0f)
+        {
+
+            hudCombo.gameObject.SetActive(false);
+            comboCount = 0;
+            comboTimer = 0.0f;
+        }
+        else
+        {
+
+            comboTimer -= Time.deltaTime;
+            if (comboTimer > 5.0f)
+            {
+
+                comboTimer = 5.0f;
+            }
+            float s = 0.3f + 0.5f * comboTimer;
+            hudCombo.gameObject.SetActive(true);
+            hudCombo.transform.localScale = new Vector3(s, s, 1.0f);
+        }
     }
 
     protected override void FixedUpdateCharacter()
@@ -391,6 +440,8 @@ public class PlayerController : BaseCharacterController
 
         SetHp(0, hpMax);
         Invoke("GameOver", 3.0f);
+
+        GameObject.Find("HUD_Dead").GetComponent<Text>().enabled = true;
     }
 
     public void GameOver()
@@ -412,5 +463,13 @@ public class PlayerController : BaseCharacterController
         nowHpMax = _hpMax;
 
         return base.SetHp(_hp, _hpMax);
+    }
+
+    public void AddCombo()
+    {
+
+        comboCount++;
+        comboTimer += 1.0f;
+        hudCombo.text = string.Format("Combo {0, 3}", comboCount);
     }
 }
