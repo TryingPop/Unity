@@ -49,6 +49,7 @@ public class PlayerController : BaseCharacterController
     // 기본 파라미터
     [HideInInspector] public Vector3 enemyActiveZonePointA;
     [HideInInspector] public Vector3 enemyActiveZonePointB;
+    [HideInInspector] public float groundY = 0.0f;
 
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
@@ -153,7 +154,8 @@ public class PlayerController : BaseCharacterController
         }
 
         // 카메라
-        Camera.main.transform.position = transform.position - Vector3.forward;  // 메인 카메라 태그로 등록된 카메라의 위치는 캐릭터에 -1 좌표 위치
+        // Camera.main.transform.position = transform.position - Vector3.forward;   // 메인 카메라 태그로 등록된 카메라의 위치는 캐릭터에 -1 좌표 위치
+        // Camera.main.transform.position = transform.position + Vector3.back;      // 여기서는 안쓴다
     }
 
     // 코드 (애니메이션 이벤트용 코드)

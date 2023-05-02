@@ -18,25 +18,31 @@ public class EnemyBodyCollider : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        
+
         // Debug.Log("Enemy OnTriggerEnter2D : " + collision.name);
-        if (collision.tag == "PlayerArm")
+
+        if (enemyCtrl.cameraRendered)
         {
 
-            AnimatorStateInfo stateInfo =
-                playerAnim.GetCurrentAnimatorStateInfo(0);
-            if (attackHash != stateInfo.fullPathHash)
+            if (collision.tag == "PlayerArm")
             {
 
-                attackHash = stateInfo.fullPathHash;
+                AnimatorStateInfo stateInfo =
+                    playerAnim.GetCurrentAnimatorStateInfo(0);
+                if (attackHash != stateInfo.fullPathHash)
+                {
+
+                    attackHash = stateInfo.fullPathHash;
+                    enemyCtrl.ActionDamage();
+                    Camera.main.GetComponent<CameraFollow>().AddCameraSize(-0.01f, -0.3f);
+                }
+            }
+            else if (collision.tag == "PlayerArmBullet")
+            {
+
+                Destroy(collision.gameObject);
                 enemyCtrl.ActionDamage();
             }
-        }
-        else if (collision.tag == "PlayerArmBullet")
-        {
-
-            Destroy(collision.gameObject);
-            enemyCtrl.ActionDamage();
         }
     }
 

@@ -51,4 +51,17 @@ public class PlayerBodyCollider : MonoBehaviour
             }
         }
     }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        
+        if (!playerCtrl.jumped && 
+            (collision.gameObject.tag == "Road" ||
+            collision.gameObject.tag == "MoveObject" ||
+            collision.gameObject.tag == "Enemy"))
+        {
+
+            playerCtrl.groundY = transform.parent.transform.position.y;
+        }
+    }
 }
