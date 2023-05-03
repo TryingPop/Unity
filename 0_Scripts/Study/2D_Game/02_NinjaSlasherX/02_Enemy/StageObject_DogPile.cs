@@ -35,10 +35,13 @@ public class StageObject_DogPile : MonoBehaviour
         {
 
             // 제거할 게임 오브젝트 리스트에 포함된 오브젝트를 삭제한다
-            foreach(GameObject destroyGameObject in destroyObjectList)
+            foreach(GameObject destroyObject in destroyObjectList)
             {
 
-                Destroy(destroyGameObject, 1.0f);
+                destroyObject.AddComponent<Effect_FadeObject>();
+                destroyObject.SendMessage("FadeStart");
+
+                Destroy(destroyObject, 1.0f);
             }
 
             CancelInvoke("CheckEnemy");
