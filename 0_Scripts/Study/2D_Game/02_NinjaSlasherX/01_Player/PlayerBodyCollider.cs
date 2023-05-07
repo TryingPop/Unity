@@ -50,6 +50,43 @@ public class PlayerBodyCollider : MonoBehaviour
                 Destroy(collision.gameObject);
             }
         }
+        else if (collision.tag == "CameraTrigger")
+        {
+
+            Camera.main.GetComponent<CameraFollow>().SetCamera(
+                collision.GetComponent<StageTrigger_Camera>().param);
+        }
+        else if (collision.tag == "Item")
+        {
+
+            if (collision.name == "Item_koban")
+            {
+
+                PlayerController.score += 10;
+            }
+            else if(collision.name == "Item_Ohoban")
+            {
+
+                PlayerController.score += 100000;
+            }
+            else if (collision.name == "Item_Hyoutan")
+            {
+
+                playerCtrl.SetHp(playerCtrl.hp + playerCtrl.hpMax / 3, playerCtrl.hpMax);
+            }
+            else if (collision.name == "Item_Makimono")
+            {
+
+                // playerCtrl.superMode = true;
+                playerCtrl.GetComponentInChildren<Stage_AfterImage>().afterImageEnabled = true;
+                playerCtrl.basScaleX = 2.0f;
+                playerCtrl.transform.localScale = new Vector3(
+                    playerCtrl.basScaleX, 2.0f, 1.0f);
+                Invoke("SuperModeEnd", 10.0f);
+            }
+
+            Destroy(collision.gameObject);
+        }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -63,5 +100,15 @@ public class PlayerBodyCollider : MonoBehaviour
 
             playerCtrl.groundY = transform.parent.transform.position.y;
         }
+    }
+
+    void SuperModeEnd()
+    {
+
+        // playerCtrl.superMode = false;
+        playerCtrl.GetComponent<Stage_AfterImage>().afterImageEnabled = false;
+        playerCtrl.basScaleX = 1.0f;
+        playerCtrl.transform.localScale =
+            new Vector3(playerCtrl.basScaleX, 1.0f, 1.0f);
     }
 }
