@@ -109,7 +109,8 @@ public class zFoxTween : MonoBehaviour
     {
 
         sprite = GetComponent<SpriteRenderer>();
-        orgPosition = transform.localRotation.eulerAngles;
+        orgPosition = transform.position;
+        orgLocalRotationEA = transform.localRotation.eulerAngles;
         orgLocalScale = transform.localScale;
 
         if (sprite != null)
@@ -282,7 +283,7 @@ public class zFoxTween : MonoBehaviour
         {
 
             case zFOXTWEEN_OUT.OVERRIDE: nowN = orgN; break;
-            case zFOXTWEEN_OUT.ADD: n = n; break;
+            case zFOXTWEEN_OUT.ADD: break;
             case zFOXTWEEN_OUT.SUB: n = -n; break;
             case zFOXTWEEN_OUT.ADDxWEIGHT: n = +n * tw.outWeight; break;
             case zFOXTWEEN_OUT.SUBxWEIGHT: n = -n * tw.outWeight; break;
