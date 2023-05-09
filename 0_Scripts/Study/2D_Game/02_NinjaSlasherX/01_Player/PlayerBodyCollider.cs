@@ -56,6 +56,11 @@ public class PlayerBodyCollider : MonoBehaviour
             Camera.main.GetComponent<CameraFollow>().SetCamera(
                 collision.GetComponent<StageTrigger_Camera>().param);
         }
+        else if (collision.tag == "EventTrigger")
+        {
+
+            collision.SendMessage("OnTriggerEnter2D_PlayerEvent", gameObject);
+        }
         else if (collision.tag == "Item")
         {
 
@@ -79,10 +84,10 @@ public class PlayerBodyCollider : MonoBehaviour
 
                 // playerCtrl.superMode = true;
                 playerCtrl.GetComponentInChildren<Stage_AfterImage>().afterImageEnabled = true;
-                playerCtrl.basScaleX = 2.0f;
-                playerCtrl.transform.localScale = new Vector3(
-                    playerCtrl.basScaleX, 2.0f, 1.0f);
-                Invoke("SuperModeEnd", 10.0f);
+                // playerCtrl.basScaleX = 2.0f;
+                // playerCtrl.transform.localScale = new Vector3(
+                //    playerCtrl.basScaleX, 2.0f, 1.0f);
+                // Invoke("SuperModeEnd", 10.0f);
             }
 
             Destroy(collision.gameObject);

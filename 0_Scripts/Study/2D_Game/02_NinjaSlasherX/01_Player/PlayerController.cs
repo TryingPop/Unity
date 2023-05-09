@@ -49,6 +49,14 @@ public class PlayerController : BaseCharacterController
     public static float nowHp = 0;
     public static int score = 0;
 
+    public static bool checkPointEnabled = false;
+    public static string checkPointSceneName = "";
+    public static string checkPointLabelName = "";
+    public static float checkPointHp = 0;
+
+    // 외부로부터 처리를 조작하기 위한 파라미터
+    public static bool initParam = true;
+
     // 기본 파라미터
     [HideInInspector] public Vector3 enemyActiveZonePointA;
     [HideInInspector] public Vector3 enemyActiveZonePointB;
@@ -90,6 +98,43 @@ public class PlayerController : BaseCharacterController
             (boxCol2D.offset.x + boxCol2D.size.x / 2.0f, boxCol2D.offset.y + boxCol2D.size.y / 2.0f);
 
         boxCol2D.transform.gameObject.SetActive(false);
+
+        // 파라미터 초기화
+        if (initParam)
+        {
+
+            SetHp(initHpMax, initHpMax);
+            initParam = false;
+        }
+        if (SetHp(PlayerController.nowHp, PlayerController.nowHpMax))
+        {
+
+            // Hp가 없을 때는 1부터 시작
+            SetHp(1, initHpMax);
+        }
+
+        // 체크 포인터에서 다시 시작
+        if (checkPointEnabled)
+        {
+
+            StageTrigger_CheckPoint[] triggerList = GameObject.Find("Stage").
+                GetComponentsInChildren<StageTrigger_CheckPoint>();
+            foreach(StageTrigger_CheckPoint trigger in triggerList)
+            {
+
+                if (trigger.labelName == checkPointLabelName)
+                {
+
+                    transform.position = trigger.transform.position;
+                    groundY = transform.position.y;
+                    Camera.main.GetComponent<CameraFollow>().SetCamera(trigger.cameraParam);
+                    break;
+                }
+            }
+        }
+
+        Camera.main.transform.position = new Vector3(
+            transform.position.x, groundY, Camera.main.transform.position.z);
     }
 
     protected override void Update()
@@ -399,6 +444,26 @@ public class PlayerController : BaseCharacterController
         }
     }
 
+    public void ActionEtc()
+    {
+
+        Collider2D[] otherAll = Physics2D.OverlapPointAll(groundCheck_C.position);
+        foreach(Collider2D other in otherAll)
+        {
+
+            if (other.tag == "EvenetTrigger")
+            {
+
+                StageTrigger_Link link = other.GetComponent<StageTrigger_Link>();
+                if (link != null)
+                {
+
+                    link.Jump();
+                }
+            }
+        }
+    }
+
     // 코드 (지원 함수)   - Player 게임 오브젝트가 반드시 생성됭어 있고 씬에 하나밖에 없다는 것을 전제로 한다
     public static GameObject GetGameObject()
     {
@@ -437,17 +502,35 @@ public class PlayerController : BaseCharacterController
         }
 
         base.Dead(gameOver);
+        if (gameOver)
+        {
+            SetHp(0, hpMax);
+            Invoke("GameOver", 3.0f);
+        }
+        else
+        {
 
-        SetHp(0, hpMax);
-        Invoke("GameOver", 3.0f);
+            SetHp(hp / 2, hpMax);
+            Invoke("GameReset", 3.0f);
+        }
 
         GameObject.Find("HUD_Dead").GetComponent<Text>().enabled = true;
+        GameObject.Find("HUD_DeadShadow").GetComponent<MeshRenderer>().enabled = true;
     }
 
     public void GameOver()
     {
 
         PlayerController.score = 0;
+        PlayerController.nowHp = PlayerController.checkPointHp;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void GameReset()
+    {
+
+        PlayerController.score = 0;
+        PlayerController.nowHp = PlayerController.checkPointHp;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
