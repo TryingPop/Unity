@@ -7,6 +7,7 @@ public class PlayerMain : MonoBehaviour
 
     // 캐시
     PlayerController playerCtrl;
+    bool actionEtcRun = true;
 
     // 코드 (MonoBehaviour 기본 기능 구현)
     private void Awake()
@@ -54,6 +55,22 @@ public class PlayerMain : MonoBehaviour
                 playerCtrl.ActionAttackJump();
             }
             
+        }
+
+        // 문을 열거나 통로에 들어간다
+        if (Input.GetAxisRaw("Vertical") > 0.7f)
+        {
+            if (actionEtcRun)
+            {
+
+                playerCtrl.ActionEtc();
+                actionEtcRun = false;
+            }
+        }
+        else
+        {
+
+            actionEtcRun = true;
         }
     }
 }
