@@ -89,6 +89,31 @@ public class PlayerBodyCollider : MonoBehaviour
                 //    playerCtrl.basScaleX, 2.0f, 1.0f);
                 // Invoke("SuperModeEnd", 10.0f);
             }
+            else if (collision.name == "Item_Key_A")
+            {
+
+                PlayerController.score += 10000;
+                PlayerController.itemKeyA = true;
+                GameObject.Find("Stage_Item_Key_A").
+                    GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else if (collision.name == "Item_Key_B")
+            {
+
+                PlayerController.score += 10000;
+                PlayerController.itemKeyB = true;
+                GameObject.Find("Stage_Item_Key_B").
+                    GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else if (collision.name == "Item_Key_C")
+            {
+
+                PlayerController.score += 10000;
+                PlayerController.itemKeyC = true;
+                GameObject.Find("Stage_Item_Key_C").
+                    GetComponent<SpriteRenderer>().enabled = true;
+            }
+
 
             Destroy(collision.gameObject);
         }

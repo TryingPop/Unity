@@ -54,6 +54,10 @@ public class PlayerController : BaseCharacterController
     public static string checkPointLabelName = "";
     public static float checkPointHp = 0;
 
+    public static bool itemKeyA = false;
+    public static bool itemKeyB = false;
+    public static bool itemKeyC = false;
+
     // 외부로부터 처리를 조작하기 위한 파라미터
     public static bool initParam = true;
 
@@ -135,6 +139,12 @@ public class PlayerController : BaseCharacterController
 
         Camera.main.transform.position = new Vector3(
             transform.position.x, groundY, Camera.main.transform.position.z);
+
+        // HUD 표시 상태를 설정
+        Transform hud = GameObject.FindGameObjectWithTag("Canvas").transform;
+        hud.Find("Stage_Item_Key_A").GetComponent<SpriteRenderer>().enabled = itemKeyA;
+        hud.Find("Stage_Item_Key_B").GetComponent<SpriteRenderer>().enabled = itemKeyB;
+        hud.Find("Stage_Item_Key_C").GetComponent<SpriteRenderer>().enabled = itemKeyC;
     }
 
     protected override void Update()
