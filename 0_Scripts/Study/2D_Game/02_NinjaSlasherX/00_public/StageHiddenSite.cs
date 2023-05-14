@@ -30,7 +30,7 @@ public class StageHiddenSite : MonoBehaviour
             for (int i = 0; i < sprites.Length; i++)
             {
 
-                sprites[i].color = new Color(0f, 0f, 0f, 0.8f);
+                sprites[i].color = Color.white;
             }
         }
     }
