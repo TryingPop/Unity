@@ -141,10 +141,10 @@ public class PlayerController : BaseCharacterController
             transform.position.x, groundY, Camera.main.transform.position.z);
 
         // HUD 표시 상태를 설정
-        Transform hud = GameObject.FindGameObjectWithTag("Canvas").transform;
-        hud.Find("Stage_Item_Key_A").GetComponent<SpriteRenderer>().enabled = itemKeyA;
-        hud.Find("Stage_Item_Key_B").GetComponent<SpriteRenderer>().enabled = itemKeyB;
-        hud.Find("Stage_Item_Key_C").GetComponent<SpriteRenderer>().enabled = itemKeyC;
+        Transform hud = GameObject.FindGameObjectWithTag("SubCamera").transform;
+        // hud.Find("Stage_Item_Key_A").GetComponent<SpriteRenderer>().enabled = itemKeyA;
+        // hud.Find("Stage_Item_Key_B").GetComponent<SpriteRenderer>().enabled = itemKeyB;
+        // hud.Find("Stage_Item_Key_C").GetComponent<SpriteRenderer>().enabled = itemKeyC;
     }
 
     protected override void Update()
@@ -461,7 +461,7 @@ public class PlayerController : BaseCharacterController
         foreach(Collider2D other in otherAll)
         {
 
-            if (other.tag == "EvenetTrigger")
+            if (other.tag == "EventTrigger")
             {
 
                 StageTrigger_Link link = other.GetComponent<StageTrigger_Link>();
@@ -470,6 +470,12 @@ public class PlayerController : BaseCharacterController
 
                     link.Jump();
                 }
+            }
+            else if (other.tag == "KeyDoor")
+            {
+
+                StageObject_KeyDoor keydoor = other.GetComponent<StageObject_KeyDoor>();
+                keydoor.OpenDoor();
             }
         }
     }
@@ -525,7 +531,7 @@ public class PlayerController : BaseCharacterController
         }
 
         GameObject.Find("HUD_Dead").GetComponent<Text>().enabled = true;
-        GameObject.Find("HUD_DeadShadow").GetComponent<MeshRenderer>().enabled = true;
+        // GameObject.Find("HUD_DeadShadow").GetComponent<MeshRenderer>().enabled = true;
     }
 
     public void GameOver()
