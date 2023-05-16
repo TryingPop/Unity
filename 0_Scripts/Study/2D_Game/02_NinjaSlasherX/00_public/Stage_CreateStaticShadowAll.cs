@@ -44,6 +44,20 @@ public class Stage_CreateStaticShadowAll : MonoBehaviour
                 sprite.name == "StageA_RoadUnder_B" ||
                 sprite.name == "StageA_RoadUnder_LT" ||
                 sprite.name == "StageA_RoadUnder_RT" ||
+                sprite.name == "StageB_Road_A" ||
+                sprite.name == "StageB_Road_B" ||
+                sprite.name == "StageB_Road_L" ||
+                sprite.name == "StageB_Road_R" ||
+                sprite.name == "StageB_RoadUnder_A" ||
+                sprite.name == "StageB_RoadUnder_B" ||
+                sprite.name == "StageB_RoadUnder_L" ||
+                sprite.name == "StageB_RoadUnder_L2" ||
+                sprite.name == "StageB_Floor_A" ||
+                sprite.name == "StageB_Floor_L" ||
+                sprite.name == "StageB_Floor_R" ||
+                sprite.name == "StageB_FloorUnder_A" ||
+                sprite.name == "StageB_FloorUnder_B" ||
+                sprite.name == "Stage_Arrow" ||
                 sprite.name == "Stage_Item_Key_A" ||
                 sprite.name == "Stage_Item_Key_B" ||
                 sprite.name == "Stage_Item_Key_C" ||
