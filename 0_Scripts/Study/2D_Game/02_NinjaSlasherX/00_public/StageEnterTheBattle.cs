@@ -6,7 +6,7 @@ public class StageEnterTheBattle : MonoBehaviour
 {
 
     [SerializeField] GameObject[] activeObjs;   // 배틀 진입 시 활성화 시킬 오브젝트들
-    [SerializeField] bool once;
+    [SerializeField] bool once = true;
     void OnTriggerEnter2D(Collider2D collision)
     {
         

@@ -69,12 +69,12 @@ public class PlayerController : BaseCharacterController
     [HideInInspector] public int comboCount = 0;
 
     // 캐시
-    // LineRenderer hudHpBar;   // 버전이 달라서 현 상황에 맞게 수정
-    // TextMesh hudScore;
-    // TextMesh hudCombo;
-    GameObject hudHpBar;
-    Text hudScore;
-    Text hudCombo;
+    // GameObject hudHpBar; // 교재 방법대로 따라간다
+    // Text hudScore;
+    // Text hudCombo;
+    LineRenderer hudHpBar;   
+    TextMesh hudScore;
+    TextMesh hudCombo;
 
     // 코드 (MonoBehaviour 기본 기능 구현)
     protected override void Awake()
@@ -83,9 +83,13 @@ public class PlayerController : BaseCharacterController
         base.Awake();
 
         // 캐시
-        hudHpBar = GameObject.Find("HUD_HPBAR");
-        hudScore = GameObject.Find("HUD_Score").GetComponent<Text>();
-        hudCombo = GameObject.Find("HUD_Combo").GetComponent<Text>();
+        // hudHpBar = GameObject.Find("HUD_HPBAR");
+        // hudScore = GameObject.Find("HUD_Score").GetComponent<Text>();
+        // hudCombo = GameObject.Find("HUD_Combo").GetComponent<Text>();
+        hudHpBar = GameObject.Find("HUD_HPBar").GetComponent<LineRenderer>();
+        hudScore = GameObject.Find("HUD_Score").GetComponent<TextMesh>();
+        hudCombo = GameObject.Find("HUD_Combo").GetComponent<TextMesh>();
+
 
         // 파라미터 초기화
         speed = initSpeed;
@@ -530,8 +534,9 @@ public class PlayerController : BaseCharacterController
             Invoke("GameReset", 3.0f);
         }
 
-        GameObject.Find("HUD_Dead").GetComponent<Text>().enabled = true;
-        // GameObject.Find("HUD_DeadShadow").GetComponent<MeshRenderer>().enabled = true;
+        // TextMesh는 MeshRenderer를 비활성화해야 텍스트 표시가 안된다
+        GameObject.Find("HUD_Dead").GetComponent<MeshRenderer>().enabled = true;
+        GameObject.Find("HUD_DeadShadow").GetComponent<MeshRenderer>().enabled = true;
     }
 
     public void GameOver()

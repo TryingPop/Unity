@@ -35,7 +35,7 @@ public class Effect_FadeObject : MonoBehaviour
         foreach(SpriteRenderer sprite in spriteList)
         {
 
-            sprite.tag = "";
+            sprite.tag = "Untagged";
             Collider2D[] col2DList = GetComponentsInChildren<Collider2D>();
             foreach(Collider2D col2D in col2DList)
             {

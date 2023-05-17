@@ -56,14 +56,15 @@ public class StageTrigger_Link : MonoBehaviour
         playerCtrl.ActionMove(0.0f);
         playerCtrl.activeSts = false;
 
-        Invoke("JumpWork", jumpDelayTime);
+        Invoke("JumpWork", jumpDelayTime);      // 씬넘어갈 때 게임 오브젝트가 파괴되어 문 역할을 못한다
+                                                // 그래서 플레이어 컨트롤러에서 시작때 이동하는 코드가 있다
     }
 
     void JumpWork()
     {
 
         playerCtrl.activeSts = true;
-
+        
         if (SceneManager.GetActiveScene().name == jumpSceneName)
         {
 

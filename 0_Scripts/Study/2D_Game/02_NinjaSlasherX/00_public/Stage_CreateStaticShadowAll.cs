@@ -31,6 +31,7 @@ public class Stage_CreateStaticShadowAll : MonoBehaviour
             }
 
             if (sprite.name == "Filter_Paper" ||
+                sprite.name == "Effect_Hit1_2" ||
                 sprite.name == "Stage_Block_A3" ||
                 sprite.name == "Stage_Block_B3" ||
                 sprite.name == "Stage_Block_C3" ||
@@ -57,6 +58,7 @@ public class Stage_CreateStaticShadowAll : MonoBehaviour
                 sprite.name == "StageB_Floor_R" ||
                 sprite.name == "StageB_FloorUnder_A" ||
                 sprite.name == "StageB_FloorUnder_B" ||
+                sprite.name == "StageB_Door_A" ||
                 sprite.name == "Stage_Arrow" ||
                 sprite.name == "Stage_Item_Key_A" ||
                 sprite.name == "Stage_Item_Key_B" ||

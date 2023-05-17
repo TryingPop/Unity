@@ -87,7 +87,7 @@ public class PlayerBodyCollider : MonoBehaviour
                 // playerCtrl.basScaleX = 2.0f;
                 // playerCtrl.transform.localScale = new Vector3(
                 //    playerCtrl.basScaleX, 2.0f, 1.0f);
-                // Invoke("SuperModeEnd", 10.0f);
+                Invoke("SuperModeEnd", 10.0f);
             }
             else if (collision.name == "Item_Key_A")
             {
