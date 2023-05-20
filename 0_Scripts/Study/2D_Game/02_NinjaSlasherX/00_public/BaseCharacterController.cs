@@ -16,33 +16,33 @@ public class BaseCharacterController : MonoBehaviour
 
     // 외부 파라미터
     // [System.NonSerialized]   // 인스펙트 창에서만 안보이면 되므로 unity에서 제공하는 HideInInspector 어트리뷰트 이용
-    [HideInInspector] public float hpMax = 10.0f;
-    [HideInInspector] public float hp = 10.0f;
-    [HideInInspector] public float dir = 1.0f;
-    [HideInInspector] public float speed = 6.0f;
-    [HideInInspector] public float basScaleX = 1.0f;
-    [HideInInspector] public bool activeSts = false;
-    [HideInInspector] public bool jumped = false;
-    [HideInInspector] public bool grounded = false;
-    [HideInInspector] public bool groundedPrev = false;
+    [HideInInspector] public float hpMax = 10.0f;           
+    [HideInInspector] public float hp = 10.0f;              
+    [HideInInspector] public float dir = 1.0f;              // 바라보는 방향 현재는 1이면 오른쪽을 보고, -1이면 왼쪽을 본다
+    [HideInInspector] public float speed = 6.0f;            // 이동속도
+    [HideInInspector] public float basScaleX = 1.0f;        // 초기 X축 크기 배율
+    [HideInInspector] public bool activeSts = false;        // 살아있는 상태? (키 입력 받을 수 잇는지 확인)
+    [HideInInspector] public bool jumped = false;           // 점프 중인지 확인
+    [HideInInspector] public bool grounded = false;         // 지면인지 확인
+    [HideInInspector] public bool groundedPrev = false;     // 앞 프레임에 지면에 닿았는가?
 
     // 캐시
     [HideInInspector] public Animator animator;
-    protected Transform groundCheck_L;
-    protected Transform groundCheck_C;
-    protected Transform groundCheck_R;
+    protected Transform groundCheck_L;                      // 좌측 하단 지면 체크
+    protected Transform groundCheck_C;                      // 캐릭 하단 지면 체크
+    protected Transform groundCheck_R;                      // 우측 하단 지면 체크
 
     // 내부 파라미터
-    protected float speedVx = 0.0f;
-    protected float speedVxAddPower = 0.0f;
-    protected float gravityScale = 10.0f;
-    protected float jumpStartTime = 0.0f;
+    protected float speedVx = 0.0f;                         
+    protected float speedVxAddPower = 0.0f;                 
+    protected float gravityScale = 10.0f;                   // 중력 크기
+    protected float jumpStartTime = 0.0f;                   // 점프 시작 시간
 
-    protected GameObject groundCheck_OnRoadObject;
-    protected GameObject groundCheck_OnMoveObject;
+    protected GameObject groundCheck_OnRoadObject;         
+    protected GameObject groundCheck_OnMoveObject;         
     protected GameObject groundCheck_OnEnemyObject;
 
-    protected bool addForceVxEnabled = false;
+    protected bool addForceVxEnabled = false;               
     protected float addForceVxStartTime = 0.0f;
 
     protected bool addVelocityEnabled = false;
