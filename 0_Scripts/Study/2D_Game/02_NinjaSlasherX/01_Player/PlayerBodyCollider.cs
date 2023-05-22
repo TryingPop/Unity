@@ -56,6 +56,11 @@ public class PlayerBodyCollider : MonoBehaviour
             Camera.main.GetComponent<CameraFollow>().SetCamera(
                 collision.GetComponent<StageTrigger_Camera>().param);
         }
+        else if (collision.tag == "DeathCollider")
+        {
+
+            playerCtrl.Dead(false); // »ç¸Á
+        }
         else if (collision.tag == "EventTrigger")
         {
 
@@ -87,7 +92,7 @@ public class PlayerBodyCollider : MonoBehaviour
                 // playerCtrl.basScaleX = 2.0f;
                 // playerCtrl.transform.localScale = new Vector3(
                 //    playerCtrl.basScaleX, 2.0f, 1.0f);
-                Invoke("SuperModeEnd", 10.0f);
+                // Invoke("SuperModeEnd", 10.0f);
             }
             else if (collision.name == "Item_Key_A")
             {
@@ -119,7 +124,17 @@ public class PlayerBodyCollider : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+        if (collision.gameObject.name == "DeathCollider")
+        {
+
+            playerCtrl.Dead(false); // »ç¸Á
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
     {
         
         if (!playerCtrl.jumped && 

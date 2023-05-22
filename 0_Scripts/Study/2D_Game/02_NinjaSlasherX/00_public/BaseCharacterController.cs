@@ -136,6 +136,20 @@ public class BaseCharacterController : MonoBehaviour
         // 캐릭터 개별 처리
         FixedUpdateCharacter(); // 플레이어는 여기서 착지 여부, 방향, 감속여부, 카메라 좌표 순으로 처리한다
 
+        // 올라탔는지 검사
+        if (grounded)
+        {
+
+            speedVxAddPower = 0.0f;
+            if (groundCheck_OnMoveObject != null)   // 접지된 이동 오브젝트 있는지 판별
+            {
+
+                // 접지된 오브젝트의 리지드바디 획득하고 캐릭터도 x만큼 이동 속도 부여
+                Rigidbody2D rb2D = groundCheck_OnMoveObject.GetComponentInParent<Rigidbody2D>();
+                speedVxAddPower = rb2D.velocity.x;
+            }
+        }
+
         // 이동 계산
         if (addForceVxEnabled)
         {
