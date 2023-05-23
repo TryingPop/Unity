@@ -61,6 +61,28 @@ public class PlayerBodyCollider : MonoBehaviour
 
             playerCtrl.Dead(false); // »ç¸Á
         }
+        else if (collision.name == "DeathCollider_Rock")
+        {
+
+            if (playerCtrl.transform.position.y < collision.transform.position.y)
+            {
+
+                if ((playerCtrl.transform.position.x < collision.transform.position.x && 
+                    collision.transform.parent.GetComponent<Rigidbody2D>().velocity.x < -1.0f) ||
+                    (playerCtrl.transform.position.x > collision.transform.position.x &&
+                    collision.transform.parent.GetComponent<Rigidbody2D>().velocity.x > 1.0f) ||
+                    (collision.transform.parent.GetComponent<Rigidbody2D>().velocity.y < -1.0f))
+                {
+
+                    playerCtrl.Dead(false); // »ç¸Á
+                }
+            }
+        }
+        else if (collision.tag == "DestroySwitch")
+        {
+
+            collision.GetComponent<StageObject_DestroySwitch>().DestroyStageObject();
+        }
         else if (collision.tag == "EventTrigger")
         {
 
