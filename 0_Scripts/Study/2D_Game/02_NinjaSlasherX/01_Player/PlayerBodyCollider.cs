@@ -169,6 +169,23 @@ public class PlayerBodyCollider : MonoBehaviour
         }
     }
 
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        
+        // 트리거 검사
+        if (collision.tag == "DamageObject")
+        {
+
+            float damage = collision.GetComponent<StageObject_Damage>().damage * 
+                Time.fixedDeltaTime;
+            if (playerCtrl.SetHp(playerCtrl.hp - damage, playerCtrl.hpMax))
+            {
+
+                playerCtrl.Dead(true);  // 사망
+            }
+        }
+    }
+
     void SuperModeEnd()
     {
 
