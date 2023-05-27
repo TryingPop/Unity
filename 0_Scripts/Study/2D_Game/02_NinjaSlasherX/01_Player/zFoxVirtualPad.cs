@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public enum zFOXVPAD_BUTTON
 {
@@ -212,25 +213,240 @@ public class zFoxVirtualPad : MonoBehaviour
                 CheckButtonNon();
             }
         }
+
+        // SlidePad
+        movEnable = false;
+        if (Input.touchCount > 0)
+        {
+
+            // 터치 검사
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+
+                if (i != buttonAindex && i != buttonBindex)
+                {
+
+                    TouchPhase tp = Input.GetTouch(i).phase;
+                    if (tp == TouchPhase.Began)
+                    {
+
+                        if (CheckSlidePadDown(Input.GetTouch(i).position))
+                        {
+
+                            break;
+                        }
+                    }
+                    else if (tp == TouchPhase.Moved ||
+                        tp == TouchPhase.Stationary)
+                    {
+
+                        if (CheckSlidePadMove(Input.GetTouch(i).position))
+                        {
+
+                            break;
+                        }
+                    }
+                    else if (tp == TouchPhase.Ended ||
+                        tp == TouchPhase.Canceled)
+                    {
+
+                        CheckSlidePadUp();
+                    }
+                }
+            }
+        }
+        else
+        {
+
+            // 마우스 검사
+            if (Input.GetMouseButtonDown(0))
+            {
+
+                if (Input.mousePosition.x / Screen.width < 0.5f)
+                {
+
+                    CheckSlidePadDown((Vector2)Input.mousePosition);
+                }
+            }
+            else if (Input.GetMouseButton(0))
+            {
+
+                CheckSlidePadMove((Vector2)Input.mousePosition);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+
+                CheckSlidePadUp();
+            }
+        }
+
+        if (movEnable == false)
+        {
+
+            movPadEnable = false;
+            mov = Vector2.zero;
+        }
+
+        // 이동량 계산
+        switch (padValMode)
+        {
+
+            case zFOXVPAD_SLIDEPADVALUEMODE.PAD_XY_SCREEN_WH:
+                horizontal = mov.x * padSensitive / Screen.width;
+                vertical = mov.y * padSensitive / Screen.height;
+                break;
+
+            case zFOXVPAD_SLIDEPADVALUEMODE.PAD_XY_SCREEN_WW:
+                horizontal = mov.x * padSensitive / Screen.width;
+                vertical = mov.y * padSensitive / Screen.height;
+                break;
+
+            case zFOXVPAD_SLIDEPADVALUEMODE.PAD_XY_SCREEN_HH:
+                horizontal = mov.x * padSensitive / Screen.height;
+                vertical = mov.y * padSensitive / Screen.height;
+                break;
+        }
+
+        if (horizontal < -1.0f) horizontal = -1.0f;
+        if (horizontal > 1.0f) horizontal = 1.0f;
+        if (vertical < -1.0f) vertical = -1.0f;
+        if (vertical > 1.0f) vertical = 1.0f;
+
+        if (Mathf.Abs(horizontal) < horizontalStartVal)
+        {
+
+            horizontal = 0.0f;
+        }
+
+        if (Mathf.Abs(vertical) < verticalStartVal)
+        {
+
+            vertical = 0.0f;
+        }
+
+        // 패드 이동
+        Vector3 pos = new Vector3(horizontal / (padSensitive / 2.0f),
+            vertical / (padSensitive / 2.0f), 0.0f);
+        sprSlidePad.transform.localPosition = pos;
     }
 
-    private void CheckButtonNon()
+    // 코드 (버튼 처리 구현)
+    private void CheckButtonDown(RaycastHit hit, int i)
     {
-        throw new NotImplementedException();
-    }
 
-    private void CheckButtonUp(RaycastHit hit, int i)
-    {
-        throw new NotImplementedException();
+        if (hit.collider.gameObject == sprButtonA.gameObject)
+        {
+
+            buttonA = zFOXVPAD_BUTTON.DOWN;
+            buttonAindex = i;
+            buttonAHit = true;
+            sprButtonA.color = new Color(1.0f, 0.0f, 0.0f);
+        }
+        else if (hit.collider.gameObject == sprButtonB.gameObject)
+        {
+
+            buttonB = zFOXVPAD_BUTTON.DOWN;
+            buttonBindex = i;
+            buttonBHit = true;
+            sprButtonA.color = new Color(1.0f, 0.0f, 0.0f);
+        }
     }
 
     private void CheckButtonMove(RaycastHit hit, int i)
     {
-        throw new NotImplementedException();
+
+        if (hit.collider.gameObject == sprButtonA.gameObject)
+        {
+
+            buttonA = zFOXVPAD_BUTTON.HOLD;
+            buttonAindex = i;
+            buttonAHit = true;
+        }
+        else if (hit.collider.gameObject == sprButtonB.gameObject)
+        {
+
+            buttonB = zFOXVPAD_BUTTON.HOLD;
+            buttonBindex = i;
+            buttonBHit = true;
+        }
     }
 
-    private void CheckButtonDown(RaycastHit hit, int i)
+    private void CheckButtonUp(RaycastHit hit, int i)
     {
-        throw new NotImplementedException();
+
+        if (hit.collider.gameObject == sprButtonA.gameObject)
+        {
+
+            buttonA = zFOXVPAD_BUTTON.UP;
+            buttonAindex = i;
+            sprButtonA.color = new Color(1.0f, 1.0f, 1.0f);
+        }
+        else if (hit.collider.gameObject == sprButtonB.gameObject)
+        {
+
+            buttonB = zFOXVPAD_BUTTON.HOLD;
+            buttonBindex = i;
+            sprButtonB.color = new Color(1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    private void CheckButtonNon()
+    {
+
+        if (!buttonAHit)
+        {
+
+            buttonA = zFOXVPAD_BUTTON.NON;
+            buttonAindex = -1;
+            sprButtonA.color = new Color(1.0f, 1.0f, 1.0f);
+        }
+
+        if (!buttonBHit)
+        {
+
+            buttonB = zFOXVPAD_BUTTON.NON;
+            buttonBindex = -1;
+            sprButtonB.color = new Color(1.0f, 1.0f, 1.0f);
+        }
+    }
+
+
+    // 코드 (슬라이드 패드 처리 구현)
+    private bool CheckSlidePadDown(Vector2 posTouch)
+    {
+
+        if (posTouch.x / Screen.width < 0.5f)
+        {
+
+            movPadEnable = true;
+            movEnable = true;
+            movSt = posTouch;
+            Vector3 vec3 = uicam.ScreenToWorldPoint(posTouch);
+            vec3.z = sprSlidePad.transform.position.z;
+            sprSlidePadBack.transform.position = vec3;
+            return true;
+        }
+        return false;
+    }
+
+    private bool CheckSlidePadMove(Vector2 posTouch)
+    {
+
+        if (movPadEnable)
+        {
+
+            movEnable = true;
+            mov = posTouch - movSt;
+            sprSlidePad.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void CheckSlidePadUp()
+    {
+
+        sprSlidePad.color = new Color(1.0f, 1.0f, 1.0f, 0.2f);
     }
 }
