@@ -348,7 +348,7 @@ public class zFoxVirtualPad : MonoBehaviour
             buttonB = zFOXVPAD_BUTTON.DOWN;
             buttonBindex = i;
             buttonBHit = true;
-            sprButtonA.color = new Color(1.0f, 0.0f, 0.0f);
+            sprButtonB.color = new Color(1.0f, 0.0f, 0.0f);
         }
     }
 

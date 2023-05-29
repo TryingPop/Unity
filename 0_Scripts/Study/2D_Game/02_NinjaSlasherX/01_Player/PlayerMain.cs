@@ -54,7 +54,7 @@ public class PlayerMain : MonoBehaviour
         playerCtrl.ActionMove(joyMv + vpadMv);               // 이동 변수 세팅 및 애니메이션 설정
 
         // 점프
-        if (Input.GetButtonDown("Jump") || vpad_btnA = zFOXVPAD_BUTTON.DOWN)
+        if (Input.GetButtonDown("Jump") || vpad_btnA == zFOXVPAD_BUTTON.DOWN)
         {
 
             playerCtrl.ActionJump();                // 점프 실행
