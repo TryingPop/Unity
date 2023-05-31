@@ -228,4 +228,168 @@ public class zFoxSoundManager : MonoBehaviour
             SetVolume(audioSource, vol);
         }
     }
+
+    // 코드 (페이드 처리 구현)
+    class Fade
+    {
+
+        public AudioSource fadeAudio;
+        public float targetV;
+        public float dir;
+        public float time;
+        public float vmin, vmax;
+        public Fade(AudioSource a, float v, float d, float t)
+        {
+
+            fadeAudio = a;
+            targetV = v;
+            dir = d;
+            time = t;
+            if (dir < 0.0f)
+            {
+
+                vmin = v;
+                vmax = 1.0f;
+            }
+            else
+            {
+
+                vmin = 0.0f;
+                vmax = v;
+            }
+        }
+    }
+
+    List<Fade> fadeStackList = new List<Fade>();
+
+    public void FadeInVolume(AudioSource audioSource, float v, float t, bool init)
+    {
+
+        if (audioSource.volume < 1.0f && audioSource.isPlaying)
+        {
+
+            if (fadeStackList.Count <= 0)
+            {
+
+                InvokeRepeating("SoundFade", 0.0f, 0.02f);
+            }
+
+            if (init)
+            {
+
+                audioSource.volume = 0.0f;
+            }
+
+            fadeStackList.Add(new Fade(audioSource, v, +1.0f, t));
+        }
+    }
+
+    public void FadeOutVolume(AudioSource audioSource, float v, float t, bool init)
+    {
+
+        if (audioSource.volume > 0.0f && audioSource.isPlaying)
+        {
+
+            if (fadeStackList.Count <= 0)
+            {
+
+                InvokeRepeating("SoundFade", 0.0f, 0.02f);
+            }
+
+            if (init)
+            {
+
+                audioSource.volume = 1.0f;
+            }
+
+            fadeStackList.Add(new Fade(audioSource, v, -1.0f, t));
+        }
+    }
+
+    public void FadeOutVolumeGroup(string groupName, AudioSource playAudioSource,
+        float v, float t, bool init)
+    {
+
+        GameObject go = GetGroup(groupName);
+        AudioSource[] audioSourceList = go.GetComponents<AudioSource>();
+        foreach(AudioSource audioSource in audioSourceList)
+        {
+
+            if (playAudioSource != audioSource)
+            {
+
+                FadeOutVolume(audioSource, v, t, init);
+            }
+        }
+    }
+
+    public void FadeOutVolumeGroup(string groupName, string soundName,
+        float v, float t, bool init)
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            FadeOutVolumeGroup(groupName, audioSource, v, t, init);
+        }
+    }
+
+    public void FadeOutVolumeGroup(string groupName, float v, float t, bool init)
+    {
+
+        FadeOutVolumeGroup(groupName, (AudioSource)null, v, t, init);
+    }
+
+    void SoundFade()
+    {
+
+        foreach(Fade fade in fadeStackList)
+        {
+
+            float v = fade.fadeAudio.volume +
+                (1.0f * (0.02f / fade.time)) * fade.dir;
+
+            SetVolume(fade.fadeAudio, v);
+        }
+
+        for (int i = 0; i < fadeStackList.Count; i++)
+        {
+
+            if (fadeStackList[i].fadeAudio.volume <= fadeStackList[i].vmin ||
+                fadeStackList[i].fadeAudio.volume >= fadeStackList[i].vmax)
+            {
+
+                if (fadeStackList[i].fadeAudio.volume <= 0.0f)
+                {
+
+                    fadeStackList[i].fadeAudio.Stop();
+                }
+                fadeStackList.Remove(fadeStackList[i]);
+            }
+
+            if (fadeStackList.Count <= 0)
+            {
+
+                CancelInvoke("SoundFade");
+            }
+        }
+    }
+
+    // 코드 (지원 함수 구현)
+    public static zFoxSoundManager GetInstance(
+        string gameObjectName = "zFoxSoundManager")
+    {
+
+        GameObject go = GameObject.Find(gameObjectName);
+
+        if (go)
+        {
+
+            return go.GetComponent<zFoxSoundManager>();
+        }
+
+        return null;
+    }
 }
+
