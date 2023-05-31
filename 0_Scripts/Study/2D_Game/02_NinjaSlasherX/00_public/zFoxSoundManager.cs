@@ -82,4 +82,150 @@ public class zFoxSoundManager : MonoBehaviour
 
         return goSound.GetComponents<AudioSource>();
     }
+
+    public void Play(AudioSource audioSource, bool loop)
+    {
+
+        audioSource.loop = loop;
+        audioSource.Play();
+    }
+
+    // 코드 (재생 처리 구현)
+    public void Play(string groupName, string soundName, bool loop) // 오버로딩
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            Play(audioSource, loop);
+        }
+    }
+
+    public void PlayDontOverride(AudioSource audioSource, bool loop)
+    {
+
+        if (!audioSource.isPlaying)
+        {
+
+            audioSource.loop = loop;
+            audioSource.Play();
+        }
+    }
+
+    public void PlayDontOverride(string groupName, string soundName, bool loop)
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            PlayDontOverride(audioSource, loop);
+        }
+    }
+
+    public void PlayOneShot(AudioSource audioSource)
+    {
+
+        audioSource.PlayOneShot(audioSource.clip);
+    }
+
+    public void PlayOneShot(string groupName, string soundName)
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            PlayOneShot(audioSource);
+        }
+    }
+
+    public void Stop(AudioSource audioSource)
+    {
+
+        audioSource.Stop();
+    }
+
+    public void Stop(string groupName, string soundName)
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            audioSource.Stop();
+        }
+    }
+
+    public void Stop(string groupName)
+    {
+
+        AudioSource[] audioSourceList = FindAudioSource(groupName);
+        foreach(AudioSource audioSource in audioSourceList)
+        {
+
+            Stop(audioSource);
+        }
+    }
+
+    public void StopAllSound()
+    {
+
+        AudioSource[] audios = transform.GetComponentsInChildren<AudioSource>();
+        foreach(AudioSource audio in audios)
+        {
+
+            audio.Stop();
+        }
+    }
+
+    // 코드 (음량 처리 구현)
+    public float GetVolume(AudioSource audioSource)
+    {
+
+        return audioSource.volume;
+    }
+
+    public float GetVolume(string groupName, string soundName)
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            return GetVolume(audioSource);
+        }
+
+        return 0.0f;
+    }
+
+    public void SetVolume(AudioSource audioSource, float vol)
+    {
+
+        audioSource.volume = vol;
+    }
+
+    public void SetVolume(string groupName, string soundName, float vol)
+    {
+
+        AudioSource audioSource = FindAudioSource(groupName, soundName);
+        if (audioSource)
+        {
+
+            SetVolume(audioSource, vol);
+        }
+    }
+
+    public void SetVolume(string groupName, float vol)
+    {
+
+        GameObject go = GetGroup(groupName);
+        AudioSource[] audioSourceList = go.GetComponents<AudioSource>();
+        foreach(AudioSource audioSource in audioSourceList)
+        {
+
+            SetVolume(audioSource, vol);
+        }
+    }
 }
