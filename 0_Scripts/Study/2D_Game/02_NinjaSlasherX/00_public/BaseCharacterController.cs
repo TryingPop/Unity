@@ -54,6 +54,8 @@ public class BaseCharacterController : MonoBehaviour
     protected float setVelocityVx = 0.0f;
     protected float setVelocityVy = 0.0f;
 
+    protected AudioSource[] seAnimationList;
+
     public new Rigidbody2D rigidbody2D;
 
     // 코드 (MonoBehaviour 기본 기능 구현)
@@ -283,6 +285,12 @@ public class BaseCharacterController : MonoBehaviour
 
         // Debug.Log("--- DisableSuperArmor ----------------");
         superArmor = false;
+    }
+
+    public virtual void PlayAnimationSE(int i)
+    {
+
+        seAnimationList[i].Play();
     }
 
     // 코드 (기본 액션)

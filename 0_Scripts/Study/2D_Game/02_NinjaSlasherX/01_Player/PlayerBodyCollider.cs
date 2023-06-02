@@ -95,16 +95,19 @@ public class PlayerBodyCollider : MonoBehaviour
             {
 
                 PlayerController.score += 10;
+                AppSound.instance.SE_ITEM_KOBAN.Play();
             }
             else if(collision.name == "Item_Ohoban")
             {
 
                 PlayerController.score += 100000;
+                AppSound.instance.SE_ITEM_OHBAN.Play();
             }
             else if (collision.name == "Item_Hyoutan")
             {
 
                 playerCtrl.SetHp(playerCtrl.hp + playerCtrl.hpMax / 3, playerCtrl.hpMax);
+                AppSound.instance.SE_ITEM_HYOUTAN.Play();
             }
             else if (collision.name == "Item_Makimono")
             {
@@ -115,6 +118,7 @@ public class PlayerBodyCollider : MonoBehaviour
                 // playerCtrl.transform.localScale = new Vector3(
                 //    playerCtrl.basScaleX, 2.0f, 1.0f);
                 // Invoke("SuperModeEnd", 10.0f);
+                AppSound.instance.SE_ITEM_MAKIMONO.Play();
             }
             else if (collision.name == "Item_Key_A")
             {
@@ -123,6 +127,7 @@ public class PlayerBodyCollider : MonoBehaviour
                 PlayerController.itemKeyA = true;
                 GameObject.Find("Stage_Item_Key_A").
                     GetComponent<SpriteRenderer>().enabled = true;
+                AppSound.instance.SE_ITEM_KEY.Play();
             }
             else if (collision.name == "Item_Key_B")
             {
@@ -131,6 +136,7 @@ public class PlayerBodyCollider : MonoBehaviour
                 PlayerController.itemKeyB = true;
                 GameObject.Find("Stage_Item_Key_B").
                     GetComponent<SpriteRenderer>().enabled = true;
+                AppSound.instance.SE_ITEM_KEY.Play();
             }
             else if (collision.name == "Item_Key_C")
             {
@@ -139,6 +145,7 @@ public class PlayerBodyCollider : MonoBehaviour
                 PlayerController.itemKeyC = true;
                 GameObject.Find("Stage_Item_Key_C").
                     GetComponent<SpriteRenderer>().enabled = true;
+                AppSound.instance.SE_ITEM_KEY.Play();
             }
 
 
