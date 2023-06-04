@@ -60,6 +60,7 @@ public class PlayerController : BaseCharacterController
 
     // 외부로부터 처리를 조작하기 위한 파라미터
     public static bool initParam = true;
+    public static float startFadeTime = 2.0f;
 
     // 기본 파라미터
     [HideInInspector] public Vector3 enemyActiveZonePointA;
@@ -144,6 +145,9 @@ public class PlayerController : BaseCharacterController
         Camera.main.transform.position = new Vector3(
             transform.position.x, groundY, Camera.main.transform.position.z);
 
+        // VirtualPad, HUD 표시 기능을 설정
+        GameObject.Find("VRPad").SetActive(true);
+
         // HUD 표시 상태를 설정
         Transform hud = GameObject.FindGameObjectWithTag("SubCamera").transform;
         // hud.Find("Stage_Item_Key_A").GetComponent<SpriteRenderer>().enabled = itemKeyA;
@@ -155,6 +159,9 @@ public class PlayerController : BaseCharacterController
     {
         
         base.Start();
+
+        zFoxFadeFilter.instance.FadeIn(Color.black, startFadeTime);
+        startFadeTime = 2.0f;
 
         // 애니메이션에 추가
         seAnimationList = new AudioSource[5];
@@ -536,6 +543,9 @@ public class PlayerController : BaseCharacterController
         }
 
         base.Dead(gameOver);
+
+        zFoxFadeFilter.instance.FadeOut(Color.black, 2.0f);
+
         if (gameOver)
         {
             SetHp(0, hpMax);
@@ -551,6 +561,11 @@ public class PlayerController : BaseCharacterController
         // TextMesh는 MeshRenderer를 비활성화해야 텍스트 표시가 안된다
         GameObject.Find("HUD_Dead").GetComponent<MeshRenderer>().enabled = true;
         GameObject.Find("HUD_DeadShadow").GetComponent<MeshRenderer>().enabled = true;
+        if (GameObject.Find("VRPad") != null)
+        {
+
+            GameObject.Find("VRPad").SetActive(false);
+        }
     }
 
     public void GameOver()

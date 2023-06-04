@@ -88,6 +88,7 @@ public class StageTrigger_Link : MonoBehaviour
         else
         {
 
+            PlayerController.startFadeTime = 0.5f;
             SceneManager.LoadScene(jumpSceneName);
         }
     }
