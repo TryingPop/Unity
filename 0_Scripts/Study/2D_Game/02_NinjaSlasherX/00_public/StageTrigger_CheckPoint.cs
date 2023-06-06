@@ -7,6 +7,7 @@ public class StageTrigger_CheckPoint : MonoBehaviour
 {
 
     public string labelName = "";
+    public bool save = true;
     public CameraFollow.Param cameraParam;
 
     void OnTriggerEnter2D_PlayerEvent(GameObject go)
@@ -17,5 +18,11 @@ public class StageTrigger_CheckPoint : MonoBehaviour
         PlayerController.checkPointSceneName = SceneManager.GetActiveScene().name;
         PlayerController.checkPointHp = PlayerController.nowHp;
         Camera.main.GetComponent<CameraFollow>().SetCamera(cameraParam);
+        
+        if (save)
+        {
+
+            SaveData.SaveGamePlay();
+        }
     }
 }

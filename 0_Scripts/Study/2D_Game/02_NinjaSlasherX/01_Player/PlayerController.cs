@@ -108,6 +108,52 @@ public class PlayerController : BaseCharacterController
 
         boxCol2D.transform.gameObject.SetActive(false);
 
+        // 끝난 게임을 플레이어가 이어서 계속 플레이 하는지 검사
+        if (SaveData.continuePlay)
+        {
+
+            // 이어서 플레이
+            if (!SaveData.LoadGamePlay(true))
+            {
+
+                initParam = false;
+            }
+            SaveData.continuePlay = false;
+        }
+
+        if (initParam)
+        {
+
+            // New (처음부터 플레이)
+            SetHp(initHpMax, initHpMax);
+            PlayerController.score = 0;
+            PlayerController.checkPointEnabled = false;
+            PlayerController.checkPointLabelName = "";
+            PlayerController.checkPointSceneName = SceneManager.GetActiveScene().name;
+            PlayerController.checkPointHp = initHpMax;
+            PlayerController.itemKeyA = false;
+            PlayerController.itemKeyB = false;
+            PlayerController.itemKeyC = false;
+            SaveData.DeleteAndInit(false);
+            SaveData.SaveGamePlay();
+            initParam = false;
+        }
+        else
+        {
+
+            //이어서 플레이 하는 것도 아니고, 처음부터 플레이하는 것도 아닌 링크로 점프할 땐
+            // 스테이지의 상태만을 저장 데이터에서 불러온다
+            SaveData.LoadGamePlay(false);
+        }
+
+        if (SetHp(PlayerController.nowHp, PlayerController.nowHpMax))
+        {
+
+            // HP가 없을 땐 1부터 시작
+            SetHp(1, initHpMax);
+        }
+
+        /*
         // 파라미터 초기화
         if (initParam)
         {
@@ -121,6 +167,8 @@ public class PlayerController : BaseCharacterController
             // Hp가 없을 때는 1부터 시작
             SetHp(1, initHpMax);
         }
+        */
+
 
         // 체크 포인터에서 다시 시작
         if (checkPointEnabled)
@@ -146,13 +194,17 @@ public class PlayerController : BaseCharacterController
             transform.position.x, groundY, Camera.main.transform.position.z);
 
         // VirtualPad, HUD 표시 기능을 설정
-        GameObject.Find("VRPad").SetActive(true);
+        GameObject.Find("VRPad").SetActive(SaveData.VRPadEnabled);
 
         // HUD 표시 상태를 설정
+
         Transform hud = GameObject.FindGameObjectWithTag("SubCamera").transform;
         // hud.Find("Stage_Item_Key_A").GetComponent<SpriteRenderer>().enabled = itemKeyA;
         // hud.Find("Stage_Item_Key_B").GetComponent<SpriteRenderer>().enabled = itemKeyB;
         // hud.Find("Stage_Item_Key_C").GetComponent<SpriteRenderer>().enabled = itemKeyC;
+
+
+        
     }
 
     protected override void Start()
@@ -456,6 +508,13 @@ public class PlayerController : BaseCharacterController
     public void Actiondamage(float damage)
     {
 
+        // Debug : 무적 모드
+        if (SaveData.debug_Invicible)
+        {
+
+            return;
+        }
+
         if (!activeSts)
         {
 
@@ -571,16 +630,30 @@ public class PlayerController : BaseCharacterController
     public void GameOver()
     {
 
+        SaveData.SaveHiScore(score);
         PlayerController.score = 0;
         PlayerController.nowHp = PlayerController.checkPointHp;
+        SaveData.SaveGamePlay();
+
+        AppSound.instance.fm.Stop("BGM");
+        if (SaveData.newRecord > 0)
+        {
+
+            AppSound.instance.BGM_HISCORE_RANKIN.Play();
+        }
+        else
+        {
+
+            AppSound.instance.BGM_HISCORE.Play();
+        }
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void GameReset()
     {
 
-        PlayerController.score = 0;
-        PlayerController.nowHp = PlayerController.checkPointHp;
+        SaveData.SaveGamePlay();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
