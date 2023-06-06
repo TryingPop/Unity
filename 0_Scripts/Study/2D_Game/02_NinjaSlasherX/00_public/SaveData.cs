@@ -100,6 +100,7 @@ public class SaveData
             // SaveDataInfo
             SaveDataHeader("SDG_GamePlay");
 
+            // 배열 이니셜라이저 검색
             {
 
                 // PlayerData
@@ -245,5 +246,185 @@ public class SaveData
         }
 
         return false;
+    }
+
+    public static string LoadContinueSceneName()
+    {
+
+        if (CheckSaveDataHeader("SDG_GamePlay"))
+        {
+
+            zFoxDataPackString playerData = new zFoxDataPackString();
+            playerData.DecodeDataPackString(
+                playerData.PlayerPrefsGetStringUTF8("PlayerData"));
+            return (string)playerData.GetData("Player_checkPointSceneName");
+        }
+
+        continuePlay = false;
+        return "StageA";            // 시작 스테이지 입력필요!
+    }
+
+    // 코드 (랭킹 데이터 저장 불러오기)
+    public static bool SaveHiScore(int playerScore)
+    {
+
+        LoadHiScore();
+        try
+        {
+
+            Debug.Log("SaveData.SaveHiScore : Start");
+            // Hiscore set & sort
+            newRecord = 0;
+            int[] scoreList = new int[11];
+            HiScore.CopyTo(scoreList, 0);
+            scoreList[10] = playerScore;
+            System.Array.Sort(scoreList);
+            System.Array.Reverse(scoreList);
+            for (int i = 0; i < 10; i++)
+            {
+
+                HiScore[i] = scoreList[i];
+                if (playerScore == HiScore[i])
+                {
+
+                    newRecord = i + 1;
+                }
+            }
+
+            // Hiscore save
+            SaveDataHeader("SDG_HiScore");
+            zFoxDataPackString hiscoreData = new zFoxDataPackString();
+            for (int i = 0; i < 10; i++)
+            {
+
+                hiscoreData.Add("Rank" + (i + 1), HiScore[i]);
+            }
+            hiscoreData.PlayerPrefsSetStringUTF8(
+                "HiScoreData", hiscoreData.EncodeDataPackString());
+
+            PlayerPrefs.Save();
+            Debug.Log("SaveData.SaveHiSocre : End");
+            return true;
+        }
+        catch(System.Exception e)
+        {
+
+            Debug.LogWarning("SaveData.SaveHiScore : Failed(" + e.Message + ")");
+        }
+
+        return false;
+    }
+
+    public static bool LoadHiScore()
+    {
+
+        try
+        {
+
+            if (CheckSaveDataHeader("SDG_HiScore"))
+            {
+
+                Debug.Log("SaveData.LoadHiScore : Start");
+                zFoxDataPackString hiscoreData = new zFoxDataPackString();
+                hiscoreData.DecodeDataPackString(
+                    hiscoreData.PlayerPrefsGetStringUTF8("HiScoreData"));
+                for (int i = 0; i < 10; i++)
+                {
+
+                    HiScore[i] = (int)hiscoreData.GetData("Rank" + (i + 1));
+                }
+
+                Debug.Log("SaveData.LoadHiScore : End");
+            }
+
+            return true;
+        }
+        catch(System.Exception e)
+        {
+
+            Debug.LogWarning("SaveData.LoadHiScore : Failed(" + e.Message + ")");
+        }
+
+        return false;
+    }
+
+    // 코드 (옵션 데이터 저장 불러오기)
+    public static bool SaveOption()
+    {
+
+        try
+        {
+
+            Debug.Log("SaveData.SaveOption : Start");
+            SaveDataHeader("SDG_Option");
+
+            PlayerPrefs.SetFloat("SoundBGMVolume", SoundBGMVolume);
+            PlayerPrefs.SetFloat("SoundSEVolume", SoundSEVolume);
+
+            // Save
+            PlayerPrefs.Save();
+            Debug.Log("SaveData.SaveOption : End");
+            return true;
+        }
+        catch(System.Exception e)
+        {
+
+            Debug.LogWarning("SaveData.SaveOption : Failed(" + e.Message + ")");
+        }
+
+        return false;
+    }
+
+    public static bool LoadOption()
+    {
+
+        try
+        {
+
+            if (CheckSaveDataHeader("SDG_Option"))
+            {
+
+                Debug.Log("SaveData.LoadOption : Start");
+
+                SoundBGMVolume = PlayerPrefs.GetFloat("SoundBGMVolume");
+                SoundSEVolume = PlayerPrefs.GetFloat("SoundSEVolume");
+                VRPadEnabled = (PlayerPrefs.GetInt("VRPadEnabled") > 0) ?
+                    true : false;
+
+                Debug.Log("SaveData.LoadOption : End");
+            }
+        }
+        catch(System.Exception e)
+        {
+
+            Debug.LogWarning("SaveData.LoadOption : Failed(" + e.Message + ")");
+        }
+
+        return false;
+    }
+
+    // 코드 (저장 불러오기, 삭제 초기화)
+    public static void DeleteAndInit(bool init)
+    {
+
+        Debug.Log("SaveData.DeleteAndInit : DeleteAll");
+        PlayerPrefs.DeleteAll();
+
+        if (init)
+        {
+
+            Debug.Log("SaveData.DeleteAndInit : Init");
+            SaveDate = "(non)";
+            SoundBGMVolume = 1.0f;
+            SoundSEVolume = 1.0f;
+
+#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+    VRPadEnabled = true;
+#else
+            VRPadEnabled = false;
+#endif
+
+            HiScoreInitData.CopyTo(HiScore, 0);
+        }
     }
 }
