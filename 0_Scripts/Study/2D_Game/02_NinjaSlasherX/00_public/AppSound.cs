@@ -136,6 +136,10 @@ public class AppSound : MonoBehaviour
 
             sceneName = SceneManager.GetActiveScene().name;
 
+            // 음량 설절
+            fm.SetVolume("BGM", SaveData.SoundBGMVolume);
+            fm.SetVolume("SE", SaveData.SoundSEVolume);
+
             // 배경음 재생
             if (sceneName == "Menu_Logo")
             {
@@ -151,6 +155,7 @@ public class AppSound : MonoBehaviour
                     fm.Stop("BGM");
                     BGM_TITLE.Play();
                     fm.FadeInVolume(BGM_TITLE, 1.0f, 1.0f, true);
+                    fm.FadeInVolume(BGM_TITLE, SaveData.SoundBGMVolume, 1.0f, true);
                 }
             }
             else if (sceneName == "Menu_Option" || sceneName == "Menu_HiScore" || 
@@ -163,7 +168,8 @@ public class AppSound : MonoBehaviour
             {
 
                 fm.FadeOutVolumeGroup("BGM", BGM_STAGEA, 0.0f, 1.0f, false);
-                fm.FadeInVolume(BGM_TITLE, 1.0f, 1.0f, true);
+                // fm.FadeInVolume(BGM_TITLE, 1.0f, 1.0f, true);
+                fm.FadeInVolume(BGM_TITLE, SaveData.SoundBGMVolume, 1.0f, true);
                 BGM_STAGEA.loop = true;
                 BGM_STAGEA.Play();
             }

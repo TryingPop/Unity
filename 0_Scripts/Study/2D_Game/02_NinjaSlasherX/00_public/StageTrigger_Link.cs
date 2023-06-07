@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class StageTrigger_Link : MonoBehaviour
@@ -13,6 +14,9 @@ public class StageTrigger_Link : MonoBehaviour
     public int jumpDir = 0;
     public bool jumpInput = true;   // false = AutoJump
     public float jumpDelayTime = 0.0f;
+
+    public bool save = true;
+    public bool sePlay = true;
 
     // 내부 파라미터
     Transform playerTrfm;
@@ -53,8 +57,20 @@ public class StageTrigger_Link : MonoBehaviour
         PlayerController.checkPointSceneName = jumpSceneName;
         PlayerController.checkPointHp = PlayerController.nowHp;
 
+        if (save)
+        {
+
+            SaveData.SaveGamePlay();
+        }
+
         playerCtrl.ActionMove(0.0f);
         playerCtrl.activeSts = false;
+
+        if (sePlay)
+        {
+
+            AppSound.instance.SE_OBJ_EXIT.Play();
+        }
 
         Invoke("JumpWork", jumpDelayTime);      // 씬넘어갈 때 게임 오브젝트가 파괴되어 문 역할을 못한다
                                                 // 그래서 플레이어 컨트롤러에서 시작때 이동하는 코드가 있다

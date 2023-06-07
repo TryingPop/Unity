@@ -27,7 +27,8 @@ public class StageTrigger_EventSound : MonoBehaviour
         if (playAudio != "")
         {
 
-            AppSound.instance.fm.SetVolume(playGroup, playAudio, 1.0f);
+            // AppSound.instance.fm.SetVolume(playGroup, playAudio, 1.0f);
+            AppSound.instance.fm.SetVolume(playGroup, playAudio, SaveData.SoundBGMVolume);
             AppSound.instance.fm.PlayDontOverride(playGroup, playAudio, loop);
         }
     }
