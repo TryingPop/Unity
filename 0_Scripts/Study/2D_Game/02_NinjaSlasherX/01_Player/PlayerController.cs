@@ -647,7 +647,8 @@ public class PlayerController : BaseCharacterController
             AppSound.instance.BGM_HISCORE.Play();
         }
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("Menu_HiScore");
     }
 
     public void GameReset()
