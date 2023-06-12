@@ -83,6 +83,9 @@ public class PlayerController : BaseCharacterController
 
         base.Awake();
 
+        // 가비지 컬렉션 실행
+        System.GC.Collect();
+
         // 캐시
         // hudHpBar = GameObject.Find("HUD_HPBAR");
         // hudScore = GameObject.Find("HUD_Score").GetComponent<Text>();

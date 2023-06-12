@@ -10,7 +10,10 @@ public class Menu_Title : MonoBehaviour
 
     void Start()
     {
-        
+
+        // 가비지 컬렉션 강제 실행
+        System.GC.Collect();
+
         if (!SaveData.CheckGamePlayData())
         {
 
