@@ -75,4 +75,29 @@ public class VolumeInfo
     }
 
     private float m_bytes = 0;              // 바이트 단위로 용량 기록
+
+    // public float bytes { get; private set; }
+    // 는 다음 코드와 같다
+    /*
+    
+    private float m_bytes;
+    public float bytes
+    {
+
+        get { return m_bytes; }
+
+        private set { m_bytes = value; }
+    }
+    */
+
+    // 프로퍼티를 설정함에 있어서 아래와 같이 자기자신을 참조하게 정의해서는 안된다
+    // 컴파일러에서 아래 코드가 에러가 없다고 떠서 실행 가능하나
+    // 실제로 실행 시키면 스택 오버플로우를 발생시키는 악성코드가 된다
+    /*
+    public float Bytes
+    {
+
+        get { return Bytes; }
+    }
+    */
 }
