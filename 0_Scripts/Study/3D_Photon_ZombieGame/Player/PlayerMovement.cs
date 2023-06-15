@@ -43,8 +43,8 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 moveDistance =
             playerInput.move * transform.forward * moveSpeed * Time.fixedDeltaTime;
-        // 교재에서는 Time.deltaTime이라 되어져 있는데, fixedUpdate 연산방법에 의해
-        // 컴퓨터 성능이 좋으면 실제보다 느린 이동속도를 내고 컴퓨터 성능이 안좋으면 빠른 속도를 내기에 fixedDeltaTime으로 수정
+        // 유니티에서는 개발자의 편의를 위해 fixedUpdate안에서는 Time.deltaTime은 Time.fixedDeltaTime의 값을 이용한다
+        // 그래도 여기서는 fixedUpdate에서 쓴다는 것을 표현하기 위해 fixedDeltaTime으로 표현 
 
         // 리지드바디를 이용해 게임 오브젝트 위치 변경
         playerRigidbody.MovePosition(playerRigidbody.position + moveDistance);
