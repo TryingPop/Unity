@@ -56,8 +56,8 @@ public class Zombie : LivingEntity
         zombieRenderer = GetComponentInChildren<Renderer>();
     }
 
-    // 좀비 AI의 초기 슿펙을 결정하는 셋업 메서드
-    private void Setup(ZombieData zombieData)
+    // 좀비 AI의 초기 스펙을 결정하는 셋업 메서드
+    private void Setup(ZombieData zombieData)       // 현재 사용하지 않는다
     {
 
         // 체력 설정
