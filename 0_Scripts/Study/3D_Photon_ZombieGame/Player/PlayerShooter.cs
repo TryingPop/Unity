@@ -68,14 +68,12 @@ public class PlayerShooter : MonoBehaviour
     private void UpdateUI()
     {
 
-        /*
         if (gun != null && UIManager.instance != null)
         {
 
             // UI 매니저의 탄알 텍스트에 탄창의 탄알과 남은 전체 탄알 표시
-            UIManager.instance.UpdateAmmotext(gun.magAmmo, gun.ammoRemain);
+            UIManager.instance.UpdateAmmoText(gun.magAmmo, gun.ammoRemain);
         }
-        */
     }
 
     // 애니메이터의 IK 갱신
