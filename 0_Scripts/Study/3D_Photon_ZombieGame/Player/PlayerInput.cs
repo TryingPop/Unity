@@ -26,7 +26,7 @@ public class PlayerInput : MonoBehaviour
         
         // 게임오버 상태에서는 사용자 입력을 감지하지 않음
         // GameManager 싱글톤 객체가 필요하다
-        if (GameManager.instance != null && GameManager.instance.isGameOver)
+        if (GameManager.instance != null && GameManager.instance.isGameover)
         {
 
             move = 0;
@@ -43,6 +43,6 @@ public class PlayerInput : MonoBehaviour
         // fire에 관한 입력 감지
         fire = Input.GetButton(fireButtonName);
         // reload에 관한 입력 감지
-        reload = Input.GetButtonDown(fireButtonName);
+        reload = Input.GetButtonDown(reloadButtonName);
     }
 }
