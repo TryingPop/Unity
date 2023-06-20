@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build.Content;
 using UnityEngine;
+using Photon.Pun;
 
 // 플레이어 캐릭터를 조작하기 위한 사용자 입력을 감지
 // 감지된 입력값을 다른 컴포넌트가 사용할 수 있도록 제공
-public class PlayerInput : MonoBehaviour
+public class PlayerInput : MonoBehaviourPun
 {
 
     public string moveAxisName = "Vertical";        // 앞뒤 움직임을 위한 입력축 이름
@@ -24,6 +24,13 @@ public class PlayerInput : MonoBehaviour
     private void Update()
     {
         
+        // 로컬 플레이어가 아닌 경우 입력을 받지 않음
+        if (!photonView.IsMine)
+        {
+
+            return;
+        }
+
         // 게임오버 상태에서는 사용자 입력을 감지하지 않음
         // GameManager 싱글톤 객체가 필요하다
         if (GameManager.instance != null && GameManager.instance.isGameover)
