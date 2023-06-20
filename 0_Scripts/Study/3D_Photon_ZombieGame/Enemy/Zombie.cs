@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Photon.Pun;
 
 // 좀비 AI 구현
 public class Zombie : LivingEntity
@@ -57,7 +58,8 @@ public class Zombie : LivingEntity
     }
 
     // 좀비 AI의 초기 스펙을 결정하는 셋업 메서드
-    public void Setup(ZombieData zombieData)       // 현재 사용하지 않는다
+    [PunRPC]
+    public void Setup(ZombieData zombieData)       
     {
 
         // 체력 설정
@@ -75,12 +77,27 @@ public class Zombie : LivingEntity
     private void Start()
     {
 
+        // 호스트가 아니라면 AI의 추적 루틴을 실행하지 않음
+        if (!PhotonNetwork.IsMasterClient)
+        {
+
+            return;
+        }
+
         // 게임 오브젝트 활성화와 동시에 AI의 추적 루틴 시작
         StartCoroutine(UpdatePath());
     }
 
     private void Update()
     {
+
+        // 호스트가 아니라면 애니메이션의 파라미터를 직접 갱신하지 않음
+        // 호스트가 파라미터를 갱신하면 클라이언트에 자동으로 전달되기 때문
+        if (!PhotonNetwork.IsMasterClient)
+        {
+
+            return;
+        }
 
         // 추적 대상의 존재 여부에 따라 다른 애니메이션 재생
         zombieAnimator.SetBool("HasTarget", hasTarget);
@@ -138,6 +155,7 @@ public class Zombie : LivingEntity
     }
 
     // 데미지를 입었을 때 실행할 처리
+    [PunRPC]
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
 
@@ -185,6 +203,13 @@ public class Zombie : LivingEntity
     private void OnTriggerStay(Collider other)
     {
         
+        // 호스트가 아니라면 공격 실행 불가
+        if (!PhotonNetwork.IsMasterClient)
+        {
+
+            return;
+        }
+
         // 자신이 사망하지 않았으며,
         // 최근 공격 시점에서 timeBetAttack 이상 시간이 지났다면 공격 가능
         if (!dead && Time.time >= lastAttackTime + timeBetAttack)
