@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class HealthPack : MonoBehaviour, IItem
+public class HealthPack : MonoBehaviourPun, IItem
 {
 
     public float health = 50;       // 체력을 회복할 수치
@@ -22,6 +23,6 @@ public class HealthPack : MonoBehaviour, IItem
         }
 
         // 사용되었으므로 자신을 파괴
-        Destroy(gameObject);
+        PhotonNetwork.Destroy(gameObject);
     }
 }
