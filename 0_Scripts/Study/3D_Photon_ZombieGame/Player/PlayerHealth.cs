@@ -42,6 +42,10 @@ public class PlayerHealth : LivingEntity
         healthSlider.maxValue = startingHealth;
         // 체력 슬라이더의 값을 현재 체력값으로 변경
         healthSlider.value = health;
+
+        // 플레이어 조작을 받는 컴포넌트 활성화
+        playerMovement.enabled = true;
+        playerShooter.enabled = true;
     }
 
     // 체력 회복
