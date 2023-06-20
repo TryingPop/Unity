@@ -219,8 +219,8 @@ public class Zombie : LivingEntity
             // 상대방의 LivingEntity 타입 가져오기 시도
             LivingEntity attackTarget = other.GetComponent<LivingEntity>();
 
-            // 상대방의 LivingEntity가 자신의 추적 대상이라면 공격 실행
-            if (attackTarget != null && attackTarget == targetEntity)
+            // 상대방의 LivingEntity가 Player 태그를 가진 경우 공격
+            if (attackTarget != null && attackTarget.tag == "Player")
             {
 
                 // 최근 공격 시간 갱신

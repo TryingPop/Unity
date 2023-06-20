@@ -97,15 +97,6 @@ public class Gun : MonoBehaviourPun, IPunObservable
         state = State.Ready;
         // 마지막으로 총을 쏜 시점을 초기화
         lastFireTime = 0;
-
-
-        photonView.enabled = true;
-    }
-
-    private void OnDisable()
-    {
-
-        photonView.enabled = false;
     }
 
     // 발사 시도
