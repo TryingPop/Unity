@@ -59,19 +59,20 @@ public class Zombie : LivingEntity
 
     // 좀비 AI의 초기 스펙을 결정하는 셋업 메서드
     [PunRPC]
-    public void Setup(ZombieData zombieData)       
+    public void Setup(float newHealth, float newDamage,
+        float newSpeed, Color skinColor)       
     {
 
         // 체력 설정
-        startingHealth = zombieData.health;
+        startingHealth = newHealth;
         health = startingHealth;
 
         // 공격력 설정
-        damage = zombieData.damage;
+        damage = newDamage;
         // 내비메시 에이전트의 이동 속도 설정
-        navMeshAgent.speed = zombieData.speed;
+        navMeshAgent.speed = newSpeed;
         // 렌더러가 사용 중인 머테리얼의 컬러를 변경, 외형 색이 변함
-        zombieRenderer.material.color = zombieData.skinColor;
+        zombieRenderer.material.color = skinColor;
     }
 
     private void Start()
