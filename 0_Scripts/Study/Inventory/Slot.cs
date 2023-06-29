@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class Slot : MonoBehaviour, 
+    IPointerEnterHandler, IPointerExitHandler, // 마우스가 슬롯에 들어가고 나올 때
+    IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
 
     public Item item;                             // 획득한 아이템 (추후 아이템 스크립트)
@@ -18,11 +20,19 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
     private WeaponManager myWeaponManager;
     private Vector3 originPos;
 
+    [SerializeField] private SlotTooltip theSlotToolTip;
+
     void Start()
     {
 
         originPos = transform.position;
         myWeaponManager = transform.GetComponentInParent<WeaponManager>();
+
+        if (theSlotToolTip == null)
+        {
+
+            theSlotToolTip = GameObject.FindObjectOfType<SlotTooltip>();
+        }
     }
 
     /// <summary>
@@ -199,6 +209,26 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
         {
 
             DragSlot.instance.dragSlot.ClearSlot();
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+
+        if (item != null)
+        {
+
+            theSlotToolTip.ShowTooltip(item, eventData.position);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+
+        if (item != null)
+        {
+
+            theSlotToolTip.HideTooltip();
         }
     }
 }
