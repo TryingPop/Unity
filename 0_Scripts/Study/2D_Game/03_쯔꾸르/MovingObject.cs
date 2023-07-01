@@ -19,10 +19,12 @@ public class MovingObject : MonoBehaviour
 
     private bool canMove = true;
 
+    private Animator animator;
+
     private void Start()
     {
 
-        
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -45,41 +47,59 @@ public class MovingObject : MonoBehaviour
     IEnumerator MoveCoroutine()
     {
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        // 코루틴 생성에 많은 비용을 소모하기에 코루틴 생성의 최소화
+        while (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
         {
+         
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
 
-            applySpeed = runSpeed;
-            applyRunFlag = true;
-        }
-        else
-        {
+                applySpeed = runSpeed;
+                applyRunFlag = true;
+            }
+            else
+            {
 
-            applySpeed = walkSpeed;
-            applyRunFlag = false;
-        }
+                applySpeed = walkSpeed;
+                applyRunFlag = false;
+            }
 
-        vector.Set(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), transform.position.z);
+            vector.Set(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), transform.position.z);
 
-        while (currentWalkCount < walkCount)
-        {
+            // 좌우를 최우선으로 실행
             if (vector.x != 0)
             {
 
-                // 현재 위치에서 해당 값만큼 이동
-                transform.Translate(vector.x * applySpeed * walkCount, 0, 0);
+                vector.y = 0;
             }
-            else if (vector.y != 0)
+
+            // 애니메이터에 블랜드트리로 DirX, DirY로 방향 설정
+            animator.SetFloat("DirX", vector.x);
+            animator.SetFloat("DirY", vector.y);
+            animator.SetBool("Walking", true);
+
+            while (currentWalkCount < walkCount)
             {
+                if (vector.x != 0)
+                {
 
-                transform.Translate(0, vector.y * applySpeed * walkCount, 0);
+                    // 현재 위치에서 해당 값만큼 이동
+                    transform.Translate(vector.x * applySpeed * walkCount, 0, 0);
+                }
+                else if (vector.y != 0)
+                {
+
+                    transform.Translate(0, vector.y * applySpeed * walkCount, 0);
+                }
+
+                if (applyRunFlag) currentWalkCount++;
+
+                currentWalkCount++;
+                yield return new WaitForSeconds(0.01f);
             }
-
-            if (applyRunFlag) currentWalkCount++;
-
-            currentWalkCount++;
-            yield return new WaitForSeconds(0.01f);
         }
 
+        animator.SetBool("Walking", false);
         currentWalkCount = 0;
         canMove = true;
     }
