@@ -6,6 +6,10 @@ using UnityEngine;
 public class MovingObject : MonoBehaviour
 {
 
+    public static MovingObject instance;    // ΩÃ±€≈Ê
+
+    public string currentMapName;           // «ˆ¿Á ∏  ¿Ã∏ß
+
     public float walkSpeed;
     public float runSpeed;
 
@@ -28,8 +32,23 @@ public class MovingObject : MonoBehaviour
     private void Start()
     {
 
-        animator = GetComponent<Animator>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        if (instance == null)
+        {
+
+            DontDestroyOnLoad(this.gameObject);
+
+            animator = GetComponent<Animator>();
+            boxCollider = GetComponent<BoxCollider2D>();
+            animator = GetComponent<Animator>();
+            instance = this;
+        }
+        else
+        {
+
+            Destroy(this.gameObject);
+        }
+
+
     }   
 
     private void Update()
