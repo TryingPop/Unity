@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MovingObject : MonoBehaviour
@@ -20,12 +21,16 @@ public class MovingObject : MonoBehaviour
     private bool canMove = true;
 
     private Animator animator;
+    private BoxCollider2D boxCollider;
+
+    public LayerMask layerMask;             // 통과 불가능한 레이어 설정
 
     private void Start()
     {
 
         animator = GetComponent<Animator>();
-    }
+        boxCollider = GetComponent<BoxCollider2D>();
+    }   
 
     private void Update()
     {
@@ -76,6 +81,23 @@ public class MovingObject : MonoBehaviour
             // 애니메이터에 블랜드트리로 DirX, DirY로 방향 설정
             animator.SetFloat("DirX", vector.x);
             animator.SetFloat("DirY", vector.y);
+
+            RaycastHit2D hit;
+
+            Vector2 start = boxCollider.bounds.center;  // 캐릭터의 현재 위치 값 
+                                                        // 박스콜라이더 기준이므로 박스콜라이더 중심을 기준으로 했다
+            Vector2 end = start + new Vector2(vector.x * applySpeed * walkCount, vector.y * applySpeed * walkCount);    // 캐릭터가 이동하고자 하는 위치 값
+
+            boxCollider.enabled = false;
+            hit = Physics2D.Linecast(start, end, layerMask);
+            boxCollider.enabled = true;
+
+            if (hit.transform != null)
+            {
+
+                break;
+            }
+
             animator.SetBool("Walking", true);
 
             while (currentWalkCount < walkCount)
