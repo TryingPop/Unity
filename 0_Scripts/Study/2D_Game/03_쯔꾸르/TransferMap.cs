@@ -9,6 +9,7 @@ public class TransferMap : MonoBehaviour
     public string transferMapName;          // 이동할 맵 이름
 
     public Transform target;
+    public BoxCollider2D targetBound;
 
     public bool flag = true;                // 씬변환 체크 변수
                                             // 이 변환에서 주의할 껀 재생성되면서
@@ -36,14 +37,18 @@ public class TransferMap : MonoBehaviour
         {
 
             thePlayer.currentMapName = transferMapName;
+            
 
+            // 초기화 주의!
             if (flag)
             {
 
                 SceneManager.LoadScene(transferMapName);
             }
-            else
+            else    
             {
+
+                theCamera.SetBound(targetBound);
                 theCamera.transform.position = new Vector3(
                     this.transform.position.x, this.transform.position.y,
                     theCamera.transform.position.z);
