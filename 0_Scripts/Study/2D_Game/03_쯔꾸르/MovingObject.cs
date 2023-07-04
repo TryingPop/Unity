@@ -29,6 +29,19 @@ public class MovingObject : MonoBehaviour
 
     public LayerMask layerMask;             // 통과 불가능한 레이어 설정
 
+    // public AudioClip walkSound_1;
+    // public AudioClip walkSound_2;
+
+    // private AudioSource audioSource;    // 사운드 플레이어
+
+    public string walkSound_1;
+    public string walkSound_2;
+    public string walkSound_3;
+    public string walkSound_4;
+
+    private AudioManager theAudio;
+
+
     private void Start()
     {
 
@@ -40,6 +53,10 @@ public class MovingObject : MonoBehaviour
             animator = GetComponent<Animator>();
             boxCollider = GetComponent<BoxCollider2D>();
             animator = GetComponent<Animator>();
+            // audioSource = GetComponent<AudioSource>();
+
+            theAudio = FindObjectOfType<AudioManager>();
+
             instance = this;
         }
         else
@@ -119,6 +136,28 @@ public class MovingObject : MonoBehaviour
 
             animator.SetBool("Walking", true);
 
+            int temp = Random.Range(1, 5);
+
+            switch (temp)
+            {
+
+                case 1:
+                    theAudio.Play(walkSound_1);
+                    break;
+
+                case 2:
+                    theAudio.Play(walkSound_2);
+                    break;
+
+                case 3:
+                    theAudio.Play(walkSound_3);
+                    break;
+
+                case 4:
+                    theAudio.Play(walkSound_4);
+                    break;
+            }
+
             while (currentWalkCount < walkCount)
             {
                 if (vector.x != 0)
@@ -137,6 +176,28 @@ public class MovingObject : MonoBehaviour
 
                 currentWalkCount++;
                 yield return new WaitForSeconds(0.01f);
+
+                /*
+                if (currentWalkCount % 9 == 2)
+                {
+
+                    int temp = Random.Range(1, 3);
+                    switch (temp)
+                    {
+
+                        case 1:
+                            audioSource.clip = walkSound_1;
+                            audioSource.Play();
+                            break;
+
+                        case 2:
+                            audioSource.clip = walkSound_2;
+                            audioSource.Play();
+                            break;
+
+                    }
+                }
+                */
             }
         }
 
