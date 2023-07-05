@@ -6,6 +6,7 @@ using UnityEngine;
 public class MovingObject : MonoBehaviour
 {
     public float walkSpeed;
+    protected float applySpeed;
 
     public int walkCount;
     protected int currentWalkCount;
@@ -55,10 +56,12 @@ public class MovingObject : MonoBehaviour
 
         animator.SetBool("Walkinig", true);
 
+        applySpeed = walkSpeed;
+
         while (currentWalkCount < walkCount)
         {
 
-            transform.Translate(vector.x * walkSpeed, vector.y * walkSpeed, 0);
+            transform.Translate(vector.x * applySpeed, vector.y * applySpeed, 0);
 
             currentWalkCount++;
             yield return new WaitForSeconds(0.01f);
@@ -73,5 +76,22 @@ public class MovingObject : MonoBehaviour
         }
 
         npcCanMove = true;
+    }
+
+    protected bool CheckCollision()
+    {
+
+        RaycastHit2D hit;
+
+        Vector2 start = transform.position;
+        Vector2 end = start + new Vector2(vector.x * applySpeed * walkCount, vector.y * vector.y * applySpeed * walkCount); ;
+
+        boxCollider.enabled = false;
+        hit = Physics2D.Linecast(start, end, layerMask);
+        boxCollider.enabled = false;
+
+        if (hit.transform != null) return true;
+
+        return false;
     }
 }

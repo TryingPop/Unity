@@ -11,8 +11,6 @@ public class PlayerManager : MovingObject
 
     public float runSpeed;
 
-    private float applySpeed;
-
     private bool applyRunFlag = false;
 
     private bool canMove = true;
@@ -102,21 +100,22 @@ public class PlayerManager : MovingObject
             animator.SetFloat("DirX", vector.x);
             animator.SetFloat("DirY", vector.y);
 
-            RaycastHit2D hit;
+            bool checkCollisionFlag = base.CheckCollision();
 
-            Vector2 start = boxCollider.bounds.center;  // 캐릭터의 현재 위치 값 
-                                                        // 박스콜라이더 기준이므로 박스콜라이더 중심을 기준으로 했다
-            Vector2 end = start + new Vector2(vector.x * applySpeed * walkCount, vector.y * applySpeed * walkCount);    // 캐릭터가 이동하고자 하는 위치 값
-
-            boxCollider.enabled = false;
-            hit = Physics2D.Linecast(start, end, layerMask);
-            boxCollider.enabled = true;
-
-            if (hit.transform != null)
+            if (checkCollisionFlag)
             {
 
                 break;
             }
+
+            /*
+            // ..?
+            if (base.CheckCollision())
+            {
+
+                break;
+            }
+            */
 
             animator.SetBool("Walking", true);
 
