@@ -16,7 +16,7 @@ public class TransferMap : MonoBehaviour
                                             // true로 할당되어 씬 이동 시에 적용안될 수도 있기 때문에
                                             // 따로 스크립트를 만들어야 한다
     private CameraManager theCamera;
-    private MovingObject thePlayer;
+    private PlayerManager thePlayer;
 
     private void Start()
     {
@@ -26,7 +26,7 @@ public class TransferMap : MonoBehaviour
 
             theCamera = FindObjectOfType<CameraManager>();
         }
-        thePlayer = FindObjectOfType<MovingObject>();       // 하이라키의 모든 객체에 대해 해당 컴포넌트를 검색해서 리턴
+        thePlayer = FindObjectOfType<PlayerManager>();       // 하이라키의 모든 객체에 대해 해당 컴포넌트를 검색해서 리턴
 
     }
 

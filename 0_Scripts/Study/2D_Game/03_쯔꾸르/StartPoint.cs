@@ -7,14 +7,14 @@ public class StartPoint : MonoBehaviour
 
     public string startPoint;       // 맵 시작 위치
 
-    private MovingObject thePlayer;
+    private PlayerManager thePlayer;
     private CameraManager theCamera;
 
     private void Start()
     {
 
         theCamera = FindObjectOfType<CameraManager>();
-        thePlayer = FindObjectOfType<MovingObject>();
+        thePlayer = FindObjectOfType<PlayerManager>();
 
         if (startPoint == thePlayer.currentMapName)
         {
