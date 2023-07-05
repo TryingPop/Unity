@@ -24,30 +24,33 @@ public class PlayerManager : MovingObject
     private AudioManager theAudio;
 
 
-    private void Start()
+    private void Awake()
     {
-
+        
         if (instance == null)
         {
 
             DontDestroyOnLoad(this.gameObject);
-
-            animator = GetComponent<Animator>();
-            boxCollider = GetComponent<BoxCollider2D>();
-            animator = GetComponent<Animator>();
-            // audioSource = GetComponent<AudioSource>();
-
-            theAudio = FindObjectOfType<AudioManager>();
-
             instance = this;
         }
         else
         {
 
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
+    }
 
+    private void Start()
+    {
 
+        queue = new Queue<string>();
+
+        animator = GetComponent<Animator>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
+        // audioSource = GetComponent<AudioSource>();
+
+        theAudio = FindObjectOfType<AudioManager>();
     }
 
     private void Update()

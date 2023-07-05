@@ -24,19 +24,19 @@ public class NPCManager : MovingObject
     private void Start()
     {
 
-        StartCoroutine(MoveCoroutine());
+        queue = new Queue<string>();
     }
 
     public void SetMove()
     {
 
-
+        StartCoroutine(MoveCoroutine());
     }
 
     public void SetNotMove()
     {
 
-
+        StopAllCoroutines();
     }
 
     private IEnumerator MoveCoroutine()
@@ -71,7 +71,7 @@ public class NPCManager : MovingObject
                         break;
                 }
 
-                yield return new WaitUntil(() => npcCanMove);       // npcCanMove 변수가 참일 때까지 대기
+                yield return new WaitUntil(() => queue.Count < 2);       // npcCanMove 변수가 참일 때까지 대기
 
                 base.Move(npc.direction[i], npc.frequency);
 
