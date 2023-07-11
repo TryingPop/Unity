@@ -23,6 +23,7 @@ public class PlayerManager : MovingObject
 
     private AudioManager theAudio;
 
+    public bool notMove;
 
     private void Awake()
     {
@@ -56,12 +57,12 @@ public class PlayerManager : MovingObject
     private void Update()
     {
 
-        // 좌 방향키 -1, 우 방향키 1 리턴
-        // 상 방향키 1, 하 방향키 -1
-        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+        if (canMove && !notMove)
         {
 
-            if (canMove)
+            // 좌 방향키 -1, 우 방향키 1 리턴
+            // 상 방향키 1, 하 방향키 -1
+            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             {
 
                 StartCoroutine(MoveCoroutine());
@@ -74,7 +75,7 @@ public class PlayerManager : MovingObject
     {
 
         // 코루틴 생성에 많은 비용을 소모하기에 코루틴 생성의 최소화
-        while (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+        while (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0 && !notMove)
         {
 
             if (Input.GetKey(KeyCode.LeftShift))

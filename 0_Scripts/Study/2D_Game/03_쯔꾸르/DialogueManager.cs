@@ -33,7 +33,7 @@ public class DialogueManager : MonoBehaviour
     public SpriteRenderer rendererSprite;               // Sprite를 관리하는 컴포넌트라 보면 된다
     public SpriteRenderer rendererDialogueWindow;
 
-    public List<string> listSetences;
+    private List<string> listSetences;
     public List<Sprite> listSprites;
     public List<Sprite> listDialogueWindows;
 
@@ -42,6 +42,14 @@ public class DialogueManager : MonoBehaviour
     public Animator animSprite;
     public Animator animDialogueWindow;
 
+    public string typeSound;
+    public string enterSound;
+
+    private AudioManager theAudio;
+    private OrderManager theOrder;
+
+    public bool talking = false;;
+    private bool keyActivated = false;
     private void Start()
     {
         count = 0;
@@ -50,10 +58,16 @@ public class DialogueManager : MonoBehaviour
         listSetences = new List<string>();
         listSprites = new List<Sprite>();
         listDialogueWindows = new List<Sprite>();
+
+        theAudio = FindObjectOfType<AudioManager>();
+        theOrder = FindObjectOfType<OrderManager>();
     }
 
     public void ShowDialogue(Dialogue dialogue)
     {
+
+        talking = true;
+        theOrder.NotMove();
 
         for (int i = 0; i < dialogue.sentences.Length; i++)
         {
@@ -78,11 +92,13 @@ public class DialogueManager : MonoBehaviour
         listDialogueWindows.Clear();
         animSprite.SetBool("Appear", false);
         animDialogueWindow.SetBool("Appear", false);
+
+        talking = false;
+        theOrder.Move();
     }
 
     IEnumerator StartDialogueCoroutine()
     {
-
 
         if (count > 0)
         {
@@ -120,22 +136,34 @@ public class DialogueManager : MonoBehaviour
             rendererSprite.GetComponent<SpriteRenderer>().sprite = listSprites[count];
         }
 
+        keyActivated = true;
         for (int i = 0; i < listSetences[count].Length; i++)
         {
 
             text.text += listSetences;        // 한글자씩 출력
+
+            if (i%7 == 1)
+            {
+
+                theAudio.Play(typeSound);
+            }
+
             yield return new WaitForSeconds(0.01f);
         }
+
     }
 
     private void Update()
     {
         
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (talking && keyActivated && Input.GetKeyDown(KeyCode.Z))
         {
 
+            keyActivated = false;
             count++;
             text.text = "";
+            theAudio.Play(enterSound);
+
             if (count == listSetences.Count - 1)
             {
 
@@ -150,5 +178,4 @@ public class DialogueManager : MonoBehaviour
             }
         }
     }
-
 }
