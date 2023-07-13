@@ -18,6 +18,9 @@ public class TransferMap : MonoBehaviour
     private CameraManager theCamera;
     private PlayerManager thePlayer;
 
+    private FadeManager theFade;
+    private OrderManager theOrder;
+
     private void Start()
     {
 
@@ -27,7 +30,8 @@ public class TransferMap : MonoBehaviour
             theCamera = FindObjectOfType<CameraManager>();
         }
         thePlayer = FindObjectOfType<PlayerManager>();       // 하이라키의 모든 객체에 대해 해당 컴포넌트를 검색해서 리턴
-
+        theFade = FindObjectOfType<FadeManager>();
+        theOrder = FindObjectOfType<OrderManager>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -36,25 +40,42 @@ public class TransferMap : MonoBehaviour
         if (collision.gameObject.name == "Player")
         {
 
-            thePlayer.currentMapName = transferMapName;
-            
+            StartCoroutine(TransferCoroutine());
 
-            // 초기화 주의!
-            if (flag)
-            {
-
-                SceneManager.LoadScene(transferMapName);
-            }
-            else    
-            {
-
-                theCamera.SetBound(targetBound);
-                theCamera.transform.position = new Vector3(
-                    this.transform.position.x, this.transform.position.y,
-                    theCamera.transform.position.z);
-
-                thePlayer.transform.position = target.transform.position;
-            }
         }
+    }
+
+    IEnumerator TransferCoroutine()
+    {
+
+        theOrder.NotMove();
+        theFade.FadeOut();
+
+        yield return new WaitForSeconds(1f);
+
+        thePlayer.currentMapName = transferMapName;
+
+
+        // 초기화 주의!
+        if (flag)
+        {
+
+            SceneManager.LoadScene(transferMapName);
+        }
+        else
+        {
+
+            theCamera.SetBound(targetBound);
+            theCamera.transform.position = new Vector3(
+                this.transform.position.x, this.transform.position.y,
+                theCamera.transform.position.z);
+
+            thePlayer.transform.position = target.transform.position;
+        }
+
+        theFade.FadeIn();
+        yield return new WaitForSeconds(0.5f);
+
+        theOrder.Move();
     }
 }

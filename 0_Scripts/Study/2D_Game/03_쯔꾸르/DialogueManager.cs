@@ -46,9 +46,9 @@ public class DialogueManager : MonoBehaviour
     public string enterSound;
 
     private AudioManager theAudio;
-    private OrderManager theOrder;
+    // private OrderManager theOrder;
 
-    public bool talking = false;;
+    public bool talking = false;
     private bool keyActivated = false;
     private void Start()
     {
@@ -60,14 +60,15 @@ public class DialogueManager : MonoBehaviour
         listDialogueWindows = new List<Sprite>();
 
         theAudio = FindObjectOfType<AudioManager>();
-        theOrder = FindObjectOfType<OrderManager>();
+        // theOrder = FindObjectOfType<OrderManager>();
     }
 
     public void ShowDialogue(Dialogue dialogue)
     {
 
         talking = true;
-        theOrder.NotMove();
+        // 이벤트에서 다룬다
+        // theOrder.NotMove();
 
         for (int i = 0; i < dialogue.sentences.Length; i++)
         {
@@ -94,7 +95,8 @@ public class DialogueManager : MonoBehaviour
         animDialogueWindow.SetBool("Appear", false);
 
         talking = false;
-        theOrder.Move();
+        // 이벤트에서 다룬다
+        // theOrder.Move();
     }
 
     IEnumerator StartDialogueCoroutine()
