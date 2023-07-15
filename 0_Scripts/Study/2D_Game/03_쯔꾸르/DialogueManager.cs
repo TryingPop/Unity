@@ -33,7 +33,7 @@ public class DialogueManager : MonoBehaviour
     public SpriteRenderer rendererSprite;               // Sprite를 관리하는 컴포넌트라 보면 된다
     public SpriteRenderer rendererDialogueWindow;
 
-    private List<string> listSetences;
+    private List<string> listSentences;
     public List<Sprite> listSprites;
     public List<Sprite> listDialogueWindows;
 
@@ -50,12 +50,14 @@ public class DialogueManager : MonoBehaviour
 
     public bool talking = false;
     private bool keyActivated = false;
+    private bool onlyText = false;
+
     private void Start()
     {
         count = 0;
         text.text = "";
 
-        listSetences = new List<string>();
+        listSentences = new List<string>();
         listSprites = new List<Sprite>();
         listDialogueWindows = new List<Sprite>();
 
@@ -63,17 +65,33 @@ public class DialogueManager : MonoBehaviour
         // theOrder = FindObjectOfType<OrderManager>();
     }
 
+    public void ShowText(string[] _sentences)
+    {
+
+        talking = true;
+        onlyText = true;
+
+        for (int i = 0; i < _sentences.Length; i++)
+        {
+
+            listSentences.Add(_sentences[i]);
+        }
+
+        StartCoroutine(StartTextCoroutine());
+    }
+
     public void ShowDialogue(Dialogue dialogue)
     {
 
         talking = true;
+        onlyText = false;
         // 이벤트에서 다룬다
         // theOrder.NotMove();
 
         for (int i = 0; i < dialogue.sentences.Length; i++)
         {
 
-            listSetences.Add(dialogue.sentences[i]);
+            listSentences.Add(dialogue.sentences[i]);
             listSprites.Add(dialogue.sprites[i]);
             listDialogueWindows.Add(dialogue.dialogueWindows[i]);
         }
@@ -88,7 +106,7 @@ public class DialogueManager : MonoBehaviour
 
         text.text = "";
         count = 0;
-        listSetences.Clear();
+        listSentences.Clear();
         listSprites.Clear();
         listDialogueWindows.Clear();
         animSprite.SetBool("Appear", false);
@@ -97,6 +115,25 @@ public class DialogueManager : MonoBehaviour
         talking = false;
         // 이벤트에서 다룬다
         // theOrder.Move();
+    }
+
+    IEnumerator StartTextCoroutine()
+    {
+
+        keyActivated = true;
+
+        for (int i = 0; i < listSentences[count].Length; i++)
+        {
+
+            text.text += listSentences[count][i];
+            if (i% 7 == 1)
+            {
+
+                theAudio.Play(typeSound);
+            }
+
+            yield return new WaitForSeconds(0.01f);
+        }
     }
 
     IEnumerator StartDialogueCoroutine()
@@ -139,10 +176,10 @@ public class DialogueManager : MonoBehaviour
         }
 
         keyActivated = true;
-        for (int i = 0; i < listSetences[count].Length; i++)
+        for (int i = 0; i < listSentences[count].Length; i++)
         {
 
-            text.text += listSetences;        // 한글자씩 출력
+            text.text += listSentences;        // 한글자씩 출력
 
             if (i%7 == 1)
             {
@@ -166,7 +203,7 @@ public class DialogueManager : MonoBehaviour
             text.text = "";
             theAudio.Play(enterSound);
 
-            if (count == listSetences.Count - 1)
+            if (count == listSentences.Count - 1)
             {
 
                 StopAllCoroutines();
@@ -176,7 +213,17 @@ public class DialogueManager : MonoBehaviour
             {
 
                 StopAllCoroutines();
-                StartCoroutine(StartDialogueCoroutine());
+
+                if (onlyText)
+                {
+
+                    StartCoroutine(StartTextCoroutine());
+                }
+                else
+                {
+
+                    StartCoroutine(StartDialogueCoroutine());
+                }
             }
         }
     }

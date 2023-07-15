@@ -11,6 +11,17 @@ public class TransferMap : MonoBehaviour
     public Transform target;
     public BoxCollider2D targetBound;
 
+    public Animator anim_1;
+    public Animator anim_2;
+
+    public int door_count;
+    [Tooltip("UP, DOWN, LEFT, RIGHT")]
+    public string direction;                // 캐릭터가 바라보고 있는 방향
+    private Vector2 vector;                 // (GetFloat"DirX", GetFloat"DirY")
+
+    [Tooltip("문이 열린다 : true, 문이 없으면 : f alse")]
+    public bool door;                       // 문이 있는가 없는가?
+
     public bool flag = true;                // 씬변환 체크 변수
                                             // 이 변환에서 주의할 껀 재생성되면서
                                             // true로 할당되어 씬 이동 시에 적용안될 수도 있기 때문에
@@ -34,6 +45,59 @@ public class TransferMap : MonoBehaviour
         theOrder = FindObjectOfType<OrderManager>();
     }
 
+    private void OnTriggerStay2D(Collider2D other)
+    {
+
+        if (door)
+        {
+
+            if (other.gameObject.name == "Player")
+            {
+
+                if (Input.GetKeyDown(KeyCode.Z))
+                {
+
+                    vector.Set(thePlayer.animator.GetFloat("DirX"), thePlayer.animator.GetFloat("DirY"));
+                    switch (direction)
+                    {
+
+                        case "UP":
+                            if (vector.y == 1f)
+                            {
+
+                                StartCoroutine(TransferCoroutine());
+                            }
+                            break;
+                        case "DOWN":
+                            if (vector.y == -1f)
+                            {
+
+                                StartCoroutine(TransferCoroutine());
+                            }
+                            break;
+                        case "RIGHT":
+                            if (vector.x == 1f)
+                            {
+
+                                StartCoroutine(TransferCoroutine());
+                            }
+                            break;
+                        case "LEFT":
+                            if (vector.x == -1f)
+                            {
+
+                                StartCoroutine(TransferCoroutine());
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         
@@ -48,10 +112,40 @@ public class TransferMap : MonoBehaviour
     IEnumerator TransferCoroutine()
     {
 
+        theOrder.PreLoadCharacter();
         theOrder.NotMove();
         theFade.FadeOut();
 
-        yield return new WaitForSeconds(1f);
+        if (door)
+        {
+
+            anim_1.SetBool("Open", true);
+
+            if (door_count == 2)
+            {
+
+                anim_2.SetBool("Open", true);
+            }
+        }
+        yield return new WaitForSeconds(0.3f);
+
+        theOrder.SetTransparent("player");
+
+        if (door)
+        {
+
+            anim_1.SetBool("Open", false);
+
+            if (door_count == 2)
+            {
+
+                anim_2.SetBool("Open", false);
+            }
+        }
+
+        yield return new WaitForSeconds(0.7f);
+
+        theOrder.SetUnTransparent("player");
 
         thePlayer.currentMapName = transferMapName;
 
