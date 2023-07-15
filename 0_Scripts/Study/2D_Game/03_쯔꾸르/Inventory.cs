@@ -7,6 +7,10 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
 
+    public static Inventory instance;
+
+    private DatabaseManager theDatabase;
+
     private OrderManager theOrder;
 
     private AudioManager theAudio;
@@ -40,10 +44,27 @@ public class Inventory : MonoBehaviour
 
     private WaitForSeconds waitTime = new WaitForSeconds(0.01f);
 
+    private void Awake()
+    {
+        
+        if (instance == null)
+        {
+
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+
+            Destroy(gameObject);
+        }
+    }
+
 
     private void Start()
     {
         
+        theDatabase = FindObjectOfType<DatabaseManager>();
         theOrder = FindObjectOfType<OrderManager>();
         theAudio = FindObjectOfType<AudioManager>();
         inventoryItemList = new List<Item>();
@@ -260,6 +281,51 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    public void GetAnItem(int _itemID, int _count)
+    {
+
+        // 데이터 베이스 아이템 검색
+        for (int i = 0; i < theDatabase.itemList.Count; i++)
+        {
+
+            // 데이터베이스에 아이템 발견
+            if (_itemID == theDatabase.itemList[i].itemID)
+            {
+
+                // 소지품에 같은 아이템이 있는지 검색
+                for (int j = 0; j < inventoryItemList.Count; j++)
+                {
+
+                    // 소지품에 같은 아이템이 있다 -> 개수만 증가
+                    if (inventoryItemList[j].itemID == _itemID)
+                    {
+
+                        if (inventoryItemList[i].itemType == Item.ItemType.Use)
+                        {
+
+                            inventoryItemList[j].itemCount += _count;
+                        }
+                        else
+                        {
+
+                            inventoryItemList.Add(theDatabase.itemList[i]);
+                        }
+                        return;
+                    }
+                }
+
+                // 소지품에 해당 아이템 추가
+                inventoryItemList.Add(theDatabase.itemList[i]);
+                inventoryItemList[inventoryItemList.Count - 1].itemCount = _count; 
+                return;
+            }
+        }
+
+        // 데이터베이스에 ItemID 없음
+        Debug.LogError("데이터베이스에 해당 ID것을 가진 아이템이 존재하지 않습니다.");
     }
 
     // 탭 활성화
