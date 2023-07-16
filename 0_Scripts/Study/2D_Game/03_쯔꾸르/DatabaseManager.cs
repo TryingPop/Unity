@@ -37,6 +37,18 @@ public class DatabaseManager : MonoBehaviour
 
     public List<Item> itemList = new List<Item>();
 
+    public void UseItem(int _itemID)
+    {
+
+        switch (_itemID)
+        {
+
+            case 10001:
+                Debug.Log("Hp가 50 회복되었습니다.");
+                break;
+        }
+    }
+
     private void Start()
     {
 

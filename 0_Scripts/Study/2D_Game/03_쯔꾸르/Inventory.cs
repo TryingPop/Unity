@@ -33,6 +33,10 @@ public class Inventory : MonoBehaviour
     public GameObject go;                   // 인벤토리 활성화 비활성화
     public GameObject[] selectedTabImages;
 
+    public GameObject go_OOC;               // 선택지 활성화 비활성화
+
+    public GameObject prefab_Floating_Text; 
+
     public int selectedItem;                // 선택된 아이템
     private int selectedTab;                // 선택된 텝
 
@@ -43,6 +47,8 @@ public class Inventory : MonoBehaviour
     private bool preventExec;               // 중복실행 제한
 
     private WaitForSeconds waitTime = new WaitForSeconds(0.01f);
+
+    private OkOrCancel theOOC;
 
     private void Awake()
     {
@@ -70,6 +76,7 @@ public class Inventory : MonoBehaviour
         inventoryItemList = new List<Item>();
         inventoryTabList = new List<Item>();
         slots = tf.GetComponentsInChildren<InventorySlot>();
+        theOOC = FindObjectOfType<OkOrCancel>();
     }
 
     private void Update()
@@ -247,7 +254,7 @@ public class Inventory : MonoBehaviour
                                 theAudio.Play(enter_sound);
                                 stopKeyInput = true;
 
-                                // 선택지 호출
+                                StartCoroutine(OOCCoroutine());
                             }
                             else if (selectedTab == 1)
                             {
@@ -284,6 +291,46 @@ public class Inventory : MonoBehaviour
     }
 
 
+    // Ok or Cancel
+    IEnumerator OOCCoroutine()
+    {
+
+        go_OOC.SetActive(true);
+        theOOC.ShowTwoChoice("사용", "취소");
+        yield return new WaitUntil(() => !theOOC.activated);
+        if (theOOC.GetResult())
+        {
+
+            for (int i = 0; i < inventoryItemList.Count; i++)
+            {
+
+                if (inventoryItemList[i].itemID == inventoryTabList[selectedItem].itemID)
+                {
+
+                    theDatabase.UseItem(inventoryItemList[i].itemID);
+
+                    if (inventoryItemList[i].itemCount > 1)
+                    {
+
+                        inventoryItemList[i].itemCount--;
+                    }
+                    else
+                    {
+
+                        inventoryItemList.RemoveAt(i);
+                    }
+
+                    // theAudio.Play(); // 아이템 사용 소리
+                    ShowItem();
+                    break;
+                }
+            }
+        }
+
+        stopKeyInput = false;
+        go_OOC.SetActive(false);
+    }
+
     public void GetAnItem(int _itemID, int _count)
     {
 
@@ -294,6 +341,12 @@ public class Inventory : MonoBehaviour
             // 데이터베이스에 아이템 발견
             if (_itemID == theDatabase.itemList[i].itemID)
             {
+
+                var clone = Instantiate(prefab_Floating_Text, PlayerManager.instance.transform.position, 
+                    Quaternion.Euler(Vector3.zero));    // Quaternion.identity;
+
+                clone.GetComponent<FloatingText>().text.text = theDatabase.itemList[i].itemName + " " + _count + "개 획득 + ";
+                clone.transform.SetParent(this.transform);  // 이 구문 대신에 instantiate의 4번째 인자에 추가해도 된다
 
                 // 소지품에 같은 아이템이 있는지 검색
                 for (int j = 0; j < inventoryItemList.Count; j++)

@@ -123,7 +123,7 @@ public class MovingObject : MonoBehaviour
 
                 currentWalkCount++;
 
-                if (currentWalkCount == 12)
+                if (currentWalkCount == walkCount * 0.5f + 2)       // 박스 콜라이더의 원위치
                 {
 
                     boxCollider.offset = Vector2.zero;  // 원위치
