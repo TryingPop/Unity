@@ -5,7 +5,7 @@ using UnityEngine;
 public class SlimeController : MovingObject
 {
 
-    public int atk;                     // 슬라임 공격력
+    // public int atk;                     // 슬라임 공격력 다른 EnemyStat의 스텟에 있다
     public float attackDelay;           // 공격 유예
 
     public float inter_MoveWaitTime;    // 대기 시간
@@ -16,8 +16,10 @@ public class SlimeController : MovingObject
 
     private Vector2 playerPos;          // 플레이어 좌표 값
 
-    private int random_int;             // 
+    private int random_int;             // 방향 설정
     private string direction;
+
+    private EnemyStat theStat;
 
     private void Start()
     {
@@ -143,7 +145,8 @@ public class SlimeController : MovingObject
         if (NearPlayer())
         {
 
-            Debug.Log("플레이어 공격");
+            // PlayerStat.instance.Hit(atk);
+            PlayerStat.instance.Hit(theStat.atk);
         }
     }
 }

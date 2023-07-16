@@ -25,6 +25,12 @@ public class PlayerManager : MovingObject
 
     public bool notMove;
 
+    private bool attacking = false;
+    public float attackDelay;
+    private float currentAttackDelay;
+
+
+
     private void Awake()
     {
         
@@ -57,7 +63,7 @@ public class PlayerManager : MovingObject
     private void Update()
     {
 
-        if (canMove && !notMove)
+        if (canMove && !notMove && !attacking)
         {
 
             // 좌 방향키 -1, 우 방향키 1 리턴
@@ -69,13 +75,37 @@ public class PlayerManager : MovingObject
                 canMove = false;
             }
         }
+
+        if (!notMove && !attacking)
+        {
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+
+                currentAttackDelay = attackDelay;
+                attacking = true;
+                animator.SetBool("Attacking", true);
+            }
+        }
+
+        if (attacking)
+        {
+
+            currentAttackDelay -= Time.deltaTime;
+            if (currentAttackDelay <= 0)
+            {
+
+                animator.SetBool("Attacking", false);
+                attacking = false;
+            }
+        }
     }
 
     IEnumerator MoveCoroutine()
     {
 
         // 코루틴 생성에 많은 비용을 소모하기에 코루틴 생성의 최소화
-        while (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0 && !notMove)
+        while (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0 && !notMove && !attacking)
         {
 
             if (Input.GetKey(KeyCode.LeftShift))
