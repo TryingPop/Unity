@@ -50,6 +50,8 @@ public class Inventory : MonoBehaviour
 
     private OkOrCancel theOOC;
 
+    private Equipment theEquip;
+
     private void Awake()
     {
         
@@ -77,6 +79,7 @@ public class Inventory : MonoBehaviour
         inventoryTabList = new List<Item>();
         slots = tf.GetComponentsInChildren<InventorySlot>();
         theOOC = FindObjectOfType<OkOrCancel>();
+        theEquip = FindObjectOfType<Equipment>();
     }
 
     private void Update()
@@ -251,15 +254,13 @@ public class Inventory : MonoBehaviour
                             if (selectedTab == 0)
                             {
 
-                                theAudio.Play(enter_sound);
-                                stopKeyInput = true;
-
-                                StartCoroutine(OOCCoroutine());
+                                StartCoroutine(OOCCoroutine("사용", "취소"));
                             }
                             else if (selectedTab == 1)
                             {
 
-                                // 장비 장착
+
+                                StartCoroutine(OOCCoroutine("장착", "취소"));
                             }
                             else    // 비프음 출력
                             {
@@ -292,11 +293,14 @@ public class Inventory : MonoBehaviour
 
 
     // Ok or Cancel
-    IEnumerator OOCCoroutine()
+    IEnumerator OOCCoroutine(string _up, string _down)
     {
 
+        theAudio.Play(enter_sound);
+        stopKeyInput = true;
+
         go_OOC.SetActive(true);
-        theOOC.ShowTwoChoice("사용", "취소");
+        theOOC.ShowTwoChoice(_up, _down);
         yield return new WaitUntil(() => !theOOC.activated);
         if (theOOC.GetResult())
         {
@@ -307,22 +311,33 @@ public class Inventory : MonoBehaviour
                 if (inventoryItemList[i].itemID == inventoryTabList[selectedItem].itemID)
                 {
 
-                    theDatabase.UseItem(inventoryItemList[i].itemID);
-
-                    if (inventoryItemList[i].itemCount > 1)
+                    if (selectedTab == 0) 
                     {
 
-                        inventoryItemList[i].itemCount--;
+                        theDatabase.UseItem(inventoryItemList[i].itemID);
+
+                        if (inventoryItemList[i].itemCount > 1)
+                        {
+
+                            inventoryItemList[i].itemCount--;
+                        }
+                        else
+                        {
+
+                            inventoryItemList.RemoveAt(i);
+                        }
+
+                        // theAudio.Play(); // 아이템 사용 소리
+                        ShowItem();
+                        break;
                     }
-                    else
+                    else if (selectedTab == 1)
                     {
 
+                        theEquip.EquipItem(inventoryItemList[i]);
                         inventoryItemList.RemoveAt(i);
+                        ShowItem();
                     }
-
-                    // theAudio.Play(); // 아이템 사용 소리
-                    ShowItem();
-                    break;
                 }
             }
         }
@@ -564,5 +579,12 @@ public class Inventory : MonoBehaviour
 
             Description_Text.text = "해당 타입의 아이템을 소유하고 있지 않습니다.";
         }
+    }
+
+    // 아이템 추가 메소드
+    public void EquipToInventory(Item _item)
+    {
+
+        inventoryItemList.Add(_item);
     }
 }
