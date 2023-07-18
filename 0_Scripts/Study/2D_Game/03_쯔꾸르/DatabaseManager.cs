@@ -98,6 +98,7 @@ public class DatabaseManager : MonoBehaviour
     {
 
         thePlayerStat = FindObjectOfType<PlayerStat>();
-        // itemList.Add(new Item(10001, "빨간 포션", "체력을 50 회복", Item.ItemType.Use));
+        itemList.Add(new Item(10001, "빨간 포션", "체력을 50 회복", Item.ItemType.Use));
+        itemList.Add(new Item(20001, "짧은 검", "기본적인 용사의 검", Item.ItemType.Equipment, 1, 3, 0, 0, 0));    // 공 3 증가
     }
 }

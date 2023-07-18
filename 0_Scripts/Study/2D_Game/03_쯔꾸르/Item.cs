@@ -24,7 +24,15 @@ public class Item
         ETC
     }
 
-    public Item(int _itemID, string _itemName, string _itemDes, ItemType _itemType, int _itemCount = 1)
+    // 장비에 추가할 스텟
+    public int atk;
+    public int def;
+
+    public int recover_hp;
+    public int recover_mp;
+
+    public Item(int _itemID, string _itemName, string _itemDes, ItemType _itemType, int _itemCount = 1, 
+        int _atk = 0, int _def = 0, int _recover_hp = 0, int _recover_mp = 0)
     {
 
         itemID = _itemID;
@@ -36,5 +44,10 @@ public class Item
         // Assets 폴더 바로 아래의 Resources 에 해당 파일을 넣어줘야한다
         // Resources 폴더가 없다면 해당 이름으로 생성하면 된다
         itemIcon = Resources.Load("ItemIcon/" + itemID.ToString(), typeof(Sprite)) as Sprite;
+
+        atk = _atk;
+        def = _def;
+        recover_hp = _recover_hp;
+        recover_mp = _recover_mp;
     }
 }

@@ -20,10 +20,16 @@ public class PlayerStat : MonoBehaviour
     public int atk;
     public int def;
 
+    public int recover_hp;      // 1초당 hp회복력
+    public int recover_mp;      // 1초당 mp회복력
+
     public string dmgSound;
 
     public GameObject prefabs_Floating_text;
     public GameObject parent;
+
+    public float time;
+    private float current_time;
 
     private void Awake()
     {
@@ -39,6 +45,13 @@ public class PlayerStat : MonoBehaviour
 
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+
+        currentHp = hp;
+        current_time = time;
     }
 
     public void Hit(int _enemyAtk)
@@ -126,6 +139,28 @@ public class PlayerStat : MonoBehaviour
             currentMp = mp;
             atk++;
             def++;
+        }
+
+        current_time -= Time.deltaTime;
+        if (current_time < 0)
+        {
+
+            if (recover_hp > 0)
+            {
+
+                if (currentHp + recover_hp <= hp)
+                {
+
+                    currentHp += recover_hp;
+                }
+                else
+                {
+
+                    currentHp = hp;
+                }
+            }
+
+            current_time = 0;
         }
     }
 }

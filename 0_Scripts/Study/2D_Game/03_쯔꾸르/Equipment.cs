@@ -18,7 +18,7 @@ public class Equipment : MonoBehaviour
     public string open_sound;
     public string close_sound;
     public string takeoff_sound;
-
+    public string equip_sound;
 
     private const int WEAPON = 0,       // enum 대신에 쓴다면 다음과 같이 이용 -> 하드코딩 방지
                     SHIELD = 1,
@@ -47,6 +47,13 @@ public class Equipment : MonoBehaviour
 
     public bool activated = false;
     private bool inputKey = true;
+
+    public const int ATK = 0, DEF = 1, RECOVER_HP = 6, RECOVER_MP = 7;
+
+    private int added_atk, added_def, added_recover_hp, added_recover_mp;
+
+    public GameObject equipWeapon;          // 무기 형태에 맞는 게임오브젝트를 각각 배치
+                                            // 그리고 애니메이션도 각각 설정
 
     private void Start()
     {
@@ -80,7 +87,7 @@ public class Equipment : MonoBehaviour
                     SelectedSlot();
                     ClearEquip();
                     ShowEquip();
-
+                    ShowTxt();
                 }
                 else
                 {
@@ -239,6 +246,8 @@ public class Equipment : MonoBehaviour
             // 대표적으로만 표시
             case "200":     // 무기
                 EquipItemCheck(WEAPON, _item);
+                equipWeapon.SetActive(true);
+                equipWeapon.GetComponent<SpriteRenderer>().sprite = _item.itemIcon;
                 break;  
 
             case "201":     // 방패
@@ -252,7 +261,6 @@ public class Equipment : MonoBehaviour
             case "203":     // 반지
                 EquipItemCheck(LEFT_RING, _item);
                 break;
-
         }
     }
 
@@ -268,8 +276,13 @@ public class Equipment : MonoBehaviour
         {
 
             theInven.EquipToInventory(equipItemList[_count]);
+            TakeOffEffect(equipItemList[_count]);
             equipItemList[_count] = _item;
         }
+
+        EquipEffect(_item);
+        theAudio.Play(equip_sound);
+        ShowTxt();
     }
 
     IEnumerator OOCCoroutine(string _up, string _down)
@@ -283,6 +296,13 @@ public class Equipment : MonoBehaviour
         {
 
             theInven.EquipToInventory(equipItemList[selectedSlot]);
+            TakeOffEffect(equipItemList[selectedSlot]);                        // 아이템 효과 제거
+            if (selectedSlot == WEAPON)
+            {
+
+                equipWeapon.SetActive(false);
+            }
+            ShowTxt();
             equipItemList[selectedSlot] = new Item(0, "", "", Item.ItemType.Equipment);
             theAudio.Play(takeoff_sound);
             ClearEquip();
@@ -291,5 +311,85 @@ public class Equipment : MonoBehaviour
 
         inputKey = true;
         go_OOC.SetActive(false);
+    }
+
+    private void EquipEffect(Item _item)
+    {
+
+        thePlayerStat.atk += _item.atk;
+        thePlayerStat.def += _item.def;
+        thePlayerStat.recover_hp += _item.recover_hp;
+        thePlayerStat.recover_mp += _item.recover_mp;
+
+        added_atk += _item.atk;
+        added_def += _item.def;
+        added_recover_hp += _item.recover_hp;
+        added_recover_mp += _item.recover_mp;
+    }
+
+    /// <summary>
+    /// Hp를 올렸을 경우 현재 hp가 초과했는지 확인해야한다!
+    /// </summary>
+    /// <param name="_item"></param>
+    private void TakeOffEffect(Item _item)
+    {
+
+        thePlayerStat.atk -= _item.atk;
+        thePlayerStat.def -= _item.def;
+        thePlayerStat.recover_hp -= _item.recover_hp;
+        thePlayerStat.recover_mp -= _item.recover_mp;
+
+        added_atk -= 0;
+        added_def -= 0;
+        added_recover_hp -= 0;
+        added_recover_mp -= 0;
+    }
+
+    public void ShowTxt()
+    {
+
+        if (added_atk == 0)
+        {
+
+            texts[ATK].text = thePlayerStat.atk.ToString();
+        }
+        else
+        {
+
+            texts[ATK].text = thePlayerStat.atk.ToString() + "(" + added_atk + ")";
+        }
+
+        if (added_def == 0)
+        {
+
+            texts[DEF].text = thePlayerStat.def.ToString();
+        }
+        else
+        {
+
+            texts[DEF].text = thePlayerStat.atk.ToString() + "(" + added_atk + ")";
+        }
+        
+        if (added_recover_hp == 0)
+        {
+
+            texts[RECOVER_HP].text = thePlayerStat.recover_hp.ToString();
+        }
+        else
+        {
+
+            texts[RECOVER_HP].text = thePlayerStat.atk.ToString() + "(" + added_atk + ")";
+        }
+
+        if (added_recover_mp == 0)
+        {
+
+            texts[RECOVER_MP].text = thePlayerStat.recover_mp.ToString();
+        }
+        else
+        {
+
+            texts[RECOVER_MP].text = thePlayerStat.atk.ToString() + "(" + added_atk + ")";
+        }
     }
 }
