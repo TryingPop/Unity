@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class PlayerStat : MonoBehaviour
     public float time;
     private float current_time;
 
+    public Slider hpSlider;
+    public Slider mpSlider;
+
     private void Awake()
     {
 
@@ -51,6 +55,7 @@ public class PlayerStat : MonoBehaviour
     {
 
         currentHp = hp;
+        currentMp = mp;
         current_time = time;
     }
 
@@ -127,6 +132,12 @@ public class PlayerStat : MonoBehaviour
 
     private void Update()
     {
+
+        hpSlider.maxValue = hp;
+        mpSlider.maxValue = mp;
+
+        hpSlider.value = currentHp;
+        mpSlider.value = currentMp;
 
         if (currentExp >= needExp[character_Lv - 1])
         {

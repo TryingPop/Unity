@@ -20,6 +20,7 @@ public class SlimeController : MovingObject
     private string direction;
 
     private EnemyStat theStat;
+    public GameObject healthBar;
 
     private void Start()
     {
@@ -121,7 +122,7 @@ public class SlimeController : MovingObject
     {
 
         Vector3 flip = transform.localScale;
-
+        
         if (playerPos.x > transform.position.x)
         {
 
@@ -133,6 +134,7 @@ public class SlimeController : MovingObject
         }
 
         this.transform.localScale = flip;
+        healthBar.transform.localScale = flip;
         animator.SetTrigger("Attack");
     }
 
