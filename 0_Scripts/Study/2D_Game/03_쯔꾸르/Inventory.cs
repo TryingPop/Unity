@@ -587,4 +587,24 @@ public class Inventory : MonoBehaviour
 
         inventoryItemList.Add(_item);
     }
+
+    /// <summary>
+    /// 세이브용 메소드
+    /// </summary>
+    /// <returns></returns>
+    public List<Item> SaveItem()
+    {
+
+        return inventoryItemList;
+    }
+
+    /// <summary>
+    /// 로드용 메소드
+    /// </summary>
+    /// <param name="_itemList"></param>
+    public void LoadItem(List<Item> _itemList)
+    {
+
+        inventoryItemList = _itemList;
+    }
 }

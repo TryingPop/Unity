@@ -50,7 +50,9 @@ public class Equipment : MonoBehaviour
 
     public const int ATK = 0, DEF = 1, RECOVER_HP = 6, RECOVER_MP = 7;
 
-    private int added_atk, added_def, added_recover_hp, added_recover_mp;
+    public int added_atk, added_def, added_recover_hp, added_recover_mp;
+
+
 
     public GameObject equipWeapon;          // 무기 형태에 맞는 게임오브젝트를 각각 배치
                                             // 그리고 애니메이션도 각각 설정

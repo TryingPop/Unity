@@ -8,6 +8,7 @@ public class PlayerManager : MovingObject
     public static PlayerManager instance;    // ½Ì±ÛÅæ
 
     public string currentMapName;           // ÇöÀç ¸Ê ÀÌ¸§
+    public string currentSceneName;         // ÇöÀç ÀÖ´Â ¾À ÀÌ¸§
 
     public float runSpeed;
 
@@ -29,7 +30,7 @@ public class PlayerManager : MovingObject
     public float attackDelay;
     private float currentAttackDelay;
 
-
+    private SaveNLoad theSaveNLoad;
 
     private void Awake()
     {
@@ -58,10 +59,22 @@ public class PlayerManager : MovingObject
         // audioSource = GetComponent<AudioSource>();
 
         theAudio = FindObjectOfType<AudioManager>();
+        theSaveNLoad = FindObjectOfType<SaveNLoad>();
     }
 
     private void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+
+            theSaveNLoad.CallSave();
+        }
+        else if (Input.GetKeyDown(KeyCode.F9))
+        {
+
+            theSaveNLoad.CallLoad();
+        }
 
         if (canMove && !notMove && !attacking)
         {
