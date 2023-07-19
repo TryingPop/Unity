@@ -117,7 +117,7 @@ public class SaveNLoad : MonoBehaviour
             data.varNumberList.Add(theDatabase.var[i]);
         }
 
-        for (int i = 0; i < theDatabase.switch_name.Length: i++)
+        for (int i = 0; i < theDatabase.switch_name.Length; i++)
         {
 
             data.swNameList.Add(theDatabase.switch_name[i]);
