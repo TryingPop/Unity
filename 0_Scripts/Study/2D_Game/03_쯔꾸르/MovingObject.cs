@@ -143,13 +143,21 @@ public class MovingObject : MonoBehaviour
         }
     }
 
+    
     protected bool CheckCollision()
     {
 
         RaycastHit2D hit;
-
+        /*
+        // 겹친 경우 절대로 탈출 할 수 없다
         Vector2 start = transform.position;
         Vector2 end = start + new Vector2(vector.x * applySpeed * walkCount, vector.y * vector.y * applySpeed * walkCount); ;
+        */
+
+        // 겹친 경우 탈출 가능
+        Vector2 start = new Vector2(transform.position.x + vector.x * applySpeed * walkCount,
+                            transform.position.y + vector.y * vector.y * applySpeed * walkCount);
+        Vector2 end = start + new Vector2(vector.x * applySpeed * walkCount, vector.y * vector.y * applySpeed * walkCount);
 
         boxCollider.enabled = false;
         hit = Physics2D.Linecast(start, end, layerMask);

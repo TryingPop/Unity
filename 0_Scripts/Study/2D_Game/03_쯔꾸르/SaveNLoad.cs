@@ -61,6 +61,8 @@ public class SaveNLoad : MonoBehaviour
 
     private Vector3 vector;
 
+    private FadeManager theFade;
+
     public void CallSave()
     {
 
@@ -186,6 +188,10 @@ public class SaveNLoad : MonoBehaviour
             theEquip = FindObjectOfType<Equipment>();
             theInven = FindObjectOfType<Inventory>();
 
+            theFade = FindObjectOfType<FadeManager>();
+
+            theFade.FadeOut();
+
             thePlayer.currentMapName = data.mapName;
             thePlayer.currentSceneName = data.sceneName;
 
@@ -258,11 +264,17 @@ public class SaveNLoad : MonoBehaviour
             theInven.LoadItem(itemList);
             theEquip.ShowTxt();
 
-            GameManager theGM = FindObjectOfType<GameManager>();
-            theGM.LoadStart();
-
-            SceneManager.LoadScene(data.sceneName);
-
+            StartCoroutine(WaitCoroutine());
         }
+    }
+
+    IEnumerator WaitCoroutine()
+    {
+
+        yield return new WaitForSeconds(2f);
+        GameManager theGM = FindObjectOfType<GameManager>();
+        theGM.LoadStart();
+
+        SceneManager.LoadScene(data.sceneName);
     }
 }
