@@ -32,6 +32,8 @@ public class Player : MonoBehaviour
 
     private bool isReload;      // 장전 중?
 
+    private bool isBorder;
+
     private Vector3 moveVec;    // 이동용 벡터3
     private Vector3 dodgeVec;   // 닷지용 벡터3
     private Animator anim;
@@ -123,7 +125,11 @@ public class Player : MonoBehaviour
             moveVec = Vector3.zero;
         }
 
-        transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+        if (!isBorder)
+        {
+
+            transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+        }
 
         anim.SetBool("isRun", moveVec != Vector3.zero);
         anim.SetBool("isWalk", wDown);
@@ -325,6 +331,28 @@ public class Player : MonoBehaviour
                 Destroy(nearObject);
             }
         } 
+    }
+
+    private void FixedUpdate()
+    {
+
+        FreezeRotation();
+        StopToWall();
+    }
+
+    private void FreezeRotation()
+    {
+
+        rigid.angularVelocity = Vector3.zero;
+    }
+
+    private void StopToWall()
+    {
+
+        Debug.DrawRay(transform.position + Vector3.up * 2f, transform.forward * 5, Color.magenta);
+        
+        // 레이를 쏴서 벽 레이어와 충돌 되면 true, 없으면 false
+        isBorder = Physics.Raycast(transform.position + Vector3.up * 2f, transform.forward, 5, LayerMask.GetMask("Wall"));
     }
 
     // 착지 판정
