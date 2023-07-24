@@ -19,7 +19,9 @@ public class Player : MonoBehaviour
     private bool sDown2;
     private bool sDown3;
 
-    private bool fDown;     // 공격 버튼 
+    private bool fDown;     // 공격 버튼 마우스 왼쪽
+
+    private bool rDown;     // 장전 버튼 r버튼
 
     private bool isJump;    // 현재 점프 상태 체크
     private bool isDodge;   // 현재 회피 상태 체크
@@ -27,6 +29,8 @@ public class Player : MonoBehaviour
     private bool isSwap;    // 무기 변경 중?
 
     private bool isFireReady = true;   // 공격 가능 상태?
+
+    private bool isReload;      // 장전 중?
 
     private Vector3 moveVec;    // 이동용 벡터3
     private Vector3 dodgeVec;   // 닷지용 벡터3
@@ -55,6 +59,8 @@ public class Player : MonoBehaviour
 
     private float fireDelay;    // 공격 딜레이
 
+    public Camera followCamera;
+
     private void Awake()
     {
 
@@ -70,6 +76,7 @@ public class Player : MonoBehaviour
         Turn();
         Jump();
         Attack();
+        Reload();
         Dodge();
 
         Swap();
@@ -92,6 +99,8 @@ public class Player : MonoBehaviour
 
         fDown = Input.GetButton("Fire1");
 
+        rDown = Input.GetButtonDown("Reload");
+
         sDown1 = Input.GetButtonDown("Swap1");
         sDown2 = Input.GetButtonDown("Swap2");
         sDown3 = Input.GetButtonDown("Swap3");
@@ -108,11 +117,12 @@ public class Player : MonoBehaviour
             moveVec = dodgeVec;
         }
 
-        if (isSwap || !isFireReady)
+        if (isSwap || isReload || !isFireReady)
         {
 
             moveVec = Vector3.zero;
         }
+
         transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
 
         anim.SetBool("isRun", moveVec != Vector3.zero);
@@ -122,6 +132,7 @@ public class Player : MonoBehaviour
     private void Turn()
     {
 
+        // 키보드에 의한 회전
         // 해당 좌표로 바라본다
         // 그래서 현재 위치 + moveVec을 해준다
         // 이동 전이나 이동 후나 코드는 똑같다
@@ -129,6 +140,30 @@ public class Player : MonoBehaviour
         // Vector3 destination = transform.position + moveVec
         // LookAt은 이동 전으로 가야한다
         transform.LookAt(transform.position + moveVec);
+
+        // 마우스에 의한 회전
+
+        if (fDown)
+        {
+
+            Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);  // 스크린에서 레이를 쏘는 메소드 매개변수는 해당 위치
+            RaycastHit rayHit;  // 충돌체를 담는 변수
+
+            // 거리는 100
+            // LayerMask.GetMask(레이어 이름);대신 사용한 코드
+            // 여기서 11이 Floor 레이어이므로 11로 설정
+            // 1 << ?? 에서 ?? 에 들어갈 숫자는 레이어 번호 1을 비트 왼쪽으로 11칸 이동 시켜라는 의미이다
+            // 혹은 2^11 = 2048의 값을 해도된다
+            if (Physics.Raycast(ray, out rayHit, 100, 1 << 11))
+            {
+
+
+                // 레이가 닿았던 지점
+                Vector3 nextVec = rayHit.point - transform.position;
+                nextVec.y = 0;
+                transform.LookAt(transform.position + nextVec);
+            }
+        }
     }
 
     private void Jump()
@@ -158,9 +193,43 @@ public class Player : MonoBehaviour
         {
 
             equipWeapon.Use();
-            anim.SetTrigger("doSwing");
+            anim.SetTrigger(equipWeapon.type == Weapon.Type.Melee ? "doSwing" : "doShot");
             fireDelay = 0f;
         }
+    }
+
+    private void Reload()
+    {
+
+        if (equipWeapon == null)
+        {
+
+            return;
+        }
+
+        if (equipWeapon.type != Weapon.Type.Ranged || ammo == 0)
+        {
+
+            return;
+        }
+
+        if (rDown && !isJump && !isDodge && !isSwap && isFireReady)
+        {
+
+            anim.SetTrigger("doReload");
+            isReload = true;
+
+            Invoke("ReloadOut", 0.4f);
+        }
+    }
+
+    private void ReloadOut()
+    {
+
+        int reAmmo = ammo < equipWeapon.maxAmmo - equipWeapon.curAmmo ? ammo : equipWeapon.maxAmmo - equipWeapon.curAmmo;
+        equipWeapon.curAmmo += reAmmo;
+        ammo -= reAmmo;
+        isReload = false;
     }
 
     private void Dodge()
@@ -255,7 +324,7 @@ public class Player : MonoBehaviour
 
                 Destroy(nearObject);
             }
-        }
+        } 
     }
 
     // 착지 판정
