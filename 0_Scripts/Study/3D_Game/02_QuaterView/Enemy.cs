@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour
 
     private Material mat;
 
+    // private static long testNum;
+
     private void Awake()
     {
 
@@ -54,6 +56,8 @@ public class Enemy : MonoBehaviour
     {
 
         mat.color = Color.red;
+
+        // Debug.Log($"内风凭 积己 冉荐 {++testNum}");
 
         yield return new WaitForSeconds(0.1f);
 
