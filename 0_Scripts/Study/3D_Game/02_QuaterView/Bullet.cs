@@ -8,21 +8,23 @@ public class Bullet : MonoBehaviour
     public int damage;
     public bool isMelee;
     public bool isRock;
+
+
     private void OnTriggerEnter(Collider other)
     {
         
 
-        if (!isMelee && !isRock && other.gameObject.tag == "Wall")
+        if (!isMelee && other.gameObject.tag == "Wall")
         {
 
-            Destroy(gameObject, 3);
+            Destroy(gameObject);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
 
-        if (!isMelee && collision.gameObject.tag == "Floor")
+        if (!isMelee && !isRock && collision.gameObject.tag == "Floor")
         {
             
             Destroy(gameObject, 3f);

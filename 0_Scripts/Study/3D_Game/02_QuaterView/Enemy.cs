@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
     public int curHealth;
 
     protected Rigidbody rigid;
-    protected BoxCollider boxCollider;
+    protected BoxCollider boxCollider;      // 여기서는 안쓰는 컴포넌트 ... 보스에서만 쓴다
 
     public Transform target;
 
@@ -270,6 +270,7 @@ public class Enemy : MonoBehaviour
                 reactVec += Vector3.up * 3f;
 
                 rigid.freezeRotation = false;   // X, Z 축회전 다시 활성화
+
                 rigid.AddForce(reactVec * 5, ForceMode.Impulse);
                 rigid.AddTorque(reactVec * 15, ForceMode.Impulse);
             }
@@ -281,6 +282,7 @@ public class Enemy : MonoBehaviour
 
                 rigid.AddForce(reactVec * 5, ForceMode.Impulse);
             }
+
             if (enemyType != Type.D)
             {
 

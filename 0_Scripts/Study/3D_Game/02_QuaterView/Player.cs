@@ -221,7 +221,7 @@ public class Player : MonoBehaviour
             {
 
                 Vector3 nextVec = rayHit.point - transform.position;
-                nextVec.y = 4f;
+                nextVec.y = 10f;
 
                 GameObject instantGrenade = Instantiate(grenadeObj, transform.position + 2 * Vector3.up, transform.rotation);
                 Rigidbody rigidGrenade = instantGrenade.GetComponent<Rigidbody>();
