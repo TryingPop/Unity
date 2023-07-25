@@ -7,15 +7,15 @@ public class Bullet : MonoBehaviour
 
     public int damage;
     public bool isMelee;
-
+    public bool isRock;
     private void OnTriggerEnter(Collider other)
     {
         
 
-        if (!isMelee && other.gameObject.tag == "Wall")
+        if (!isMelee && !isRock && other.gameObject.tag == "Wall")
         {
 
-            Destroy(gameObject);
+            Destroy(gameObject, 3);
         }
     }
 

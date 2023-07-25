@@ -6,23 +6,23 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
 
-    public enum Type { A, B, C };
+    public enum Type { A, B, C, D };
     public Type enemyType;
-
 
     public int maxHealth;
     public int curHealth;
 
-    private Rigidbody rigid;
-    private BoxCollider boxCollider;
+    protected Rigidbody rigid;
+    protected BoxCollider boxCollider;
 
     public Transform target;
 
-    private Material mat;
+    // private Material mat;
+    protected MeshRenderer[] meshs;
 
-    private NavMeshAgent nav;
+    protected NavMeshAgent nav;
 
-    private Animator anim;
+    protected Animator anim;
 
     public bool isChase;
 
@@ -33,25 +33,31 @@ public class Enemy : MonoBehaviour
 
     // private static long testNum;
 
+    protected bool isDead;
 
-    private void Awake()
+    protected virtual void Awake()
     {
 
         rigid = GetComponent<Rigidbody>();
         boxCollider = GetComponent<BoxCollider>();
         // mat = GetComponent<MeshRenderer>().material;
-        mat = GetComponentInChildren<MeshRenderer>().material;      // 자식 오브젝트 중에 제일 위에 있는 메쉬렌더러를 가져온다
+        // mat = GetComponentInChildren<MeshRenderer>().material;      // 자식 오브젝트 중에 제일 위에 있는 메쉬렌더러를 가져온다
+        meshs = GetComponentsInChildren<MeshRenderer>();                // 보스 때문에 수정
 
         nav = GetComponent<NavMeshAgent>();
 
         anim = GetComponentInChildren<Animator>();                  // 자식의 MeshObject에 있다
 
-        Invoke("ChaseStart", 2f);
+        if (enemyType != Type.D)
+        {
+
+            Invoke("ChaseStart", 2f);
+        }
     }
 
     private void Update()
     {
-        if (nav.enabled)
+        if (nav.enabled && enemyType != Type.D)
         {
 
             nav.SetDestination(target.position);
@@ -76,37 +82,41 @@ public class Enemy : MonoBehaviour
     private void Targeting()
     {
 
-        float targetRadius = 0f;
-        float targetRange = 0f;
-
-        switch (enemyType)
+        if (!isDead && enemyType != Type.D)
         {
 
-            case Type.A:
-                targetRadius = 1.5f;
-                targetRange = 3f;
-                break;
-            case Type.B:
-                targetRadius = 1f;
-                targetRange = 12f;
-                break;
-            case Type.C:
-                targetRadius = 0.5f;
-                targetRange = 25f;
-                break;
-        }
-        
+            float targetRadius = 0f;
+            float targetRange = 0f;
 
-        // 해당 방향으로 지름이 targetRadius인 구를 쏜다고 생각하면 된다
-        // 여기서 targetRange 거리만큼 쏜다
-        RaycastHit[] rayHits = Physics.SphereCastAll(
-            transform.position, targetRadius, transform.forward, 
-            targetRange, LayerMask.GetMask("Player"));
+            switch (enemyType)
+            {
 
-        if (rayHits.Length > 0 && !isAttack)
-        {
+                case Type.A:
+                    targetRadius = 1.5f;
+                    targetRange = 3f;
+                    break;
+                case Type.B:
+                    targetRadius = 1f;
+                    targetRange = 12f;
+                    break;
+                case Type.C:
+                    targetRadius = 0.5f;
+                    targetRange = 25f;
+                    break;
+            }
 
-            StartCoroutine(Attack());
+
+            // 해당 방향으로 지름이 targetRadius인 구를 쏜다고 생각하면 된다
+            // 여기서 targetRange 거리만큼 쏜다
+            RaycastHit[] rayHits = Physics.SphereCastAll(
+                transform.position, targetRadius, transform.forward,
+                targetRange, LayerMask.GetMask("Player"));
+
+            if (rayHits.Length > 0 && !isAttack)
+            {
+
+                StartCoroutine(Attack());
+            }
         }
     }
 
@@ -208,7 +218,13 @@ public class Enemy : MonoBehaviour
     private IEnumerator OnDamage(Vector3 reactVec, bool isGrenade = false)
     {
 
-        mat.color = Color.red;
+        foreach(MeshRenderer mesh in meshs)
+        {
+
+            mesh.material.color = Color.red;
+        }
+
+        // mat.color = Color.red;
 
         // Debug.Log($"코루틴 생성 횟수 {++testNum}");
 
@@ -217,18 +233,31 @@ public class Enemy : MonoBehaviour
         if (curHealth > 0)
         {
 
-            mat.color = Color.white;
+            // mat.color = Color.white;
+            foreach(MeshRenderer mesh in meshs)
+            {
+
+                mesh.material.color = Color.white;
+            }
         }
         else
         {
 
+
             // 여기에 넣을 때는 레이어 숫자 그대로 넣어주면 된다
             // LayerMask쪽은 다르게 !
             gameObject.layer = 25;
-            mat.color = Color.gray;
+
+            // mat.color = Color.gray;
+            foreach(MeshRenderer mesh in meshs)
+            {
+
+                mesh.material.color = Color.gray;
+            }
 
             // isAttack = false;       // freeze때 문에 추가..
 
+            isDead = true;
             isChase = false;
             nav.enabled = false;    // 내비메쉬 비활성화
 
@@ -252,8 +281,11 @@ public class Enemy : MonoBehaviour
 
                 rigid.AddForce(reactVec * 5, ForceMode.Impulse);
             }
+            if (enemyType != Type.D)
+            {
 
-            Destroy(gameObject, 4f);
+                Destroy(gameObject, 4f);
+            }
         }
     }
 
