@@ -34,12 +34,16 @@ public class Player : MonoBehaviour
 
     private bool isReload;      // 장전 중?
 
-    private bool isBorder;
+    private bool isBorder;      // 가장자리에 갔는지?
+
+    private bool isDamage;      // 무적 타임을 위한 변수
 
     private Vector3 moveVec;    // 이동용 벡터3
     private Vector3 dodgeVec;   // 닷지용 벡터3
     private Animator anim;
     public Rigidbody rigid;
+
+    private MeshRenderer[] meshs;  
 
     private GameObject nearObject;
     private Weapon equipWeapon;
@@ -72,6 +76,8 @@ public class Player : MonoBehaviour
 
         anim = GetComponentInChildren<Animator>();
         rigid = GetComponent<Rigidbody>();
+
+        meshs = GetComponentsInChildren<MeshRenderer>();
     }
 
     private void Update()
@@ -417,7 +423,8 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+
+        // 아이템
         if (other.tag == "Item")
         {
 
@@ -453,6 +460,42 @@ public class Player : MonoBehaviour
 
             Destroy(other.gameObject);
         }
+        // 적
+        else if (other.tag == "EnemyBullet")
+        {
+
+            if (!isDamage)
+            {
+
+                Bullet enemyBullet = other.GetComponent<Bullet>();
+                health -= enemyBullet.damage;
+
+                if (other.GetComponent<Rigidbody>() != null) Destroy(other.gameObject);
+                StartCoroutine(OnDamage());
+            }
+        }
+    }
+
+    IEnumerator OnDamage()
+    {
+
+        isDamage = true;
+
+        foreach(MeshRenderer mesh in meshs)
+        {
+
+            mesh.material.color = Color.yellow;
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        foreach(MeshRenderer mesh in meshs)
+        {
+
+            mesh.material.color = Color.white;
+        }
+
+        isDamage = false;
     }
 
     private void OnTriggerStay(Collider other)
