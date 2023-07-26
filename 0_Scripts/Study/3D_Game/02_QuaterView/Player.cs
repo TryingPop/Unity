@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -47,9 +48,9 @@ public class Player : MonoBehaviour
 
     private MeshRenderer[] meshs;  
 
-    private GameObject nearObject;
-    private Weapon equipWeapon;
-    int equipWeaponIndex = -1;
+    private GameObject nearObject;  // 무기와 상점 동시에 감지한다
+    public Weapon equipWeapon;
+    private int equipWeaponIndex = -1;
 
     public GameObject[] weapons;
     public bool[] hasWeapons;
@@ -62,7 +63,8 @@ public class Player : MonoBehaviour
     public int ammo;
     public int coin;
     public int health;
-    
+
+    public int score;
 
     public int maxAmmo;
     public int maxCoin;
@@ -80,6 +82,10 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
 
         meshs = GetComponentsInChildren<MeshRenderer>();
+
+        // 최고 점수 저장 - 유니티에서 제공하는 기능
+        // PlayerPrefs.SetInt("MaxScore", 0);
+        // Debug.Log(PlayerPrefs.GetInt("MaxScore"));
     }
 
     private void Update()
@@ -387,7 +393,7 @@ public class Player : MonoBehaviour
 
                 Destroy(nearObject);
             }
-            else if (nearObject.tag == "Shop")
+            if (nearObject.tag == "Shop")
             {
 
                 Shop shop = nearObject.GetComponent<Shop>();
@@ -527,13 +533,17 @@ public class Player : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         
-        if (other.tag == "Weapon" || other.tag == "Shop")
+        if (other.tag == "Weapon")
         {
 
             nearObject = other.gameObject;
         }
-
         
+        else if (other.tag == "Shop")
+        {
+
+            nearObject = other.gameObject;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -544,12 +554,12 @@ public class Player : MonoBehaviour
 
             nearObject = null;
         }
-        if (other.tag == "Shop")
+        else if (other.tag == "Shop")
         {
             Shop shop = nearObject.GetComponent<Shop>();
             shop.Exit();
-            nearObject = null;
             isShop = false;
+            nearObject = null;
         }
     }
 }

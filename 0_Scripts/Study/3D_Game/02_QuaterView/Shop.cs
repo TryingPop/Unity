@@ -49,7 +49,7 @@ public class Shop : MonoBehaviour
 
         enterPlayer.coin -= price;
         Vector3 randVec = Vector3.right * Random.Range(-3, 3)
-            + Vector3.forward * Random.Range(-3, 3);
+            + Vector3.forward * Random.Range(0, 3);
 
         Instantiate(itemObjs[index], itemPos[index].position + randVec + Vector3.up, itemPos[index].rotation);
     }
