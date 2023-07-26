@@ -548,7 +548,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        
+
         if (other.tag == "Weapon")
         {
 
@@ -556,10 +556,15 @@ public class Player : MonoBehaviour
         }
         else if (other.tag == "Shop")
         {
-            Shop shop = nearObject.GetComponent<Shop>();
-            shop.Exit();
-            isShop = false;
-            nearObject = null;
+
+            if (nearObject != null)     // shop을 못찾는 경우가 있어서 해당 부분 일단 막았다
+            {
+
+                Shop shop = nearObject.GetComponent<Shop>();
+                shop.Exit();
+                nearObject = null;
+            }
+            isShop = false;             // 별도로 탈출은 해야하기에 if문 관계없이 진행
         }
     }
 }
