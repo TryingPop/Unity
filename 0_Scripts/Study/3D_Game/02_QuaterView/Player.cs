@@ -38,6 +38,8 @@ public class Player : MonoBehaviour
 
     private bool isDamage;      // 무적 타임을 위한 변수
 
+    private bool isShop;        // 쇼핑 중?
+
     private Vector3 moveVec;    // 이동용 벡터3
     private Vector3 dodgeVec;   // 닷지용 벡터3
     private Animator anim;
@@ -168,14 +170,15 @@ public class Player : MonoBehaviour
         {
 
             Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);  // 스크린에서 레이를 쏘는 메소드 매개변수는 해당 위치
-            RaycastHit rayHit;  // 충돌체를 담는 변수
+            RaycastHit rayHit;  // 충돌체를 담는 변수 밑에서 인라인
 
             // 거리는 100
             // LayerMask.GetMask(레이어 이름);대신 사용한 코드
             // 여기서 11이 Floor 레이어이므로 11로 설정
             // 1 << ?? 에서 ?? 에 들어갈 숫자는 레이어 번호 1을 비트 왼쪽으로 11칸 이동 시켜라는 의미이다
             // 혹은 2^11 = 2048의 값을 해도된다
-            if (Physics.Raycast(ray, out rayHit, 100, 1 << 11))
+            if (Physics.Raycast(ray, out rayHit, 100, 1 << 11))  // 
+            // if (Physics.Raycast(ray, out RaycastHit rayHit, 100, 1 << 11))
             {
 
 
@@ -215,8 +218,10 @@ public class Player : MonoBehaviour
         {
 
             Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit rayHit;
+            RaycastHit rayHit;       // 변수 인라인
 
+
+            // if (Physics.Raycast(ray, out RaycastHit rayHit, 100))
             if (Physics.Raycast(ray, out rayHit, 100))
             {
 
@@ -247,7 +252,7 @@ public class Player : MonoBehaviour
         fireDelay += Time.deltaTime;
         isFireReady = equipWeapon.rate < fireDelay;
 
-        if (fDown && isFireReady && !isDodge && !isSwap)
+        if (fDown && isFireReady && !isDodge && !isSwap && !isShop)
         {
 
             equipWeapon.Use();
@@ -271,7 +276,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        if (rDown && !isJump && !isDodge && !isSwap && isFireReady)
+        if (rDown && !isJump && !isDodge && !isSwap && isFireReady && !isShop)
         {
 
             anim.SetTrigger("doReload");
@@ -293,7 +298,7 @@ public class Player : MonoBehaviour
     private void Dodge()
     {
 
-        if (jDown && !isJump && moveVec != Vector3.zero && !isDodge && !isSwap)
+        if (jDown && !isJump && moveVec != Vector3.zero && !isDodge && !isSwap && !isShop)
         {
 
             dodgeVec = moveVec;
@@ -381,6 +386,13 @@ public class Player : MonoBehaviour
                 hasWeapons[weaponIndex] = true;
 
                 Destroy(nearObject);
+            }
+            else if (nearObject.tag == "Shop")
+            {
+
+                Shop shop = nearObject.GetComponent<Shop>();
+                shop.Enter(this);
+                isShop = true;
             }
         } 
     }
@@ -515,7 +527,7 @@ public class Player : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         
-        if (other.tag == "Weapon")
+        if (other.tag == "Weapon" || other.tag == "Shop")
         {
 
             nearObject = other.gameObject;
@@ -531,6 +543,13 @@ public class Player : MonoBehaviour
         {
 
             nearObject = null;
+        }
+        if (other.tag == "Shop")
+        {
+            Shop shop = nearObject.GetComponent<Shop>();
+            shop.Exit();
+            nearObject = null;
+            isShop = false;
         }
     }
 }
