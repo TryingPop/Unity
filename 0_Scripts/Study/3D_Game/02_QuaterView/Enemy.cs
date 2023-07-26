@@ -35,6 +35,11 @@ public class Enemy : MonoBehaviour
 
     protected bool isDead;
 
+    public int score;
+    public GameObject[] coins;
+
+    public GameManager manager;
+
     protected virtual void Awake()
     {
 
@@ -257,11 +262,67 @@ public class Enemy : MonoBehaviour
 
             // isAttack = false;       // freeze때 문에 추가..
 
+            // 바꾸기 전에는 적이 2번 이상 죽는걸로 간주되는 경우가 존재해서
+            // 게임매니저 스크립트가 꼬인다!
+            if (!isDead)
+            {
+
+                switch (enemyType)
+                {
+
+                    case Type.A:
+                        manager.enemyCntA--;
+                        break;
+
+                    case Type.B:
+                        manager.enemyCntB--;
+                        break;
+
+                    case Type.C:
+                        manager.enemyCntC--;
+                        break;
+
+                    case Type.D:
+                        manager.enemyCntD--;
+                        manager.bossHealthGroup.gameObject.SetActive(false);
+                        break;
+                }
+            }
             isDead = true;
             isChase = false;
             nav.enabled = false;    // 내비메쉬 비활성화
 
             anim.SetTrigger("doDie");
+
+            Player player = target.GetComponent<Player>();
+            player.score += score;
+            int randCoin = Random.Range(0, 3);
+
+            Instantiate(coins[randCoin], transform.position, Quaternion.identity);
+
+            /*
+            // 카운트가 2번 되는 경우가 존재!
+            switch (enemyType)
+            {
+
+                case Type.A:
+                    manager.enemyCntA--;
+                    break;
+
+                case Type.B:
+                    manager.enemyCntB--;
+                    break;
+
+                case Type.C:
+                    manager.enemyCntC--;
+                    break;
+
+                case Type.D:
+                    manager.enemyCntD--;
+                    manager.bossHealthGroup.gameObject.SetActive(false);
+                    break;
+            }
+            */
 
             if (isGrenade)
             {
@@ -283,11 +344,15 @@ public class Enemy : MonoBehaviour
                 rigid.AddForce(reactVec * 5, ForceMode.Impulse);
             }
 
+            /*
             if (enemyType != Type.D)
             {
 
                 Destroy(gameObject, 4f);
             }
+            */
+
+            Destroy(gameObject, 4f);
         }
     }
 

@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
 
     private bool isShop;        // 쇼핑 중?
 
+    private bool isDead;        // 사망?
+
     private Vector3 moveVec;    // 이동용 벡터3
     private Vector3 dodgeVec;   // 닷지용 벡터3
     private Animator anim;
@@ -74,6 +76,8 @@ public class Player : MonoBehaviour
     private float fireDelay;    // 공격 딜레이
 
     public Camera followCamera;
+
+    public GameManager manager;
 
     private void Awake()
     {
@@ -142,7 +146,7 @@ public class Player : MonoBehaviour
             moveVec = dodgeVec;
         }
 
-        if (isSwap || isReload || !isFireReady)
+        if (isSwap || isReload || !isFireReady || isDead)
         {
 
             moveVec = Vector3.zero;
@@ -171,8 +175,7 @@ public class Player : MonoBehaviour
         transform.LookAt(transform.position + moveVec);
 
         // 마우스에 의한 회전
-
-        if (fDown)
+        if (fDown && !isDead)
         {
 
             Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);  // 스크린에서 레이를 쏘는 메소드 매개변수는 해당 위치
@@ -199,7 +202,7 @@ public class Player : MonoBehaviour
     private void Jump()
     {
 
-        if (jDown && !isJump && moveVec == Vector3.zero && !isDodge && !isSwap)
+        if (jDown && !isJump && moveVec == Vector3.zero && !isDodge && !isSwap && !isDead)
         {
 
             // 순간적인 힘을 주는 모드인 Impulse
@@ -220,7 +223,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        if (gDown && !isReload && !isSwap)
+        if (gDown && !isReload && !isSwap && !isDead)
         {
 
             Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
@@ -253,7 +256,7 @@ public class Player : MonoBehaviour
     private void Attack()
     {
 
-        if (equipWeapon == null) return;
+        if (equipWeapon == null || isDead) return;
 
         fireDelay += Time.deltaTime;
         isFireReady = equipWeapon.rate < fireDelay;
@@ -270,7 +273,7 @@ public class Player : MonoBehaviour
     private void Reload()
     {
 
-        if (equipWeapon == null)
+        if (equipWeapon == null || isDead)
         {
 
             return;
@@ -304,7 +307,7 @@ public class Player : MonoBehaviour
     private void Dodge()
     {
 
-        if (jDown && !isJump && moveVec != Vector3.zero && !isDodge && !isSwap && !isShop)
+        if (jDown && !isJump && moveVec != Vector3.zero && !isDodge && !isSwap && !isShop && !isDead)
         {
 
             dodgeVec = moveVec;
@@ -326,6 +329,11 @@ public class Player : MonoBehaviour
 
     private void Swap()
     {
+
+        if (isDead)
+        {
+            return;
+        }
 
         if (sDown1 && (!hasWeapons[0] || equipWeaponIndex == 0))
         {
@@ -380,7 +388,7 @@ public class Player : MonoBehaviour
     private void Interaction()
     {
 
-        if (iDown && nearObject != null && !isJump && !isDodge)
+        if (iDown && nearObject != null && !isJump && !isDodge && !isDead )
         {
 
             if (nearObject.tag == "Weapon")
@@ -482,7 +490,7 @@ public class Player : MonoBehaviour
         else if (other.tag == "EnemyBullet")
         {
 
-            if (!isDamage)
+            if (!isDamage && !isDead)
             {
 
                 Bullet enemyBullet = other.GetComponent<Bullet>();
@@ -500,7 +508,6 @@ public class Player : MonoBehaviour
     {
 
         isDamage = true;
-
         foreach(MeshRenderer mesh in meshs)
         {
 
@@ -511,6 +518,13 @@ public class Player : MonoBehaviour
         {
 
             rigid.AddForce(transform.forward * -25, ForceMode.Impulse);
+        }
+
+        if (health <= 0 && !isDead)
+        {
+
+            health = 0;
+            OnDie();
         }
 
         yield return new WaitForSeconds(1f);
@@ -528,6 +542,21 @@ public class Player : MonoBehaviour
 
             rigid.velocity = Vector3.zero;
         }
+
+
+    }
+
+    private void OnDie()
+    {
+
+        anim.SetTrigger("doDie");
+        isDead = true;
+        manager.GameOver();
+
+        // 추가
+        // StopAllCoroutines();
+        // rigid.useGravity = false;
+        // GetComponent<CapsuleCollider>().enabled = false;
     }
 
     private void OnTriggerStay(Collider other)
@@ -557,7 +586,9 @@ public class Player : MonoBehaviour
         else if (other.tag == "Shop")
         {
 
-            Shop shop = other.gameObject.GetComponent<Shop>();
+            // Shop shop = nearObject.GetComponent<Shop>();
+            Shop shop = other.gameObject.GetComponent<Shop>();  // 여러 시장이 있을 경우에는 사용할 수 있는 방법이 아니다
+                                                                // 오히려 벽감지 레이를 통해 매번 체크하는게 좋지 않을까 싶다
             isShop = false;             
             shop.Exit();
             nearObject = null;
