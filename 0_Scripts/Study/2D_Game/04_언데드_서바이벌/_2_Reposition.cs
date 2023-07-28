@@ -5,7 +5,7 @@ using UnityEngine;
 public class _2_Reposition : MonoBehaviour
 {
 
-    public int tileSizeX = 24;
+    public int tileSizeX = 20;
     public int tileSizeY = 20;
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -42,6 +42,7 @@ public class _2_Reposition : MonoBehaviour
         {
 
             case "Ground":
+
                 if (diffX > diffY)
                 {
 
