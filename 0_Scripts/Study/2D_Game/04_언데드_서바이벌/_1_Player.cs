@@ -9,6 +9,8 @@ public class _1_Player : MonoBehaviour
 
     private Vector2 inputVec;
     private Rigidbody2D rigid;
+    private SpriteRenderer spriter;
+    private Animator anim;
 
     [SerializeField] private float speed;
 
@@ -16,11 +18,10 @@ public class _1_Player : MonoBehaviour
     {
 
         rigid = GetComponent<Rigidbody2D>();
+        spriter = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
 
-    /*
-    // InputSystem 으로 대체
-    // 사용되지 않는다
     private void Update()
     {
 
@@ -29,7 +30,6 @@ public class _1_Player : MonoBehaviour
         inputVec.x = Input.GetAxisRaw("Horizontal");
         inputVec.y = Input.GetAxisRaw("Vertical");
     }
-    */
 
     private void FixedUpdate()
     {
@@ -45,13 +45,25 @@ public class _1_Player : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVec);  // rigid의 위치 + 이동할 방향
     }
 
-    /// <summary>
-    /// 인풋 시스템을 이용한 이동
-    /// </summary>
-    /// <param name="value">Input System에서 설정한 value</param>
+    /*
+    // 인풋 시스템을 이용한 이동
+    // 이런 것도 있다고만 느끼면 될거 같다
     private void OnMove(InputValue value)
     {
 
         inputVec = value.Get<Vector2>();
+    }
+    */
+
+    private void LateUpdate()
+    {
+
+        anim.SetFloat("Speed", inputVec.magnitude);
+
+        if (inputVec.x != 0)
+        {
+
+            spriter.flipX = inputVec.x < 0;
+        }
     }
 }
