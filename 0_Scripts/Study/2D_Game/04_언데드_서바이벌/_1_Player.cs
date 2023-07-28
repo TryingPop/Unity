@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class _1_Player : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class _1_Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
+    /*
+    // InputSystem 으로 대체
+    // 사용되지 않는다
     private void Update()
     {
 
@@ -25,6 +29,7 @@ public class _1_Player : MonoBehaviour
         inputVec.x = Input.GetAxisRaw("Horizontal");
         inputVec.y = Input.GetAxisRaw("Vertical");
     }
+    */
 
     private void FixedUpdate()
     {
@@ -40,5 +45,13 @@ public class _1_Player : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVec);  // rigid의 위치 + 이동할 방향
     }
 
+    /// <summary>
+    /// 인풋 시스템을 이용한 이동
+    /// </summary>
+    /// <param name="value">Input System에서 설정한 value</param>
+    private void OnMove(InputValue value)
+    {
 
+        inputVec = value.Get<Vector2>();
+    }
 }
