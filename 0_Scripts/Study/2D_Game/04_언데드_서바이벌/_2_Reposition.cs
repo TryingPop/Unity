@@ -32,27 +32,19 @@ public class _2_Reposition : MonoBehaviour
         float dirX = playerPos.x - myPos.x;
         float dirY = playerPos.y - myPos.y;
 
-        float diffX = Mathf.Abs(dirX);
-        float diffY = Mathf.Abs(dirY);
+        // float diffX = Mathf.Abs(dirX);
+        // float diffY = Mathf.Abs(dirY);
 
-        dirX = dirX > 0 ? 1 : -1;
-        dirY = dirY > 0 ? 1 : -1;
+        dirX = (int)dirX / tileSizeX;
+        dirY = (int)dirY / tileSizeY;
 
         switch (transform.tag)
         {
 
             case "Ground":
 
-                if (diffX > diffY)
-                {
-
-                    transform.Translate(Vector3.right * dirX * tileSizeX * 2);
-                }
-                else if (diffX < diffY)
-                {
-
-                    transform.Translate(Vector3.up * dirY * tileSizeY * 2);
-                }
+                transform.Translate(Vector3.right * dirX * tileSizeX * 2);
+                transform.Translate(Vector3.up * dirY * tileSizeY * 2);
                 break;
 
             case "Enemy":
