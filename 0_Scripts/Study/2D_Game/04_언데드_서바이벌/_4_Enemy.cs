@@ -9,22 +9,39 @@ public class _4_Enemy : MonoBehaviour
     public float speed;
     public Rigidbody2D target;
 
-    private bool isLive = true;
+    private bool isLive;
 
     private Rigidbody2D rigid;
     private SpriteRenderer spriter;
+    private Animator anim;
+
+    public float health;
+    public float maxHealth;
+    public RuntimeAnimatorController[] animCon;
 
     private void Awake()
     {
 
         rigid = GetComponent<Rigidbody2D>();
         spriter = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
 
     private void OnEnable()
     {
 
         target = _3_GameManager.instance.player.GetComponent<Rigidbody2D>();
+        isLive = true;
+        health = maxHealth;
+    }
+
+    public void Init(_7_spawnData data)
+    {
+
+        anim.runtimeAnimatorController = animCon[data.spriteType];
+        speed = data.speed;
+        maxHealth = data.health;
+        health = maxHealth;
     }
 
     private void FixedUpdate()

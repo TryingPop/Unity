@@ -6,9 +6,13 @@ public class _6_Spawner : MonoBehaviour
 {
 
     public Transform[] spawnPoint;
+    public _7_spawnData[] spawnData;
 
     private float timer;
     public float spawnTime;
+
+    private int level;
+
 
     private void Awake()
     {
@@ -20,8 +24,9 @@ public class _6_Spawner : MonoBehaviour
     {
 
         timer += Time.deltaTime;
+        level = Mathf.Min(Mathf.FloorToInt(_3_GameManager.instance.gameTime / 10f), spawnData.Length - 1);
 
-        if (timer > spawnTime)
+        if (timer > spawnData[level].spawnTime)
         {
 
             timer = 0f;
@@ -32,7 +37,8 @@ public class _6_Spawner : MonoBehaviour
     private void Spawn()
     {
 
-        GameObject enemy = _3_GameManager.instance.pool.Get(Random.Range(0, 2));
+        GameObject enemy = _3_GameManager.instance.pool.Get(0);
+        enemy.GetComponent<_4_Enemy>().Init(spawnData[level]);
         enemy.transform.position = spawnPoint[Random.Range(1, spawnPoint.Length)].position;     // 모든 오브젝트는 Transform을 보유하고 있고,
                                                                                                 // 자기자신도 담기므로 1부터
     }
