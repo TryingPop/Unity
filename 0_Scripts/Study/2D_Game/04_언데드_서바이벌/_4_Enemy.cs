@@ -21,6 +21,12 @@ public class _4_Enemy : MonoBehaviour
         spriter = GetComponent<SpriteRenderer>();
     }
 
+    private void OnEnable()
+    {
+
+        target = _3_GameManager.instance.player.GetComponent<Rigidbody2D>();
+    }
+
     private void FixedUpdate()
     {
 

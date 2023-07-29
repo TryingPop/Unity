@@ -9,6 +9,7 @@ public class _3_GameManager : MonoBehaviour
     public static _3_GameManager instance;
 
     public _1_Player player;
+    public _5_PoolManager pool;
 
     private void Awake()
     {
