@@ -8,6 +8,14 @@ public class _2_Reposition : MonoBehaviour
     public int tileSizeX = 20;
     public int tileSizeY = 20;
 
+    Collider2D coll;
+
+    private void Awake()
+    {
+
+        coll = GetComponent<Collider2D>();
+    }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         
@@ -25,7 +33,7 @@ public class _2_Reposition : MonoBehaviour
         // float diffY = Mathf.Abs(playerPos.y - myPos.y);
 
         // 여기서 inputVec은 public 선언 해줘야한다
-        // Vector3 playerDir = _3_GameManager.instance.player.inputVec;
+        Vector3 playerDir = _3_GameManager.instance.player.inputVec;
         // float dirX = playerDir.x < 0 ? -1 : 1;
         // float dirY = playerDir.y < 0 ? -1 : 1;
 
@@ -40,7 +48,7 @@ public class _2_Reposition : MonoBehaviour
 
         switch (transform.tag)
         {
-
+            
             case "Ground":
 
                 transform.Translate(Vector3.right * dirX * tileSizeX * 2);
@@ -49,6 +57,12 @@ public class _2_Reposition : MonoBehaviour
 
             case "Enemy":
 
+                // 콜라이더가 활성화 = 살아있다
+                if (coll.enabled)
+                {
+
+                    transform.Translate(playerDir * 20 + new Vector3(Random.Range(-3f, 3f), Random.Range(-3f, 3f), 0));
+                }
                 break;
         }
     }
