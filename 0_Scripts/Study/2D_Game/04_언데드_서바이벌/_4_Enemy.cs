@@ -73,4 +73,34 @@ public class _4_Enemy : MonoBehaviour
 
         spriter.flipX = target.position.x < rigid.position.x;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+        if (!collision.CompareTag("Bullet"))
+        {
+
+            return;
+        }
+
+        health -= collision.GetComponent<_8_Bullet>().damage;
+        
+        
+        if (health  > 0)
+        {
+
+            anim.SetTrigger("Hit");
+        }
+        else
+        {
+
+            Dead();
+        }
+    }
+
+    private void Dead()
+    {
+
+        gameObject.SetActive(false);
+    }
 }
