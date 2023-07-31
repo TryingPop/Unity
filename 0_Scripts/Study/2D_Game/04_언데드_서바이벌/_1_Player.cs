@@ -12,6 +12,8 @@ public class _1_Player : MonoBehaviour
     private SpriteRenderer spriter;
     private Animator anim;
 
+    public _10_Scanner scanner;
+
     [SerializeField] private float speed;
 
     private void Awake()
@@ -20,6 +22,8 @@ public class _1_Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         spriter = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+
+        scanner = GetComponent<_10_Scanner>();
     }
 
     private void Update()
