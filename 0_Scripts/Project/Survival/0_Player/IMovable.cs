@@ -6,13 +6,14 @@ public interface IMovable
 {
 
     /// <summary>
-    /// 이동 가능, 불가능 프로퍼티,
-    /// 홀딩 시스템에 사용된다
-    /// </summary>
-    public bool isMove { get; set; }
-
-    /// <summary>
     /// 이동 메서드
+    /// 해당 지점으로 이동한다
     /// </summary>
     public abstract void Move();
+
+    /// <summary>
+    /// 이동을 멈출 때 사용하는 메서드,
+    /// 해당 지역에 도착했을 때 사용하자!
+    /// </summary>
+    public abstract void MoveStop();
 }
