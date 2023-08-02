@@ -8,7 +8,6 @@ public class CameraMovement : MonoBehaviour, IMovable
     [SerializeField, Range(0f, 50f)]
     private float wheelSpeed;
 
-    private Camera cam;
     private Vector3 dir;            // ÀÌµ¿¿ë
 
     public bool isMove;
@@ -21,7 +20,6 @@ public class CameraMovement : MonoBehaviour, IMovable
     private void Awake()
     {
 
-        cam = Camera.main;
         isMove = true;
     }
 

@@ -14,6 +14,9 @@ public class OrderManager : MonoBehaviour
 
     [SerializeField] private FollowUI[] follows;
 
+    private Vector3 startPos;
+    private Vector3 endPos;
+
     private void Awake()
     {
         
@@ -35,23 +38,7 @@ public class OrderManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
 
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 500f, LayerMask.GetMask("Ground")))
-            {
-
-                var units = select.Get();
-
-                if (units != null)
-                {
-
-                    for (int i = 0; i < units.Length; i++)
-                    {
-
-                        units[i].SetDestination(hit.point);
-                    }
-                }
-            }
+            MoveUnits();
         }
 
         if (Input.GetKeyDown(KeyCode.S))
@@ -68,6 +55,16 @@ public class OrderManager : MonoBehaviour
         {
 
             select.ShowSize();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+
+            foreach(var unit in select.Get())
+            {
+
+                unit.SetRun();
+            }
         }
     }
 
@@ -107,6 +104,9 @@ public class OrderManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 선택된 유닛 보여주기
+    /// </summary>
     private void SetFollowUI()
     {
 
@@ -136,6 +136,31 @@ public class OrderManager : MonoBehaviour
             {
 
                 follows[i].ResetTarget();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 선택된 유닛들 이동!
+    /// </summary>
+    private void MoveUnits()
+    {
+
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 500f, LayerMask.GetMask("Ground")))
+        {
+
+            var units = select.Get();
+
+            if (units != null)
+            {
+
+                for (int i = 0; i < units.Length; i++)
+                {
+
+                    units[i].SetDestination(hit.point);
+                }
             }
         }
     }
