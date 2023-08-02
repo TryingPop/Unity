@@ -42,21 +42,14 @@ public class SelectedTable
     /// 기존에 있는 경우 제거
     /// </summary>
     /// <param name="unit"></param>
-    public void Selct(GameObject unit)
+    public void Select(Character unit)
     {
 
-        Character chr = unit.GetComponent<Character>();
-
-        if (selectedChr.Contains(chr))
+        
+        if (selectedChr.Count < MAX_UNIT)
         {
 
-            selectedChr.Remove(chr);
-            Debug.Log($"Remove {unit.GetInstanceID()}");
-        }
-        else if (selectedChr.Count < MAX_UNIT)
-        {
-
-            selectedChr.Add(unit.GetComponent<Character>());
+            selectedChr.Add(unit);
             Debug.Log($"Add {unit.GetInstanceID()}");
         }
         else
@@ -64,6 +57,18 @@ public class SelectedTable
 
             Debug.Log("Group is fulled!");
         }
+    }
+
+    public void DeSelect(Character unit)
+    {
+
+        selectedChr.Remove(unit);
+    }
+
+    public bool IsContains(Character unit)
+    {
+
+        return selectedChr.Contains(unit);
     }
 
     /// <summary>
