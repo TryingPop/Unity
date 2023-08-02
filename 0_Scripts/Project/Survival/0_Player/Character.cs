@@ -10,12 +10,17 @@ public class Character : MonoBehaviour, IMovable
     protected Collider myCollider;
     protected NavMeshAgent myAgent;
     protected Rigidbody myRigid;
+    protected LineRenderer myLineRenderer;
 
     private Camera cam;
 
     private Vector3 destination;
 
     public LayerMask moveLayer;
+
+    private Coroutine pathRoot;
+
+    [SerializeField] private MeshRenderer point;
 
     public bool isMove { get; protected set; }
 
@@ -27,34 +32,17 @@ public class Character : MonoBehaviour, IMovable
         myAgent = GetComponent<NavMeshAgent>();
         myRigid = GetComponent<Rigidbody>();
         cam = Camera.main;
+
+        myLineRenderer = GetComponent<LineRenderer>();
+
+        myLineRenderer.startWidth = 0.1f;
+        myLineRenderer.endWidth = 0.1f;
+        myLineRenderer.material.color = Color.red;
     }
 
     protected void Update()
     {
 
-        // 마우스를 이용한 이동
-        if (Input.GetMouseButtonDown(1))
-        {
-
-            // 마우스 포지션을 기준으로 레이를 쏜다
-            // 방향은 카메라가 바라보는 방향
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f, moveLayer))
-            {
-
-                // 지면과 충돌한 경우 해당 지점으로 이동
-                destination = hit.point;
-                myAgent.SetDestination(destination);
-            }
-        }
-
-        // 강제 멈춤
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-
-            MoveStop();
-        }
 
         if (Input.GetKeyDown(KeyCode.W))
         {
@@ -72,7 +60,6 @@ public class Character : MonoBehaviour, IMovable
         {
 
             myAgent.updatePosition = !myAgent.updatePosition;       // 캐릭터만 이동안할 뿐 에이전트는 이동한다 그래서
-                                                                    // 해당 상태 탈출 시 순간이동 한다
         }
     }
 
@@ -80,17 +67,35 @@ public class Character : MonoBehaviour, IMovable
 
     protected void FixedUpdate()
     {
-        
 
+        Move();
+    }
+
+    public void SetDestination(Vector3 _destination)
+    {
+
+        destination = _destination;
+
+        myAgent.SetDestination(destination);
+
+        if (pathRoot != null) StopCoroutine(pathRoot);
+        pathRoot = StartCoroutine(DrawPath());
+        point.transform.position = destination;
     }
 
     public void Move()
     {
 
-        if (Vector3.Distance(destination, transform.position) < 1f)
+        // if (Vector3.Distance(destination, transform.position) < 1f)
+        if (myAgent.remainingDistance < 1f)     // 내부에서 제공하는 길이
         {
 
             MoveStop();
+            if (pathRoot != null)
+                StopCoroutine(pathRoot);
+
+            myLineRenderer.enabled = false;
+            point.enabled = false;
         }
     }
 
@@ -98,5 +103,29 @@ public class Character : MonoBehaviour, IMovable
     {
 
         myAgent.SetDestination(transform.position);
+    }
+
+    IEnumerator DrawPath()
+    {
+
+        myLineRenderer.enabled = true;
+        point.enabled = true;
+
+        yield return null;
+
+        while (true)
+        {
+
+            int cnt = myAgent.path.corners.Length;
+            myLineRenderer.positionCount = cnt;
+
+            for (int i = 0; i < cnt; i++)
+            {
+
+                myLineRenderer.SetPosition(i, myAgent.path.corners[i]);
+            }
+
+            yield return null;
+        }
     }
 }
