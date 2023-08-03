@@ -45,7 +45,7 @@ public class SelectedTable
     public void Select(Character unit)
     {
 
-        
+        if (unit == null) return;
         if (selectedChr.Count < MAX_UNIT)
         {
 

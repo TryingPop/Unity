@@ -82,6 +82,8 @@ public class Character : MonoBehaviour, IMovable
     public void SetDestination(Vector3 _destination)
     {
 
+        myAgent.velocity = Vector3.zero;
+
         destination = _destination;
 
         myAgent.SetDestination(destination);
@@ -135,6 +137,7 @@ public class Character : MonoBehaviour, IMovable
     public void MoveStop()
     {
 
+        myAgent.velocity = Vector3.zero;
         myAgent.SetDestination(transform.position);
     }
 

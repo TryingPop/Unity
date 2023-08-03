@@ -14,8 +14,13 @@ public class OrderManager : MonoBehaviour
 
     [SerializeField] private FollowUI[] follows;
 
+
+
+
     private Vector3 startPos;
     private Vector3 endPos;
+
+    private bool isDrag;
 
     private void Awake()
     {
@@ -31,7 +36,19 @@ public class OrderManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
 
+            isDrag = true;
+            SetVec();
+
             Select();
+            SetFollowUI();
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+
+            isDrag = false;
+            SetVec();
+
+            MultiSelect();
             SetFollowUI();
         }
 
@@ -105,6 +122,37 @@ public class OrderManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 드래그 기능
+    /// </summary>
+    private void MultiSelect()
+    {
+
+        if (endPos.y == float.PositiveInfinity || endPos.y == float.NegativeInfinity || Vector3.Distance(cam.WorldToScreenPoint(startPos), cam.WorldToScreenPoint(endPos)) < 10f) return;
+
+        Vector3 center = (startPos + endPos) / 2f;
+        Vector3 halfExtents = new Vector3(Mathf.Abs(center.x - startPos.x), 15f, Mathf.Abs(center.z - startPos.z));
+
+        // 누르지 않았다면 클리어
+        if (!Input.GetKey(KeyCode.LeftShift))
+        {
+
+            select.Clear();
+        }
+
+        var hits = Physics.BoxCastAll(center, halfExtents, Vector3.up, Quaternion.identity, 0f, LayerMask.GetMask("Player"));
+
+
+        foreach (RaycastHit hit in hits)
+        {
+
+            
+            var chr = hit.transform.gameObject.GetComponent<Character>();
+            select.Select(chr);
+        }
+    }
+
+
+    /// <summary>
     /// 선택된 유닛 보여주기
     /// </summary>
     private void SetFollowUI()
@@ -164,6 +212,60 @@ public class OrderManager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// 마우스 클릭 시작지점 종료지점 설정
+    /// </summary>
+    private void SetVec()
+    {
+
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        if (isDrag)
+        {
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 500f, LayerMask.GetMask("Ground")))
+            {
+
+                startPos = hit.point;
+            }
+            else
+            {
+
+                startPos = Vector3.positiveInfinity;
+            }
+
+        }
+        else
+        {
+            
+            if (Physics.Raycast(ray, out RaycastHit hit, 500f, LayerMask.GetMask("Ground")))
+            {
+
+                endPos = hit.point;
+            }
+            else
+            {
+
+                endPos = Vector3.positiveInfinity;
+            }
+        }
+    }
+
+
+    private void OnGUI()
+    {
+        
+        if (isDrag 
+            && startPos.y != float.PositiveInfinity && startPos.y != float.NegativeInfinity 
+            && endPos.y != float.PositiveInfinity && endPos.y != float.NegativeInfinity)
+        {
+
+            Vector3 p1 = cam.WorldToScreenPoint(startPos);
+
+            Rect rect = FollowUI.GetScreenRect(p1, Input.mousePosition);
+            FollowUI.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
+            FollowUI.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
+        }
+    }
 }
-
-
