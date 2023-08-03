@@ -14,7 +14,7 @@ public class _1_Player : MonoBehaviour
 
     public _10_Scanner scanner;
 
-    [SerializeField] private float speed;
+    public float speed;
 
     private void Awake()
     {

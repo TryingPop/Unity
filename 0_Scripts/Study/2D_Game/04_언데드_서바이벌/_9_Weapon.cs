@@ -21,18 +21,34 @@ public class _9_Weapon : MonoBehaviour
 
     private void Awake()
     {
-        
-        player = GetComponentInParent<_1_Player>();
+
+        // player = GetComponentInParent<_1_Player>();
+        player = _3_GameManager.instance.player;
     }
 
-    private void Start()
+    public void Init(_13_ItemData data)
     {
 
-        Init();
-    }
+        // Basic Set
+        name = "Weapon " + data.itemId;
+        transform.parent = player.transform;
+        transform.localPosition = Vector3.zero;
 
-    public void Init()
-    {
+        // Property Set
+        id = data.itemId;
+        damage = data.baseDamage;
+        count = data.baseCount;
+
+        for (int index = 0; index < _3_GameManager.instance.pool.prefabs.Length; index++)
+        {
+
+            if (data.projectile == _3_GameManager.instance.pool.prefabs[index])
+            {
+
+                prefabId = index;
+                break;
+            }
+        }
 
         switch (id)
         {
@@ -52,6 +68,11 @@ public class _9_Weapon : MonoBehaviour
 
                 break;
         }
+
+        // 자기 자신과 자식 모두에서 ApplyGear 이름의 메서드 실행
+        // 두 번째 매개변수가 없는 경우 ApplyGear메서드를 실행 못하면 에러 메시지가 뜨는데,
+        // 두 번째 매개변수에 있으면 에러 메시지는 안뜬다
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
 
     private void Batch()
@@ -113,7 +134,7 @@ public class _9_Weapon : MonoBehaviour
                 break;
         }
 
-#if true
+#if false
         // Test Code
         if (Input.GetButtonDown("Jump"))
         {
@@ -135,6 +156,8 @@ public class _9_Weapon : MonoBehaviour
 
             Batch();
         }
+
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
 
     private void Fire()

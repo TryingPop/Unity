@@ -49,7 +49,7 @@ public class _3_GameManager : MonoBehaviour
 
         exp += add;
 
-        if (exp >= nextExp[level])
+        if (level < nextExp.Length && exp >= nextExp[level])
         {
 
             level++;
