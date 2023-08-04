@@ -12,13 +12,16 @@ public class OrderManager : MonoBehaviour
 
     [SerializeField] private FollowUI[] follows;
 
-
-
-
     private Vector3 startPos;
     private Vector3 endPos;
 
     private bool isDrag;
+
+    [SerializeField, Range(1f, 3f)] 
+    private float xBatchSize = 2f;
+    [SerializeField, Range(1f, 3f)]
+    private float zBatchSize = 2f;
+
 
     private void Awake()
     {
@@ -158,7 +161,6 @@ public class OrderManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// 선택된 유닛 보여주기
     /// </summary>
@@ -206,11 +208,19 @@ public class OrderManager : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 500f, LayerMask.GetMask("Ground")))
         {
 
+            // 아무 것도 없는 경우 탈출!
+            if (select.GetSize() == 0) return;
+
+
+            // 유닛 배치
             var units = select.Get();
+            Vector3 addPos = Vector3.zero;
+
             for (int i = 0; i < units.Count; i++)
             {
-
-                units[i].SetDestination(hit.point);
+                
+                SetNextPos(i, ref addPos);
+                units[i].SetDestination(hit.point + addPos);
             }
         }
     }
@@ -254,6 +264,54 @@ public class OrderManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 회오리? 모양의 배치
+    /// </summary>
+    /// <param name="num">몇 번째 유닛?</param>
+    /// <param name="pos">배치될 좌표</param>
+    public void SetNextPos(int num, ref Vector3 pos)
+    {
+
+        if (num == 0) return;
+        int i = 0;
+
+        int n = num;
+        while (n > 0)
+        {
+
+            i += 1;
+            n -= 2 * i;
+        }
+
+        if (n + i <= 0)
+        {
+
+            if (i % 2 == 0)
+            {
+
+                pos.x -= xBatchSize;
+            }
+            else
+            {
+
+                pos.x += xBatchSize;
+            }
+        }
+        else
+        {
+
+            if (i % 2 == 0)
+            {
+
+                pos.z += zBatchSize;
+            }
+            else
+            {
+
+                pos.z -= zBatchSize;
+            }
+        }
+    }
 
     private void OnGUI()
     {

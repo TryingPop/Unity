@@ -17,18 +17,22 @@ public class SelectedTable
     /// <summary>
     /// 달리기 상태 반환
     /// </summary>
-    public bool IsRun { get
+    public bool IsRun 
+    { 
+        
+        get
         {
 
             isRun = !isRun;
             return isRun;
-        } }
+        } 
+    }
 
 
     /// <summary>
     /// 한번에 부대지정 가능한 최대 인원
     /// </summary>
-    private static readonly int MAX_UNIT = 12;
+    private static readonly int MAX_UNIT = 16;
 
     /// <summary>
     /// 생성자
