@@ -14,6 +14,9 @@ public class SelectedTable
     private List<Character> selectedChr;
 
     private bool isRun;
+    /// <summary>
+    /// 달리기 상태 반환
+    /// </summary>
     public bool IsRun { get
         {
 
@@ -43,7 +46,7 @@ public class SelectedTable
     {
 
         selectedChr.Clear();
-        isRun = false;
+        isRun = true;
     }
 
     /// <summary>
@@ -58,6 +61,7 @@ public class SelectedTable
         if (selectedChr.Count < MAX_UNIT)
         {
             
+            isRun = unit.isRun && isRun;
             selectedChr.Add(unit);
         }
     }
