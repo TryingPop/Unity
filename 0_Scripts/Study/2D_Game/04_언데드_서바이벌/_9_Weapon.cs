@@ -69,6 +69,11 @@ public class _9_Weapon : MonoBehaviour
                 break;
         }
 
+        // Hand Set
+        _16_Hand hand = player.hands[(int)data.itemType];
+        hand.spriter.sprite = data.hand;
+        hand.gameObject.SetActive(true);
+
         // 자기 자신과 자식 모두에서 ApplyGear 이름의 메서드 실행
         // 두 번째 매개변수가 없는 경우 ApplyGear메서드를 실행 못하면 에러 메시지가 뜨는데,
         // 두 번째 매개변수에 있으면 에러 메시지는 안뜬다

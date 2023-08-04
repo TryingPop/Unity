@@ -16,6 +16,8 @@ public class _1_Player : MonoBehaviour
 
     public float speed;
 
+    public _16_Hand[] hands;
+
     private void Awake()
     {
 
@@ -24,6 +26,8 @@ public class _1_Player : MonoBehaviour
         anim = GetComponent<Animator>();
 
         scanner = GetComponent<_10_Scanner>();
+        // 비활성화 된 것도 가져온다 기존은 비활성화된 오브젝트는 못가져온다
+        hands = GetComponentsInChildren<_16_Hand>(true);
     }
 
     private void Update()

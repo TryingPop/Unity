@@ -31,4 +31,5 @@ public class _13_ItemData : ScriptableObject
 
     [Header("# Weapon")]
     public GameObject projectile;
+    public Sprite hand;
 }
