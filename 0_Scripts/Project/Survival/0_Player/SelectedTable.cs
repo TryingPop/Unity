@@ -11,9 +11,17 @@ public class SelectedTable
     /// <summary>
     /// 선택된 유닛      일단 보여주기!
     /// </summary>
-    private HashSet<Character> selectedChr;
-    
-    
+    private List<Character> selectedChr;
+
+    private bool isRun;
+    public bool IsRun { get
+        {
+
+            isRun = !isRun;
+            return isRun;
+        } }
+
+
     /// <summary>
     /// 한번에 부대지정 가능한 최대 인원
     /// </summary>
@@ -25,7 +33,7 @@ public class SelectedTable
     public SelectedTable()
     {
 
-        selectedChr = new HashSet<Character>(MAX_UNIT);
+        selectedChr = new List<Character>(MAX_UNIT);
     }
 
     /// <summary>
@@ -35,6 +43,7 @@ public class SelectedTable
     {
 
         selectedChr.Clear();
+        isRun = false;
     }
 
     /// <summary>
@@ -48,14 +57,8 @@ public class SelectedTable
         if (unit == null) return;
         if (selectedChr.Count < MAX_UNIT)
         {
-
+            
             selectedChr.Add(unit);
-            Debug.Log($"Add {unit.GetInstanceID()}");
-        }
-        else
-        {
-
-            Debug.Log("Group is fulled!");
         }
     }
 
@@ -76,20 +79,33 @@ public class SelectedTable
     /// 없는 경우 널 반환
     /// </summary>
     /// <returns></returns>
-    public Character[] Get()
+    public List<Character> Get()
     {
 
-        if (selectedChr.Count == 0) return null;
-
-        return selectedChr.ToArray();
+        return selectedChr;
     }
 
     /// <summary>
     /// 테스트용 몇 마리 있는지 확인
     /// </summary>
-    public void ShowSize()
+    public int GetSize()
     {
 
-        Debug.Log($"Size : {selectedChr.Count}");
+        return selectedChr.Count;
     }
+
+    /*
+    // 이 방법은 좋지 않은거 같다
+    // 너무 중구난방으로 튄다
+    // 이 경우 destination을 방향으로 바꿔야 한다
+    /// <summary>
+    /// 선택된 전체 n마리 중 n / 2 번째 몬스터의 위치를 나타낸다
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 midPos()
+    {
+
+        return selectedChr.ToArray()[selectedChr.Count / 2].transform.position;
+    }
+    */
 }

@@ -1,8 +1,6 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class OrderManager : MonoBehaviour
@@ -71,16 +69,25 @@ public class OrderManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
-            select.ShowSize();
+
+            Debug.Log($"selcted Units : {select.GetSize()}");
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
 
+            int nums = select.GetSize();
+            bool isRun = false;
+
+            if (nums > 0)
+            {
+
+                isRun = select.IsRun;
+            }
             foreach(var unit in select.Get())
             {
 
-                unit.SetRun();
+                unit.SetRun(isRun);
             }
         }
     }
@@ -164,13 +171,13 @@ public class OrderManager : MonoBehaviour
         {
 
             // 선택된 애들만 UI 활성화
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < arr.Count; i++)
             {
 
                 follows[i].SetTarget(arr[i].transform);
             }
 
-            for (int i = arr.Length; i < follows.Length; i++)
+            for (int i = arr.Count; i < follows.Length; i++)
             {
 
                 follows[i].ResetTarget();
@@ -200,15 +207,10 @@ public class OrderManager : MonoBehaviour
         {
 
             var units = select.Get();
-
-            if (units != null)
+            for (int i = 0; i < units.Count; i++)
             {
 
-                for (int i = 0; i < units.Length; i++)
-                {
-
-                    units[i].SetDestination(hit.point);
-                }
+                units[i].SetDestination(hit.point);
             }
         }
     }
@@ -269,3 +271,6 @@ public class OrderManager : MonoBehaviour
         }
     }
 }
+
+// https://www.youtube.com/watch?v=vAVi04mzeKk 여기 참고하자!
+// 해보니 유닛을 담아서 한다...

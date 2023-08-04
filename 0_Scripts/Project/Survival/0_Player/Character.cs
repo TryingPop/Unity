@@ -82,8 +82,6 @@ public class Character : MonoBehaviour, IMovable
     public void SetDestination(Vector3 _destination)
     {
 
-        myAgent.velocity = Vector3.zero;
-
         destination = _destination;
 
         myAgent.SetDestination(destination);
@@ -100,7 +98,7 @@ public class Character : MonoBehaviour, IMovable
     {
 
         // if (Vector3.Distance(destination, transform.position) < 1f)
-        if (myAgent.remainingDistance < 1f)     // 내부에서 제공하는 길이
+        if (myAgent.remainingDistance < 0.2f)     // 내부에서 제공하는 길이
         {
 
             MoveStop();
@@ -137,7 +135,6 @@ public class Character : MonoBehaviour, IMovable
     public void MoveStop()
     {
 
-        myAgent.velocity = Vector3.zero;
         myAgent.SetDestination(transform.position);
     }
 
@@ -169,10 +166,10 @@ public class Character : MonoBehaviour, IMovable
         }
     }
 
-    public void SetRun()
+    public void SetRun(bool _isRun)
     {
 
-        isRun = !isRun;
+        isRun = _isRun;
         if (isRun)
         {
 
