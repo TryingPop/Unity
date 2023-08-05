@@ -13,6 +13,8 @@ public class _14_Item : MonoBehaviour
 
     private Image icon;
     private Text textLevel;
+    private Text textName;
+    private Text textDesc;
 
     private void Awake()
     {
@@ -24,14 +26,45 @@ public class _14_Item : MonoBehaviour
         // 텍스트는 설명글 같이 여러 개 이다
         Text[] texts = GetComponentsInChildren<Text>();
         textLevel = texts[0];
+        textName = texts[1];
+        textDesc = texts[2];
+
+        textName.text = data.itemName;
     }
 
+    private void OnEnable()
+    {
+
+        textLevel.text = $"Lv.{level + 1}";
+        switch (data.itemType)
+        {
+
+            case _13_ItemData.ItemType.Melee:
+            case _13_ItemData.ItemType.Range:
+
+                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100, data.counts[level]);
+                break;
+
+            case _13_ItemData.ItemType.Glove:
+            case _13_ItemData.ItemType.Shoe:
+
+                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100);
+                break;
+
+            default:
+                textDesc.text = string.Format(data.itemDesc);
+                break;
+        }
+        
+    }
+
+    /*
     private void LateUpdate()
     {
 
         textLevel.text = $"Lv.{(level) + 1}";
     }
-
+    */
     public void OnClick()
     {
 

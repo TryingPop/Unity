@@ -33,6 +33,8 @@ public class _1_Player : MonoBehaviour
     private void Update()
     {
 
+        if (!_3_GameManager.instance.isLive) return;
+
         // GetAxis로하면 미끄러지는 현상이 있다
         // Raw로 붙이면 -1, 0, 1로 된다
         inputVec.x = Input.GetAxisRaw("Horizontal");
@@ -41,6 +43,8 @@ public class _1_Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        if (!_3_GameManager.instance.isLive) return;
 
         // 힘을 준다
         // rigid.AddForce(inputVec);
@@ -65,6 +69,8 @@ public class _1_Player : MonoBehaviour
 
     private void LateUpdate()
     {
+
+        if (!_3_GameManager.instance.isLive) return;
 
         anim.SetFloat("Speed", inputVec.magnitude);
 

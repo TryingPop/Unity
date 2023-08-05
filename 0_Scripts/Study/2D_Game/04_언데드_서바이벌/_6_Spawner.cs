@@ -23,6 +23,8 @@ public class _6_Spawner : MonoBehaviour
     private void Update()
     {
 
+        if (!_3_GameManager.instance.isLive) return;
+
         timer += Time.deltaTime;
         level = Mathf.Min(Mathf.FloorToInt(_3_GameManager.instance.gameTime / 10f), spawnData.Length - 1);
 

@@ -114,6 +114,8 @@ public class _9_Weapon : MonoBehaviour
     private void Update()
     {
 
+        if (!_3_GameManager.instance.isLive) return;
+
         switch (id)
         {
 
