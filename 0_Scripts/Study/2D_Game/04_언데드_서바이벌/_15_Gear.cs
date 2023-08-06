@@ -40,7 +40,7 @@ public class _15_Gear : MonoBehaviour
 
                 SpeedUp();
                 break;
-        }
+        } 
     }
 
     public void LevelUp(float rate)
@@ -64,13 +64,15 @@ public class _15_Gear : MonoBehaviour
 
                 case 0:
                     // 회전 속도
-                    weapon.speed = 150 + (150 * rate);
+                    float speed = 150 * _19_Character.WeaponSpeed;
+                    weapon.speed = speed + (speed * rate);
 
                     break;
 
                 default:
                     // 플레이어의 기본 공격 속도
-                    weapon.speed = 0.5f * (1f - rate);
+                    speed = 0.5f * _19_Character.WeaponRate; 
+                    weapon.speed = speed * (1f - rate);
                     break;
             }
         }
@@ -80,7 +82,7 @@ public class _15_Gear : MonoBehaviour
     {
 
         // 플레이어의 기본 속도
-        float speed = 3f;
+        float speed = 3f * _19_Character.Speed;
         _3_GameManager.instance.player.speed = speed + speed * rate;
     }
 }
