@@ -80,4 +80,26 @@ public class _1_Player : MonoBehaviour
             spriter.flipX = inputVec.x < 0;
         }
     }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+
+        if (!_3_GameManager.instance.isLive) return;
+
+        _3_GameManager.instance.health -= Time.deltaTime * 10;
+
+        if (_3_GameManager.instance.health < 0)
+        {
+
+            // 2번 인덱스 이후 자식 오브젝트들 전부 비활성화
+            for (int index = 2; index < transform.childCount; index++)
+            {
+
+                transform.GetChild(index).gameObject.SetActive(false);
+            }
+
+            anim.SetTrigger("Dead");
+            _3_GameManager.instance.GameOver();
+        }
+    }
 }
