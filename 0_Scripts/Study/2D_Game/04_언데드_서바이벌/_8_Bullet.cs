@@ -35,7 +35,13 @@ public class _8_Bullet : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (!collision.CompareTag("Enemy") || per == -1) return;
+        if (!collision.CompareTag("Enemy")) return;
+        if (per == -1)
+        {
+
+            _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Melee);
+            return;
+        }
 
         per--;
 

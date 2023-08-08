@@ -183,5 +183,7 @@ public class _9_Weapon : MonoBehaviour
         bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
 
         bullet.GetComponent<_8_Bullet>().Init(damage, count, dir);
+
+        _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Range);
     }
 }

@@ -50,6 +50,9 @@ public class _3_GameManager : MonoBehaviour
         // 기본 무기 지급
         uiLevelUp.Select(playerId % 2);
         Resume();
+
+        _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Select);
+        _21_AudioManager.instance.PlayBgm(true);
     }
 
     public void GameOver()
@@ -68,6 +71,9 @@ public class _3_GameManager : MonoBehaviour
         uiResult.gameObject.SetActive(true);
         uiResult.Lose();
         Stop();
+
+        _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Lose);
+        _21_AudioManager.instance.PlayBgm(false);
     }
     public void GameVictory()
     {
@@ -86,6 +92,9 @@ public class _3_GameManager : MonoBehaviour
         uiResult.gameObject.SetActive(true);
         uiResult.Win();
         Stop();
+
+        _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Win);
+        _21_AudioManager.instance.PlayBgm(false);
     }
 
     public void GameRetry()

@@ -119,8 +119,11 @@ public class _20_AchiveManager : MonoBehaviour
 
         uiNotice.SetActive(true);
 
+        _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.LevelUp);
+
         yield return wait;
 
         uiNotice.SetActive(false);
+
     }
 }

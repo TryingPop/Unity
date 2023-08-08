@@ -99,6 +99,7 @@ public class _4_Enemy : MonoBehaviour
         {
 
             anim.SetTrigger("Hit");
+            _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Hit);
         }
         else
         {
@@ -110,8 +111,13 @@ public class _4_Enemy : MonoBehaviour
             spriter.sortingOrder = 1;
             anim.SetBool("Dead", true);
 
-            _3_GameManager.instance.kill++;
-            _3_GameManager.instance.GetExp();
+            if (_3_GameManager.instance.isLive)
+            {
+
+                _3_GameManager.instance.kill++;
+                _3_GameManager.instance.GetExp();
+                _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Dead);
+            }
         }
     }
 
