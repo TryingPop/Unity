@@ -9,7 +9,6 @@ public class Build : MonoBehaviour
     public GameObject prefabBuilding;
     public static bool isBuild;
 
-
     public void SpawnBuilding()
     {
 

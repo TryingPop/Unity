@@ -10,7 +10,7 @@ public class Prepare : MonoBehaviour
     private MeshRenderer mesh;
     private bool doBuild;
 
-    public Vector3 unit;
+    private static Vector3 unit = Vector3.one;
 
     private Vector3 pos;
 
