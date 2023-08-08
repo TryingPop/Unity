@@ -155,9 +155,15 @@ public class OrderManager : MonoBehaviour
         foreach (RaycastHit hit in hits)
         {
 
-            
+
             var chr = hit.transform.gameObject.GetComponent<Character>();
-            select.Select(chr);
+
+            // 중복 추가 방지!
+            if (!select.IsContains(chr))
+            {
+
+                select.Select(chr);
+            }
         }
     }
 
@@ -313,6 +319,9 @@ public class OrderManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 드래그 시 사각형 그리기
+    /// </summary>
     private void OnGUI()
     {
         

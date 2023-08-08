@@ -62,6 +62,8 @@ public class SelectedTable
     {
 
         if (unit == null) return;
+
+        // 중복은 order매니저에서 다룬다!
         if (selectedChr.Count < MAX_UNIT)
         {
             
@@ -116,4 +118,5 @@ public class SelectedTable
         return selectedChr.ToArray()[selectedChr.Count / 2].transform.position;
     }
     */
+
 }

@@ -13,23 +13,24 @@ public class Character : MonoBehaviour, IMovable
     protected Rigidbody myRigid;
     protected LineRenderer myLineRenderer;
 
-    private Camera cam;
+    protected Camera cam;
 
-    private Vector3 destination;
+    protected Vector3 destination;
 
     public LayerMask moveLayer;
 
-    private Coroutine pathRoot;
+    protected Coroutine pathRoot;
 
     [SerializeField] 
-    private MeshRenderer point;
+    protected MeshRenderer point;
 
     public bool isRun;
     public float walkSpeed;
     public float runSpeed;
 
+    protected Queue<Vector3> destinations;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
 
         myAnimator = GetComponentInChildren<Animator>();
@@ -69,7 +70,7 @@ public class Character : MonoBehaviour, IMovable
     */
 
 
-    protected void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
 
         Move();
@@ -79,7 +80,7 @@ public class Character : MonoBehaviour, IMovable
     /// 목적지 설정 및 이동
     /// </summary>
     /// <param name="_destination">목적지</param>
-    public void SetDestination(Vector3 _destination)
+    public virtual void SetDestination(Vector3 _destination)
     {
 
         destination = _destination;
@@ -94,19 +95,17 @@ public class Character : MonoBehaviour, IMovable
     /// <summary>
     /// 목적지로 이동한다
     /// </summary>
-    public void Move()
+    public virtual void Move()
     {
 
         // if (Vector3.Distance(destination, transform.position) < 1f)
-        if (myAgent.remainingDistance < 0.2f)     // 내부에서 제공하는 길이
+        if (myAgent.remainingDistance < 0.1f)     // 내부에서 제공하는 길이
         {
 
-            MoveStop();
             if (pathRoot != null)
                 StopCoroutine(pathRoot);
 
             myLineRenderer.enabled = false;
-            point.enabled = false;
 
             // 이동 모션
             myAnimator.SetFloat("Move", 0f);
@@ -132,17 +131,18 @@ public class Character : MonoBehaviour, IMovable
     /// <summary>
     /// 제자리 멈춤
     /// </summary>
-    public void MoveStop()
+    public virtual void MoveStop()
     {
 
         myAgent.SetDestination(transform.position);
+        myAnimator.SetFloat("Move", 0f);
     }
 
     /// <summary>
     /// 경로 그리기
     /// </summary>
     /// <returns></returns>
-    private IEnumerator DrawPath()
+    protected virtual IEnumerator DrawPath()
     {
 
         myLineRenderer.enabled = true;
@@ -153,20 +153,21 @@ public class Character : MonoBehaviour, IMovable
         while (true)
         {
 
-            int cnt = myAgent.path.corners.Length;
+            Vector3[] paths = myAgent.path.corners;
+            int cnt = paths.Length;
             myLineRenderer.positionCount = cnt;
 
             for (int i = 0; i < cnt; i++)
             {
 
-                myLineRenderer.SetPosition(i, myAgent.path.corners[i]);
+                myLineRenderer.SetPosition(i, paths[i]);
             }
 
             yield return null;
         }
     }
 
-    public void SetRun(bool _isRun)
+    public virtual void SetRun(bool _isRun)
     {
 
         isRun = _isRun;
