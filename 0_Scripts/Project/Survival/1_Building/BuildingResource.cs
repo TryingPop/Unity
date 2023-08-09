@@ -59,4 +59,10 @@ public class BuildingResource : Buildings
             }
         }
     }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        CURNUM--;
+    }
 }

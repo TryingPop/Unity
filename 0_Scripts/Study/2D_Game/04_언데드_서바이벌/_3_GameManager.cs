@@ -39,7 +39,7 @@ public class _3_GameManager : MonoBehaviour
     {
         
         instance = this;
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60;           // 60FPS ·Î 
     }
 
     public void GameStart(int id)

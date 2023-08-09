@@ -64,4 +64,10 @@ public class BuildingUpgrade : Buildings
         }
         isUpgrade = false;
     }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        CURNUM--;
+    }
 }

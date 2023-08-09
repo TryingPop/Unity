@@ -46,10 +46,15 @@ public class Buildings : MonoBehaviour, IDamagable
         if (curHp < 0)
         {
 
-            curHp = 0;
-            gameObject.SetActive(false);        // 최대 갯수를 줘서
-                                                // 재활용 할 예정
+            Dead();
         }
+    }
+
+    protected virtual void Dead()
+    {
+
+        curHp = 0;
+        gameObject.SetActive(false);
     }
 
     /// <summary>
