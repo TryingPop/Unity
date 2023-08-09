@@ -11,7 +11,7 @@ public class _8_Bullet : MonoBehaviour
 
     private Rigidbody2D rigid;
 
-    private readonly int MELEE = -1;
+    public const int MELEE = -100;
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class _8_Bullet : MonoBehaviour
         this.damage = damage;
         this.per = per;
 
-        if (per != MELEE)
+        if (per >= 0)
         {
 
             rigid.velocity = dir * 15f;
@@ -36,7 +36,7 @@ public class _8_Bullet : MonoBehaviour
     {
 
         if (!collision.CompareTag("Enemy")) return;
-        if (per == -1)
+        if (per == MELEE)
         {
 
             _21_AudioManager.instance.PlaySfx(_21_AudioManager.Sfx.Melee);
@@ -45,11 +45,24 @@ public class _8_Bullet : MonoBehaviour
 
         per--;
 
-        if (per == -1)
+        if (per < 0)
         {
 
             rigid.velocity = Vector2.zero;
             gameObject.SetActive(false);    // 풀링할 예정
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+
+        if (!collision.CompareTag("Area") || per == MELEE)
+        {
+
+            return;
+        }
+
+        rigid.velocity = Vector3.zero;
+        gameObject.SetActive(false);
     }
 }

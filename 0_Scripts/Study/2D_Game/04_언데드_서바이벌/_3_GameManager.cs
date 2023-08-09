@@ -17,6 +17,8 @@ public class _3_GameManager : MonoBehaviour
     public _18_Result uiResult;
     public GameObject enemyCleaner;
 
+    public Transform uiJoy;
+
     [Header("# Game Control")]
     public float gameTime;
     public float maxGameTime = 2 * 10f;
@@ -37,6 +39,7 @@ public class _3_GameManager : MonoBehaviour
     {
         
         instance = this;
+        Application.targetFrameRate = 60;
     }
 
     public void GameStart(int id)
@@ -138,6 +141,7 @@ public class _3_GameManager : MonoBehaviour
 
         isLive = false;
         Time.timeScale = 0f;
+        uiJoy.localScale = Vector3.zero;
     }
 
     public void Resume()
@@ -145,5 +149,12 @@ public class _3_GameManager : MonoBehaviour
 
         isLive = true;
         Time.timeScale = 1f;
+        uiJoy.localScale = Vector3.one;
+    }
+
+    public void GameQuit()
+    {
+
+        Application.Quit();
     }
 }

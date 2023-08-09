@@ -1,3 +1,5 @@
+// #define keyboard
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -44,10 +46,13 @@ public class _1_Player : MonoBehaviour
 
         if (!_3_GameManager.instance.isLive) return;
 
+
+#if keyboard
         // GetAxis로하면 미끄러지는 현상이 있다
         // Raw로 붙이면 -1, 0, 1로 된다
         inputVec.x = Input.GetAxisRaw("Horizontal");
         inputVec.y = Input.GetAxisRaw("Vertical");
+#endif
     }
 
     private void FixedUpdate()
@@ -66,7 +71,7 @@ public class _1_Player : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVec);  // rigid의 위치 + 이동할 방향
     }
 
-    /*
+#if !keyboard
     // 인풋 시스템을 이용한 이동
     // 이런 것도 있다고만 느끼면 될거 같다
     private void OnMove(InputValue value)
@@ -74,7 +79,7 @@ public class _1_Player : MonoBehaviour
 
         inputVec = value.Get<Vector2>();
     }
-    */
+#endif
 
     private void LateUpdate()
     {

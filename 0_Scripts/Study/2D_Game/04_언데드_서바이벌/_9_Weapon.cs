@@ -15,8 +15,6 @@ public class _9_Weapon : MonoBehaviour
 
     private float timer;
 
-    public readonly int Infinity = -1;
-
     _1_Player player;
 
     private void Awake()
@@ -108,7 +106,7 @@ public class _9_Weapon : MonoBehaviour
             bullet.Rotate(rotVec);                              // 생성한 불렛을 회전
             bullet.Translate(bullet.up * 1.5f, Space.World);      // 불렛의 윗 방향으로 world좌표로 이동
 
-            bullet.GetComponent<_8_Bullet>().Init(damage, Infinity, Vector2.zero);
+            bullet.GetComponent<_8_Bullet>().Init(damage, _8_Bullet.MELEE, Vector2.zero);
         }
     }
 
