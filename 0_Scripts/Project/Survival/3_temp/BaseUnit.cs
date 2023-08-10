@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.TestTools;
 
 /// <summary>
 /// 유닛의 기본이 되는 클래스
@@ -15,17 +14,35 @@ public class BaseUnit : Selectable, IMovable       //
     protected Collider myCollider;
     protected NavMeshAgent myAgent;
 
-    public float applySpeed;                    // 적용된 이동 속도
+    public float applySpeed;                        // 적용된 이동 속도
 
-    protected Command cmd;                      // 명령
-    protected Queue<Command> cmds;              // 예약 명령
+    
+    protected Queue<Command> cmds;                  // 예약 명령
 
-    public static readonly int MAX_COMMANDS = 5;// 최대 명령 수
+    public static readonly int MAX_COMMANDS = 5;    // 최대 명령 수
+
+    protected Transform target;
+    protected Vector3 targetPos;
+
+    protected Vector3 patrolPos;
+
+    public enum STATE_UNIT                          // 유닛들이 보유한 상태
+    {
+
+        DEAD = -1,
+        NONE = 0,                                   // 아무상태도 아니다
+        MOVE = 1,                                   // 이동
+        STOP = 2,                                   // 1
+                                                    // 턴간 가만히 있는다
+        PATROL = 3,
+    }
+
+    [SerializeField] protected STATE_UNIT myState;
 
     protected virtual void Awake()
     {
 
-        myAnimator = GetComponent<Animator>();
+        myAnimator = GetComponentInChildren<Animator>();
         myCollider = GetComponent<Collider>();
         myAgent = GetComponent<NavMeshAgent>();
 
@@ -38,102 +55,182 @@ public class BaseUnit : Selectable, IMovable       //
         Init();
     }
 
+    protected virtual void FixedUpdate()
+    {
+
+        if (myState == STATE_UNIT.DEAD) return;
+        else if (myState == STATE_UNIT.NONE)
+        {
+
+            if (cmds.Count > 0) ReadCommand();
+        }
+
+        Action();
+    }
+
     /// <summary>
     /// 초기화 메서드
     /// </summary>
     protected override void Init()
     {
         base.Init();
-        OnMoveStop();
+        OnStop();
         cmds.Clear();
-        cmd = null;
     }
 
     /// <summary>
-    /// Fixedupdate에서 매번 확인할 예정
+    /// 상태에 따른 행동
     /// </summary>
-    public virtual void Action()
+    protected virtual void Action()
+    {
+
+        switch (myState) 
+        {
+
+            case STATE_UNIT.MOVE:
+                Move();
+                break;
+
+            case STATE_UNIT.STOP:
+                OnStop();
+                break;
+
+            case STATE_UNIT.PATROL:
+                Patrol();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 타겟이 있으면 타겟과 거리가 0.1이거나 타겟이 죽으면 멈춘다
+    /// 특정 좌표를 가야하는 경우 좌표 따라 이동한다
+    /// </summary>
+    public virtual void Move()
     {
 
         // 타겟이 있으면 타겟만 쫓는다
-        if (cmd.target != null)
+        if (target != null)
         {
 
             // 타겟이 살아 있을 경우 타겟만 쫓는다
-            if (cmd.target.gameObject.activeSelf) OnMove(cmd.target.position);
+            if (target.gameObject.activeSelf) myAgent.destination = target.position;
             else
             {
 
                 // 죽은 경우
-                cmd.target = null;
+                target = null;
                 myAgent.destination = transform.position;
             }
         }
 
-
         if (myAgent.remainingDistance < 0.1f)
         {
 
-            // 목적지와 거리가 0.1이면 멈추고 다음 목적지로 이동
-            if (cmds.Count == 0)
-            {
-
-                // 다음 목적지가 없으면 대기모션을 취한다
-                myAnimator.SetFloat("Move", 0f);
-                return;
-            }
-            else
-            {
-
-                // 다음 커맨더 읽기
-            }
+            // 목적지와 거리가 0.1이면 멈추고 다음 행동을 기다린다
+            myAnimator.SetFloat("Move", 0f);
+            myState = STATE_UNIT.NONE;
+            return;
         }
     }
 
     /// <summary>
-    /// 이동 중지
+    /// 특정 좌표를 반복해서 이동
     /// </summary>
-    public virtual void OnMoveStop()
+    public virtual void Patrol()
     {
 
-        myAgent.destination = transform.position;
-        myAnimator.SetFloat("Move", 0f);
+        if (myAgent.remainingDistance < 0.1f)
+        {
+
+            myAgent.destination = patrolPos;
+            patrolPos = transform.position;
+        }
     }
 
     /// <summary>
-    /// 해당 좌표로 이동
+    /// 모든 행동 중지하고 1 번 행동 X
     /// </summary>
-    /// <param name="_destination">이동할 장소</param>
-    public virtual void OnMove(Vector3 _destination)
+    public virtual void OnStop()
     {
 
-        myAgent.SetDestination(_destination);
-        myAnimator.SetFloat("Move", 1f);
+        myAgent.destination = transform.position;
+        myAgent.velocity = Vector3.zero;
+        myAnimator.SetFloat("Move", 0f);
+        myState = STATE_UNIT.NONE;
+    }
+
+    public override void OnDamaged(int _dmg, Transform _trans = null)
+    {
+        
+        base.OnDamaged(_dmg, _trans);
+
+        if (myState == STATE_UNIT.NONE)
+        {
+
+            myAgent.destination = (2 * transform.position) - _trans.position;
+            myState = STATE_UNIT.MOVE;
+        }
+    }
+
+    public override void Dead()
+    {
+
+        base.Dead();
+        OnStop();
+        myState = STATE_UNIT.DEAD;
     }
 
     #region command
 
-    public override void AddCommand(Command _cmd)
+    public override void DoCommand(Command _cmd, bool _add = false)
     {
+
+        if (myState == STATE_UNIT.DEAD) return;
+
+        if (!_add)
+        {
+
+            myState = STATE_UNIT.NONE;
+            cmds.Clear();
+        }
 
         if (cmds.Count < MAX_COMMANDS) cmds.Enqueue(_cmd);
+        else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
     }
 
-    public override void SetCommand(Command.TYPE _type, Vector3 _pos, Transform _target = null)
+    protected override void ReadCommand()
     {
 
-        cmds.Clear();
-        cmd.type = _type;
-        cmd.Set(_pos, _target);
+        Command cmd = cmds.Dequeue();
+        Debug.Log($"{cmd.type} 명령을 받았습니다.");
+        if (ChkOutOfState(cmd.type)) return;
+
+        myState = (STATE_UNIT)cmd.type;
+        Debug.Log($"{myState}상태 변경 완료!");
+        target = cmd.target != transform ? cmd.target : null;
+        targetPos = cmd.pos;
+
+        if (myState == STATE_UNIT.MOVE || myState == STATE_UNIT.PATROL) 
+        {
+
+            myAgent.destination = targetPos;
+            myAnimator.SetFloat("Move", 1.0f); 
+        }
     }
-    protected virtual void ReadCommand()
+
+    protected virtual bool ChkOutOfState(int _num)
     {
 
-        // 명령이 없는 경우
-        if (cmd == null && cmds.Count == 0) return;
-        else if (cmd == null && cmds.Count > 0) cmd = cmds.Dequeue();
+        if (_num > 3)
+        {
+            
+            return true;
+        }
 
-        // 읽기가 문제네 .. 이거 하드코딩 각인가?
-    }
+        return false;
+    } 
     #endregion
 }
