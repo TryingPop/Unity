@@ -124,7 +124,7 @@ public class InputManager : MonoBehaviour
 
         ChkRay(ref pos, ref target);
 
-        curGroup.Command(1, pos, null, putLS);
+        curGroup.Command(1, pos, target, putLS);
     }
 
     private void ChkRay(ref Vector3 _pos, ref Transform _target)

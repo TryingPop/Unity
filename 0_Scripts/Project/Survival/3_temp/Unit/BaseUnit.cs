@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,15 +17,23 @@ public class BaseUnit : Selectable, IMovable       //
 
     public float applySpeed;                        // 적용된 이동 속도
 
+    public NavMeshAgent MyAgent { get { return myAgent; } }
+    public Animator MyAnimator { get { return myAnimator; } }
     
-    protected Queue<Command> cmds;                  // 예약 명령
 
+    protected Queue<Command> cmds;                  // 예약 명령
+    public Queue<Command> Cmds { get { return cmds; } }
     public static readonly int MAX_COMMANDS = 5;    // 최대 명령 수
 
-    protected Transform target;
-    protected Vector3 targetPos;
+
+    [SerializeField] protected Transform target;
+    [SerializeField] protected Vector3 targetPos;
+
+    public Transform Target { get { return target; } }
+    public Vector3 TargetPos { get { return targetPos; } }
 
     protected Vector3 patrolPos;
+
 
     public enum STATE_UNIT                          // 유닛들이 보유한 상태
     {
@@ -36,8 +45,10 @@ public class BaseUnit : Selectable, IMovable       //
                                                     // 턴간 가만히 있는다
         PATROL = 3,
     }
+    public static readonly int MAX_STATES = 4;
 
-    [SerializeField] protected STATE_UNIT myState;
+    protected STATE_UNIT myState;
+    public STATE_UNIT MyState { get { return myState; } }
 
     protected virtual void Awake()
     {
@@ -59,13 +70,15 @@ public class BaseUnit : Selectable, IMovable       //
     {
 
         if (myState == STATE_UNIT.DEAD) return;
-        else if (myState == STATE_UNIT.NONE)
+
+        Action();
+
+        // phyiscs에서 길찾기 연산을 한다
+        if (myState == STATE_UNIT.NONE)
         {
 
             if (cmds.Count > 0) ReadCommand();
         }
-
-        Action();
     }
 
     /// <summary>
@@ -162,6 +175,7 @@ public class BaseUnit : Selectable, IMovable       //
         myState = STATE_UNIT.NONE;
     }
 
+
     public override void OnDamaged(int _dmg, Transform _trans = null)
     {
         
@@ -201,15 +215,14 @@ public class BaseUnit : Selectable, IMovable       //
         else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
     }
 
-    protected override void ReadCommand()
+    public override void ReadCommand()
     {
 
         Command cmd = cmds.Dequeue();
-        Debug.Log($"{cmd.type} 명령을 받았습니다.");
+
         if (ChkOutOfState(cmd.type)) return;
 
         myState = (STATE_UNIT)cmd.type;
-        Debug.Log($"{myState}상태 변경 완료!");
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
 
@@ -224,7 +237,7 @@ public class BaseUnit : Selectable, IMovable       //
     protected virtual bool ChkOutOfState(int _num)
     {
 
-        if (_num > 3)
+        if (_num >= MAX_STATES)
         {
             
             return true;
