@@ -7,18 +7,6 @@ public class ActionHandler
 {
 
     private IUnitState[] states;
-    protected bool isDone;
-    public bool IsDone
-    {
-
-        get
-        {
-
-            bool result = isDone;
-            if (result) isDone = false;
-            return result;
-        }
-    }
 
     public ActionHandler(int MAX_STATESNUM)
     {
@@ -35,13 +23,10 @@ public class ActionHandler
 
             // 인덱스 밖이면 실행 X
             // 공격 중이거나 사망인 경우 인덱스 밖
-            isDone = false;
             return;
         }
 
         Execute(_num);
-
-        if (states[_num].IsDone) isDone = true;
     }
 
 

@@ -11,15 +11,6 @@ public class BaseUnitState : IUnitState
 
     protected BaseUnit baseUnit;
 
-    public bool IsDone
-    {
-        get
-        {
-
-            return baseUnit.MyState == BaseUnit.STATE_UNIT.NONE
-                || baseUnit.MyState == BaseUnit.STATE_UNIT.DEAD;
-        }
-    }
 
     public BaseUnitState(BaseUnit _baseUnit)
     {

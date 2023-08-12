@@ -17,22 +17,22 @@ public class BaseUnit : Selectable
 
     public float applySpeed;                        // 적용된 이동 속도
 
-    public NavMeshAgent MyAgent { get { return myAgent; } }
-    public Animator MyAnimator { get { return myAnimator; } }
+    public NavMeshAgent MyAgent => myAgent;
+    public Animator MyAnimator => myAnimator;
     
 
     protected Queue<Command> cmds;                  // 예약 명령
-    public Queue<Command> Cmds { get { return cmds; } }
     public static readonly int MAX_COMMANDS = 5;    // 최대 명령 수
 
 
     [SerializeField] protected Transform target;
     [SerializeField] protected Vector3 targetPos;
 
-    public Transform Target { get { return target; } }
-    public Vector3 TargetPos { get { return targetPos; } }
+    public Transform Target => target;
+    public Vector3 TargetPos => targetPos;
 
     public Vector3 patrolPos;
+
 
 
     public enum STATE_UNIT                          // 유닛들이 보유한 상태
@@ -56,7 +56,13 @@ public class BaseUnit : Selectable
     }
 
     [SerializeField] protected STATE_UNIT myState;
-    public STATE_UNIT MyState { get { return myState; } }
+    public STATE_UNIT MyState => myState;
+
+    /// <summary>
+    /// 활동 중인지 판별
+    /// </summary>
+    public virtual bool IsActive => myState != STATE_UNIT.NONE 
+                                    && myState != STATE_UNIT.DEAD; 
 
     protected ActionHandler actionHandler;
     public static readonly int MAX_STATES = 4;
@@ -86,11 +92,10 @@ public class BaseUnit : Selectable
         if (myState == STATE_UNIT.DEAD) return;
 
         actionHandler.Action((int)myState);
-
-        if (actionHandler.IsDone)
+        
+        if (myState == STATE_UNIT.NONE)
         {
 
-            if (myState != STATE_UNIT.NONE) DoneState();
             if (cmds.Count > 0) ReadCommand();
         }
     }
@@ -122,33 +127,53 @@ public class BaseUnit : Selectable
     public void DoneState()
     {
 
-        myAnimator.SetFloat("Move", 0f);
+
         myState = STATE_UNIT.NONE;
+        ActionReset();
     }
 
     /// <summary>
     /// 상태의 초기 세팅
     /// </summary>
-    public void InitState()
+    public virtual void ActionReset()
     {
 
-        if (myState == STATE_UNIT.MOVE || myState == STATE_UNIT.PATROL)
+
+        switch (myState)
         {
 
-            myAgent.destination = targetPos;
-            myAnimator.SetFloat("Move", 1.0f);
+            case STATE_UNIT.DEAD:
 
-            if (myState == STATE_UNIT.PATROL)
-            {
+                myAgent.ResetPath();
+                myAnimator.SetTrigger("Dead");
+                break;
 
+            case STATE_UNIT.NONE:
+
+                myAgent.ResetPath();
+                myAnimator.SetFloat("Move", 0f);
+                break;
+
+            case STATE_UNIT.MOVE:
+
+                myAgent.destination = targetPos;
+                myAnimator.SetFloat("Move", 1f);
+                break;
+
+            case STATE_UNIT.PATROL:
+
+                myAgent.destination = targetPos;
+                myAnimator.SetFloat("Move", 1f);
                 patrolPos = transform.position;
-            }
-        }
-        else if (myState == STATE_UNIT.HOLD)
-        {
+                break;
 
-            myAgent.ResetPath();
-            myAnimator.SetFloat("Move", 0f);
+            case STATE_UNIT.HOLD:
+                myAgent.ResetPath();
+                myAnimator.SetFloat("Move", 0f);
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -183,9 +208,8 @@ public class BaseUnit : Selectable
     {
 
         base.Dead();
-        myAgent.ResetPath();
         myState = STATE_UNIT.DEAD;
-        myAnimator.SetTrigger("Dead");
+        ActionReset();
     }
 
     #region command
@@ -225,7 +249,7 @@ public class BaseUnit : Selectable
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
 
-        InitState();
+        ActionReset();
     }
 
     protected virtual bool ChkOutOfState(int _num)

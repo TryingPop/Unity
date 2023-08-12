@@ -20,7 +20,7 @@ public class CombatUnitHold : CombatUnitState
         {
 
             combatUnit.transform.LookAt(combatUnit.Target);
-            combatUnit.OnAttackState();
+            combatUnit.OnAttackingState();
         }
     }
 }

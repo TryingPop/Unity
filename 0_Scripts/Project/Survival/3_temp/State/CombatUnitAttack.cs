@@ -21,13 +21,14 @@ public class CombatUnitAttack : CombatUnitState
                 // 타겟이 살아 있는 경우
                 combatUnit.MyAgent.destination = combatUnit.Target.position;
 
-                if (combatUnit.MyAgent.remainingDistance < combatUnit.AttackRange)
+                if (Vector3.Distance(combatUnit.transform.position, combatUnit.Target.position) < combatUnit.AttackRange
+                    && Vector3.Angle(combatUnit.transform.forward, combatUnit.Target.position - combatUnit.transform.position) < 60f)
                 {
 
                     // 타겟을 바라본다
-                    combatUnit.MyAgent.transform.LookAt(combatUnit.Target.position);
+                    // combatUnit.MyAgent.transform.LookAt(combatUnit.Target.position);
                     combatUnit.MyAgent.stoppingDistance = combatUnit.AttackRange;
-                    combatUnit.OnAttackState();
+                    combatUnit.OnAttackingState();
                 }
             }
             else

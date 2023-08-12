@@ -11,10 +11,13 @@ public class CombatUnit : BaseUnit
     public LayerMask attackLayer;
     [SerializeField] protected int atk;
     [SerializeField] protected float attackRange;
-    public float AttackRange { get { return attackRange; } }
+    public float AttackRange => attackRange;
 
     public Transform SetTarget { set { target = value; } }
 
+    public override bool IsActive => myState != STATE_UNIT.DEAD 
+                                    && myState != STATE_UNIT.ATTACKING
+                                    && myState != STATE_UNIT.HOLD_ATTACKING;
 
     protected override void SetActions()
     {
@@ -31,10 +34,17 @@ public class CombatUnit : BaseUnit
     public void OnAttackState()
     {
 
-        myAnimator.SetTrigger("Attack");
-        
+        myState = STATE_UNIT.ATTACK;
+        ActionReset();
+    }
+
+    public void OnAttackingState()
+    {
+
         if (myState == STATE_UNIT.HOLD) myState = STATE_UNIT.HOLD_ATTACKING;
         else myState = STATE_UNIT.ATTACKING;
+
+        ActionReset();
     }
 
     public void OnAttackDone()
@@ -42,12 +52,39 @@ public class CombatUnit : BaseUnit
 
         if (myState == STATE_UNIT.HOLD_ATTACKING) myState = STATE_UNIT.HOLD;
         else myState = STATE_UNIT.ATTACK;
+
+        ActionReset();
+    }
+
+    public override void ActionReset()
+    {
+        base.ActionReset();
+
+        switch (myState)
+        {
+
+            case STATE_UNIT.ATTACK:
+                
+                myAnimator.SetFloat("Move", 1f);
+                break;
+
+            case STATE_UNIT.ATTACKING:
+            case STATE_UNIT.HOLD_ATTACKING:
+
+                myAnimator.SetTrigger("Attack");
+                break;
+
+            default:
+                break;
+        }
     }
 
     public virtual void OnAttack()
     {
 
-        target.GetComponent<Selectable>().OnDamaged(atk);
+        // 공격 시 실행할 메서드
+        // 일단은 직빵으로 때린다!
+        target.GetComponent<IDamagable>().OnDamaged(atk);
     }
 
     protected override void OnDamagedAction(Transform _trans)
@@ -60,6 +97,7 @@ public class CombatUnit : BaseUnit
 
             target = _trans;
             myState = STATE_UNIT.ATTACK;
+            ActionReset();
         }
     }
 

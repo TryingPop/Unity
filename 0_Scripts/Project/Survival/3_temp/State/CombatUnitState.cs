@@ -8,18 +8,6 @@ public class CombatUnitState : IUnitState
 
     protected CombatUnit combatUnit;
 
-    public bool IsDone
-    {
-
-        get
-        {
-
-            return combatUnit.MyState == BaseUnit.STATE_UNIT.NONE
-                || combatUnit.MyState == BaseUnit.STATE_UNIT.DEAD
-                || combatUnit.MyState == BaseUnit.STATE_UNIT.ATTACKING
-                || combatUnit.MyState == BaseUnit.STATE_UNIT.HOLD_ATTACKING;
-        }
-    }
 
     public CombatUnitState(CombatUnit _combatUnit)
     {
@@ -30,11 +18,9 @@ public class CombatUnitState : IUnitState
     public virtual void Execute() 
     {
 
-
-        Debug.Log("공격 유닛 행동 개시 중...");
         FindTarget();
 
-        if (!combatUnit.Target) combatUnit.OnAttackState();
+        if (combatUnit.Target != null) combatUnit.OnAttackState();
     }
 
     /// <summary>
