@@ -15,6 +15,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
                                                     // 업그레이드로 증가가능하게 따로 변수 추가했다
     protected int curHp;                            // 현재 체력
 
+    protected int def;
 
     /// <summary>
     /// 초기화 메서드
@@ -33,8 +34,8 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
         if (ChkInvincible()) return;
 
-        curHp -= _dmg;
-
+        curHp -= _dmg - def < 0 ? 0 : _dmg - def; 
+        
         if (curHp <= 0)
         {
 
@@ -65,6 +66,8 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     {
 
         curHp = 0;
+        // 시체 레이어로 변경
+        gameObject.layer = 14;
     }
 
     #region command
