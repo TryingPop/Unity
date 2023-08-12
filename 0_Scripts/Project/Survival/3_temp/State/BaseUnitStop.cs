@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseUnitStop : BaseUnitNone
+public class BaseUnitStop : BaseUnitState
 {
 
+    public BaseUnitStop(BaseUnit _baseUnit) : base(_baseUnit) { }
 
-    public BaseUnitStop(NavMeshAgent _nav) : base(_nav) { }
-
-    public override void Execute(Vector3 _vec, Transform _target)
+    public override void Execute()
     {
 
-        nav.destination = nav.transform.position;
-        nav.velocity = Vector3.zero;
-        isDone = true;
+        baseUnit.MyAgent.ResetPath();
+        baseUnit.MyAgent.velocity = Vector3.zero;
+        baseUnit.DoneState();
     }
 }

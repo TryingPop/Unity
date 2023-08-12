@@ -4,25 +4,23 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseUnitPatrol : BaseUnitNone
+public class BaseUnitPatrol : BaseUnitState
 {
 
-
-    protected Vector3 patrolPos;
-
-    public BaseUnitPatrol(NavMeshAgent _nav) : base(_nav) { }
+    public BaseUnitPatrol(BaseUnit _baseUnit) : base(_baseUnit) { }
 
     /// <summary>
     /// µÎ ÁÂÇ¥¸¦ ¿Ô´Ù°¬´Ù ÇÏ±â!
     /// </summary>
-    public override void Execute(Vector3 _vec, Transform _target)
+    public override void Execute()
     {
 
-        if (nav.remainingDistance < 0.1f)
+        if (baseUnit.MyAgent.remainingDistance < 0.1f)
         {
 
-            nav.destination = patrolPos;
-            patrolPos = nav.transform.position;
+            Vector3 temp = baseUnit.patrolPos;
+            baseUnit.patrolPos = baseUnit.MyAgent.destination;
+            baseUnit.MyAgent.destination = temp;
         }
     }
 }

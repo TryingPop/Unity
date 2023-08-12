@@ -3,38 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseUnitMove : BaseUnitNone
+public class BaseUnitMove : BaseUnitState
 {
 
-    public BaseUnitMove(NavMeshAgent _nav) : base(_nav) { }
+    public BaseUnitMove(BaseUnit _baseUnit) : base(_baseUnit) { }
 
 
     // 이동을 실행한다
-    public override void Execute(Vector3 _vec, Transform _target)
+    public override void Execute()
     {
 
-        if (_target != null)
+        if (baseUnit.Target != null)
         {
 
             // 타겟이 살아있을 경우 타겟만 쫓는다
-            if (_target.gameObject.activeSelf) nav.destination = _target.position;
+            if (baseUnit.Target.gameObject.activeSelf) baseUnit.MyAgent.destination = baseUnit.Target.position;
             else
             {
 
                 // 타겟이 죽은 경우
-                nav.destination = nav.transform.position;
+                baseUnit.MyAgent.ResetPath();
             }
         }
 
-        if (nav.remainingDistance < 0.1f)
+        if (baseUnit.MyAgent.remainingDistance < 0.1f)
         {
 
-            isDone = true;
-        }
-        else
-        {
-
-            isDone = false;
+            baseUnit.DoneState();
         }
     }
 }
