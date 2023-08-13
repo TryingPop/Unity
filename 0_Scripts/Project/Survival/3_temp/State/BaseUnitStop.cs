@@ -3,16 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseUnitStop : BaseUnitState
+public class BaseUnitStop : IUnitState<BaseUnit>
 {
 
-    public BaseUnitStop(BaseUnit _baseUnit) : base(_baseUnit) { }
+    private static BaseUnitStop instance;
+    public static BaseUnitStop Instance 
+    { 
+        
+        get
+        {
 
-    public override void Execute()
+            if (instance == null)
+            {
+
+                instance = new BaseUnitStop();
+            }
+
+            return instance;
+        } 
+    }
+
+    public void Execute(BaseUnit _baseUnit)
     {
 
-        baseUnit.MyAgent.ResetPath();
-        baseUnit.MyAgent.velocity = Vector3.zero;
-        baseUnit.DoneState();
+        _baseUnit.MyAgent.ResetPath();
+        _baseUnit.MyAgent.velocity = Vector3.zero;
+        _baseUnit.DoneState();
+    }
+
+    public void Reset(BaseUnit _baseUnit)
+    {
+
+        _baseUnit.MyAnimator.SetFloat("Move", 0f);
     }
 }

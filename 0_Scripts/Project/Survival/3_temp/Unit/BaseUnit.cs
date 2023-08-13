@@ -33,6 +33,7 @@ public class BaseUnit : Selectable
 
     public Vector3 patrolPos;
 
+    protected bool isFirst;
 
 
     public enum STATE_UNIT                          // 유닛들이 보유한 상태
@@ -56,15 +57,16 @@ public class BaseUnit : Selectable
     }
 
     [SerializeField] protected STATE_UNIT myState;
-    public STATE_UNIT MyState => myState;
+    public int MyState => (int)myState;
 
     /// <summary>
     /// 활동 중인지 판별
     /// </summary>
-    public virtual bool IsActive => myState != STATE_UNIT.NONE 
+    public virtual bool IsActive => myState != STATE_UNIT.NONE
+                                    && myState != STATE_UNIT.HOLD
                                     && myState != STATE_UNIT.DEAD; 
 
-    protected ActionHandler actionHandler;
+    protected ActionHandler<BaseUnit> actionHandler;
     public static readonly int MAX_STATES = 4;
 
 
@@ -86,31 +88,38 @@ public class BaseUnit : Selectable
         Init();
     }
 
-    protected virtual void FixedUpdate()
+    protected void FixedUpdate()
     {
 
         if (myState == STATE_UNIT.DEAD) return;
 
-        actionHandler.Action((int)myState);
+        actionHandler.Action(this);
         
         if (myState == STATE_UNIT.NONE)
         {
 
             if (cmds.Count > 0) ReadCommand();
         }
+
+        if (isFirst)
+        {
+
+            isFirst = false;
+            actionHandler.Reset(this);
+        }
     }
 
     /// <summary>
     /// 행동 설정!
     /// </summary>
-    protected virtual void SetActions()
+    protected void SetActions()
     {
 
-        actionHandler = new ActionHandler(MAX_STATES);
-        actionHandler.AddState(0, new BaseUnitState(this));
-        actionHandler.AddState(1, new BaseUnitMove(this));
-        actionHandler.AddState(2, new BaseUnitStop(this));
-        actionHandler.AddState(3, new BaseUnitPatrol(this));
+        actionHandler = new ActionHandler<BaseUnit>(MAX_STATES);
+        actionHandler.AddState(0, BaseUnitState.Instance);
+        actionHandler.AddState(1, BaseUnitMove.Instance);
+        actionHandler.AddState(2, BaseUnitStop.Instance);
+        actionHandler.AddState(3, BaseUnitPatrol.Instance);
     }
 
     /// <summary>
@@ -127,54 +136,14 @@ public class BaseUnit : Selectable
     public void DoneState()
     {
 
-
         myState = STATE_UNIT.NONE;
         ActionReset();
     }
 
-    /// <summary>
-    /// 상태의 초기 세팅
-    /// </summary>
     public virtual void ActionReset()
     {
 
-
-        switch (myState)
-        {
-
-            case STATE_UNIT.DEAD:
-
-                myAgent.ResetPath();
-                myAnimator.SetTrigger("Dead");
-                break;
-
-            case STATE_UNIT.NONE:
-
-                myAgent.ResetPath();
-                myAnimator.SetFloat("Move", 0f);
-                break;
-
-            case STATE_UNIT.MOVE:
-
-                myAgent.destination = targetPos;
-                myAnimator.SetFloat("Move", 1f);
-                break;
-
-            case STATE_UNIT.PATROL:
-
-                myAgent.destination = targetPos;
-                myAnimator.SetFloat("Move", 1f);
-                patrolPos = transform.position;
-                break;
-
-            case STATE_UNIT.HOLD:
-                myAgent.ResetPath();
-                myAnimator.SetFloat("Move", 0f);
-                break;
-
-            default:
-                break;
-        }
+        isFirst = true;
     }
 
     protected virtual void OnDamagedAction(Transform _trans)
@@ -185,6 +154,7 @@ public class BaseUnit : Selectable
 
             myAgent.destination = (2 * transform.position) - _trans.position;
             myState = STATE_UNIT.MOVE;
+            ActionReset();
         }
     }
 
@@ -209,7 +179,9 @@ public class BaseUnit : Selectable
 
         base.Dead();
         myState = STATE_UNIT.DEAD;
-        ActionReset();
+
+        myAgent.ResetPath();
+        myAnimator.SetTrigger("Dead");
     }
 
     #region command

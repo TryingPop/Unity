@@ -4,23 +4,46 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseUnitPatrol : BaseUnitState
+public class BaseUnitPatrol : IUnitState<BaseUnit>
 {
 
-    public BaseUnitPatrol(BaseUnit _baseUnit) : base(_baseUnit) { }
+    private static BaseUnitPatrol instance;
+    public static BaseUnitPatrol Instance
+    {
+
+        get
+        {
+
+            if (instance == null)
+            {
+
+                instance = new BaseUnitPatrol();
+            }
+
+            return instance;
+        }
+    }
 
     /// <summary>
     /// µÎ ÁÂÇ¥¸¦ ¿Ô´Ù°¬´Ù ÇÏ±â!
     /// </summary>
-    public override void Execute()
+    public void Execute(BaseUnit _baseUnit)
     {
 
-        if (baseUnit.MyAgent.remainingDistance < 0.1f)
+        if (_baseUnit.MyAgent.remainingDistance < 0.1f)
         {
 
-            Vector3 temp = baseUnit.patrolPos;
-            baseUnit.patrolPos = baseUnit.MyAgent.destination;
-            baseUnit.MyAgent.destination = temp;
+            Vector3 temp = _baseUnit.patrolPos;
+            _baseUnit.patrolPos = _baseUnit.MyAgent.destination;
+            _baseUnit.MyAgent.destination = temp;
         }
+    }
+
+    public void Reset(BaseUnit _baseUnit)
+    {
+
+        _baseUnit.MyAgent.destination = _baseUnit.TargetPos;
+        _baseUnit.MyAnimator.SetFloat("Move", 0.5f);
+        _baseUnit.patrolPos = _baseUnit.transform.position;
     }
 }

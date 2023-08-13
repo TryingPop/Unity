@@ -1,43 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-public class CombatUnitState : IUnitState
+public class CombatUnitState : IUnitState<CombatUnit>
 {
 
-    protected CombatUnit combatUnit;
+    private static CombatUnitState instance;
 
-
-    public CombatUnitState(CombatUnit _combatUnit)
+    public static CombatUnitState Instance
     {
 
-        combatUnit = _combatUnit;
+        get
+        {
+
+            if (instance == null)
+            {
+
+                instance = new CombatUnitState();
+            }
+
+            return instance;
+        }
     }
 
-    public virtual void Execute() 
+
+    public void Execute(CombatUnit _combatUnit)
     {
 
-        FindTarget();
+        FindTarget(_combatUnit);
 
-        if (combatUnit.Target != null) combatUnit.OnAttackState();
+        if (_combatUnit.Target != null) _combatUnit.OnAttackState();
+    }
+
+    public void Reset(CombatUnit _combatUnit)
+    {
+
+        _combatUnit.MyAgent.ResetPath();
+        _combatUnit.MyAnimator.SetFloat("Move", 0f);
     }
 
     /// <summary>
     /// Å¸°Ù Ã£±â
     /// </summary>
-    protected void FindTarget()
+    public void FindTarget(CombatUnit _combatUnit)
     {
 
-        RaycastHit[] hits = Physics.SphereCastAll(combatUnit.transform.position, combatUnit.AttackRange, combatUnit.transform.forward, 0f, combatUnit.attackLayer);
+        RaycastHit[] hits = Physics.SphereCastAll(_combatUnit.transform.position, _combatUnit.AttackRange, _combatUnit.transform.forward, 0f, _combatUnit.attackLayer);
         if (hits.Length == 0) return;
 
-        float minDis = combatUnit.AttackRange + 1f;
+        float minDis = _combatUnit.AttackRange + 1f;
 
         for (int i = 0; i < hits.Length; i++)
         {
 
-            if (hits[i].transform == combatUnit.transform)
+            if (hits[i].transform == _combatUnit.transform)
             {
 
                 continue;
@@ -47,8 +63,9 @@ public class CombatUnitState : IUnitState
             {
 
                 minDis = hits[i].distance;
-                combatUnit.SetTarget = hits[i].transform;
+                _combatUnit.SetTarget = hits[i].transform;
             }
         }
     }
+
 }

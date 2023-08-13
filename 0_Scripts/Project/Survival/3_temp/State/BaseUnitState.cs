@@ -6,20 +6,36 @@ using UnityEngine.AI;
 /// <summary>
 /// 유닛 상태의 기초가되는 클래스
 /// </summary>
-public class BaseUnitState : IUnitState
+public class BaseUnitState : IUnitState<BaseUnit>
 {
 
-    protected BaseUnit baseUnit;
+    private static BaseUnitState instance;
 
+    public static BaseUnitState Instance 
+    { 
+        
+        get 
+        {
 
-    public BaseUnitState(BaseUnit _baseUnit)
-    {
+            if (instance == null) 
+            { 
 
-        baseUnit = _baseUnit;
+                instance = new BaseUnitState(); 
+            }
+
+            return instance;
+        } 
     }
 
     /// <summary>
     /// 죽으면 탈출!
     /// </summary>
-    public virtual void Execute() { }
+    public void Execute(BaseUnit _baseUnit) { }
+
+    public void Reset(BaseUnit _baseUnit)
+    {
+
+        _baseUnit.MyAgent.ResetPath();
+        _baseUnit.MyAnimator.SetFloat("Move", 0f);
+    }
 }

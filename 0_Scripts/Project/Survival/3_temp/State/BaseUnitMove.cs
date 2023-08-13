@@ -3,33 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseUnitMove : BaseUnitState
+public class BaseUnitMove : IUnitState<BaseUnit>
 {
 
-    public BaseUnitMove(BaseUnit _baseUnit) : base(_baseUnit) { }
-
-
-    // 이동을 실행한다
-    public override void Execute()
+    private static BaseUnitMove instance;
+    public static BaseUnitMove Instance
     {
 
-        if (baseUnit.Target != null)
+        get
+        {
+
+            if (instance == null)
+            {
+
+                instance = new BaseUnitMove();
+            }
+
+            return instance;
+        }
+    }
+
+    // 이동을 실행한다
+    public void Execute(BaseUnit _baseUnit)
+    {
+
+        if (_baseUnit.Target != null)
         {
 
             // 타겟이 살아있을 경우 타겟만 쫓는다
-            if (baseUnit.Target.gameObject.activeSelf) baseUnit.MyAgent.destination = baseUnit.Target.position;
+            if (_baseUnit.Target.gameObject.activeSelf) _baseUnit.MyAgent.destination = _baseUnit.Target.position;
             else
             {
 
                 // 타겟이 죽은 경우
-                baseUnit.MyAgent.ResetPath();
+                _baseUnit.MyAgent.ResetPath();
             }
         }
 
-        if (baseUnit.MyAgent.remainingDistance < 0.1f)
+        if (_baseUnit.MyAgent.remainingDistance < 0.1f)
         {
 
-            baseUnit.DoneState();
+            _baseUnit.DoneState();
         }
+    }
+
+    public void Reset(BaseUnit _baseUnit)
+    {
+
+        _baseUnit.MyAgent.destination = _baseUnit.TargetPos;
+        _baseUnit.MyAnimator.SetFloat("Move", 0.5f);
     }
 }

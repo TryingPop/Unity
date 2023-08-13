@@ -3,44 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ActionHandler
+public class ActionHandler<T> where T : BaseUnit
 {
 
-    private IUnitState[] states;
+    private IUnitState<T>[] states;
 
-    public ActionHandler(int MAX_STATESNUM)
+    public ActionHandler (int _MAX_STATES)
     {
 
-
-        states = new IUnitState[MAX_STATESNUM];
+        states = new IUnitState<T>[_MAX_STATES];
     }
 
-    public void Action(int _num)
+    public void AddState(int _idx, IUnitState<T> _state)
     {
 
-        if (_num >= states.Length || _num < 0)
-        {
-
-            // 인덱스 밖이면 실행 X
-            // 공격 중이거나 사망인 경우 인덱스 밖
-            return;
-        }
-
-        Execute(_num);
+        if (_idx < 0 || _idx >= states.Length) return;
+        states[_idx] = _state;
     }
 
-
-    protected void Execute(int _num) 
+    public void Action(T _unit)
     {
 
-        states[_num].Execute();
+        int idx = _unit.MyState;
+        if (idx < 0 || idx >= states.Length) return;
+        if (states[idx] == null) return;
+
+        states[idx].Execute(_unit);
     }
 
-    public void AddState(int _idx, IUnitState _addState)
+    public void Reset(T _unit)
     {
 
-        if (_idx >= states.Length) return;
+        int idx = _unit.MyState;
+        if (idx < 0 || idx >= states.Length) return;
+        if (states[idx] == null) return;
 
-        states[_idx] = _addState;
+        states[idx].Reset(_unit);
     }
 }

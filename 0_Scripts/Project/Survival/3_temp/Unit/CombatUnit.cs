@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using UnityEngine;
 public class CombatUnit : BaseUnit
 {
 
-    public new static readonly int MAX_STATES = 6;
+    public new static readonly int MAX_STATES = 2;
 
     public LayerMask attackLayer;
     [SerializeField] protected int atk;
@@ -19,16 +20,32 @@ public class CombatUnit : BaseUnit
                                     && myState != STATE_UNIT.ATTACKING
                                     && myState != STATE_UNIT.HOLD_ATTACKING;
 
-    protected override void SetActions()
+    protected new ActionHandler<CombatUnit> actionHandler;
+
+    protected new void SetActions()
     {
 
-        actionHandler = new ActionHandler(MAX_STATES);
-        actionHandler.AddState(0, new CombatUnitState(this));
-        actionHandler.AddState(1, new BaseUnitMove(this));
-        actionHandler.AddState(2, new BaseUnitStop(this));
-        actionHandler.AddState(3, new CombatUnitPatrol(this));    // 이거 수정 필요!
-        actionHandler.AddState(4, new CombatUnitHold(this));
-        actionHandler.AddState(5, new CombatUnitAttack(this));
+        actionHandler = new ActionHandler<CombatUnit>(MAX_STATES);
+        actionHandler.AddState(0, CombatUnitState.Instance);
+        actionHandler.AddState(1, CombatUnitMove.Instance);
+        actionHandler.AddState(2, CombatUnitStop.Instance);
+        actionHandler.AddState(3, CombatUnitPatrol.Instance);
+        actionHandler.AddState(4, CombatUnitHold.Instance);
+        actionHandler.AddState(5, CombatUnitAttack.Instance);
+    }
+
+    protected new void FixedUpdate()
+    {
+
+        if (myState == STATE_UNIT.DEAD) return;
+
+        actionHandler.Action(this);
+
+        if (myState == STATE_UNIT.NONE)
+        {
+
+            if (cmds.Count > 0) ReadCommand();
+        }
     }
 
     public void OnAttackState()

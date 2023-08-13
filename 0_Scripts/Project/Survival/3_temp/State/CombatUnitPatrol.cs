@@ -2,20 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatUnitPatrol : CombatUnitState
+public class CombatUnitPatrol : IUnitState<CombatUnit>
 {
 
-    public CombatUnitPatrol(CombatUnit _combatUnit) : base(_combatUnit) { }
+    private static CombatUnitPatrol instance;
 
-    public override void Execute()
+    public static CombatUnitPatrol Instance
     {
-        
-        if (combatUnit.MyAgent.remainingDistance < 0.1f)
+
+        get
         {
 
-            Vector3 temp = combatUnit.patrolPos;
-            combatUnit.patrolPos = combatUnit.MyAgent.destination;
-            combatUnit.MyAgent.destination = temp;
+            if (instance == null)
+            {
+
+                instance = new CombatUnitPatrol();
+            }
+
+            return instance;
         }
+    }
+
+    public void Execute(CombatUnit _combatUnit)
+    {
+
+        if (_combatUnit.MyAgent.remainingDistance < 0.1f)
+        {
+
+            Vector3 temp = _combatUnit.patrolPos;
+            _combatUnit.patrolPos = _combatUnit.MyAgent.destination;
+            _combatUnit.MyAgent.destination = temp;
+        }
+    }
+
+    public void Reset(CombatUnit _combatUnit)
+    {
+
+        _combatUnit.MyAgent.destination = _combatUnit.TargetPos;
+        _combatUnit.MyAnimator.SetFloat("Move", 0.5f);
+        _combatUnit.patrolPos = _combatUnit.transform.position;
     }
 }

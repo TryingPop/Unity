@@ -3,24 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CombatUnitHold : CombatUnitState
+public class CombatUnitHold : IUnitState<CombatUnit>
 {
 
-    public CombatUnitHold(CombatUnit _combatUnit) : base(_combatUnit) { }
+    private static CombatUnitHold instance;
 
-    public override void Execute()
+    public static CombatUnitHold Instance
     {
 
-        if (combatUnit.Target == null)
+        get
         {
 
-            FindTarget();
+            if (instance == null)
+            {
+
+                instance = new CombatUnitHold();
+            }
+
+            return instance;
+        }
+    }
+
+    public void Execute(CombatUnit _combatUnit)
+    {
+
+        if (_combatUnit.Target == null)
+        {
+
+            CombatUnitState.Instance.FindTarget(_combatUnit);
         }
         else
         {
 
-            combatUnit.transform.LookAt(combatUnit.Target);
-            combatUnit.OnAttackingState();
+            _combatUnit.transform.LookAt(_combatUnit.Target);
+            _combatUnit.OnAttackingState();
         }
+    }
+
+    public void Reset(CombatUnit _combatUnit)
+    {
+
+        _combatUnit.MyAgent.ResetPath();
+        _combatUnit.MyAnimator.SetFloat("Move", 0f);
     }
 }
