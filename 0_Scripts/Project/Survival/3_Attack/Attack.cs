@@ -7,6 +7,10 @@ public abstract class Attack : MonoBehaviour
 
     public abstract void OnAttack(Unit _unit);
 
+    /// <summary>
+    /// 공격이 완료되었음을 알리는 메서드
+    /// </summary>
+    /// <param name="_unit"></param>
     public virtual void AttackDone(Unit _unit)
     {
 

@@ -9,12 +9,16 @@ public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, ATTACK = 3, PA
 public class Unit : Selectable
 {
 
+    #region 변수
     [Header("참조 변수")]
     [SerializeField] protected Animator myAnimator;
     [SerializeField] protected Collider myCollider;
     [SerializeField] protected NavMeshAgent myAgent;
+
     [SerializeField] protected Transform target;
     [SerializeField] protected Vector3 targetPos;
+    [SerializeField] protected Vector3 patrolPos;
+
     [SerializeField] protected STATE_UNIT myState;
     [SerializeField] protected StateAction myStateAction;
     [SerializeField] protected Attack myAttack;  
@@ -30,11 +34,15 @@ public class Unit : Selectable
 
     [SerializeField] protected bool stateChange;
 
+    [SerializeField] protected float applySpeed;
+
     protected WaitForSeconds atkTimer;
     protected WaitForSeconds atkDoneTimer;
 
     protected Queue<Command> cmds;
     public static readonly int MAX_COMMANDS = 5;
+
+    #endregion 변수
 
     #region 프로퍼티
     public Animator MyAnimator => myAnimator;
@@ -63,6 +71,13 @@ public class Unit : Selectable
         set { targetPos = value; }
     }
 
+    public Vector3 PatrolPos
+    {
+
+        get { return patrolPos; }
+        set { patrolPos = value; }
+    }
+
     public int MyState
     {
 
@@ -70,17 +85,20 @@ public class Unit : Selectable
         set { myState = (STATE_UNIT)value; }
     }
 
-    public bool StateChange
+    /// <summary>
+    /// 명령 받을 수 있는 상태인지 체크
+    /// </summary>
+    protected virtual bool atCommand
     {
 
         get
         {
 
-            bool result = stateChange;
-            if (result) stateChange = false;
-            return result;
+            return myState == STATE_UNIT.NONE 
+                && cmds.Count > 0;
         }
     }
+
     #endregion 프로퍼티
 
     protected virtual void Awake()
@@ -97,6 +115,25 @@ public class Unit : Selectable
         SetTimer();
     }
     
+    protected virtual void FixedUpdate()
+    {
+
+        Action();
+    }
+
+
+    protected override void Init()
+    {
+        
+        base.Init();
+        myAgent.speed = applySpeed;
+        ActionDone();
+        cmds.Clear();
+    }
+
+    /// <summary>
+    /// 타이머 설정
+    /// </summary>
     protected virtual void SetTimer()
     {
 
@@ -105,7 +142,35 @@ public class Unit : Selectable
     }
 
     /// <summary>
-    /// 행동이 완료되었는지 판별!
+    /// 해당 유닛의 행동
+    /// </summary>
+    protected virtual void Action()
+    {
+
+        if (myState == STATE_UNIT.DEAD) return;
+
+        // 행동 실행
+        myStateAction.Action(this);
+
+        // 명령이 있고 받을 수 있는지 확인
+        if (atCommand) 
+        {
+
+            ReadCommand(); 
+        }
+
+
+        // 상태 변화가 있는지
+        if (stateChange)
+        {
+
+            stateChange = false;
+            myStateAction.Changed(this);
+        }
+    }
+
+    /// <summary>
+    /// 행동이 완료 혹은 변경이 필요
     /// </summary>
     /// <param name="_nextState">다음 상태</param>
     public virtual void ActionDone(STATE_UNIT _nextState = STATE_UNIT.NONE)
@@ -149,54 +214,84 @@ public class Unit : Selectable
         }
     }
 
+    /// <summary>
+    /// 공격
+    /// Attack 클래스에 있는 공격을 실행한다
+    /// </summary>
     public virtual void OnAttack()
     {
 
         StartCoroutine(AttackCoroutine());
     }
 
+    /// <summary>
+    /// 공격 코루틴
+    /// </summary>
+    /// <returns></returns>
     protected IEnumerator AttackCoroutine()
     {
 
+        // 여기서는 일단 홀드 상태에서 공격이면 홀드 공격, 이외는 그냥 공격
         myState = myState == STATE_UNIT.HOLD ? STATE_UNIT.HOLD_ATTACKING : STATE_UNIT.ATTACKING;
         yield return atkTimer;
 
-
+        // Attack에 등록된 공격
         myAttack.OnAttack(this);
         yield return atkDoneTimer;
 
+        // 공격 완료를 알리는 메서드
         myAttack.AttackDone(this);
     }
 
-    public override void DoCommand(Command _cmd, bool _add = false)
+    /// <summary>
+    /// 명령 받기
+    /// 예약 명령이 아닌 경우 
+    /// 공격 중 상태가 아니면 현재 행동을 취소하고 1턴 뒤에 명령을 수행한다
+    /// </summary>
+    /// <param name="_cmd">받을 명령</param>
+    /// <param name="_add">예약 명령인가?</param>
+    public override void GetCommand(Command _cmd, bool _add = false)
     {
 
         if (myState == STATE_UNIT.DEAD) return;
 
+        // 예약 명령이 아닌 경우 기존에 예약 명령 초기화와
+        // 다음 턴에 예약 명령을 실행할 수 있게 NONE 상태로 변경
         if (!_add)
         {
 
-            stateChange = true;
+            ActionDone();
             cmds.Clear();
         }
 
+        Debug.Log("명령을 받았습니다.");
+
+        // 명령 등록, 예약 명령인 경우 최대 수 확인 한다
         if (cmds.Count < MAX_COMMANDS) cmds.Enqueue(_cmd);
-        else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
+        // else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
     }
 
+    /// <summary>
+    /// 명령 읽기
+    /// </summary>
     public override void ReadCommand()
     {
-
+        
         Command cmd = cmds.Dequeue();
 
-        if (ChkState(cmd.type)) return;
+        // 등록된 행동이 있는지 확인
+        // 읽을 수 없는 행동이면 명령만 사라진다
+        if (!ChkState(cmd.type)) return;
         myState = (STATE_UNIT)cmd.type;
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
-
-        stateChange = true;
     }
 
+    /// <summary>
+    /// 행동할 수 있는 상태인지 체크
+    /// </summary>
+    /// <param name="_num">상태 번호</param>
+    /// <returns></returns>
     protected virtual bool ChkState(int _num)
     {
 

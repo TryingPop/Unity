@@ -13,11 +13,16 @@ public class StateAction : MonoBehaviour
         actions = new IUnitAction[_actions];
     }
 
+    /// <summary>
+    /// 행동 있으면 행동 실행
+    /// </summary>
+    /// <param name="_unit"></param>
     public void Action(Unit _unit)
     {
 
         int idx = _unit.MyState;
         if (ChkActions(idx)) actions[idx].Action(_unit);
+        else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
     }
 
     /// <summary>
@@ -39,6 +44,7 @@ public class StateAction : MonoBehaviour
 
         int idx = _unit.MyState;
         if (ChkActions(idx)) actions[idx].Changed(_unit);
+        else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
     }
 
     public void AddActions(int _idx, IUnitAction _action)

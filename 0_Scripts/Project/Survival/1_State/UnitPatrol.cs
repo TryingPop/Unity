@@ -22,7 +22,6 @@ public class UnitPatrol : IUnitAction
         }
     }
 
-    protected Vector3 patrolPos;
 
     public override void Action(Unit _unit)
     {
@@ -30,8 +29,8 @@ public class UnitPatrol : IUnitAction
         if (_unit.MyAgent.remainingDistance < 0.1f)
         {
 
-            _unit.TargetPos = patrolPos;
-            patrolPos = _unit.MyAgent.destination;
+            _unit.TargetPos = _unit.PatrolPos;
+            _unit.PatrolPos = _unit.MyAgent.destination;
             _unit.MyAgent.destination = _unit.TargetPos;
         }
     }
@@ -39,7 +38,7 @@ public class UnitPatrol : IUnitAction
     public override void Changed(Unit _unit)
     {
 
-        patrolPos = _unit.transform.position;
+        _unit.PatrolPos = _unit.transform.position;
         _unit.MyAgent.destination = _unit.TargetPos;
         _unit.MyAnimator.SetFloat("Move", 0.5f);
     }
