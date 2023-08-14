@@ -25,14 +25,10 @@ public class UnitAtkHold : UnitHold
     public override void Action(Unit _unit)
     {
 
-        if (_unit.Target == null)
-        {
+        _unit.FindTarget(false);
 
-            _unit.FindTarget(false);
-        }
-        else
+        if (_unit.Target != null)
         {
-
             _unit.transform.LookAt(_unit.Target);
             _unit.OnAttack();
         }

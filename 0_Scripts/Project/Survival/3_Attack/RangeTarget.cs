@@ -10,6 +10,8 @@ public class RangeTarget : Attack
     public override void OnAttack(Unit _unit)
     {
 
-        
+        GameObject go = Instantiate(missile, transform.position, Quaternion.identity);
+        go.GetComponent<Missile>().Init(_unit.transform, _unit.Target, 
+            _unit.AtkRange * 1f, _unit.Atk);
     }
 }

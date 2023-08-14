@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 
 public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, ATTACK = 3, PATROL = 4, HOLD = 5, REPAIR = 6, SKILL1 = 7, SKILL2 = 8, SKILL3 = 9, ATTACKING = 11, HOLD_ATTACKING = 12 }
+
 
 public class Unit : Selectable
 {
@@ -30,6 +32,8 @@ public class Unit : Selectable
     [SerializeField] protected float atkRange;
     [SerializeField] protected float atkTime;
     [SerializeField] protected float atkDoneTime;
+    [SerializeField] protected bool isAtk;
+
     [SerializeField] protected float chaseRange;
 
     [SerializeField] protected bool stateChange;
@@ -99,6 +103,17 @@ public class Unit : Selectable
         }
     }
 
+    protected virtual bool atkReaction
+    {
+
+        get
+        {
+
+            return myState == STATE_UNIT.NONE
+                || myState == STATE_UNIT.PATROL;
+        }
+    }
+
     #endregion 프로퍼티
 
     protected virtual void Awake()
@@ -112,9 +127,16 @@ public class Unit : Selectable
         myStateAction = GetComponent<StateAction>();
 
         cmds = new Queue<Command>(MAX_COMMANDS);
+
         SetTimer();
     }
-    
+    protected virtual void OnEnable()
+    {
+
+        Init();
+    }
+
+
     protected virtual void FixedUpdate()
     {
 
@@ -126,6 +148,7 @@ public class Unit : Selectable
     {
         
         base.Init();
+        myAgent.enabled = true;
         myAgent.speed = applySpeed;
         ActionDone();
         cmds.Clear();
@@ -143,30 +166,26 @@ public class Unit : Selectable
 
     /// <summary>
     /// 해당 유닛의 행동
+    /// 여기 로직에서 문제 있다!
     /// </summary>
     protected virtual void Action()
     {
 
         if (myState == STATE_UNIT.DEAD) return;
 
-        // 행동 실행
-        myStateAction.Action(this);
-
-        // 명령이 있고 받을 수 있는지 확인
-        if (atCommand) 
-        {
-
-            ReadCommand(); 
-        }
-
-
         // 상태 변화가 있는지
         if (stateChange)
         {
 
             stateChange = false;
+
+            // 명령이 있고 받을 수 있는지 확인
+            if (atCommand) ReadCommand();
             myStateAction.Changed(this);
         }
+        // 행동 실행
+        else myStateAction.Action(this);
+
     }
 
     /// <summary>
@@ -187,29 +206,28 @@ public class Unit : Selectable
     public virtual void FindTarget(bool isChase)
     {
 
+        // 검사하는 유닛이 박스 콜라이더를 갖고 있어 hits는 최소 크기 1이 보장된다
         RaycastHit[] hits = Physics.SphereCastAll(transform.position,
                    isChase ? chaseRange : atkRange, transform.forward, 0f, atkLayers);
 
-        if (hits.Length > 0)
+        
+        float minDis = isChase ? chaseRange + 1f : atkRange + 1f;
+        target = null;
+
+        for (int i = 0; i < hits.Length; i++)
         {
 
-            float minDis = isChase ? chaseRange + 1f : atkRange + 1f;
-
-            for (int i = 0; i < hits.Length; i++)
+            if (hits[i].transform == transform)
             {
 
-                if (hits[i].transform == transform)
-                {
+                continue;
+            }
 
-                    continue;
-                }
+            if (minDis > hits[i].distance)
+            {
 
-                if (minDis > hits[i].distance)
-                {
-
-                    minDis = hits[i].distance;
-                    Target = hits[i].transform;
-                }
+                minDis = hits[i].distance;
+                Target = hits[i].transform;
             }
         }
     }
@@ -221,7 +239,7 @@ public class Unit : Selectable
     public virtual void OnAttack()
     {
 
-        StartCoroutine(AttackCoroutine());
+        if (!isAtk) StartCoroutine(AttackCoroutine());
     }
 
     /// <summary>
@@ -232,7 +250,9 @@ public class Unit : Selectable
     {
 
         // 여기서는 일단 홀드 상태에서 공격이면 홀드 공격, 이외는 그냥 공격
+        isAtk = true;
         myState = myState == STATE_UNIT.HOLD ? STATE_UNIT.HOLD_ATTACKING : STATE_UNIT.ATTACKING;
+        myAnimator.SetTrigger("Attack");
         yield return atkTimer;
 
         // Attack에 등록된 공격
@@ -241,6 +261,51 @@ public class Unit : Selectable
 
         // 공격 완료를 알리는 메서드
         myAttack.AttackDone(this);
+        isAtk = false;
+    }
+
+    public override void OnDamaged(int _dmg, Transform _trans = null)
+    {
+
+        if (myState == STATE_UNIT.DEAD) return;
+
+        base.OnDamaged(_dmg, _trans);
+
+        OnDamageAction(_trans);
+    }
+
+    protected virtual void OnDamageAction(Transform _trans)
+    {
+
+        if (_trans == null || !atkReaction) return;
+
+        if (myAttack == null)
+        {
+
+            // 공격을 못하면 반대 방향으로 도주!
+            Vector3 dir = (transform.position - _trans.position).normalized;
+            targetPos = transform.position + dir * applySpeed;
+            myAgent.destination = targetPos;
+            ActionDone(STATE_UNIT.MOVE);
+        }
+        else
+        {
+
+            // 공격할 수 있으면 맞받아친다!
+            target = _trans;
+            ActionDone(STATE_UNIT.ATTACK);
+        }
+    }
+
+    public override void Dead()
+    {
+
+        base.Dead();
+
+        myAgent.ResetPath();
+        myAgent.enabled = false;
+        myAnimator.SetTrigger("Die");
+        myState = STATE_UNIT.DEAD;
     }
 
     /// <summary>
@@ -264,11 +329,9 @@ public class Unit : Selectable
             cmds.Clear();
         }
 
-        Debug.Log("명령을 받았습니다.");
-
         // 명령 등록, 예약 명령인 경우 최대 수 확인 한다
         if (cmds.Count < MAX_COMMANDS) cmds.Enqueue(_cmd);
-        // else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
+        else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
     }
 
     /// <summary>
