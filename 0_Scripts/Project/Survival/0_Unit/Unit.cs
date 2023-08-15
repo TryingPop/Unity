@@ -21,6 +21,8 @@ public class Unit : Selectable
     [SerializeField] protected Vector3 targetPos;
     [SerializeField] protected Vector3 patrolPos;
 
+
+
     [SerializeField] protected STATE_UNIT myState;
     [SerializeField] protected StateAction myStateAction;
     [SerializeField] protected Attack myAttack;  
@@ -88,6 +90,10 @@ public class Unit : Selectable
         get { return (int)myState; }
         set { myState = (STATE_UNIT)value; }
     }
+
+
+
+        
 
     /// <summary>
     /// 명령 받을 수 있는 상태인지 체크
@@ -246,7 +252,7 @@ public class Unit : Selectable
     /// 공격 코루틴
     /// </summary>
     /// <returns></returns>
-    protected IEnumerator AttackCoroutine()
+    protected virtual IEnumerator AttackCoroutine()
     {
 
         // 여기서는 일단 홀드 상태에서 공격이면 홀드 공격, 이외는 그냥 공격
@@ -284,8 +290,7 @@ public class Unit : Selectable
 
             // 공격을 못하면 반대 방향으로 도주!
             Vector3 dir = (transform.position - _trans.position).normalized;
-            targetPos = transform.position + dir * applySpeed;
-            myAgent.destination = targetPos;
+            targetPos = transform.position + dir * applySpeed * 0.5f;
             ActionDone(STATE_UNIT.MOVE);
         }
         else
@@ -348,6 +353,8 @@ public class Unit : Selectable
         myState = (STATE_UNIT)cmd.type;
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
+
+        cmd.Received(MySize);
     }
 
     /// <summary>

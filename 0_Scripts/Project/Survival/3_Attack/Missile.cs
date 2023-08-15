@@ -15,7 +15,7 @@ public class Missile : MonoBehaviour
     protected void Awake()
     {
 
-        Destroy(gameObject, 3f);
+        Destroy(gameObject, 2f);
     }
 
     /// <summary>

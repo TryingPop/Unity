@@ -14,6 +14,11 @@ public class StateAction : MonoBehaviour
     }
 
     /// <summary>
+    /// 상속받는 클래스에서 쓸 예정
+    /// </summary>
+    protected virtual void SetAction() { }
+
+    /// <summary>
     /// 행동 있으면 행동 실행
     /// </summary>
     /// <param name="_unit"></param>
