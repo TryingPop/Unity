@@ -28,7 +28,8 @@ public class UnitMove : IUnitAction
         if (_unit.Target != null)
         {
 
-            if (_unit.Target.gameObject.activeSelf) _unit.MyAgent.destination = _unit.Target.position;
+            if (_unit.Target.gameObject.activeSelf 
+                && _unit.Target.gameObject.layer != IDamagable.LAYER_DEAD) _unit.MyAgent.destination = _unit.Target.position;
             else _unit.MyAgent.ResetPath();
         }
 

@@ -9,10 +9,11 @@ public class SelectedGroup
 {
 
     private List<Selectable> selected;
-
+    
     public static readonly int MAX_SELECT = 16;
 
     public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }
+    
     public SelectedGroup()
     {
 
@@ -30,7 +31,6 @@ public class SelectedGroup
     {
 
         if (_target == null) return;
-
         Selectable select = _target.GetComponent<Selectable>();
         if (select == null) return;
 
@@ -58,8 +58,7 @@ public class SelectedGroup
     {
 
         if (_select == null) return;
-
-        else if(selected.Count < MAX_SELECT)
+        else if (selected.Count < MAX_SELECT)
         {
 
             if (!selected.Contains(_select))

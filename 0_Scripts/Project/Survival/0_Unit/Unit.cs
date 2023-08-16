@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, ATTACK = 3, PATROL = 4, HOLD = 5, REPAIR = 6, SKILL1 = 7, SKILL2 = 8, SKILL3 = 9, ATTACKING = 11, HOLD_ATTACKING = 12 }
+public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, ATTACK = 3, PATROL = 4, HOLD = 5, SKILL1 = 6, SKILL2 = 7, SKILL3 = 8, ATTACKING = 11, HOLD_ATTACKING = 12 }
 
 
 public class Unit : Selectable
@@ -16,19 +16,18 @@ public class Unit : Selectable
     [SerializeField] protected Animator myAnimator;
     [SerializeField] protected Collider myCollider;
     [SerializeField] protected NavMeshAgent myAgent;
+    [SerializeField] protected Rigidbody myRigid;
 
     [SerializeField] protected Transform target;
     [SerializeField] protected Vector3 targetPos;
     [SerializeField] protected Vector3 patrolPos;
-
-
 
     [SerializeField] protected STATE_UNIT myState;
     [SerializeField] protected StateAction myStateAction;
     [SerializeField] protected Attack myAttack;  
 
     [SerializeField] public LayerMask atkLayers;
-    
+
     [Header("값 변수")]
     [SerializeField] protected int atk;
     [SerializeField] protected float atkRange;
@@ -55,6 +54,8 @@ public class Unit : Selectable
     public Collider MyCollider => myCollider;
     public NavMeshAgent MyAgent => myAgent;
 
+    public Rigidbody MyRigid => myRigid;
+
     public Attack MyAttack => myAttack;
     public StateAction MyStateAction => myStateAction;
 
@@ -62,6 +63,7 @@ public class Unit : Selectable
     public float AtkRange => atkRange;
     public float ChaseRange => chaseRange;
 
+    public float ApplySpeed => applySpeed;
 
     public Transform Target
     {
@@ -128,10 +130,10 @@ public class Unit : Selectable
         myAnimator = GetComponentInChildren<Animator>();
         myCollider = GetComponent<Collider>();
         myAgent = GetComponent<NavMeshAgent>();
-
+        myRigid = GetComponent<Rigidbody>();
         myAttack = GetComponent<Attack>();
         myStateAction = GetComponent<StateAction>();
-
+        
         cmds = new Queue<Command>(MAX_COMMANDS);
 
         SetTimer();
@@ -302,6 +304,11 @@ public class Unit : Selectable
         }
     }
 
+    protected virtual void KnockBack(Transform _trans)
+    {
+
+    }
+
     public override void Dead()
     {
 
@@ -313,6 +320,7 @@ public class Unit : Selectable
         myState = STATE_UNIT.DEAD;
     }
 
+    #region Command
     /// <summary>
     /// 명령 받기
     /// 예약 명령이 아닌 경우 
@@ -373,4 +381,5 @@ public class Unit : Selectable
 
         return false;
     }
+    #endregion Command
 }
