@@ -182,7 +182,7 @@ public class Unit : Selectable
         if (myState == STATE_UNIT.DEAD) return;
 
         // 상태 변화가 있는지
-        if (stateChange)
+        else if (stateChange)
         {
 
             stateChange = false;
@@ -250,6 +250,15 @@ public class Unit : Selectable
         if (!isAtk) StartCoroutine(AttackCoroutine());
     }
 
+    protected virtual STATE_UNIT AttackDone()
+    {
+
+        if (myState == STATE_UNIT.DEAD) return myState;
+        else if (myState == STATE_UNIT.HOLD_ATTACKING) return STATE_UNIT.HOLD;
+        else if (myState == STATE_UNIT.ATTACKING) return STATE_UNIT.ATTACK;
+        else return STATE_UNIT.NONE;
+    }
+
     /// <summary>
     /// 공격 코루틴
     /// </summary>
@@ -258,19 +267,25 @@ public class Unit : Selectable
     {
 
         // 여기서는 일단 홀드 상태에서 공격이면 홀드 공격, 이외는 그냥 공격
+        if (myState == STATE_UNIT.DEAD) yield break;
         isAtk = true;
         myState = myState == STATE_UNIT.HOLD ? STATE_UNIT.HOLD_ATTACKING : STATE_UNIT.ATTACKING;
         myAnimator.SetTrigger("Attack");
         yield return atkTimer;
 
+
+        if (myState == STATE_UNIT.DEAD) yield break;
         // Attack에 등록된 공격
         myAttack.OnAttack(this);
         yield return atkDoneTimer;
 
-        // 공격 완료를 알리는 메서드
-        myAttack.AttackDone(this);
+        // 공격 완료
+        if (myState == STATE_UNIT.DEAD) yield break;
+        ActionDone(AttackDone());
         isAtk = false;
     }
+
+   
 
     public override void OnDamaged(int _dmg, Transform _trans = null)
     {
@@ -315,6 +330,7 @@ public class Unit : Selectable
         base.Dead();
 
         myAgent.ResetPath();
+        // StopAllCoroutines();
         myAgent.enabled = false;
         myAnimator.SetTrigger("Die");
         myState = STATE_UNIT.DEAD;

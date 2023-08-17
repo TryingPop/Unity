@@ -45,23 +45,20 @@ public class UnitAtk : IUnitAction
                     _unit.MyAgent.destination = _unit.Target.position;
                 }
             }
-            else
-            {
-
-                // 적이 죽은 경우 상태 탈출
-                _unit.Target = null;
-                _unit.ActionDone();
-            }
+            else _unit.Target = null;
         }
         else
         {
 
-            // 적이 없는 겨웅 지점에 경계하면서 간다
-            _unit.MyAgent.destination = _unit.TargetPos;
-
+            // 적이 없는 경우 지점에 경계하면서 간다
             _unit.FindTarget(true);
 
-            if (_unit.MyAgent.remainingDistance < 0.1f) _unit.ActionDone();
+            if (_unit.MyAgent.remainingDistance < 0.1f) 
+            {
+
+                _unit.TargetPos = _unit.transform.position;
+                _unit.ActionDone(); 
+            }
         }
     }
 

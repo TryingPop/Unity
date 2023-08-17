@@ -29,6 +29,7 @@ public class UnitAtkHold : UnitHold
 
         if (_unit.Target != null)
         {
+
             _unit.transform.LookAt(_unit.Target);
             _unit.OnAttack();
         }
