@@ -33,7 +33,6 @@ public class Unit : Selectable
     [SerializeField] protected float atkRange;
     [SerializeField] protected float atkTime;
     [SerializeField] protected float atkDoneTime;
-    [SerializeField] protected bool isAtk;
 
     [SerializeField] protected float chaseRange;
 
@@ -60,6 +59,7 @@ public class Unit : Selectable
     public StateAction MyStateAction => myStateAction;
 
     public int Atk => atk;
+    public float AtkTime => atkTime;
     public float AtkRange => atkRange;
     public float ChaseRange => chaseRange;
 
@@ -156,6 +156,7 @@ public class Unit : Selectable
     {
         
         base.Init();
+        myAnimator.SetBool("Die", false);
         myAgent.enabled = true;
         myAgent.speed = applySpeed;
         ActionDone();
@@ -218,8 +219,8 @@ public class Unit : Selectable
         RaycastHit[] hits = Physics.SphereCastAll(transform.position,
                    isChase ? chaseRange : atkRange, transform.forward, 0f, atkLayers);
 
-        
-        float minDis = isChase ? chaseRange + 1f : atkRange + 1f;
+
+        float minDis = isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;
         target = null;
 
         for (int i = 0; i < hits.Length; i++)
@@ -231,61 +232,34 @@ public class Unit : Selectable
                 continue;
             }
 
-            if (minDis > hits[i].distance)
+            // 가장 가까운 적 공격!
+            float targetDis = Vector3.SqrMagnitude(transform.position - hits[i].transform.position);
+            if (minDis > targetDis)
             {
 
-                minDis = hits[i].distance;
-                Target = hits[i].transform;
+                minDis = targetDis;
+                target = hits[i].transform;
             }
         }
+
     }
 
-    /// <summary>
-    /// 공격
-    /// Attack 클래스에 있는 공격을 실행한다
-    /// </summary>
     public virtual void OnAttack()
     {
 
-        if (!isAtk) StartCoroutine(AttackCoroutine());
+        if (myAttack.IsAtk)
+        {
+
+            myAttack.ChkCoolTime(this);
+        }
+        else
+        {
+
+            myAttack.IsAtk = true;
+            myAgent.ResetPath();
+            transform.LookAt(target.position);
+        }
     }
-
-    protected virtual STATE_UNIT AttackDone()
-    {
-
-        if (myState == STATE_UNIT.DEAD) return myState;
-        else if (myState == STATE_UNIT.HOLD_ATTACKING) return STATE_UNIT.HOLD;
-        else if (myState == STATE_UNIT.ATTACKING) return STATE_UNIT.ATTACK;
-        else return STATE_UNIT.NONE;
-    }
-
-    /// <summary>
-    /// 공격 코루틴
-    /// </summary>
-    /// <returns></returns>
-    protected virtual IEnumerator AttackCoroutine()
-    {
-
-        // 여기서는 일단 홀드 상태에서 공격이면 홀드 공격, 이외는 그냥 공격
-        if (myState == STATE_UNIT.DEAD) yield break;
-        isAtk = true;
-        myState = myState == STATE_UNIT.HOLD ? STATE_UNIT.HOLD_ATTACKING : STATE_UNIT.ATTACKING;
-        myAnimator.SetTrigger("Attack");
-        yield return atkTimer;
-
-
-        if (myState == STATE_UNIT.DEAD) yield break;
-        // Attack에 등록된 공격
-        myAttack.OnAttack(this);
-        yield return atkDoneTimer;
-
-        // 공격 완료
-        if (myState == STATE_UNIT.DEAD) yield break;
-        ActionDone(AttackDone());
-        isAtk = false;
-    }
-
-   
 
     public override void OnDamaged(int _dmg, Transform _trans = null)
     {
@@ -300,9 +274,9 @@ public class Unit : Selectable
     protected virtual void OnDamageAction(Transform _trans)
     {
 
-        if (_trans == null || !atkReaction) return;
+        if (_trans != null || !atkReaction) return;
 
-        if (myAttack == null)
+        else if (myAttack == null)
         {
 
             // 공격을 못하면 반대 방향으로 도주!
@@ -329,11 +303,10 @@ public class Unit : Selectable
 
         base.Dead();
 
-        myAgent.ResetPath();
-        // StopAllCoroutines();
+        ActionDone(STATE_UNIT.DEAD);
+        StopAllCoroutines();
         myAgent.enabled = false;
-        myAnimator.SetTrigger("Die");
-        myState = STATE_UNIT.DEAD;
+        myAnimator.SetBool("Die", true);
     }
 
     #region Command
