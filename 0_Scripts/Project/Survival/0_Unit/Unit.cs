@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, ATTACK = 3, PATROL = 4, HOLD = 5, SKILL1 = 6, SKILL2 = 7, SKILL3 = 8, ATTACKING = 11, HOLD_ATTACKING = 12 }
+public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, PATROL = 3, HOLD = 4, ATTACK = 5, REPAIR = 5,
+    SKILL1 = 6, SKILL2 = 7, SKILL3 = 8, ATTACKING = 11, HOLD_ATTACKING = 12 }
 
 
 public class Unit : Selectable
@@ -18,8 +19,7 @@ public class Unit : Selectable
     [SerializeField] protected NavMeshAgent myAgent;
     [SerializeField] protected Rigidbody myRigid;
 
-    [SerializeField] protected Transform target;
-    [SerializeField] protected Vector3 targetPos;
+
     [SerializeField] protected Vector3 patrolPos;
 
     [SerializeField] protected STATE_UNIT myState;
@@ -32,16 +32,12 @@ public class Unit : Selectable
     [SerializeField] protected int atk;
     [SerializeField] protected float atkRange;
     [SerializeField] protected float atkTime;
-    [SerializeField] protected float atkDoneTime;
 
     [SerializeField] protected float chaseRange;
 
     [SerializeField] protected bool stateChange;
 
     [SerializeField] protected float applySpeed;
-
-    protected WaitForSeconds atkTimer;
-    protected WaitForSeconds atkDoneTimer;
 
     protected Queue<Command> cmds;
     public static readonly int MAX_COMMANDS = 5;
@@ -65,19 +61,7 @@ public class Unit : Selectable
 
     public float ApplySpeed => applySpeed;
 
-    public Transform Target
-    {
 
-        get { return target; }
-        set { target = value; }
-    }
-
-    public Vector3 TargetPos
-    {
-
-        get { return targetPos; }
-        set { targetPos = value; }
-    }
 
     public Vector3 PatrolPos
     {
@@ -135,20 +119,12 @@ public class Unit : Selectable
         myStateAction = GetComponent<StateAction>();
         
         cmds = new Queue<Command>(MAX_COMMANDS);
-
-        SetTimer();
     }
+    
     protected virtual void OnEnable()
     {
 
         Init();
-    }
-
-
-    protected virtual void FixedUpdate()
-    {
-
-        Action();
     }
 
 
@@ -161,23 +137,15 @@ public class Unit : Selectable
         myAgent.speed = applySpeed;
         ActionDone();
         cmds.Clear();
+        ActionManager.instance.AddUnit(this);
     }
 
-    /// <summary>
-    /// 타이머 설정
-    /// </summary>
-    protected virtual void SetTimer()
-    {
 
-        atkTimer = new WaitForSeconds(atkTime);
-        atkDoneTimer = new WaitForSeconds(atkDoneTime);
-    }
 
     /// <summary>
     /// 해당 유닛의 행동
-    /// 여기 로직에서 문제 있다!
     /// </summary>
-    protected virtual void Action()
+    public void Action()
     {
 
         if (myState == STATE_UNIT.DEAD) return;
@@ -206,6 +174,8 @@ public class Unit : Selectable
 
         myState = _nextState;
         stateChange = true;
+
+        if (!myAgent.updateRotation) myAgent.updateRotation = true;
     }
 
     /// <summary>
@@ -241,24 +211,6 @@ public class Unit : Selectable
                 target = hits[i].transform;
             }
         }
-
-    }
-
-    public virtual void OnAttack()
-    {
-
-        if (myAttack.IsAtk)
-        {
-
-            myAttack.ChkCoolTime(this);
-        }
-        else
-        {
-
-            myAttack.IsAtk = true;
-            myAgent.ResetPath();
-            transform.LookAt(target.position);
-        }
     }
 
     public override void OnDamaged(int _dmg, Transform _trans = null)
@@ -293,11 +245,6 @@ public class Unit : Selectable
         }
     }
 
-    protected virtual void KnockBack(Transform _trans)
-    {
-
-    }
-
     public override void Dead()
     {
 
@@ -307,6 +254,7 @@ public class Unit : Selectable
         StopAllCoroutines();
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
+        ActionManager.instance.RemoveUnit(this);
     }
 
     #region Command
@@ -350,7 +298,6 @@ public class Unit : Selectable
         myState = (STATE_UNIT)cmd.type;
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
-
         cmd.Received(MySize);
     }
 
@@ -359,7 +306,7 @@ public class Unit : Selectable
     /// </summary>
     /// <param name="_num">상태 번호</param>
     /// <returns></returns>
-    protected virtual bool ChkState(int _num)
+    protected bool ChkState(int _num)
     {
 
         if (myStateAction.ChkActions(_num))

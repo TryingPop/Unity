@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeTarget : Attack
+public class Repair : Attack
 {
+
 
     public override void OnAttack(Unit _unit)
     {
 
-        target?.OnDamaged(_unit.Atk, transform);
+        target.CurHp += _unit.Atk;
         isAtk = false;
     }
 }

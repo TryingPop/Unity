@@ -25,12 +25,18 @@ public class UnitAtkNone : UnitNone
     {
 
         _unit.FindTarget(true);
-        if (_unit.Target != null) _unit.ActionDone(STATE_UNIT.ATTACK);
+        if (_unit.Target != null) OnExit(_unit, STATE_UNIT.ATTACK);
     }
 
-    public override void Changed(Unit _unit)
+    public override void OnEnter(Unit _unit)
     {
 
-        base.Changed(_unit);
+        base.OnEnter(_unit);
+    }
+
+    protected override void OnExit(Unit _unit, STATE_UNIT _nextState = STATE_UNIT.NONE)
+    {
+
+        _unit.ActionDone(_nextState);
     }
 }

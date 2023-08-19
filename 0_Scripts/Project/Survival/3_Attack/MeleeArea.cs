@@ -11,8 +11,9 @@ public class MeleeArea : MeleeTarget
         RaycastHit[] hits = Physics.SphereCastAll(_unit.transform.position, 
             _unit.AtkRange, _unit.transform.forward, 0f, _unit.atkLayers);
 
-        if (hits.Length > 0)
+        if (hits.Length > 1)
         {
+
 
             for (int i = 0; i < hits.Length; i++)
             {
@@ -22,5 +23,6 @@ public class MeleeArea : MeleeTarget
                 hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(_unit.Atk);
             }
         }
+        isAtk = false;
     }
 }

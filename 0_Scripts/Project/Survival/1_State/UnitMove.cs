@@ -26,6 +26,8 @@ public class UnitMove : IUnitAction
     public override void Action(Unit _unit)
     {
 
+        if (_unit.MyAgent.pathPending) return;
+
         if (_unit.Target != null)
         {
 
@@ -34,7 +36,7 @@ public class UnitMove : IUnitAction
             {
 
                 _unit.TargetPos = _unit.Target.position;
-                _unit.MyAgent.destination = _unit.TargetPos;
+                _unit.MyAgent.SetDestination(_unit.TargetPos);
             }
             else _unit.Target = null;
         }
@@ -44,16 +46,15 @@ public class UnitMove : IUnitAction
             if (_unit.MyAgent.remainingDistance < 0.1f)
             {
 
-                _unit.TargetPos = _unit.transform.position;
-                _unit.ActionDone();
+                OnExit(_unit);
             }
         }
     }
 
-    public override void Changed(Unit _unit)
+    public override void OnEnter(Unit _unit)
     {
 
-        _unit.MyAgent.destination = _unit.TargetPos;
+        _unit.MyAgent.SetDestination(_unit.TargetPos);
         _unit.MyAnimator.SetFloat("Move", 0.5f);
     }
 }

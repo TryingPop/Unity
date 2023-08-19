@@ -5,9 +5,11 @@ using UnityEngine;
 public class Missile : MonoBehaviour
 {
 
-    
+    public static readonly int LAYER_BULLET = 14;
+
     protected Transform atker;
-    protected Transform target;
+    protected Transform targetPos;
+    protected Selectable target;
     protected float moveSpeed;
     
     protected int atk;
@@ -15,50 +17,53 @@ public class Missile : MonoBehaviour
     protected void Awake()
     {
 
-        Destroy(gameObject, 2f);
+        // Destroy(gameObject, 1.5f);
     }
 
     /// <summary>
     /// 미사일 초기 세팅
     /// </summary>
-    /// <param name="_attacker">공격자</param>
+    /// <param name="_attacker">공격자 위치</param>
+    /// <param name="_targetPos">대상 위치</param>
     /// <param name="_target">대상</param>
     /// <param name="_moveSpeed">투사체 속도</param>
     /// <param name="_atk">공격력</param>
-    public void Init(Transform _attacker, Transform _target, 
+    public void Init(Transform _attacker, Transform _targetPos, Selectable _target, 
         float _moveSpeed, int _atk)
     {
 
         atker = _attacker;
+        targetPos = _targetPos;
         target = _target;
         moveSpeed = _moveSpeed;
         atk = _atk;
+        transform.position = _attacker.position;
     }
 
     protected void FixedUpdate()
     {
 
         // 유도 !
-        if (target == null || target.gameObject.layer == IDamagable.LAYER_DEAD)
+        if (targetPos == null || targetPos.gameObject.layer == IDamagable.LAYER_DEAD)
         {
-            
-            Destroy(gameObject);
+
+            PoolManager.instance.UsedPrefab(gameObject);
             return;
         }
 
-        Vector3 dir = (target.position - transform.position).normalized;
+        Vector3 dir = (targetPos.position - transform.position).normalized;
         transform.position += moveSpeed * dir * Time.fixedDeltaTime;
-        transform.LookAt(target);
+        transform.LookAt(targetPos);
     }
 
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.transform == target)
+        if (other.transform == targetPos)
         {
 
-            target.GetComponent<IDamagable>()?.OnDamaged(atk, atker);
-            Destroy(gameObject);
+            target.OnDamaged(atk, atker);
+            PoolManager.instance.UsedPrefab(gameObject);
         }
     }
 }

@@ -30,8 +30,25 @@ public class UnitAtkHold : UnitHold
         if (_unit.Target != null)
         {
 
-            _unit.transform.LookAt(_unit.Target);
-            _unit.OnAttack();
+            if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
+            _unit.transform.LookAt(_unit.Target.position);
+            
+
+            if (_unit.MyAttack.IsAtk)
+            {
+
+                _unit.MyAttack.ChkCoolTime(_unit);
+            }
+            else
+            {
+
+                _unit.MyAttack.OnAttack(_unit);
+            }
+        }
+        else
+        {
+
+            if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
         }
     }
 }
