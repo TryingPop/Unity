@@ -11,14 +11,11 @@ public class Missile : MonoBehaviour
     protected Transform targetPos;
     protected Selectable target;
     protected float moveSpeed;
-    
+
+    [SerializeField] protected Rigidbody myRigid;
+
     protected int atk;
 
-    protected void Awake()
-    {
-
-        // Destroy(gameObject, 1.5f);
-    }
 
     /// <summary>
     /// 미사일 초기 세팅
@@ -52,7 +49,9 @@ public class Missile : MonoBehaviour
         }
 
         Vector3 dir = (targetPos.position - transform.position).normalized;
-        transform.position += moveSpeed * dir * Time.fixedDeltaTime;
+        // transform.position += moveSpeed * dir * Time.fixedDeltaTime;
+        myRigid.position += dir * moveSpeed * Time.fixedDeltaTime;
+        // myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
         transform.LookAt(targetPos);
     }
 

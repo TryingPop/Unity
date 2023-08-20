@@ -22,7 +22,7 @@ public class RangeTarget : Attack
 
             go.SetActive(true);
             go.GetComponent<Missile>().Init(_unit.transform, _unit.Target, Target,
-                _unit.AtkRange * 1f, _unit.Atk);
+                atkRange * 1f, atk);
         }
 
         isAtk = false;

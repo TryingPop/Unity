@@ -25,7 +25,7 @@ public class UnitAtkHold : UnitHold
     public override void Action(Unit _unit)
     {
 
-        _unit.FindTarget(false);
+        _unit.MyAttacks[0].FindTarget(_unit, false);
 
         if (_unit.Target != null)
         {
@@ -34,15 +34,15 @@ public class UnitAtkHold : UnitHold
             _unit.transform.LookAt(_unit.Target.position);
             
 
-            if (_unit.MyAttack.IsAtk)
+            if (_unit.MyAttacks[0].IsAtk)
             {
 
-                _unit.MyAttack.ChkCoolTime(_unit);
+                _unit.MyAttacks[0].ActionAttack(_unit);
             }
             else
             {
 
-                _unit.MyAttack.OnAttack(_unit);
+                _unit.MyAttacks[0].OnAttack(_unit);
             }
         }
         else

@@ -26,27 +26,29 @@ public class UnitRepair : IUnitAction
     public override void Action(Unit _unit)
     {
 
-        // 수리 대상이 없거나 파괴된 상태면 종료
+        // 수리 대상이 없거나 수리를 못학거나 대상이 파괴된(사망인) 상태면 종료
         if (_unit.Target == null
+            || _unit.MyAttacks == null
             || _unit.Target.gameObject.layer == IDamagable.LAYER_DEAD)
         {
 
             OnExit(_unit);
             return;
         }
+
         // 길 찾기 연산 중이면 행동 안함
         if (_unit.MyAgent.pathPending) return;
 
-        if (Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.position) < _unit.AtkRange * _unit.AtkRange)
+        if (Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.position) < _unit.MyAttacks[0].atkRange * _unit.MyAttacks[0].atkRange)
         {
 
             // 수리 거리 안인지 확인
-            if (!_unit.MyAttack.IsAtk)
+            if (!_unit.MyAttacks[0].IsAtk)
             {
 
                 // 준비 상태
-                _unit.MyAttack.IsAtk = true;
-                _unit.MyAttack.Target = _unit.Target.GetComponent<Selectable>();
+                _unit.MyAttacks[0].IsAtk = true;
+                _unit.MyAttacks[0].Target = _unit.Target.GetComponent<Selectable>();
                 _unit.MyAgent.ResetPath();
                 if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
                 _unit.transform.LookAt(_unit.Target.position);
@@ -56,12 +58,12 @@ public class UnitRepair : IUnitAction
             {
 
                 // 준비 완료이므로 수리 시작
-                _unit.MyAttack.ChkCoolTime(_unit);
+                _unit.MyAttacks[0].ActionAttack(_unit);
 
             }
 
             // 수리 다됐으면 상태 탈출
-            if (_unit.MyAttack.Target.FullHp) OnExit(_unit);
+            if (_unit.MyAttacks[0].Target.FullHp) OnExit(_unit);
             return;
         }
 
@@ -72,7 +74,7 @@ public class UnitRepair : IUnitAction
     public override void OnEnter(Unit _unit)
     {
 
-        _unit.MyAttack.IsAtk = false;
+        _unit.MyAttacks[0].IsAtk = false;
         _unit.MyAgent.SetDestination(_unit.TargetPos);
         _unit.MyAnimator.SetFloat("Move", 0.5f);
     }
@@ -80,7 +82,7 @@ public class UnitRepair : IUnitAction
     protected override void OnExit(Unit _unit, STATE_UNIT _nextState = STATE_UNIT.NONE)
     {
 
-        _unit.MyAttack.IsAtk = false;
+        _unit.MyAttacks[0].IsAtk = false;
         base.OnExit(_unit, _nextState);
     }
 }

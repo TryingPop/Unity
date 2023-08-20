@@ -9,7 +9,7 @@ public class MeleeArea : MeleeTarget
     {
 
         RaycastHit[] hits = Physics.SphereCastAll(_unit.transform.position, 
-            _unit.AtkRange, _unit.transform.forward, 0f, _unit.atkLayers);
+            atkRange, _unit.transform.forward, 0f, atkLayers);
 
         if (hits.Length > 1)
         {
@@ -20,7 +20,7 @@ public class MeleeArea : MeleeTarget
 
                 if (hits[i].transform == _unit.transform) continue;
 
-                hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(_unit.Atk);
+                hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(atk);
             }
         }
         isAtk = false;

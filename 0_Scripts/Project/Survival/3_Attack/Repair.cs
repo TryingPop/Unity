@@ -5,11 +5,10 @@ using UnityEngine;
 public class Repair : Attack
 {
 
-
     public override void OnAttack(Unit _unit)
     {
 
-        target.CurHp += _unit.Atk;
+        target.CurHp += atk;
         isAtk = false;
     }
 }

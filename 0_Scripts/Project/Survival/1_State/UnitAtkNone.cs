@@ -24,7 +24,7 @@ public class UnitAtkNone : UnitNone
     public override void Action(Unit _unit)
     {
 
-        _unit.FindTarget(true);
+        _unit.MyAttacks[0].FindTarget(_unit, true);
         if (_unit.Target != null) OnExit(_unit, STATE_UNIT.ATTACK);
     }
 
