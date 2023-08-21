@@ -10,9 +10,9 @@ public class Missile : MonoBehaviour
     protected Transform atker;
     protected Transform targetPos;
     protected Selectable target;
-    protected float moveSpeed;
 
     [SerializeField] protected Rigidbody myRigid;
+    [SerializeField] protected float moveSpeed;
 
     protected int atk;
 
@@ -25,16 +25,14 @@ public class Missile : MonoBehaviour
     /// <param name="_target">대상</param>
     /// <param name="_moveSpeed">투사체 속도</param>
     /// <param name="_atk">공격력</param>
-    public void Init(Transform _attacker, Transform _targetPos, Selectable _target, 
-        float _moveSpeed, int _atk)
+    public void Init(Transform _attacker, Transform _targetPos, 
+        Selectable _target, int _atk)
     {
 
         atker = _attacker;
         targetPos = _targetPos;
         target = _target;
-        moveSpeed = _moveSpeed;
         atk = _atk;
-        transform.position = _attacker.position;
     }
 
     protected void FixedUpdate()
@@ -49,9 +47,8 @@ public class Missile : MonoBehaviour
         }
 
         Vector3 dir = (targetPos.position - transform.position).normalized;
-        // transform.position += moveSpeed * dir * Time.fixedDeltaTime;
-        myRigid.position += dir * moveSpeed * Time.fixedDeltaTime;
-        // myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
+        
+        myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
         transform.LookAt(targetPos);
     }
 

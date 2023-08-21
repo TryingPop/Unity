@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 
-public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, PATROL = 3, HOLD = 4, ATTACK = 5, REPAIR = 5,
-    SKILL1 = 6, SKILL2 = 7, SKILL3 = 8, ATTACKING = 11, HOLD_ATTACKING = 12 }
+/// <summary>
+/// -1 ~ 5 번까지는 일반 유닛이 갖는 번호
+/// 6번부터는 특수!
+/// </summary>
+public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, PATROL = 3, HOLD = 4, ATTACK = 5, REPAIR = 5, HEAL = 5,
+    SKILL0 = 5, SKILL1 = 6, SKILL2 = 7, SKILL3 = 8 }
 
 
 public class Unit : Selectable
@@ -19,25 +22,21 @@ public class Unit : Selectable
     [SerializeField] protected NavMeshAgent myAgent;
     [SerializeField] protected Rigidbody myRigid;
 
-
-    [SerializeField] protected Vector3 patrolPos;
-
     [SerializeField] protected STATE_UNIT myState;
     [SerializeField] protected StateAction myStateAction;
-    [SerializeField] protected Attack myAttack;  
+    [SerializeField] protected Attack[] myAttacks;  
 
-    [SerializeField] public LayerMask atkLayers;
+    [SerializeField] protected Vector3 patrolPos;
+    
 
     [Header("값 변수")]
-    [SerializeField] protected int atk;
-    [SerializeField] protected float atkRange;
-    [SerializeField] protected float atkTime;
-
-    [SerializeField] protected float chaseRange;
 
     [SerializeField] protected bool stateChange;
 
     [SerializeField] protected float applySpeed;
+
+    [SerializeField] protected byte maxMp;
+    protected byte curMp;
 
     protected Queue<Command> cmds;
     public static readonly int MAX_COMMANDS = 5;
@@ -51,17 +50,11 @@ public class Unit : Selectable
 
     public Rigidbody MyRigid => myRigid;
 
-    public Attack MyAttack => myAttack;
+    public Attack[] MyAttacks => myAttacks;
+
     public StateAction MyStateAction => myStateAction;
 
-    public int Atk => atk;
-    public float AtkTime => atkTime;
-    public float AtkRange => atkRange;
-    public float ChaseRange => chaseRange;
-
     public float ApplySpeed => applySpeed;
-
-
 
     public Vector3 PatrolPos
     {
@@ -77,9 +70,30 @@ public class Unit : Selectable
         set { myState = (STATE_UNIT)value; }
     }
 
+    public int CurMp
+    {
 
+        get { return maxMp == 0 ? -1 : curMp; }
+        set
+        {
 
-        
+            if (maxMp == ISkillAction.INFINITE_MP) return;
+            if (value > maxMp) value = maxMp;
+            curMp = (byte)value;
+        }
+    }
+
+    protected virtual bool usingSkill
+    {
+
+        get
+        {
+
+            return myState == STATE_UNIT.SKILL1
+                || myState == STATE_UNIT.SKILL2
+                || myState == STATE_UNIT.SKILL3;
+        }
+    }    
 
     /// <summary>
     /// 명령 받을 수 있는 상태인지 체크
@@ -115,7 +129,7 @@ public class Unit : Selectable
         myCollider = GetComponent<Collider>();
         myAgent = GetComponent<NavMeshAgent>();
         myRigid = GetComponent<Rigidbody>();
-        myAttack = GetComponent<Attack>();
+        myAttacks = GetComponents<Attack>();
         myStateAction = GetComponent<StateAction>();
         
         cmds = new Queue<Command>(MAX_COMMANDS);
@@ -127,16 +141,24 @@ public class Unit : Selectable
         Init();
     }
 
+    protected virtual void OnDisable()
+    {
+
+        ActionManager.instance.RemoveUnit(this);
+    }
 
     protected override void Init()
     {
         
         base.Init();
+        curMp = maxMp;
+
         myAnimator.SetBool("Die", false);
         myAgent.enabled = true;
         myAgent.speed = applySpeed;
         ActionDone();
         cmds.Clear();
+
         ActionManager.instance.AddUnit(this);
     }
 
@@ -178,40 +200,7 @@ public class Unit : Selectable
         if (!myAgent.updateRotation) myAgent.updateRotation = true;
     }
 
-    /// <summary>
-    /// 범위안 타겟 찾기
-    /// </summary>
-    /// <param name="isChase">true면 추적 범위, false면 공격 범위</param>
-    public virtual void FindTarget(bool isChase)
-    {
 
-        // 검사하는 유닛이 박스 콜라이더를 갖고 있어 hits는 최소 크기 1이 보장된다
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position,
-                   isChase ? chaseRange : atkRange, transform.forward, 0f, atkLayers);
-
-
-        float minDis = isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;
-        target = null;
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-
-            if (hits[i].transform == transform)
-            {
-
-                continue;
-            }
-
-            // 가장 가까운 적 공격!
-            float targetDis = Vector3.SqrMagnitude(transform.position - hits[i].transform.position);
-            if (minDis > targetDis)
-            {
-
-                minDis = targetDis;
-                target = hits[i].transform;
-            }
-        }
-    }
 
     public override void OnDamaged(int _dmg, Transform _trans = null)
     {
@@ -226,9 +215,9 @@ public class Unit : Selectable
     protected virtual void OnDamageAction(Transform _trans)
     {
 
-        if (_trans != null || !atkReaction) return;
+        if (_trans == null || !atkReaction) return;
 
-        else if (myAttack == null)
+        else if (myAttacks == null)
         {
 
             // 공격을 못하면 반대 방향으로 도주!
@@ -241,6 +230,7 @@ public class Unit : Selectable
 
             // 공격할 수 있으면 맞받아친다!
             target = _trans;
+            targetPos = _trans.position;
             ActionDone(STATE_UNIT.ATTACK);
         }
     }
@@ -251,10 +241,9 @@ public class Unit : Selectable
         base.Dead();
 
         ActionDone(STATE_UNIT.DEAD);
-        StopAllCoroutines();
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
-        ActionManager.instance.RemoveUnit(this);
+        // ActionManager.instance.RemoveUnit(this);
     }
 
     #region Command
@@ -270,13 +259,20 @@ public class Unit : Selectable
 
         if (myState == STATE_UNIT.DEAD) return;
 
+        
+
         // 예약 명령이 아닌 경우 기존에 예약 명령 초기화와
         // 다음 턴에 예약 명령을 실행할 수 있게 NONE 상태로 변경
         if (!_add)
         {
 
-            ActionDone();
             cmds.Clear();
+
+            // 스킬 사용 중에는 명령들 삭제만하고 명령 실행은 안되게 탈출!
+            if (usingSkill) return;     
+            
+            // 리지드바디를 다루는 경우도 있기에
+            ActionDone();
         }
 
         // 명령 등록, 예약 명령인 경우 최대 수 확인 한다

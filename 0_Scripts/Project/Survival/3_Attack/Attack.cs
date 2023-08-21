@@ -23,38 +23,43 @@ public abstract class Attack : MonoBehaviour
 
     protected Selectable target;                // 추후에 사라질 변수! << player에 target을 selectable 형으로 바꿔서 쓸 것이다!
 
-    protected virtual void Init(float _atkTime, float _animTime, float _atkRange, float _chaseRange)
+    protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
 
-        atkTime = Mathf.FloorToInt(_atkTime * 50);
+        atkTime = _atkTime;
         StartAnimTime = _animTime;
 
         atkRange = _atkRange;
         chaseRange = _chaseRange;
     }
 
-    public float AtkTime
+    public int AtkTime
     {
 
-        get { return atkTime * 0.02f; }
+        get 
+        {
+
+            if (atkTime <= 0) atkTime = 1;
+            return atkTime; 
+        }
         set
         {
 
-            atkTime = Mathf.FloorToInt(value * 50);
+            value = value < 1 ? 1 : value;
+            atkTime = value;
+            
         }
     }
 
-    [SerializeField]
-    public float StartAnimTime
+    public int StartAnimTime
     {
 
-        get { return startAnimTime * 0.02f; }
+        get { return startAnimTime; }
         set
         {
 
-            int temp = Mathf.FloorToInt(value * 50);
-            startAnimTime = temp > atkTime ? atkTime : temp;
-            startAnimTime = startAnimTime < 1 ? 1 : startAnimTime;
+            value = value < 1 ? 1 : value;
+            startAnimTime = value > atkTime ? atkTime : value;
         }
     }
 
@@ -90,7 +95,7 @@ public abstract class Attack : MonoBehaviour
 
         coolTime++;
 
-        if (coolTime == startAnimTime) _unit.MyAnimator.SetTrigger("Attack");
+        if (coolTime == startAnimTime) _unit.MyAnimator.SetTrigger($"Skill{_unit.MyState - (int)STATE_UNIT.SKILL0}");
         else if (coolTime > atkTime)
         {
 
