@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Missile : MonoBehaviour
 {
 
+    public static readonly int ONE_MISS_PER_N_TIMES = 5;
     public static readonly int LAYER_BULLET = 14;
 
     protected Transform atker;
@@ -14,8 +16,9 @@ public class Missile : MonoBehaviour
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected float moveSpeed;
 
-    protected int atk;
+    [SerializeField] protected byte prefabIdx;
 
+    protected int atk;
 
     /// <summary>
     /// 미사일 초기 세팅
@@ -42,14 +45,14 @@ public class Missile : MonoBehaviour
         if (targetPos == null || targetPos.gameObject.layer == IDamagable.LAYER_DEAD)
         {
 
-            PoolManager.instance.UsedPrefab(gameObject);
+            PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
             return;
         }
 
         Vector3 dir = (targetPos.position - transform.position).normalized;
         
         myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
-        transform.LookAt(targetPos);
+        transform.LookAt(targetPos.position);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -58,8 +61,20 @@ public class Missile : MonoBehaviour
         if (other.transform == targetPos)
         {
 
+            {
+
+                int n = (int)(targetPos.position.y - atker.position.y);
+
+                if (n > 0)
+                {
+
+                    if (Random.Range(0, ONE_MISS_PER_N_TIMES) < n) atk = 0;
+
+                }
+            }
             target.OnDamaged(atk, atker);
-            PoolManager.instance.UsedPrefab(gameObject);
+
+            PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
         }
     }
 }

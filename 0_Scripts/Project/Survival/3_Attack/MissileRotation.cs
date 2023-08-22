@@ -10,7 +10,7 @@ public class MissileRotation : MonoBehaviour
     private void Awake()
     {
 
-        rotate = new Vector3(60f * 0.02f, 0f, 0f);
+        rotate = new Vector3(120f * 0.02f, 0f, 0f);
     }
 
     private void FixedUpdate()

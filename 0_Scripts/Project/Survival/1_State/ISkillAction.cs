@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ISkillAction : IUnitAction
 {
 
-    public static readonly byte INFINITE_MP = 0;
+    public static readonly short INFINITE_MP = -100;
 
     [SerializeField] protected int usingMp;
 

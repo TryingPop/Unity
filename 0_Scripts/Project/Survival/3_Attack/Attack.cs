@@ -8,13 +8,13 @@ public abstract class Attack : MonoBehaviour
 {
 
     protected bool isAtk = false;
-    protected int coolTime;                     // 데미지 적용 쿨타임
+    protected short coolTime;                   // 데미지 적용 쿨타임
 
     public int atk;                             // 공격력
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
-    public int startAnimTime;                   // 애니메이션 시작 턴
-    public int atkTime;                         // 데미지 연산 시작 턴
+    [SerializeField] protected short startAnimTime;                   // 애니메이션 시작 턴
+    [SerializeField] protected short atkTime;                         // 데미지 연산 시작 턴
 
     public float atkRange;                      // 공격 범위
     public float chaseRange;
@@ -26,8 +26,8 @@ public abstract class Attack : MonoBehaviour
     protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
 
-        atkTime = _atkTime;
-        StartAnimTime = _animTime;
+        atkTime = (short)_atkTime;
+        startAnimTime = (short)_animTime;
 
         atkRange = _atkRange;
         chaseRange = _chaseRange;
@@ -46,7 +46,7 @@ public abstract class Attack : MonoBehaviour
         {
 
             value = value < 1 ? 1 : value;
-            atkTime = value;
+            atkTime = (short)value;
             
         }
     }
@@ -59,7 +59,7 @@ public abstract class Attack : MonoBehaviour
         {
 
             value = value < 1 ? 1 : value;
-            startAnimTime = value > atkTime ? atkTime : value;
+            StartAnimTime = value > atkTime ? atkTime : value;
         }
     }
 
@@ -86,23 +86,16 @@ public abstract class Attack : MonoBehaviour
 
 
 
-    public int CoolTime => coolTime;
+    public int CoolTime
+    {
+
+        get { return coolTime; }
+        set { coolTime = (short)value; }
+    }
+
 
     public abstract void OnAttack(Unit _unit);
 
-    public virtual void ActionAttack(Unit _unit)
-    {
-
-        coolTime++;
-
-        if (coolTime == startAnimTime) _unit.MyAnimator.SetTrigger($"Skill{_unit.MyState - (int)STATE_UNIT.SKILL0}");
-        else if (coolTime > atkTime)
-        {
-
-            coolTime = 0;
-            OnAttack(_unit);
-        }
-    }
 
     /// <summary>
     /// 범위안 타겟 찾기

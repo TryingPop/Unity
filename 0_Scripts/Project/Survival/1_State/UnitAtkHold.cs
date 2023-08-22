@@ -25,24 +25,38 @@ public class UnitAtkHold : UnitHold
     public override void Action(Unit _unit)
     {
 
-        _unit.MyAttacks[0].FindTarget(_unit, false);
+        Attack unitAttack = _unit.MyAttacks[0];
+        unitAttack.FindTarget(_unit, false);
 
         if (_unit.Target != null)
         {
 
             if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
-            _unit.transform.LookAt(_unit.Target.position);
-            
 
-            if (_unit.MyAttacks[0].IsAtk)
+            _unit.MyRigid.MoveRotation(Quaternion.LookRotation(
+                _unit.Target.position, _unit.transform.up));
+
+            if (unitAttack.IsAtk)
             {
 
-                _unit.MyAttacks[0].ActionAttack(_unit);
+                unitAttack.CoolTime++;
+                if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+                {
+
+                    _unit.MyAnimator.SetTrigger("Skill0");
+                }
+                else if (unitAttack.CoolTime > unitAttack.AtkTime)
+                {
+
+                    unitAttack.CoolTime = 0;
+                    unitAttack.OnAttack(_unit);
+                }
             }
             else
             {
 
-                _unit.MyAttacks[0].OnAttack(_unit);
+                unitAttack.IsAtk = true;
+
             }
         }
         else

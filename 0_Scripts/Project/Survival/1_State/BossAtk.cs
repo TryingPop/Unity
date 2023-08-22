@@ -21,18 +21,40 @@ public class BossAtk : IUnitAction
 
             float dis = Vector3.Distance(_unit.transform.position, _unit.Target.position);
 
-            if (dis < _unit.MyAttacks[0].atkRange)
+            Attack unitAttack = _unit.MyAttacks[0];
+
+            if (dis < unitAttack.atkRange)
             {
 
-                if (!_unit.MyAttacks[0].IsAtk)
+                if (!unitAttack.IsAtk)
                 {
 
-                    _unit.MyAttacks[0].IsAtk = true;
+
+                    unitAttack.IsAtk = true;
+                    unitAttack.Target = _unit.Target.GetComponent<Selectable>();
+                    _unit.transform.LookAt(_unit.Target.position);
+                    if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
                 }
                 else
                 {
 
-                    _unit.MyAttacks[0].ActionAttack(_unit);
+                    unitAttack.CoolTime++;
+                    if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+                    {
+
+                        _unit.MyAnimator.SetTrigger("Skill0");
+                    }
+                    
+                    if (unitAttack.CoolTime == (unitAttack.AtkTime / 2 < 1 ? 1 : unitAttack.AtkTime / 2))
+                    {
+
+                        unitAttack.OnAttack(_unit);
+                    }
+                    else if (unitAttack.CoolTime > unitAttack.AtkTime)
+                    {
+
+                        unitAttack.OnAttack(_unit);
+                    }
                 }
 
                 return;
@@ -48,12 +70,13 @@ public class BossAtk : IUnitAction
     {
 
         _unit.MyAttacks[0].IsAtk = false;
-        _unit.MyAgent.SetDestination(_unit.TargetPos);
+        _unit.MyAgent.ResetPath();
     }
 
     protected override void OnExit(Unit _unit, STATE_UNIT _nextState = STATE_UNIT.NONE)
     {
 
+        if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
         _unit.MyAttacks[0].IsAtk = false;
         base.OnExit(_unit, _nextState);
     }

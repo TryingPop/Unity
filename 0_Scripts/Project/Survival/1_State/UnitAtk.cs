@@ -45,37 +45,50 @@ public class UnitAtk : IUnitAction
 
                 float dis = Vector3.Distance(_unit.transform.position, _unit.Target.position);
 
+                Attack unitAttack = _unit.MyAttacks[0];
+
                 // 타겟이 살아있는 경우
-                if (dis < _unit.MyAttacks[0].atkRange)
+                if (dis < unitAttack.atkRange)
                 {
 
                     // 타겟이 공격 범위에 있으므로 공격 판정!
-                    if (!_unit.MyAttacks[0].IsAtk)
+                    if (!unitAttack.IsAtk)
                     {
 
                         // 대상을 향해 공격 준비
-                        _unit.MyAttacks[0].IsAtk = true;
-                        _unit.MyAttacks[0].Target = _unit.Target.GetComponent<Selectable>();
+                        unitAttack.IsAtk = true;
+                        unitAttack.Target = _unit.Target.GetComponent<Selectable>();
                         _unit.MyAgent.ResetPath();
-                        if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
                         _unit.transform.LookAt(_unit.Target.position);
-
+                        if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
                     }
                     else
                     {
 
                         // 준비가 완료되었으면 공격
-                        _unit.MyAttacks[0].ActionAttack(_unit);
+                        unitAttack.CoolTime++;
+
+                        if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+                        {
+
+                            _unit.MyAnimator.SetTrigger($"Skill0");
+                        }
+                        else if (unitAttack.CoolTime > unitAttack.AtkTime)
+                        {
+
+                            unitAttack.CoolTime = 0;
+                            unitAttack.OnAttack(_unit);
+                        }
                     }
 
                     return;
                 }
-                else if (dis < _unit.MyAttacks[0].chaseRange)
+                else if (dis < unitAttack.chaseRange)
                 {
 
                     // 타겟이 공격 범위 밖이므로 타겟을 향해 이동
                     _unit.MyAgent.SetDestination(_unit.Target.position);
-                    _unit.MyAttacks[0].IsAtk = false;
+                    unitAttack.IsAtk = false;
                     if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
 
                     return;

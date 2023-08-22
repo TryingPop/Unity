@@ -15,9 +15,20 @@ public class BossJump : ISkillAction
         // attack에 등록된 대로 행동!
         // _unit.MyAttacks[skillNum].ActionAttack(_unit);
 
+        Attack unitAttack = _unit.MyAttacks[skillNum];
+        unitAttack.CoolTime++;
+        if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+        {
 
-        _unit.MyAttacks[skillNum].ActionAttack(_unit);
+            _unit.MyAnimator.SetTrigger($"Skill{skillNum}");
+        }
+        else if (unitAttack.CoolTime > unitAttack.AtkTime)
+        {
 
+            unitAttack.CoolTime = 0;
+            unitAttack.OnAttack(_unit);
+        }
+       
 
         if (!_unit.MyAttacks[skillNum].IsAtk)
         {

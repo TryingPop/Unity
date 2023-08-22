@@ -39,16 +39,18 @@ public class UnitRepair : IUnitAction
         // 길 찾기 연산 중이면 행동 안함
         if (_unit.MyAgent.pathPending) return;
 
-        if (Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.position) < _unit.MyAttacks[0].atkRange * _unit.MyAttacks[0].atkRange)
+        Attack unitAttack = _unit.MyAttacks[0];
+
+        if (Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.position) < unitAttack.atkRange * unitAttack.atkRange)
         {
 
             // 수리 거리 안인지 확인
-            if (!_unit.MyAttacks[0].IsAtk)
+            if (!unitAttack.IsAtk)
             {
 
                 // 준비 상태
-                _unit.MyAttacks[0].IsAtk = true;
-                _unit.MyAttacks[0].Target = _unit.Target.GetComponent<Selectable>();
+                unitAttack.IsAtk = true;
+                unitAttack.Target = _unit.Target.GetComponent<Selectable>();
                 _unit.MyAgent.ResetPath();
                 if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
                 _unit.transform.LookAt(_unit.Target.position);
@@ -58,12 +60,24 @@ public class UnitRepair : IUnitAction
             {
 
                 // 준비 완료이므로 수리 시작
-                _unit.MyAttacks[0].ActionAttack(_unit);
+                // unitAttack.ActionAttack(_unit);
+                unitAttack.CoolTime++;
 
+                if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+                {
+
+                    _unit.MyAnimator.SetTrigger("Skill0");
+                }
+                else if (unitAttack.CoolTime > unitAttack.AtkTime)
+                {
+
+                    unitAttack.CoolTime = 0;
+                    unitAttack.OnAttack(_unit);
+                }
             }
 
             // 수리 다됐으면 상태 탈출
-            if (_unit.MyAttacks[0].Target.FullHp) OnExit(_unit);
+            if (unitAttack.Target.FullHp) OnExit(_unit);
             return;
         }
 
