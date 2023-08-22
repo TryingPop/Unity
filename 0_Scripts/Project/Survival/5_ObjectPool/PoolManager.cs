@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PoolManager : MonoBehaviour
 {
 
     public static PoolManager instance;
-
     [SerializeField] private PoolingData[] data;
     private Transform[] parents;
     private Stack<GameObject>[] usedPrefabs;
@@ -15,27 +15,27 @@ public class PoolManager : MonoBehaviour
     private void Awake()
     {
 
-        if (instance == null)
-        {
-
-            instance = this;
-        }
-        else
+        if (instance != null)
         {
 
             Destroy(gameObject);
+            return;
         }
+
+        instance = this;
 
         int len = data.Length;
         parents = new Transform[len];
 
+        // 부모 오브젝트 생성
         for (int i = 0; i < len; i++)
         {
 
-            GameObject go = new GameObject(data[i].prefab.name);
+            GameObject go = new GameObject(data[i].idx.ToString());
             go.transform.parent = transform;
             parents[i] = go.transform;
         }
+
 
         usedPrefabs = new Stack<GameObject>[len];
 
@@ -47,6 +47,7 @@ public class PoolManager : MonoBehaviour
 
         curNums = new int[len];
     }
+
 
     /// <summary>
     /// 생성 메서드
@@ -68,14 +69,13 @@ public class PoolManager : MonoBehaviour
 
                 curNums[_idx]++;
                 go = usedPrefabs[_idx].Pop();
-                go.SetActive(true);
+                go.gameObject.SetActive(true);
                 return go;
             }
         }
         catch
         {
 
-            Debug.LogError("풀 매니저 인덱스 에러");
             return null;
         }
 
@@ -85,40 +85,38 @@ public class PoolManager : MonoBehaviour
         go = Instantiate(data[_idx].prefab, transform);
         go.transform.parent = parents[_idx];
         return go;
-
     }
 
-    public void UsedPrefab(GameObject _prefab)
+    public void UsedPrefab(GameObject _prefab, int _idx)
     {
 
-        int idx = ChkIdx(_prefab);
-
-        if (idx == -1)
+        curNums[_idx]--;
+        if (usedPrefabs[_idx].Count < data[_idx].storageNum)
         {
 
-            Debug.LogError("풀 매니저에 등록되지 않은 프리팹입니다.");
-            return;
-        }
-
-        curNums[idx]--;
-        if (usedPrefabs[idx].Count < data[idx].storageNum)
-        {
-
-            usedPrefabs[idx].Push(_prefab);
-            _prefab.SetActive(false);
+            usedPrefabs[_idx].Push(_prefab);
+            _prefab.gameObject.SetActive(false);
         }
         else Destroy(_prefab);
     }
 
 
+    /// <summary>
+    /// 등록된 프리팹인지 검사한다!
+    /// </summary>
+    /// <param name="_prefab"></param>
+    /// <returns></returns>
     private int ChkIdx(GameObject _prefab)
     {
 
         int strLen = _prefab.name.Length;
+
         for (int i = 0; i < data.Length; i++)
         {
 
-            if (data[i].prefab.name == _prefab.name.Split("(Clone)")[0])
+            // 여기 방법을 바꿔야한다
+            // 갈비지가 하나씩 생성된다고 한다
+            if (_prefab.name.Split("(Clone)")[0] == data[i].prefab.name)
             {
 
                 return i;
