@@ -12,12 +12,12 @@ public class RangeDouble : RangeTarget
     {
 
         // Ç®¸µ 
-        GameObject go = PoolManager.instance.GetPrefabs(missileIdx, Missile.LAYER_BULLET);
+        GameObject go = PoolManager.instance.GetPrefabs(missileIdx, TargetMissile.LAYER_BULLET);
         if (go)
         {
 
             go.SetActive(true);
-            go.GetComponent<Missile>().Init(_unit.transform, _unit.Target, Target, atk);
+            go.GetComponent<TargetMissile>().Init(_unit.transform, _unit.Target, Target, atk);
 
             if (coolTime <= atkTime)
             {

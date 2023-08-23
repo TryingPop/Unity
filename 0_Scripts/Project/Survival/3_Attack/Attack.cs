@@ -23,6 +23,8 @@ public abstract class Attack : MonoBehaviour
 
     protected Selectable target;                // 추후에 사라질 변수! << player에 target을 selectable 형으로 바꿔서 쓸 것이다!
 
+    protected static RaycastHit[] hits;
+
     protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
 
@@ -31,6 +33,12 @@ public abstract class Attack : MonoBehaviour
 
         atkRange = _atkRange;
         chaseRange = _chaseRange;
+
+        // if (hits == null)
+        {
+
+        //    hits = new RaycastHit[10];
+        }
     }
 
     public int AtkTime
@@ -103,16 +111,18 @@ public abstract class Attack : MonoBehaviour
     /// <param name="isChase">true면 추적 범위, false면 공격 범위</param>
     public virtual void FindTarget(Unit _unit, bool isChase)
     {
-
         // 검사하는 유닛이 박스 콜라이더를 갖고 있어 hits는 최소 크기 1이 보장된다
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position,
-                   isChase ? chaseRange : atkRange, transform.forward, 0f, atkLayers);
+        // RaycastHit[] hits = Physics.SphereCastAll(transform.position,
+        //          isChase ? chaseRange : atkRange, transform.forward, 0f, atkLayers);
 
-
+        if (hits == null) hits = new RaycastHit[10];
+        
+        int cnt = Physics.SphereCastNonAlloc(transform.position, isChase ? chaseRange : atkRange, transform.forward, hits, 0f, atkLayers);
         float minDis = isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;
         _unit.Target = null;
 
-        for (int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < cnt; i++)
+        // for (int i = 0; i < hits.Length; i++)
         {
 
             if (hits[i].transform == transform)
@@ -130,5 +140,6 @@ public abstract class Attack : MonoBehaviour
                 _unit.Target = hits[i].transform;
             }
         }
+        
     }
 }

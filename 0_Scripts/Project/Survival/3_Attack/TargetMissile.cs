@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Missile : MonoBehaviour
+public class TargetMissile : MonoBehaviour
 {
 
     public static readonly int ONE_MISS_PER_N_TIMES = 5;
