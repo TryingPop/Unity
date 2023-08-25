@@ -34,10 +34,10 @@ public abstract class Attack : MonoBehaviour
         atkRange = _atkRange;
         chaseRange = _chaseRange;
 
-        // if (hits == null)
+        if (hits == null)
         {
 
-        //    hits = new RaycastHit[10];
+            hits = new RaycastHit[25];
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class Attack : MonoBehaviour
         // RaycastHit[] hits = Physics.SphereCastAll(transform.position,
         //          isChase ? chaseRange : atkRange, transform.forward, 0f, atkLayers);
 
-        if (hits == null) hits = new RaycastHit[10];
+        if (hits == null) hits = new RaycastHit[25];
         
         int cnt = Physics.SphereCastNonAlloc(transform.position, isChase ? chaseRange : atkRange, transform.forward, hits, 0f, atkLayers);
         float minDis = isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;

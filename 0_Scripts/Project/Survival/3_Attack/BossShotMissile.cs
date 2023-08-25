@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossShotMissile : MonoBehaviour
 {
-
-
 
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected Collider myCollider;
@@ -27,21 +26,25 @@ public class BossShotMissile : MonoBehaviour
 
     [SerializeField] protected LayerMask targetLayer;
 
-    public void Init(Vector3 _targetPos, int _atk,
+    public void Init(Vector3 _dir, int _atk,
         short _waitTurn, short _moveTurn, float _sizeUpSpeed)
     {
 
-        dir = (_targetPos - transform.position).normalized;
+        _dir.y = 0;
+        dir = _dir.normalized;
+        
         atk = _atk;
 
         waitTurn = _waitTurn;
         moveTurn = _moveTurn;
-        sizeUpSpeed = _sizeUpSpeed * Time.fixedTime;
+        sizeUpSpeed = _sizeUpSpeed;
 
         transform.localScale = Vector3.zero;
         myRigid.velocity = Vector3.zero;
 
+        transform.LookAt(_dir + transform.position);
 
+        calcTurn = 0;
         isMove = false;
         myCollider.isTrigger = false;
         myRigid.isKinematic = false;
@@ -81,7 +84,8 @@ public class BossShotMissile : MonoBehaviour
             else 
             {
 
-                Destroy(gameObject);
+                // Destroy(gameObject);
+                PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
             }
         }
 
@@ -91,12 +95,11 @@ public class BossShotMissile : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-
         if (other.CompareTag("Wall"))
         {
 
-            // 사용 아ㅗㄴ료!
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
         }
         else if (other.CompareTag("Unit"))
         {
