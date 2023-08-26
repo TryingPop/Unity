@@ -7,14 +7,14 @@ public class PrepareBuilding : MonoBehaviour
 
     [SerializeField] protected MeshRenderer myMesh;
 
-    protected bool isBuild = true;
+    [SerializeField] protected bool isBuild = true;
 
-    [SerializeField] protected int prefab
+    [SerializeField] protected int prefabIdx;
 
     private void OnTriggerStay(Collider other)
     {
         
-        if (other.CompareTag("Ground") && isBuild)
+        if (!other.CompareTag("Ground") && isBuild)
         {
 
             isBuild = false;
@@ -25,7 +25,7 @@ public class PrepareBuilding : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         
-        if (other.CompareTag("Wall"))
+        if (!other.CompareTag("Ground"))
         {
 
             isBuild = true;
@@ -54,11 +54,15 @@ public class PrepareBuilding : MonoBehaviour
         myMesh.material.color = color;
     }
 
-    public void Build()
+    public bool Build()
     {
 
-        if (!isBuild) return;
+        if (!isBuild) return false;
 
+        var go = PoolManager.instance.GetPrefabs(prefabIdx, 17);
 
+        go.transform.position = transform.position;
+
+        return true;
     }
 }
