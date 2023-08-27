@@ -54,15 +54,15 @@ public class PrepareBuilding : MonoBehaviour
         myMesh.material.color = color;
     }
 
-    public bool Build()
+    public GameObject Build()
     {
 
-        if (!isBuild) return false;
+        if (!isBuild) return null;
 
         var go = PoolManager.instance.GetPrefabs(prefabIdx, 17);
 
         go.transform.position = transform.position;
 
-        return true;
+        return go;
     }
 }
