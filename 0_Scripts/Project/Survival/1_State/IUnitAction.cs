@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class IUnitAction : MonoBehaviour
+public abstract class IUnitAction : IAction<Unit>
+    // MonoBehaviour
 {
 
 
-    public abstract void Action(Unit _unit);
+    // public abstract void Action(Unit _unit);
 
     public abstract void OnEnter(Unit _unit);
 
