@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TargetMissile : MonoBehaviour
@@ -10,7 +9,6 @@ public class TargetMissile : MonoBehaviour
     public static readonly int LAYER_BULLET = 14;
 
     protected Transform atker;
-    protected Transform targetPos;
     protected Selectable target;
 
     [SerializeField] protected Rigidbody myRigid;
@@ -20,6 +18,8 @@ public class TargetMissile : MonoBehaviour
 
     protected int atk;
 
+    [SerializeField] protected MissileRotation myRotation;
+
     /// <summary>
     /// 미사일 초기 세팅
     /// </summary>
@@ -28,12 +28,10 @@ public class TargetMissile : MonoBehaviour
     /// <param name="_target">대상</param>
     /// <param name="_moveSpeed">투사체 속도</param>
     /// <param name="_atk">공격력</param>
-    public void Init(Transform _attacker, Transform _targetPos, 
-        Selectable _target, int _atk)
+    public void Init(Transform _attacker, Selectable _target, int _atk)
     {
 
         atker = _attacker;
-        targetPos = _targetPos;
         target = _target;
         atk = _atk;
     }
@@ -42,28 +40,30 @@ public class TargetMissile : MonoBehaviour
     {
 
         // 유도 !
-        if (targetPos == null || targetPos.gameObject.layer == IDamagable.LAYER_DEAD)
+        if (target == null || target.gameObject.layer == IDamagable.LAYER_DEAD)
         {
 
             PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
             return;
         }
 
-        Vector3 dir = (targetPos.position - transform.position).normalized;
+        Vector3 dir = (target.transform.position - transform.position).normalized;
         
         myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
-        transform.LookAt(targetPos.position);
+        transform.LookAt(target.transform.position);
+
+        myRotation.Rotation();
     }
 
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.transform == targetPos)
+        if (other.transform == target.transform)
         {
 
             {
 
-                int n = (int)(targetPos.position.y - atker.position.y);
+                int n = (int)(target.transform.position.y - atker.position.y);
 
                 if (n > 0)
                 {
