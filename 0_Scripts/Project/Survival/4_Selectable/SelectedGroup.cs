@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -10,7 +8,9 @@ public class SelectedGroup
 
     private List<Selectable> selected;
     
-    public static readonly int MAX_SELECT = 16;
+    public static readonly int MAX_SELECT = 30;
+
+    private int actionNum;
 
     public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }
     
@@ -23,28 +23,27 @@ public class SelectedGroup
     public void Clear()
     {
 
+        actionNum = 0;
         selected.Clear();
     }
 
 
-    public void Select(Transform _target, bool _putLS)
+    public void Select(Selectable _target, bool _putLS)
     {
 
         if (_target == null) return;
-        Selectable select = _target.GetComponent<Selectable>();
-        if (select == null) return;
 
         if (_putLS)
         {
 
-            if (IsContains(select)) DeSelect(select);
-            else Add(select);
+            if (IsContains(_target)) DeSelect(_target);
+            else Add(_target);
         }
         else
         {
 
             Clear();
-            Add(select);
+            Add(_target);
         }
 
         ChkDead();
@@ -65,6 +64,40 @@ public class SelectedGroup
             {
 
                 selected.Add(_select);
+
+                if (selected.Count == 1)
+                {
+
+                    actionNum = _select.myActionNum;
+                }
+                else if (selected.Count == 2)
+                {
+
+                    actionNum = 44040212;
+                    
+                    /*
+                    actionNum = 0;
+
+                    // LM, S, LP, H, LA 
+                    for (int i = 1; i <= 5; i++)
+                    {
+
+                        if (i % 2 == 1)
+                        {
+
+                            actionNum += 1 << (i + InputManager.MOUSE_R);
+                        }
+                        else
+                        {
+
+                            actionNum += 1 << i;
+                        }
+                    }
+
+                    // Debug.Log(actionNum);       // 44040212
+                    */
+                }
+
             }
         }
     }
@@ -105,6 +138,12 @@ public class SelectedGroup
         return selected;
     }
 
+    public int GetSize()
+    {
+
+        return selected.Count;
+    }
+
     /// <summary>
     /// 명령하기
     /// </summary>
@@ -112,25 +151,41 @@ public class SelectedGroup
     /// <param name="_pos">좌표</param>
     /// <param name="_trans">대상</param>
     /// <param name="_add">예약 명령 여부</param>
-    public void Command(int _type, Vector3 _pos, Transform _trans = null, bool _add = false)
+    public void GiveCommand(int _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
     {
-
-        // 선택된 유닛이 없는 경우 실행 안함
-        if (selected.Count == 0) return;
 
         // 대상이 있으면 대상을 쫓고 없으면 뭉치지 않게 배치를 한다
         bool posBatch = _trans == null;
-        Command cmd = new Command((byte)selected.Count, _type, _pos, _trans);   // << 함께 참조하는게 문제였슴니다!
 
-        // 배치 유무 따지고 명령 하달
-        for (int i = 0; i < selected.Count; i++)
+        // MOUSE_R은 캐릭터쪽에서 해결!
+        if (_type != InputManager.MOUSE_R) _type %= InputManager.MOUSE_L;
+
+        // 명령 풀링
+        Command cmd = Command.GetCommand((byte)selected.Count, _type, _pos, _trans);   // << 함께 참조하는게 문제였슴니다!
+
+        // 명령 생성에서 최대 명령 수 초과하면 null을 생성하므로 
+        if (cmd != null)
         {
 
-            // if (posBatch) SetNextPos(i, ref _pos);
-            selected[i].GetCommand(cmd, _add);
+            // 배치 유무 따지고 명령 하달
+            for (int i = 0; i < selected.Count; i++)
+            {
+
+                selected[i].GetCommand(cmd, _add);
+            }
         }
     }
 
+    public bool ChkCommand(int _type)
+    {
 
+        // 선택된 유닛이 없는 경우 실행 안함
+        // if (selected.Count == 0) return false;
+
+        // 행동할 수 없는 경우면 전달자체를 안한다!
+        if (_type != InputManager.MOUSE_R && (1 << _type & actionNum) == 0) return false;
+
+        return true;
+    }
 
 }
