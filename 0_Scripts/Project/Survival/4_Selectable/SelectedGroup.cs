@@ -10,7 +10,7 @@ public class SelectedGroup
     
     public static readonly int MAX_SELECT = 30;
 
-    private int actionNum;
+    public int actionNum;
 
     public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }
     
@@ -73,8 +73,8 @@ public class SelectedGroup
                 else if (selected.Count == 2)
                 {
 
-                    actionNum = 44040212;
-                    
+                    actionNum = 43028;
+
                     /*
                     actionNum = 0;
 
@@ -85,7 +85,8 @@ public class SelectedGroup
                         if (i % 2 == 1)
                         {
 
-                            actionNum += 1 << (i + InputManager.MOUSE_R);
+                            Debug.Log(i);
+                            actionNum += 1 << (i + InputManager.MOUSE_L);
                         }
                         else
                         {
@@ -94,7 +95,7 @@ public class SelectedGroup
                         }
                     }
 
-                    // Debug.Log(actionNum);       // 44040212
+                    Debug.Log(actionNum);       // 43028
                     */
                 }
 
@@ -160,6 +161,7 @@ public class SelectedGroup
         // MOUSE_R은 캐릭터쪽에서 해결!
         if (_type != InputManager.MOUSE_R) _type %= InputManager.MOUSE_L;
 
+
         // 명령 풀링
         Command cmd = Command.GetCommand((byte)selected.Count, _type, _pos, _trans);   // << 함께 참조하는게 문제였슴니다!
 
@@ -174,6 +176,11 @@ public class SelectedGroup
                 selected[i].GetCommand(cmd, _add);
             }
         }
+        else
+        {
+
+            Debug.Log("명령이 가득차서 보낼 수 없습니다.");
+        }
     }
 
     public bool ChkCommand(int _type)
@@ -184,7 +191,6 @@ public class SelectedGroup
 
         // 행동할 수 없는 경우면 전달자체를 안한다!
         if (_type != InputManager.MOUSE_R && (1 << _type & actionNum) == 0) return false;
-
         return true;
     }
 
