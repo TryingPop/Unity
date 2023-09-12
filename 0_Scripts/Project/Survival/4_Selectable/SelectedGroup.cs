@@ -8,7 +8,7 @@ public class SelectedGroup
 
     private List<Selectable> selected;
     
-    public static readonly int MAX_SELECT = 30;
+    // public static readonly int MAX_SELECT = 30;
 
     public int actionNum;
 
@@ -17,7 +17,7 @@ public class SelectedGroup
     public SelectedGroup()
     {
 
-        selected = new List<Selectable>(MAX_SELECT);
+        selected = new List<Selectable>(VariableManager.MAX_SELECT);
     }
 
     public void Clear()
@@ -57,7 +57,7 @@ public class SelectedGroup
     {
 
         if (_select == null) return;
-        else if (selected.Count < MAX_SELECT)
+        else if (selected.Count < VariableManager.MAX_SELECT)
         {
 
             if (!selected.Contains(_select))
@@ -113,7 +113,7 @@ public class SelectedGroup
         {
 
             if (!selected[i].gameObject.activeSelf 
-                || selected[i].gameObject.layer == IDamagable.LAYER_DEAD)
+                || selected[i].gameObject.layer == VariableManager.LAYER_DEAD)
             {
 
                 selected.Remove(selected[i]);
@@ -155,15 +155,12 @@ public class SelectedGroup
     public void GiveCommand(int _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
     {
 
-        // 대상이 있으면 대상을 쫓고 없으면 뭉치지 않게 배치를 한다
-        bool posBatch = _trans == null;
-
         // MOUSE_R은 캐릭터쪽에서 해결!
-        if (_type != InputManager.MOUSE_R) _type %= InputManager.MOUSE_L;
+        // if (_type != VariableManager.MOUSE_R) _type %= VariableManager.MOUSE_L;
 
 
         // 명령 풀링
-        Command cmd = Command.GetCommand((byte)selected.Count, _type, _pos, _trans);   // << 함께 참조하는게 문제였슴니다!
+        Command cmd = Command.GetCommand((byte)selected.Count, _type, _pos, _trans);
 
         // 명령 생성에서 최대 명령 수 초과하면 null을 생성하므로 
         if (cmd != null)
@@ -173,7 +170,38 @@ public class SelectedGroup
             for (int i = 0; i < selected.Count; i++)
             {
 
-                selected[i].GetCommand(cmd, _add);
+                selected[i].GetCommand(cmd, _add, true);
+            }
+        }
+        else
+        {
+
+            Debug.Log("명령이 가득차서 보낼 수 없습니다.");
+        }
+    }
+
+    /// <summary>
+    /// 명령하기
+    /// </summary>
+    public void GiveCommand(int _type, bool _add)
+    {
+
+        // MOUSE_R은 캐릭터쪽에서 해결!
+        // if (_type != VariableManager.MOUSE_R) _type %= VariableManager.MOUSE_L;
+
+
+        // 명령 풀링
+        Command cmd = Command.GetCommand((byte)selected.Count, _type);
+
+        // 명령 생성에서 최대 명령 수 초과하면 null을 생성하므로 
+        if (cmd != null)
+        {
+
+            // 배치 유무 따지고 명령 하달
+            for (int i = 0; i < selected.Count; i++)
+            {
+
+                selected[i].GetCommand(cmd, _add, false);
             }
         }
         else
@@ -190,7 +218,7 @@ public class SelectedGroup
         // if (selected.Count == 0) return false;
 
         // 행동할 수 없는 경우면 전달자체를 안한다!
-        if (_type != InputManager.MOUSE_R && (1 << _type & actionNum) == 0) return false;
+        if (_type != VariableManager.MOUSE_R && (1 << _type & actionNum) == 0) return false;
         return true;
     }
 
