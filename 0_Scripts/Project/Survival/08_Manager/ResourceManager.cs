@@ -1,21 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ResourceManager : MonoBehaviour
 {
 
-    public static ResourceManager instance;    // 싱글톤
+    public static ResourceManager instance;     // 싱글톤
+                                                // 적도 돈을 벌게 하려면 instance 선언하면 안된다!
+                                                // 그리고 GameManager에서 관리하게 할 예정
 
-    public int goldAmount;
+    public int goldAmount;              // 현재 보유 중인 골드양
 
     public int curPopulation;           // 현재 유지 중인 인구
-    public int populationAmount;        // 최대 인구
+    public int maxPopulation;           // 최대 인구
 
+    [SerializeField] private Text goldText;
+    [SerializeField] private Text populationText;
     private void Awake()
     {
         
-        if (instance = null)
+        if (instance == null)
         {
 
             instance = this;
@@ -25,6 +30,8 @@ public class ResourceManager : MonoBehaviour
 
             Destroy(gameObject);
         }
+
+        UpdateText();
     }
 
     public enum TYPE_RESOURCE { GOLD, POPULATION };
@@ -43,7 +50,7 @@ public class ResourceManager : MonoBehaviour
 
             case TYPE_RESOURCE.POPULATION:
 
-                return populationAmount - curPopulation >= _price;
+                return maxPopulation - curPopulation >= _price;
 
             default:
 
@@ -65,11 +72,13 @@ public class ResourceManager : MonoBehaviour
             case TYPE_RESOURCE.GOLD:
 
                 goldAmount -= _amount;
+                UpdateText();
                 break;
 
             case TYPE_RESOURCE.POPULATION:
 
-                populationAmount -= _amount;
+                maxPopulation -= _amount;
+                UpdateText();
                 break;
 
             default:
@@ -80,7 +89,7 @@ public class ResourceManager : MonoBehaviour
     /// <summary>
     /// 자원 획득
     /// </summary>
-    public void AddResource(TYPE_RESOURCE _type, int _amount)
+    public void AddResources(TYPE_RESOURCE _type, int _amount)
     {
 
         if (_amount < 0) _amount = 0;
@@ -92,12 +101,14 @@ public class ResourceManager : MonoBehaviour
 
                 goldAmount += _amount;
                 if (goldAmount > VariableManager.MAX_GOLD) goldAmount = VariableManager.MAX_GOLD;
+                UpdateText();
                 break;
 
             case TYPE_RESOURCE.POPULATION:
 
-                populationAmount += _amount;
-                if (populationAmount > VariableManager.MAX_POPULATION) populationAmount = VariableManager.MAX_POPULATION;
+                maxPopulation += _amount;
+                if (maxPopulation > VariableManager.MAX_POPULATION) maxPopulation = VariableManager.MAX_POPULATION;
+                UpdateText();
                 break;
 
             default:
@@ -105,20 +116,10 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    /*
-    private void Awake()
+    private void UpdateText()
     {
 
-        if (instance == null)
-        {
-
-            instance = this;
-        }
-        else
-        {
-
-            Destroy(gameObject);
-        }
+        goldText.text = goldAmount.ToString();
+        populationText.text = $"{curPopulation} / {maxPopulation}";
     }
-    */
 }
