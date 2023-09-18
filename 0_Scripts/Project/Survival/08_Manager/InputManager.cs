@@ -208,14 +208,15 @@ public class InputManager : MonoBehaviour
                         {
 
                             bool putLS = Input.GetKey(KeyCode.LeftShift);
-
+                            
                             // 타겟이 있고, 선택 가능한 유닛인 경우에만 여기로 온다
                             if (isDoubleClicked)
                             {
 
                                 // 더블 클릭인지 확인한다
-                                Debug.Log("더블 클릭 메소드 실행~");
+                                DoubleClick(target.selectId);
                                 isDoubleClicked = false;
+                                Debug.Log("더블 클릭 메서드 실행");
                             }
                             else
                             {
@@ -299,15 +300,6 @@ public class InputManager : MonoBehaviour
         }
         */
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-            // 화면 크기로 찍힌다
-            // Debug.Log(Input.mousePosition);
-
-
-        }
-
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
 
@@ -381,40 +373,17 @@ public class InputManager : MonoBehaviour
         IsActionUI = true;
     }
 
-    /// <summary>
-    /// 멀티 선택
-    /// </summary>
     private void DragSelect()
     {
 
-        // isDrag = false;
-        // if (Vector3.Distance(clickPos, Input.mousePosition) < 40f) return;
         bool putLS = Input.GetKey(KeyCode.LeftShift);
-
-        Vector3 p1, p2;
-        {
-
-            Ray ray = cam.ScreenPointToRay(clickPos);
-            if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer))
-            {
-
-                p1 = hit.point;
-            }
-            else return;
-        }
-
-        {
-
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer)) p2 = hit.point;
-            else return;
-        }
 
         // 여기서는 BoxCastNonAlloc을 사용하지 않는다
         // 사용 빈도수도 낮고, 히트의 크기를 정하기가 쉽지 않다
-        ChkBox(p1, p2, out RaycastHit[] hits);
+        ChkBox(clickPos, Input.mousePosition, out RaycastHit[] hits);
 
-        if (hits.Length > 0)
+        if (hits != null 
+            && hits.Length > 0)
         {
 
             // 선택된게 1개 이상인 경우 기존꺼 초기화한다
@@ -431,21 +400,21 @@ public class InputManager : MonoBehaviour
         ChkSelected();
     }
 
-    public void DoubleClick()
+    public void DoubleClick(int chkId)
     {
 
         bool putLS = Input.GetKey(KeyCode.LeftShift);
 
         // 화면 크기를 가져온다
-        // float xSize = Screen.width;
-        // float ySize = Screen.height;
         Vector3 rightTop = new Vector3(Screen.width, Screen.height);
         Vector3 leftBottom = Vector3.zero;
 
         // 여기서 이제 크기?
         ChkBox(rightTop, leftBottom, out RaycastHit[] hits);
 
-        if (hits.Length > 0)
+
+        if (hits != null 
+            && hits.Length > 0)
         {
 
             // 선택된게 1개 이상인 경우 기존꺼 초기화한다
@@ -456,19 +425,54 @@ public class InputManager : MonoBehaviour
 
                 // 여기 조건에 하나 더 추가해야한다
                 if (((1 << hits[i].transform.gameObject.layer) & selectLayer) == 0) continue;
-                                
-                curGroup.Add(hits[i].transform.GetComponent<Selectable>());
+                
+                Selectable select = hits[i].transform.GetComponent<Selectable>();
+
+                if (select == null || select.selectId != chkId) continue;
+                curGroup.Add(select);
             }
         }
 
         ChkSelected();
     }
 
-    private void ChkBox(Vector3 p1, Vector3 p2, out RaycastHit[] hits) 
+
+    private void ChkBox(Vector3 screenPos1, Vector3 screenPos2, out RaycastHit[] hits) 
     {
 
-        Vector3 center = (p1 + p2) * 0.5f;
-        Vector3 half = new Vector3(Mathf.Abs(p1.x - p2.x), 60f, Mathf.Abs(p1.z - p2.z)) * 0.5f;
+        {
+
+            // screenPos1에 대한 지면 좌표 찾기
+            Ray ray = cam.ScreenPointToRay(screenPos1);
+            if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer))
+            {
+
+                screenPos1 = hit.point;
+            }
+            else 
+            {
+
+                hits = null;
+                return;
+            }
+        }
+
+        {
+
+            // screenPos2에 대한 지면 좌표 찾기
+            Ray ray = cam.ScreenPointToRay(screenPos2);
+            if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer)) screenPos2 = hit.point;
+            else 
+            {
+
+                hits = null;
+                return;
+            }
+        }
+
+        // Physics.BoxCastAll에 맞춰 찾는다
+        Vector3 center = (screenPos1 + screenPos2) * 0.5f;
+        Vector3 half = new Vector3(Mathf.Abs(screenPos1.x - screenPos2.x), 60f, Mathf.Abs(screenPos1.z - screenPos2.z)) * 0.5f;
 
         hits = Physics.BoxCastAll(center, half, Vector3.up, Quaternion.identity, 0f, targetLayer);
     }
