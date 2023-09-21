@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class InputManager : MonoBehaviour
 {
@@ -57,7 +58,6 @@ public class InputManager : MonoBehaviour
                 
                 // 유닛이 없거나 입력 받을 수 없으면 0으로 강제 초기화 하고 종료
                 myState = STATE_KEY.NONE;
-                // IsActionUI = true;
                 buttonManager.IsActionUI = true;
                 return;
             }
@@ -75,12 +75,12 @@ public class InputManager : MonoBehaviour
             else if (btnOpt == VariableManager.STATE_BUTTON_OPTION.BUILD)
             {
 
-                // 건물 짓기!
+                // 건물 짓기
                 building = null;
                 worker = curGroup.Get()[0];
                 BuildGroup group = buildManager.GetGroup(btnOpt);
-
                 buttonManager.SetBuildButton(group);
+
                 buttonManager.IsBuildUI = true;
             }
             else
@@ -116,6 +116,8 @@ public class InputManager : MonoBehaviour
 
         if (myState == STATE_KEY.NONE)
         {
+
+            // 아무상태도 아닐 때
             if (Input.GetKeyDown(KeyCode.M)) MyState = 1;
             else if (Input.GetKeyDown(KeyCode.S)) MyState = 2;
             else if (Input.GetKeyDown(KeyCode.P)) MyState = 3;
@@ -125,57 +127,9 @@ public class InputManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.W)) MyState = 7;
             else if (Input.GetKeyDown(KeyCode.E)) MyState = 8;
             // 오른쪽 버튼 클릭
-            else if (Input.GetMouseButtonDown(1)) MouseButtonR();
-            // 여기서 Mouse 왼쪽 버튼 기능 하자!
-            // 그리고 멀티 선택도!
-        }
-        else if (buttonManager.IsBuildUI)
-        {
-
-            // Build 타입으로?
-            if (building == null)
+            else if (Input.GetMouseButtonDown(0))
             {
 
-                if (Input.GetKeyDown(KeyCode.Q)) SetBuild(0);
-                else if (Input.GetKeyDown(KeyCode.W)) SetBuild(1);
-                else if (Input.GetKeyDown(KeyCode.E)) SetBuild(2);
-                else if (Input.GetKeyDown(KeyCode.Escape)) 
-                {
-
-                    worker = null;
-                    MyState = 0; 
-                }
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1)) MyState = 0;
-        // 여기에 else if 로 명령 전달되게!
-
-        if (Input.GetMouseButtonDown(0))
-        {
-
-            if (Input.mousePosition.y < 250)
-            {
-
-                Debug.Log("HUD 위치입니다!");
-            }
-
-            else if (myState != STATE_KEY.NONE)
-            {
-
-                // 명령 수행의 경우 누르는 위치에 실행하게 한다
-                bool putLS = Input.GetKey(KeyCode.LeftShift);
-
-                Vector3 pos = Vector3.positiveInfinity;
-                Selectable target = null;
-
-                ChkRay(ref pos, ref target);
-                GiveCommand(putLS, pos, target);
-
-                isCommand = true;
-            }
-            else 
-            { 
-                    
                 // 명령이 아닌 선택의 경우 시작지점만 알린다
                 clickPos = Input.mousePosition;
                 isDrag = true;
@@ -188,20 +142,15 @@ public class InputManager : MonoBehaviour
                     clickTime = -1f;
                 }
             }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-
-            if (isCommand)
+            else if (Input.GetMouseButtonUp(0))
             {
 
-                isCommand = false;
-            }
-            else
-            {
+                if (isCommand)
+                {
 
-                if (Vector3.Distance(clickPos, Input.mousePosition) < 10f)
+                    isCommand = false;
+                }
+                else if (Vector3.Distance(clickPos, Input.mousePosition) < 10f)
                 {
 
                     // 유닛 충돌 체크 없으면 비우지 않는다!
@@ -210,19 +159,19 @@ public class InputManager : MonoBehaviour
 
                     ChkRay(ref pos, ref target);
 
-                        
+
                     if (target != null
                         && ((1 << target.gameObject.layer) & selectLayer) != 0)
                     {
 
                         bool putLS = Input.GetKey(KeyCode.LeftShift);
-                            
+
                         // 타겟이 있고, 선택 가능한 유닛인 경우에만 여기로 온다
                         if (isDoubleClicked)
                         {
 
                             // 더블 클릭인지 확인한다
-                            DoubleClick(target.selectId);
+                            DoubleClick(target.selectIdx);
                             isDoubleClicked = false;
                         }
                         else
@@ -231,7 +180,10 @@ public class InputManager : MonoBehaviour
                             // 그냥 선택 구간이다
                             curGroup.Select(target, putLS);
 
-                            target.GiveButtonInfo(buttonManager.buttons);
+                            if (curGroup.GetSize() == 0) buttonManager.ClearButton();
+                            else if (curGroup.GetSize() == 1) target.GiveButtonInfo(buttonManager.buttons);
+                            else target.ChkButtons(buttonManager.buttons);
+
                             ChkSelected();
                             clickTime = Time.time;
                         }
@@ -243,12 +195,114 @@ public class InputManager : MonoBehaviour
                     // 드래그!
                     DragSelect();
                 }
-                    
+
                 isDrag = false;
             }
+            else if (Input.GetMouseButtonDown(1)) MouseButtonR();
+        }
+        else if (buttonManager.IsBuildUI)
+        {
 
+            // Build 타입으로?
+            if (building == null)
+            {
+
+                // 건물 버튼을 안누른 경우
+                if (Input.GetKeyDown(KeyCode.Q)) SetBuild(0);
+                else if (Input.GetKeyDown(KeyCode.W)) SetBuild(1);
+                else if (Input.GetKeyDown(KeyCode.E)) SetBuild(2);
+                else if (Input.GetKeyDown(KeyCode.Escape)) 
+                {
+
+                    buttonManager.IsBuildUI = false;
+                    worker = null;
+                    MyState = 0; 
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+
+                    bool putLS = Input.GetKey(KeyCode.LeftShift);
+
+                    Vector3 pos = Vector3.positiveInfinity;
+                    Selectable target = null;
+
+                    ChkRay(ref pos, ref target);
+
+                    curGroup.GiveCommand(VariableManager.MOUSE_R, pos, target, putLS);
+                }
+            }
+            else
+            {
+
+                // 건물 버튼을 누른 경우
+                // 즉 건물 건설 바로 앞 단계!
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+                // 건물 위치를 마우스 위치로!
+                if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer)) 
+                {
+
+                    Vector3 pos = new Vector3(Mathf.FloorToInt(hit.point.x), Mathf.FloorToInt(hit.point.y), Mathf.FloorToInt(hit.point.z));
+                    building.transform.position = pos;
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+
+                    var go = building.Build();
+                    if (go)
+                    {
+
+                        // 건물 건설
+                        Vector3 pos = go.transform.position;
+
+                        Building target = go.GetComponent<Building>();
+                        target.TargetPos = pos;
+                        target.DisableBuilding(building.PrefabIdx);
+                        GiveCommand(Input.GetKey(KeyCode.LeftShift), pos, target);
+
+                        buttonManager.IsBuildUI = false;
+                        building.gameObject.SetActive(false);
+                        building = null;
+                        worker = null;
+
+                        MyState = 0;
+                    }
+                }
+                else if (Input.GetKeyDown(KeyCode.Escape) 
+                    || Input.GetMouseButton(1))
+                {
+
+                    buttonManager.IsBuildUI = false;
+                    building.gameObject.SetActive(false);
+                    building = null;
+                    worker = null;
+                    MyState = 0;
+                }
+            }
+        }
+        else
+        {
+            
+            // 버튼을 누른 상태!
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1)) MyState = 0;
+            else if (Input.GetMouseButtonDown(0))
+            {
+
+
+                // 명령 수행의 경우 누르는 위치에 실행하게 한다
+                bool putLS = Input.GetKey(KeyCode.LeftShift);
+
+                Vector3 pos = Vector3.positiveInfinity;
+                Selectable target = null;
+
+                ChkRay(ref pos, ref target);
+                GiveCommand(putLS, pos, target);
+                isCommand = true;
+            }
         }
 
+        // 상황 상관없이 체력바를 보여주는 거기에 밑에 따로 빼놨다
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
 
@@ -262,7 +316,6 @@ public class InputManager : MonoBehaviour
     private void MouseButtonR()
     {
 
-        myState = STATE_KEY.MOUSE_R;
         bool putLS = Input.GetKey(KeyCode.LeftShift);
 
         Vector3 pos = Vector3.positiveInfinity;
@@ -270,9 +323,11 @@ public class InputManager : MonoBehaviour
 
         ChkRay(ref pos, ref target);
 
-        GiveCommand(putLS, pos, target);
-        // IsActionUI = true;
+        curGroup.GiveCommand(VariableManager.MOUSE_R, pos, target, putLS);
+
         buttonManager.IsActionUI = true;
+
+        myState = STATE_KEY.NONE;
     }
 
     private void ChkRay(ref Vector3 _pos, ref Selectable _target)
@@ -346,8 +401,10 @@ public class InputManager : MonoBehaviour
 
                 Selectable select = hits[i].transform.GetComponent<Selectable>();
 
+                curGroup.Add(select);
+
                 // 여기에 버튼 정보 조회
-                if (curGroup.GetSize() == 0)
+                if (curGroup.GetSize() == 1)
                 {
 
                     select.GiveButtonInfo(buttonManager.buttons);
@@ -355,10 +412,10 @@ public class InputManager : MonoBehaviour
                 else
                 {
 
-                    // num = select.ChkButtons(buttonManager.buttons);
+                    // 여기서 버튼 체크 ㄱㄱ
+                    select.ChkButtons(buttonManager.buttons);
                 }
 
-                curGroup.Add(select);
             }
         }
 
@@ -378,7 +435,7 @@ public class InputManager : MonoBehaviour
         ChkBox(rightTop, leftBottom, out RaycastHit[] hits);
 
 
-        // 여기에 버튼 체크
+        // 여기는 버튼 체크를 따로 하지 않는다
         if (hits != null 
             && hits.Length > 0)
         {
@@ -394,7 +451,7 @@ public class InputManager : MonoBehaviour
                 
                 Selectable select = hits[i].transform.GetComponent<Selectable>();
 
-                if (select == null || select.selectId != chkId) continue;
+                if (select == null || select.selectIdx != chkId) continue;
                 curGroup.Add(select);
             }
         }
@@ -444,8 +501,14 @@ public class InputManager : MonoBehaviour
     }
 
 
-    public void ChkSelected()
+    public void ChkSelected(Selectable _selectable = null)
     {
+
+        if (_selectable)
+        {
+
+            _selectable.ChkButtons(buttonManager.buttons);
+        }
 
         selectedUI.SetTargets(curGroup.Get());
         buttonManager.SetButton();
@@ -457,8 +520,7 @@ public class InputManager : MonoBehaviour
         building = buttonManager.GetBuilding(_idx);
         building.gameObject.SetActive(true);
 
-        // 캔슬 버튼 활성화
-
+        buttonManager.IsActionUI = false;
     }
 
 

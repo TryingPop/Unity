@@ -57,7 +57,7 @@ public class ButtonManager : MonoBehaviour
 
     private void Awake()
     {
-        
+
         if (instance == null)
         {
 
@@ -70,10 +70,20 @@ public class ButtonManager : MonoBehaviour
         }
 
         buttons = new ButtonInfo[VariableManager.MAX_BUTTONS];
+
+        ClearButton();
     }
 
     
+    public void ClearButton()
+    {
 
+        for (int i = 0; i < buttons.Length; i++)
+        {
+
+            buttons[i] = ButtonInfo.Empty;
+        }
+    }
 
     
     public bool ChkButton(int value)
