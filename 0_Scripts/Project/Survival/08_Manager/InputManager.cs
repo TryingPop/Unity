@@ -159,7 +159,6 @@ public class InputManager : MonoBehaviour
 
                     ChkRay(ref pos, ref target);
 
-
                     if (target != null
                         && ((1 << target.gameObject.layer) & selectLayer) != 0)
                     {
@@ -258,7 +257,9 @@ public class InputManager : MonoBehaviour
 
                         Building target = go.GetComponent<Building>();
                         target.TargetPos = pos;
+                        
                         target.DisableBuilding(building.PrefabIdx);
+
                         GiveCommand(Input.GetKey(KeyCode.LeftShift), pos, target);
 
                         buttonManager.IsBuildUI = false;
@@ -267,6 +268,7 @@ public class InputManager : MonoBehaviour
                         worker = null;
 
                         MyState = 0;
+                        isCommand = true;
                     }
                 }
                 else if (Input.GetKeyDown(KeyCode.Escape) 
