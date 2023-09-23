@@ -6,25 +6,28 @@ public class UnitAtkNone : UnitNone
 {
 
     private static UnitAtkNone instance;
-    private void Awake()
+
+    public new static UnitAtkNone Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
+                instance = new UnitAtkNone();
+            }
+
+            return instance;
         }
     }
 
     public override void Action(Unit _unit)
     {
 
-        _unit.MyAttacks[0].FindTarget(_unit, true);
+        // _unit.MyAttacks[0].FindTarget(_unit, true);
+        _unit.MyAttack.FindTarget(_unit, true);
         if (_unit.Target != null) OnExit(_unit, STATE_UNIT.ATTACK);
     }
 

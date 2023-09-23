@@ -7,25 +7,27 @@ public class UnitAtkHold : UnitHold
 
     private static UnitAtkHold instance;
 
-    private void Awake()
+    public new static UnitAtkHold Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
+                instance = new UnitAtkHold();
+            }
+
+            return instance;
         }
     }
 
     public override void Action(Unit _unit)
     {
 
-        Attack unitAttack = _unit.MyAttacks[0];
+        // Attack unitAttack = _unit.MyAttacks[0];
+        Attack unitAttack = _unit.MyAttack;
         unitAttack.FindTarget(_unit, false);
 
         if (_unit.Target != null)
@@ -34,29 +36,35 @@ public class UnitAtkHold : UnitHold
             if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
 
             _unit.MyRigid.MoveRotation(Quaternion.LookRotation(
-                _unit.Target.position, _unit.transform.up));
+                _unit.Target.transform.position, _unit.transform.up));
 
-            if (unitAttack.IsAtk)
+            // if (unitAttack.IsAtk)
+            if (_unit.MyTurn != 0)
             {
 
-                unitAttack.CoolTime++;
-                if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+                // unitAttack.CoolTime++;
+                _unit.MyTurn++;
+
+                // if (unitAttack.CoolTime == unitAttack.StartAnimTime)
+                if (_unit.MyTurn == unitAttack.StartAnimTime)
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
                 }
-                else if (unitAttack.CoolTime > unitAttack.AtkTime)
+                // else if (unitAttack.CoolTime > unitAttack.AtkTime)
+                else if (_unit.MyTurn > unitAttack.AtkTime)
                 {
 
-                    unitAttack.CoolTime = 0;
+                    // unitAttack.CoolTime = 0;
+                    _unit.MyTurn = 0;
                     unitAttack.OnAttack(_unit);
                 }
             }
             else
             {
 
-                unitAttack.IsAtk = true;
-
+                // unitAttack.IsAtk = true;
+                _unit.MyTurn++;
             }
         }
         else

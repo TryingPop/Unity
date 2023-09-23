@@ -7,18 +7,19 @@ public class UnitNone : IUnitAction
 
     private static UnitNone instance;
 
-    private void Awake()
+    public static UnitNone Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
+                instance = new UnitNone();
+            }
+
+            return instance;
         }
     }
 

@@ -4,13 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class IUnitAction : IAction<Unit>
-    // MonoBehaviour
 {
-
-
-    // public abstract void Action(Unit _unit);
-
-    public abstract void OnEnter(Unit _unit);
 
     /// <summary>
     /// 해당 상태가 끝났음을 명시적으로 알리기 위해 정의한 메서드

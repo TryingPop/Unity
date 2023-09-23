@@ -5,21 +5,21 @@ using UnityEngine;
 public class UnitMove : IUnitAction
 {
 
-    public static readonly float STOP_SPEED = 0.005f;
     private static UnitMove instance;
 
-    private void Awake()
+    public static UnitMove Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
+                instance = new UnitMove();
+            }
+
+            return instance;
         }
     }
 
@@ -32,10 +32,10 @@ public class UnitMove : IUnitAction
         {
 
             if (_unit.Target.gameObject.activeSelf
-                && _unit.Target.gameObject.layer != IDamagable.LAYER_DEAD)
+                && _unit.Target.gameObject.layer != VariableManager.LAYER_DEAD)
             {
 
-                _unit.TargetPos = _unit.Target.position;
+                _unit.TargetPos = _unit.Target.transform.position;
                 _unit.MyAgent.SetDestination(_unit.TargetPos);
             }
             else _unit.Target = null;

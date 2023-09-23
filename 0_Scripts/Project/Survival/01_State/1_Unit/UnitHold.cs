@@ -7,19 +7,20 @@ public class UnitHold : IUnitAction
 
     private static UnitHold instance;
 
-    private void Awake()
+    public static UnitHold Instance
     {
 
-        if (instance == null)
+        get 
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
-        }
+                instance = new UnitHold();
+            }
+
+            return instance;
+        } 
     }
 
     public override void Action(Unit _unit) { }
@@ -27,6 +28,7 @@ public class UnitHold : IUnitAction
     public override void OnEnter(Unit _unit)
     {
 
+        _unit.TargetPos = _unit.transform.position;
         _unit.MyAgent.ResetPath();
         _unit.MyAnimator.SetFloat("Move", 0f);
     }

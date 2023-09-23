@@ -7,21 +7,22 @@ public class UnitStop : IUnitAction
 
     private static UnitStop instance;
 
-
-    private void Awake()
+    public static UnitStop Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(gameObject);
+                instance = new UnitStop();
+            }
+
+            return instance;
         }
     }
+
 
     public override void Action(Unit _unit)
     {
@@ -31,7 +32,8 @@ public class UnitStop : IUnitAction
 
     public override void OnEnter(Unit _unit)
     {
-        
+
+        _unit.TargetPos = _unit.transform.position;
         _unit.MyAnimator.SetFloat("Move", 0f);
     }
 

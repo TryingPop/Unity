@@ -8,21 +8,21 @@ public class UnitPatrol : IUnitAction
 
     private static UnitPatrol instance;
 
-    private void Awake()
+    public static UnitPatrol Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
+                instance = new UnitPatrol();
+            }
+
+            return instance;
         }
     }
-
 
     public override void Action(Unit _unit)
     {

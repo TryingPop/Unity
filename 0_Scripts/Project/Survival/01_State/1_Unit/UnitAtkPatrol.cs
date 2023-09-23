@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 
 public class UnitAtkPatrol : UnitPatrol
@@ -8,18 +7,19 @@ public class UnitAtkPatrol : UnitPatrol
 
     private static UnitAtkPatrol instance;
 
-    private void Awake()
+    public new static UnitAtkPatrol Instance
     {
 
-        if (instance == null)
+        get
         {
 
-            instance = this;
-        }
-        else
-        {
+            if (instance == null)
+            {
 
-            Destroy(this);
+                instance = new UnitAtkPatrol();
+            }
+
+            return instance;
         }
     }
 
@@ -29,7 +29,8 @@ public class UnitAtkPatrol : UnitPatrol
 
 
         base.Action(_unit);
-        _unit.MyAttacks[0].FindTarget(_unit, true);
+        // _unit.MyAttacks[0].FindTarget(_unit, true);
+        _unit.MyAttack.FindTarget(_unit, true);
         if (_unit.Target != null) _unit.ActionDone(STATE_UNIT.ATTACK);
     }
 }
