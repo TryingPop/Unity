@@ -2,27 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "AtkPatrol", menuName = "Action/Unit/AtkPatrol")]
 public class UnitAtkPatrol : UnitPatrol
 {
-
-    private static UnitAtkPatrol instance;
-
-    public new static UnitAtkPatrol Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new UnitAtkPatrol();
-            }
-
-            return instance;
-        }
-    }
-
 
     public override void Action(Unit _unit)
     {

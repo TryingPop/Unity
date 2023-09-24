@@ -2,27 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Stop", menuName = "Action/Unit/Stop")]
 public class UnitStop : IUnitAction
 {
-
-    private static UnitStop instance;
-
-    public static UnitStop Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new UnitStop();
-            }
-
-            return instance;
-        }
-    }
-
 
     public override void Action(Unit _unit)
     {

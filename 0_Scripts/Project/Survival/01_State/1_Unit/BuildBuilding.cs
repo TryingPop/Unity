@@ -2,27 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "BuildBuilding", menuName = "Action/Unit/BuildBuilding")]
 public class BuildBuilding : IUnitAction
 {
-
-    private static BuildBuilding instance;
-
-    public static BuildBuilding Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new BuildBuilding();
-            }
-
-            return instance;
-        }
-    }
-
     public override void Action(Unit _unit)
     {
 

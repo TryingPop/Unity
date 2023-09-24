@@ -2,27 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Attack", menuName = "Action/Unit/Attack")]
 public class UnitAtk : IUnitAction
 {
-
-    private static UnitAtk instance;
-    
-    public static UnitAtk Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new UnitAtk();
-            }
-
-            return instance;
-        }
-    }
-
 
     public override void Action(Unit _unit)
     {
@@ -47,69 +29,70 @@ public class UnitAtk : IUnitAction
             if (_unit.Target.gameObject.activeSelf && _unit.Target.gameObject.layer != VariableManager.LAYER_DEAD)
             {
 
+                // 타겟이 살아있는 경우
                 Attack unitAttack = _unit.MyAttack;
 
                 float dis = Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position);
                 float atkRange = unitAttack.atkRange + (_unit.Target.MySize * 0.5f);
-                atkRange = atkRange + atkRange;
-                // 타겟이 살아있는 경우
-                if (dis < atkRange)
+                atkRange = atkRange * atkRange;
+
+                if (_unit.MyTurn == 0)
                 {
 
-                    // 타겟이 공격 범위에 있으므로 공격 판정!
-                    if (_unit.MyTurn == 0)
+                    if (dis < atkRange)
                     {
 
-                        // 대상을 향해 공격 준비
+
+                        // 타겟이 공격 범위 안에 있으므로 공격
                         _unit.MyTurn++;
                         _unit.MyAgent.ResetPath();
                         _unit.transform.LookAt(_unit.Target.transform.position);
                         _unit.MyRigid.MoveRotation(Quaternion.LookRotation(_unit.Target.transform.position - _unit.transform.position, Vector3.up));
 
                         if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
+
+                    }
+                    else if (dis <= unitAttack.chaseRange * unitAttack.chaseRange)
+                    {
+
+                        // 타겟이 공격 범위 밖이므로 타겟을 향해 이동
+                        _unit.MyAgent.SetDestination(_unit.Target.transform.position);
+                        _unit.MyTurn = 0;
+                        if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
+
                     }
                     else
                     {
 
-                        // 준비가 완료되었으면 공격
-                        if (_unit.MyTurn == unitAttack.StartAnimTime)
-                        {
-
-                            _unit.MyAnimator.SetTrigger($"Skill0");
-                            _unit.MyTurn++;
-                        }
-                        else if (_unit.MyTurn > unitAttack.AtkTime)  
-                        {
-
-                            _unit.MyTurn = 0;
-                            unitAttack.OnAttack(_unit);
-                        }
-                        else
-                        {
-
-                            _unit.MyTurn++;
-                        }
+                        // 타겟이 공격 범위를 벗어난 경우
+                        _unit.Target = null;
+                        OnExit(_unit, STATE_UNIT.ATTACK);
                     }
-
-                    
-                    return;
                 }
-                else if (dis < unitAttack.chaseRange * unitAttack.chaseRange)
+                else
                 {
 
-                    // 타겟이 공격 범위 밖이므로 타겟을 향해 이동
-                    _unit.MyAgent.SetDestination(_unit.Target.transform.position);
-                    _unit.MyTurn = 0;
-                    if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
+                    // 공격 시작하면 공격을 한다
+                    if (_unit.MyTurn == unitAttack.StartAnimTime)
+                    {
 
-                    return;
+                        _unit.MyAnimator.SetTrigger($"Skill0");
+                        _unit.MyTurn++;
+                    }
+                    else if (_unit.MyTurn > unitAttack.AtkTime)
+                    {
+
+                        _unit.MyTurn = 0;
+                        unitAttack.OnAttack(_unit);
+                    }
+                    else
+                    {
+
+                        _unit.MyTurn++;
+                    }
                 }
             }
 
-            // 타겟이 죽거나 범위를 벗어났으므로 비운다
-            // 1턴 강제로 더 쉬게 되기에 수동 컨트롤이 훨씬 좋다!
-            _unit.Target = null;
-            OnExit(_unit, STATE_UNIT.ATTACK);
             return;
         }
 
@@ -123,6 +106,7 @@ public class UnitAtk : IUnitAction
     public override void OnEnter(Unit _unit)
     {
 
+        if (_unit.Target) _unit.TargetPos = _unit.Target.transform.position;
         _unit.MyTurn = 0;
         _unit.MyAgent.SetDestination(_unit.TargetPos);
         _unit.MyAnimator.SetFloat("Move", 0.5f);

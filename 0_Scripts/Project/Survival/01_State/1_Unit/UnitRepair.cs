@@ -2,26 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Repair", menuName = "Action/Unit/Repair")]
 public class UnitRepair : IUnitAction
 {
-
-    public static UnitRepair instance;
-
-    public static UnitRepair Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new UnitRepair();
-            }
-
-            return instance;
-        }
-    }
 
     public override void Action(Unit _unit)
     {

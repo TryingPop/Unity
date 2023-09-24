@@ -2,26 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Move", menuName = "Action/Unit/Move")]
 public class UnitMove : IUnitAction
 {
-
-    private static UnitMove instance;
-
-    public static UnitMove Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new UnitMove();
-            }
-
-            return instance;
-        }
-    }
 
     public override void Action(Unit _unit)
     {

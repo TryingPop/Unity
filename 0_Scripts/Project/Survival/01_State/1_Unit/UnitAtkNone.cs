@@ -2,26 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "AtkNone", menuName = "Action/Unit/AtkNone")]
 public class UnitAtkNone : UnitNone
 {
-
-    private static UnitAtkNone instance;
-
-    public new static UnitAtkNone Instance
-    {
-
-        get
-        {
-
-            if (instance == null)
-            {
-
-                instance = new UnitAtkNone();
-            }
-
-            return instance;
-        }
-    }
 
     public override void Action(Unit _unit)
     {
