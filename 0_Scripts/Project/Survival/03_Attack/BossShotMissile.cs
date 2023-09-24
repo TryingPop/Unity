@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossShotMissile : MonoBehaviour
@@ -16,7 +15,7 @@ public class BossShotMissile : MonoBehaviour
 
     [SerializeField] protected Vector3 dir;
 
-    [SerializeField] protected float sizeUpSpeed;
+    [SerializeField] protected Vector3 sizeUp;
 
     [SerializeField] protected short waitTurn;
     [SerializeField] protected short moveTurn;
@@ -25,9 +24,11 @@ public class BossShotMissile : MonoBehaviour
     protected bool isMove = false;
 
     [SerializeField] protected LayerMask targetLayer;
+    [SerializeField] protected MissileRotation myRotation;
+    [SerializeField] protected GameObject engageParticle;
 
     public void Init(Vector3 _dir, int _atk,
-        short _waitTurn, short _moveTurn, float _sizeUpSpeed)
+        short _waitTurn, short _moveTurn, LayerMask _targetLayer)
     {
 
         _dir.y = 0;
@@ -37,7 +38,9 @@ public class BossShotMissile : MonoBehaviour
 
         waitTurn = _waitTurn;
         moveTurn = _moveTurn;
-        sizeUpSpeed = _sizeUpSpeed;
+
+        targetLayer = _targetLayer;
+
 
         transform.localScale = Vector3.zero;
         myRigid.velocity = Vector3.zero;
@@ -48,6 +51,7 @@ public class BossShotMissile : MonoBehaviour
         isMove = false;
         myCollider.isTrigger = false;
         myRigid.isKinematic = false;
+        engageParticle.SetActive(true);
     }
 
     protected void FixedUpdate()
@@ -69,14 +73,13 @@ public class BossShotMissile : MonoBehaviour
             else
             {
 
-                // myRigid.AddTorque(transform.right * moveSpeed, ForceMode.Acceleration);
-                transform.localScale += new Vector3(sizeUpSpeed, sizeUpSpeed, sizeUpSpeed);
+                transform.localScale += sizeUp;
             }
         }
         else
         {
 
-            if (calcTurn < moveTurn)
+            if (calcTurn <= moveTurn)
             {
 
                 myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
@@ -89,7 +92,7 @@ public class BossShotMissile : MonoBehaviour
             }
         }
 
-        myRigid.MoveRotation(myRigid.rotation * Quaternion.Euler(25 * moveSpeed * Time.fixedDeltaTime, 0f, 0f));
+        myRotation.Rotation();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -107,7 +110,7 @@ public class BossShotMissile : MonoBehaviour
             if (other.TryGetComponent<Selectable>(out Selectable target))
             {
 
-                if ((1 << other.gameObject.layer & targetLayer) == 1 << other.gameObject.layer)
+                if (((1 << other.gameObject.layer) & targetLayer) != 0)
                 {
 
                     target.OnDamaged(atk);

@@ -2,33 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "BossAtk", menuName = "Attack/BossAtk")]
 public class RangeDouble : RangeTarget
 {
 
-    [SerializeField] protected Transform nextPos;
+    [SerializeField] protected Vector3 nextOffset;
 
 
     public override void OnAttack(Unit _unit)
     {
 
         // Ç®¸µ 
-        GameObject go = PoolManager.instance.GetPrefabs(missileIdx, TargetMissile.LAYER_BULLET);
+        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, TargetMissile.LAYER_BULLET);
         if (go)
         {
 
-            go.SetActive(true);
-            go.GetComponent<TargetMissile>().Init(_unit.transform, _unit.Target, Target, atk);
 
-            if (coolTime <= atkTime)
+            Transform unitTrans = _unit.transform;
+
+            go.SetActive(true);
+            go.GetComponent<TargetMissile>().Init(unitTrans, _unit.Target, atk);
+
+
+            // if (coolTime <= atkTime)
+            if (_unit.MyTurn <= atkTime)
             {
 
-                go.transform.position = initPos.position;
+                Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
+
+                go.transform.position = dir + unitTrans.position;
             }
             else
             {
 
-                isAtk = false;
-                go.transform.position = nextPos.position;
+                Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * nextOffset;
+
+                go.transform.position = dir + unitTrans.position;
             }
         }
     }

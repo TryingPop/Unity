@@ -2,21 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "BossShot", menuName = "Attack/BossShot")]
 public class BossShotAttack : RangeTarget
 {
-
-    [SerializeField] protected float sizeUpSpeed;
 
     public override void OnAttack(Unit _unit)
     {
 
-        GameObject go = PoolManager.instance.GetPrefabs(missileIdx, TargetMissile.LAYER_BULLET);
+        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, TargetMissile.LAYER_BULLET);
         if (go)
         {
 
+            Transform unitTrans = _unit.transform;
+
             go.SetActive(true);
-            go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - _unit.transform.position, atk, (short)(atkRange * 50), (short)(chaseRange * 50), sizeUpSpeed);
-            go.transform.position = initPos.position;
+            go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - unitTrans.position, atk, 
+                (short)(atkRange * 50), (short)(chaseRange * 50), 
+                _unit.MyTeam.GetLayer(false));
+
+            Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
+            go.transform.position = dir + unitTrans.position;
         }
     }
 }

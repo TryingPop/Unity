@@ -40,7 +40,7 @@ public class TargetMissile : MonoBehaviour
     {
 
         // À¯µµ !
-        if (target == null || target.gameObject.layer == IDamagable.LAYER_DEAD)
+        if (target == null || target.gameObject.layer == VariableManager.LAYER_DEAD)
         {
 
             PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
@@ -73,6 +73,9 @@ public class TargetMissile : MonoBehaviour
                 }
             }
             target.OnDamaged(atk, atker);
+
+            var go = PoolManager.instance.GetPrefabs(4, 14);
+            if (go) go.transform.position = transform.position + Vector3.up;
 
             PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
         }

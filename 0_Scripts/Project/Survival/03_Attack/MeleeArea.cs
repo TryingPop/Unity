@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "MeleeArea", menuName = "Attack/MeleeArea")]
 public class MeleeArea : MeleeTarget
 {
 
@@ -9,7 +10,7 @@ public class MeleeArea : MeleeTarget
     {
 
         RaycastHit[] hits = Physics.SphereCastAll(_unit.transform.position, 
-            atkRange, _unit.transform.forward, 0f, atkLayers);
+            atkRange, _unit.transform.forward, 0f, _unit.MyTeam.GetLayer(false));
 
         if (hits.Length > 1)
         {
@@ -23,6 +24,6 @@ public class MeleeArea : MeleeTarget
                 hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(atk);
             }
         }
-        isAtk = false;
+        // isAtk = false;
     }
 }
