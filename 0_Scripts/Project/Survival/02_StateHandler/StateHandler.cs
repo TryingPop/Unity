@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class StateHandler<T, V> // : MonoBehaviour
+public abstract class StateHandler<T, V> : ScriptableObject
                                     where T : Selectable
                                     where V : IAction<T>
 {
