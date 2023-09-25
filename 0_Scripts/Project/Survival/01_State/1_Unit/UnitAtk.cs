@@ -33,7 +33,7 @@ public class UnitAtk : IUnitAction
                 Attack unitAttack = _unit.MyAttack;
 
                 float dis = Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position);
-                float atkRange = unitAttack.atkRange + (_unit.Target.MySize * 0.5f);
+                float atkRange = unitAttack.atkRange + (_unit.Target.MyStat.MySize * 0.5f);
                 atkRange = atkRange * atkRange;
 
                 if (_unit.MyTurn == 0)
@@ -42,15 +42,13 @@ public class UnitAtk : IUnitAction
                     if (dis < atkRange)
                     {
 
-
                         // 타겟이 공격 범위 안에 있으므로 공격
                         _unit.MyTurn++;
+                        _unit.MyAnimator.SetFloat("Move", 0f);
                         _unit.MyAgent.ResetPath();
                         _unit.transform.LookAt(_unit.Target.transform.position);
-                        _unit.MyRigid.MoveRotation(Quaternion.LookRotation(_unit.Target.transform.position - _unit.transform.position, Vector3.up));
 
                         if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
-
                     }
                     else if (dis <= unitAttack.chaseRange * unitAttack.chaseRange)
                     {
@@ -59,7 +57,6 @@ public class UnitAtk : IUnitAction
                         _unit.MyAgent.SetDestination(_unit.Target.transform.position);
                         _unit.MyTurn = 0;
                         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
-
                     }
                     else
                     {
@@ -84,6 +81,8 @@ public class UnitAtk : IUnitAction
 
                         _unit.MyTurn = 0;
                         unitAttack.OnAttack(_unit);
+                        _unit.MyAnimator.SetFloat("Move", 0.5f);
+                        _unit.MyAgent.updateRotation = true;
                     }
                     else
                     {
@@ -91,6 +90,13 @@ public class UnitAtk : IUnitAction
                         _unit.MyTurn++;
                     }
                 }
+            }
+            else
+            {
+
+                // 대상을 잡았을 경우 다시 Attack상태에 진입하게 한다!
+                _unit.Target = null;
+                OnExit(_unit, STATE_UNIT.ATTACK);
             }
 
             return;
@@ -116,6 +122,6 @@ public class UnitAtk : IUnitAction
     {
 
         base.OnExit(_unit, _nextState);
-        if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
+        if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
     }
 }
