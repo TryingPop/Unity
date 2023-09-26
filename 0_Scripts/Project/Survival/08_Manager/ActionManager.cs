@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
 
 public class ActionManager : MonoBehaviour
 {
 
     public static ActionManager instance;
 
-    private List<Unit> actionUnits;
-    private List<Building> actionBuildings;
+    private List<Unit> playerUnits;
+    private List<Unit> enemyUnits;
+
+    private List<Building> playerBuildings;
+    private List<Building> enemyBuildings;
 
     private Stack<HitBar> usedHitBars;
     private List<HitBar> hitBars;
@@ -40,8 +41,11 @@ public class ActionManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        actionUnits = new List<Unit>(VariableManager.MAX_CONTROL_UNITS);
-        actionBuildings = new List<Building>(VariableManager.MAX_BUILDINGS);
+        playerUnits = new List<Unit>(VariableManager.MAX_CONTROL_UNITS);
+        playerBuildings = new List<Building>(VariableManager.MAX_BUILDINGS);
+        
+        enemyUnits = new List<Unit>(50);
+        enemyBuildings = new List<Building>(50);
 
         usedHitBars = new Stack<HitBar>();
         hitBars = new List<HitBar>(VariableManager.MAX_CONTROL_UNITS + VariableManager.MAX_BUILDINGS);
@@ -61,23 +65,35 @@ public class ActionManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 건물, 유닛 순으로 행동 실행
+    /// 플레이어 건물 > 플레이어 유닛 > 적군 건물 > 적군 유닛 순으로 행동한다!
     /// </summary>
     private void Action()
     {
 
-        for (int i = 0; i < actionBuildings.Count; i++)
+        
+        for (int i = 0; i < playerBuildings.Count; i++)
         {
 
-            // 건물 행동
-            actionBuildings[i].Action();
+            playerBuildings[i].Action();
         }
 
-        for (int i = 0; i < actionUnits.Count; i++)
+        for (int i = 0; i < playerUnits.Count; i++)
         {
 
-            // 유닛 행동
-            actionUnits[i].Action();
+            playerUnits[i].Action();
+        }
+
+        for (int i = 0; i < enemyBuildings.Count; i++)
+        {
+
+            enemyBuildings[i].Action();
+        }
+
+
+        for (int i = 0; i < enemyUnits.Count; i++)
+        {
+
+            enemyUnits[i].Action();
         }
 
     }
@@ -89,21 +105,14 @@ public class ActionManager : MonoBehaviour
     public void AddUnit(Unit _unit)
     {
 
-        if (actionUnits.Count < VariableManager.MAX_CONTROL_UNITS) 
-        { 
+        if (!_unit) return;
 
-            actionUnits.Add(_unit);
-            if (!usedHitBars.TryPop(out HitBar hitbar))
-            {
+        if (_unit.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER)
+            && playerUnits.Count < VariableManager.MAX_CONTROL_UNITS) playerUnits.Add(_unit);
 
-                var go = Instantiate(unitHitBar, this.transform);
-                hitbar = go.GetComponent<HitBar>();
-            }
+        else if (_unit.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_ENEMY)) enemyUnits.Add(_unit);
 
-            _unit.MyHitBar = hitbar;
-
-            hitBars.Add(hitbar);
-        }
+        EquipHitBar(_unit);
     }
 
     /// <summary>
@@ -112,59 +121,72 @@ public class ActionManager : MonoBehaviour
     /// <param name="_unit"></param>
     public void RemoveUnit(Unit _unit)
     {
+        if (_unit.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER)) playerUnits.Remove(_unit);
 
-        actionUnits.Remove(_unit);
+        else if (_unit.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_ENEMY)) enemyUnits.Remove(_unit);
 
-        HitBar hitbar = _unit.MyHitBar;
-        hitBars.Remove(hitbar);
-        usedHitBars.Push(hitbar);
-        hitbar.Used();
-        _unit.MyHitBar = null;
+
+        ClearHitBar(_unit);
     }
 
-    /// <summary>
-    /// 이미 포함되었는지 확인 보통 사망용에 쓸 예정
-    /// </summary>
-    /// <param name="_unit"></param>
-    /// <returns></returns>
     public bool ContainsUnit(Unit _unit)
     {
 
-        return actionUnits.Contains(_unit);
+        return playerUnits.Contains(_unit) 
+            || enemyUnits.Contains(_unit);
+    }
+
+    public bool ContainsBuilding(Building _building)
+    {
+
+        return playerBuildings.Contains(_building) 
+            || enemyBuildings.Contains(_building);
     }
 
     public void AddBuilding(Building _building)
     {
 
-        if (actionBuildings.Count < VariableManager.MAX_BUILDINGS)
-        {
+        if (_building.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER)
+            && playerBuildings.Count < VariableManager.MAX_BUILDINGS) playerBuildings.Add(_building);
+        else if (_building.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_ENEMY)) enemyBuildings.Add(_building);
 
-            actionBuildings.Add(_building);
-            if (!usedHitBars.TryPop(out HitBar hitbar))
-            {
 
-                var go = Instantiate(unitHitBar, this.transform);
-                hitbar = go.GetComponent<HitBar>();
-            }
-
-            _building.MyHitBar = hitbar;
-
-            hitBars.Add(hitbar);
-        }
+        EquipHitBar(_building);
     }
 
     public void RemoveBuilding(Building _building)
     {
 
-        actionBuildings.Remove(_building);
+        if (_building.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER)) playerBuildings.Remove(_building);
+        else if (_building.MyTeam == GameManager.instance.GetTeamInfo(VariableManager.LAYER_ENEMY)) enemyBuildings.Remove(_building);
 
-        HitBar hitbar = _building.MyHitBar;
+        ClearHitBar(_building);
+    }
+
+
+    private void EquipHitBar(Selectable _select)
+    {
+
+        if (!usedHitBars.TryPop(out HitBar hitbar))
+        {
+
+            var go = Instantiate(unitHitBar, this.transform);
+            hitbar = go.GetComponent<HitBar>();
+        }
+
+        _select.MyHitBar = hitbar;
+        hitBars.Add(hitbar);
+    }
+
+    private void ClearHitBar(Selectable _select)
+    {
+
+        HitBar hitbar = _select.MyHitBar;
         hitBars.Remove(hitbar);
         usedHitBars.Push(hitbar);
         hitbar.Used();
-        _building.MyHitBar = null;
+        _select.MyHitBar = null;
     }
-
 
     private void SetHitBarPos()
     {

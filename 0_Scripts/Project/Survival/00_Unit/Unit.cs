@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -33,14 +31,12 @@ public class Unit : Selectable
     
     [Header("값 변수")]
     [SerializeField] protected bool stateChange;
-    [SerializeField] protected float applySpeed;
     [SerializeField] protected short maxMp;
     protected short curMp;
 
-    protected Queue<Command> cmds;
-    public static readonly int MAX_COMMANDS = 5;
-
+    
     #endregion 변수
+
 
     #region 프로퍼티
     public Animator MyAnimator => myAnimator;
@@ -49,11 +45,8 @@ public class Unit : Selectable
 
     public Rigidbody MyRigid => myRigid;
 
-    // public Attack[] MyAttacks => myAttacks;
     public Attack MyAttack => myAttack;
     public UnitStateAction MyStateAction => myStateAction;
-
-    public float ApplySpeed => applySpeed;
 
     public Vector3 PatrolPos
     {
@@ -62,7 +55,7 @@ public class Unit : Selectable
         set { patrolPos = value; }
     }
 
-    public int MyState
+    public override int MyState
     {
 
         get { return (int)myState; }
@@ -76,7 +69,7 @@ public class Unit : Selectable
         set
         {
 
-            if (maxMp == ISkillAction.INFINITE_MP) return;
+            if (maxMp == VariableManager.INFINITE) return;
             if (value > maxMp) value = maxMp;
             curMp = (byte)value;
         }
@@ -129,17 +122,9 @@ public class Unit : Selectable
         // https://forum.unity.com/threads/cache-transform-really-needed.356875/
         // https://geekcoders.tistory.com/56
         // transform = GetComponent<Transform>();
-
-        myAnimator = GetComponentInChildren<Animator>();
-        myCollider = GetComponent<Collider>();
-        myAgent = GetComponent<NavMeshAgent>();
-        myRigid = GetComponent<Rigidbody>();
-        myStateAction = GetComponent<UnitStateAction>();
-        mySight = GetComponentInChildren<SightMesh>();
-        myAttack = GetComponent<Attack>();
-        cmds = new Queue<Command>(MAX_COMMANDS);
+        cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
     }
-    
+
     protected virtual void OnEnable()
     {
 
@@ -151,32 +136,39 @@ public class Unit : Selectable
         
         base.Init();
         curMp = maxMp;
-
+        
         myAnimator.SetBool("Die", false);
         myAgent.enabled = true;
-        myAgent.speed = applySpeed;
         ActionDone();
         cmds.Clear();
 
+        AfterSettingLayer();
+    }
 
-        ActionManager.instance.AddUnit(this);
+    /// <summary>
+    /// 유닛을 생성한 경우 layer 설정 이후에 다시 한 번 더 실행한다!
+    /// </summary>
+    public override void AfterSettingLayer()
+    {
+
+        myTeam = GameManager.instance.GetTeamInfo(gameObject.layer);
         if (mySight == null) { }
-        else if (gameObject.layer == 17)
+        else if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
 
             mySight.isStop = true;
-            // mySight.SetSize(myAttacks?[0] == null ? 10 : myAttacks[0].chaseRange); 
             mySight.SetSize(myAttack == null ? 10 : myAttack.chaseRange);
         }
         else
         {
 
-            // mySight.SetSight(0, 20);
             mySight.isStop = false;
         }
+
+        // 유닛이 잇는 경우 제거
+        if (ActionManager.instance.ContainsUnit(this)) ActionManager.instance.RemoveUnit(this);
+        ActionManager.instance.AddUnit(this);
     }
-
-
 
     /// <summary>
     /// 해당 유닛의 행동
@@ -232,19 +224,18 @@ public class Unit : Selectable
 
         if (_trans == null || !atkReaction) return;
 
-        // else if (myAttacks == null || myAttacks[0] == null)
-        if (myAttack == null)
+        if (myAttack == null || ((1 << _trans.gameObject.layer) & myTeam.GetLayer(false)) == 0)
         {
 
-            // 공격을 못하면 반대 방향으로 도주!
+            // 공격할 수 없거나 공격한 대상이 아군일 경우 반대 방향으로 도주
             Vector3 dir = (transform.position - _trans.transform.position).normalized;
-            targetPos = transform.position + dir * applySpeed * 0.5f;
+            targetPos = transform.position + dir * myAgent.speed;
             ActionDone(STATE_UNIT.MOVE);
         }
         else
         {
 
-            // 공격할 수 있으면 맞받아친다!
+            // 공격할 수 있고 적이 때렸을 경우 맞받아친다!
             target = _trans;
             targetPos = _trans.transform.position;
             ActionDone(STATE_UNIT.ATTACK);
@@ -268,6 +259,19 @@ public class Unit : Selectable
         ActionManager.instance.RemoveUnit(this);
     }
 
+    public override void GiveButtonInfo(ButtonInfo[] _buttons)
+    {
+
+        myStateAction.GiveMyButtonInfos(_buttons, 0, 1);
+    }
+
+    public override void ChkButtons(ButtonInfo[] _buttons)
+    {
+
+        // 수정!
+        myStateAction.ChkButtons(_buttons, 5, 6, false);
+    }
+
     #region Command
     /// <summary>
     /// 명령 받기
@@ -279,7 +283,43 @@ public class Unit : Selectable
     public override void GetCommand(Command _cmd, bool _add = false)
     {
 
-        if (myState == STATE_UNIT.DEAD) return;
+        if (myState == STATE_UNIT.DEAD) 
+        {
+
+            _cmd.Canceled();
+            return; 
+        }
+
+        // 마우스 R인 경우 명령을 바꾼다!
+        if (_cmd.type == VariableManager.MOUSE_R)
+        {
+
+            // 마우스 R버튼을 누른 경우 이동이나 공격 타입으로 바꾼다
+            if (myAttack == null)
+            {
+
+                // 공격할 수 없는 경우
+                _cmd.type = 1;
+            }
+            else if (_cmd.target == null)
+            {
+
+                // 대상이 없는 경우
+                _cmd.type = 1;
+            }
+            else if ((myTeam.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
+            {
+
+                // 대상이 적이고 공격 가능한 상태면 대상을 공격
+                _cmd.type = 5;
+            }
+            else
+            {
+
+                // 대상이 아군인 경우
+                _cmd.type = 1;
+            }
+        }
 
         // 예약 명령이 아닌 경우 기존에 예약 명령 초기화와
         // 다음 턴에 예약 명령을 실행할 수 있게 NONE 상태로 변경
@@ -293,14 +333,19 @@ public class Unit : Selectable
             }
 
             // 스킬 사용 중에는 명령들 삭제만하고 명령 실행은 안되게 탈출!
-            if (usingSkill) return;     
-            
+            // if (usingSkill) return;
+
             // 리지드바디를 다루는 경우도 있기에
             ActionDone();
+        } 
+        else if (myState == STATE_UNIT.NONE)
+        {
+
+            stateChange = true;
         }
 
         // 명령 등록, 예약 명령인 경우 최대 수 확인 한다
-        if (cmds.Count < MAX_COMMANDS) cmds.Enqueue(_cmd);
+        if (cmds.Count < VariableManager.MAX_RESERVE_COMMANDS) cmds.Enqueue(_cmd);
         else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
     }
 
@@ -312,17 +357,19 @@ public class Unit : Selectable
         
         Command cmd = cmds.Dequeue();
 
-        ChkType(cmd);
-
         // 등록된 행동이 있는지 확인
         // 읽을 수 없는 행동이면 명령만 사라진다
-        if (!ChkState(cmd.type)) return;
+        if (!ChkState(cmd)) 
+        {
 
+            cmd.Canceled();
+            return; 
+        }
 
-        myState = (STATE_UNIT)cmd.type;
+        myState = (STATE_UNIT)(cmd.type);       
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
-        cmd.Received(MySize);
+        cmd.Received(myStat.MySize);
     }
 
     /// <summary>
@@ -330,49 +377,15 @@ public class Unit : Selectable
     /// </summary>
     /// <param name="_num">상태 번호</param>
     /// <returns></returns>
-    protected bool ChkState(int _num)
+    protected bool ChkState(Command _cmd)
     {
 
-        if (myStateAction.ChkActions(_num))
-        {
 
-            return true;
-        }
 
-        return false;
+        // 마우스 우측이 아닌 경우 행동 가능한지 확인한다
+        return myStateAction.ChkAction(_cmd.type);
+
     }
 
-    protected void ChkType(Command cmd)
-    {
-
-        if (cmd.type != 10) return;
-
-        // if (myAttacks[0] == null)
-        if (myAttack == null)
-        {
-
-            // 공격할 수 없는 경우
-            cmd.type = 1;
-        }
-        else if (cmd.target == null)
-        {
-
-            // 대상이 없는 경우
-            cmd.type = 1;
-        }
-        // else if ((myAttacks[0].atkLayers & (1 << cmd.target.gameObject.layer)) != 0)
-        else if ((myAttack.atkLayers & (1 << cmd.target.gameObject.layer)) != 0)
-        {
-
-            // 대상이 적이고 공격 가능한 상태면 대상을 공격
-            cmd.type = 5;
-        }
-        else
-        {
-
-            // 대상이 아군인 경우
-            cmd.type = 1;
-        }
-    }
     #endregion Command
 }
