@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyOrderManager : MonoBehaviour
 {
@@ -10,6 +11,46 @@ public class EnemyOrderManager : MonoBehaviour
 
     [SerializeField] private List<Building> playerBuildings;
     [SerializeField] private List<Building> enemyBuildings;
+
+    [SerializeField, Range(5, 20)] private float thinkMinTime = 10f;
+    [SerializeField, Range(20, 40)] private float thinkMaxTime = 20f;
+
+    [SerializeField, Range(1, 10)] private short maxRandomTimes;
+    private WaitForSeconds[] times;
+
+    private bool waveStart = false;
+
+    [SerializeField] private Transform[] initTrans;
+    [SerializeField] private ushort enemyCastleIdx;
+    private short prefabIdx = -1;
+
+    public short PrefabIdx
+    {
+
+        get
+        {
+
+            if (prefabIdx == -1)
+            {
+
+                prefabIdx = PoolManager.instance.ChkIdx(enemyCastleIdx);
+            }
+
+            return prefabIdx;
+        }
+    }
+
+    private void Awake()
+    {
+
+        times = new WaitForSeconds[maxRandomTimes];
+        for (int i = 0; i < maxRandomTimes; i++)
+        {
+
+            float time = Random.Range(thinkMinTime, thinkMaxTime);
+            times[i] = new WaitForSeconds(time);
+        }
+    }
 
     private void Start()
     {
@@ -94,7 +135,52 @@ public class EnemyOrderManager : MonoBehaviour
     private IEnumerator OrderStart()
     {
 
-        yield return new WaitForSeconds(60f);
-        GoToPlayer();
+        while (true)
+        {
+
+            if (!waveStart) yield return new WaitForSeconds(5f);
+            else yield return times[Random.Range(0, maxRandomTimes)];
+
+
+            if (!waveStart)
+            {
+
+                BuildEnemyCastle();
+                SetTech();
+                waveStart = true;
+                continue;
+            }
+
+
+        }
+    }
+
+    /// <summary>
+    /// 적 성 건설
+    /// </summary>
+    private void BuildEnemyCastle()
+    {
+
+        Vector3 randPos = initTrans[Random.Range(0, initTrans.Length)].position;
+
+        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY);
+        
+        if (go)
+        {
+
+            go.transform.position = randPos;
+        }
+        else
+        {
+
+            Debug.Log("적 성이 생성 안되었습니다. prefabIdx를 확인해주세요.");
+        }
+    }
+
+
+    private void SetTech()
+    {
+
+
     }
 }
