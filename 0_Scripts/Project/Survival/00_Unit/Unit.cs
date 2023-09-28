@@ -4,12 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-/// <summary>
-/// -1 ~ 5 번까지는 일반 유닛이 갖는 번호
-/// 6번부터는 특수!
-/// </summary>
-public enum STATE_UNIT { DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, PATROL = 3, HOLD = 4, ATTACK = 5, REPAIR = 5, HEAL = 5,
-    SKILL0 = 5, SKILL1 = 6, SKILL2 = 7, SKILL3 = 8 }
+
 
 public class Unit : Selectable
 {
@@ -33,8 +28,7 @@ public class Unit : Selectable
     [SerializeField] protected bool stateChange;
     [SerializeField] protected short maxMp;
     protected short curMp;
-
-    
+    protected int atk;
     #endregion 변수
 
 
@@ -112,6 +106,8 @@ public class Unit : Selectable
         }
     }
 
+    public int Atk => atk;
+
     #endregion 프로퍼티
 
     protected virtual void Awake()
@@ -125,15 +121,23 @@ public class Unit : Selectable
         cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
     }
 
+
     protected virtual void OnEnable()
     {
 
         Init();
     }
 
+    public override void SetStat()
+    {
+        base.SetStat();
+        atk = myAttack.atk + myUpgrades.AddAtk;
+    }
+
     protected override void Init()
     {
-        
+
+        SetStat();
         base.Init();
         curMp = maxMp;
         
@@ -151,7 +155,7 @@ public class Unit : Selectable
     public override void AfterSettingLayer()
     {
 
-        myTeam = GameManager.instance.GetTeamInfo(gameObject.layer);
+        myAlliance = TeamManager.instance.GetTeamInfo(gameObject.layer);
         if (mySight == null) { }
         else if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
@@ -224,7 +228,7 @@ public class Unit : Selectable
 
         if (_trans == null || !atkReaction) return;
 
-        if (myAttack == null || ((1 << _trans.gameObject.layer) & myTeam.GetLayer(false)) == 0)
+        if (myAttack == null || ((1 << _trans.gameObject.layer) & myAlliance.GetLayer(false)) == 0)
         {
 
             // 공격할 수 없거나 공격한 대상이 아군일 경우 반대 방향으로 도주
@@ -307,7 +311,7 @@ public class Unit : Selectable
                 // 대상이 없는 경우
                 _cmd.type = 1;
             }
-            else if ((myTeam.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
+            else if ((myAlliance.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
             {
 
                 // 대상이 적이고 공격 가능한 상태면 대상을 공격
@@ -380,11 +384,8 @@ public class Unit : Selectable
     protected bool ChkState(Command _cmd)
     {
 
-
-
         // 마우스 우측이 아닌 경우 행동 가능한지 확인한다
         return myStateAction.ChkAction(_cmd.type);
-
     }
 
     #endregion Command
