@@ -12,6 +12,7 @@ public class PoolManager : MonoBehaviour
     private Stack<GameObject>[] usedPrefabs;
     [SerializeField] private int[] curNums;
 
+    
     private void Awake()
     {
 
@@ -25,6 +26,7 @@ public class PoolManager : MonoBehaviour
         instance = this;
 
         int len = data.Length;
+
         parents = new Transform[len];
 
         // 부모 오브젝트 생성
@@ -35,7 +37,6 @@ public class PoolManager : MonoBehaviour
             go.transform.parent = transform;
             parents[i] = go.transform;
         }
-
 
         usedPrefabs = new Stack<GameObject>[len];
 
@@ -58,29 +59,20 @@ public class PoolManager : MonoBehaviour
     public GameObject GetPrefabs(int _idx, int _layer)
     {
 
+        if (_idx == -1) return null;
         GameObject go = null;
 
         // _idx의 생성된 프리팹 검사
-        try
+        if (usedPrefabs[_idx].Count > 0)
         {
 
-            if (usedPrefabs[_idx].Count > 0)
-            {
-
-                curNums[_idx]++;
-                go = usedPrefabs[_idx].Pop();
-                go.gameObject.SetActive(true);
-                return go;
-            }
-        }
-        catch
-        {
-
-            return null;
+            curNums[_idx]++;
+            go = usedPrefabs[_idx].Pop();
+            go.gameObject.SetActive(true);
+            return go;
         }
 
-        if (curNums[_idx] + usedPrefabs[_idx].Count >= data[_idx].maxNum ) return null;
-
+        // if (ChkMaxPrefab(_idx)) return null;
         curNums[_idx]++;
         go = Instantiate(data[_idx].prefab, transform);
         go.transform.parent = parents[_idx];
@@ -89,6 +81,13 @@ public class PoolManager : MonoBehaviour
 
     public void UsedPrefab(GameObject _prefab, int _idx)
     {
+
+        if (_idx == -1)
+        {
+
+            Destroy(_prefab);
+            return;
+        }
 
         curNums[_idx]--;
         if (usedPrefabs[_idx].Count < data[_idx].storageNum)
@@ -102,28 +101,35 @@ public class PoolManager : MonoBehaviour
 
 
     /// <summary>
-    /// 등록된 프리팹인지 검사한다!
+    /// 인덱스로 프리팹이 있는지 검사한다!
+    /// -1인경우 존재 X
     /// </summary>
-    /// <param name="_prefab"></param>
-    /// <returns></returns>
-    private int ChkIdx(GameObject _prefab)
+    /// <returns>현재 인덱스</returns>
+    public short ChkIdx(ushort _idx)
     {
 
-        int strLen = _prefab.name.Length;
-
-        for (int i = 0; i < data.Length; i++)
+        for (short i = 0; i < data.Length; i++)
         {
 
             // 여기 방법을 바꿔야한다
             // 갈비지가 하나씩 생성된다고 한다
-            if (_prefab.name.Split("(Clone)")[0] == data[i].prefab.name)
+            if (data[i].idx == _idx)
             {
 
                 return i;
             }
         }
 
-        return -1;
+        return VariableManager.POOLMANAGER_NOTEXIST;
     }
 
+    /// <summary>
+    /// 같은 오브젝트 생성
+    /// </summary>
+    public GameObject GetSamePrefabs(Selectable _chkObj, int _layer)
+    {
+
+        int prefabIdx = ChkIdx(_chkObj.MyStat.SelectIdx);
+        return GetPrefabs(prefabIdx, _layer);
+    }
 }

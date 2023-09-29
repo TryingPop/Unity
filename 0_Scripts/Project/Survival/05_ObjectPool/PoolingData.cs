@@ -6,8 +6,7 @@ using UnityEngine;
 public class PoolingData
 {
 
-    public int idx;
-    public int storageNum;
-    public int maxNum;
+    public ushort idx;
+    public ushort storageNum;
     public GameObject prefab;
 }
