@@ -69,6 +69,7 @@ public class PoolManager : MonoBehaviour
             curNums[_idx]++;
             go = usedPrefabs[_idx].Pop();
             go.gameObject.SetActive(true);
+            go.layer = _layer;
             return go;
         }
 
@@ -76,6 +77,7 @@ public class PoolManager : MonoBehaviour
         curNums[_idx]++;
         go = Instantiate(data[_idx].prefab, transform);
         go.transform.parent = parents[_idx];
+        go.layer = _layer;
         return go;
     }
 

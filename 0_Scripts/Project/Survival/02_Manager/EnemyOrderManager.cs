@@ -124,7 +124,7 @@ public class EnemyOrderManager : MonoBehaviour
         }
     }
 
-    public void CreateUnit()
+    public void BuildingAction()
     {
 
         int type = Random.Range((int)STATE_UNIT.SKILL1, (int)STATE_UNIT.SKILL3 + 1);
@@ -139,7 +139,7 @@ public class EnemyOrderManager : MonoBehaviour
         while (true)
         {
 
-            if (!waveStart) yield return new WaitForSeconds(5f);
+            if (!waveStart) yield return new WaitForSeconds(1f);
             else yield return times[Random.Range(0, maxRandomTimes)];
 
 
@@ -152,7 +152,8 @@ public class EnemyOrderManager : MonoBehaviour
                 continue;
             }
 
-
+            BuildingAction();
+            continue;
         }
     }
 
@@ -170,7 +171,9 @@ public class EnemyOrderManager : MonoBehaviour
         {
 
             go.transform.position = randPos;
-            return go.GetComponent<Building>();
+            var enemyCastle = go.GetComponent<Building>();
+            enemyCastle.AfterSettingLayer();
+            return enemyCastle;
         }
         else
         {
@@ -191,5 +194,7 @@ public class EnemyOrderManager : MonoBehaviour
 
         var tech = actions[Random.Range(0, actions.Length)];
         _castle.MyStateAction = tech;
+
+        Debug.Log($"{tech.name}\n적의 지침이 정해졌습니다.");
     }
 }

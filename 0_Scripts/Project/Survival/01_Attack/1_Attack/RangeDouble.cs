@@ -21,7 +21,7 @@ public class RangeDouble : RangeTarget
             Transform unitTrans = _unit.transform;
 
             go.SetActive(true);
-            go.GetComponent<TargetMissile>().Init(unitTrans, _unit.Target, _unit.Atk);
+            go.GetComponent<TargetMissile>().Init(unitTrans, _unit.Target, _unit.Atk, prefabIdx);
 
 
             // if (coolTime <= atkTime)

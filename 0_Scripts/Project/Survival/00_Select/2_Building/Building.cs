@@ -97,8 +97,9 @@ public class Building : Selectable
     public override void AfterSettingLayer()
     {
 
-        myAlliance = TeamManager.instance.GetTeamInfo(gameObject.layer);
-
+        int myLayer = gameObject.layer;
+        myAlliance = TeamManager.instance.GetTeamInfo(myLayer);
+        myUpgrades = TeamManager.instance.GetUpgradeInfo(myLayer);
         if (ActionManager.instance.ContainsBuilding(this)) ActionManager.instance.RemoveBuilding(this);
         ActionManager.instance.AddBuilding(this);
         if (myHitBar != null) ActionManager.instance.ClearHitBar(myHitBar);
@@ -183,6 +184,8 @@ public class Building : Selectable
     {
 
         myHitBar.SetHp(0);
+        ActionManager.instance.ClearHitBar(myHitBar);
+        myHitBar = null;
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
         PoolManager.instance.UsedPrefab(gameObject, _prefabIdx);

@@ -14,7 +14,7 @@ public class TargetMissile : MonoBehaviour
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected float moveSpeed;
 
-    [SerializeField] protected byte prefabIdx;
+    [SerializeField] protected short prefabIdx;
 
     protected int atk;
 
@@ -28,12 +28,13 @@ public class TargetMissile : MonoBehaviour
     /// <param name="_target">대상</param>
     /// <param name="_moveSpeed">투사체 속도</param>
     /// <param name="_atk">공격력</param>
-    public void Init(Transform _attacker, Selectable _target, int _atk)
+    public void Init(Transform _attacker, Selectable _target, int _atk, short _prefabIdx)
     {
 
         atker = _attacker;
         target = _target;
         atk = _atk;
+        prefabIdx = _prefabIdx;
     }
 
     protected void FixedUpdate()
