@@ -8,8 +8,8 @@ public class ButtonManager : MonoBehaviour
 
     public static ButtonManager instance;
 
-    // [HideInInspector]
     public ButtonInfo[] buttons;
+
 
     [SerializeField] private GameObject actionUI;
     [SerializeField] private GameObject cancelUI;
@@ -73,7 +73,6 @@ public class ButtonManager : MonoBehaviour
         ClearButton();
     }
 
-    
     public void ClearButton()
     {
 
@@ -96,12 +95,12 @@ public class ButtonManager : MonoBehaviour
         return true;
     }
 
+
     /// <summary>
     /// 버튼 설정
     /// </summary>
     public void SetButton()
     {
-
 
         for (int i = 0; i < buttons.Length; i++)
         {
@@ -116,7 +115,6 @@ public class ButtonManager : MonoBehaviour
 
                 // 순서대로 이미지랑 키를 넣는다
                 btnActionImages[i].gameObject.SetActive(true);
-                // buttonImages[i].sprite = buttons[i].buttonImg;   // 현재 이미지가 없어서 패스!
             }
         }
     }

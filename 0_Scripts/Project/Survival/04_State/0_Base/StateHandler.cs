@@ -9,6 +9,7 @@ public abstract class StateHandler<T, V> : ScriptableObject
 
     public V[] actions;
 
+
     public abstract void Action(T _param);
 
     /// <summary>
@@ -28,7 +29,10 @@ public abstract class StateHandler<T, V> : ScriptableObject
     public bool ChkAction(int _idx)
     {
 
-        if (_idx < 0 || _idx >= actions.Length) return false;
+        if (_idx < 0 
+            || _idx >= actions.Length
+            || actions[_idx] == null) return false;
+        
         return true;
     }
     
@@ -99,5 +103,11 @@ public abstract class StateHandler<T, V> : ScriptableObject
 
             _buttons[i + _startButtonIdx] = ButtonInfo.Empty;
         }
+    }
+
+    public int GetSize()
+    {
+
+        return actions.Length;
     }
 }

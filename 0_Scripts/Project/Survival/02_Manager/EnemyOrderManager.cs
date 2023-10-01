@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyOrderManager : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class EnemyOrderManager : MonoBehaviour
     private short prefabIdx = -1;
 
     [SerializeField] private BuildingStateAction[] actions;
+
+    private Transform target;
 
     public short PrefabIdx
     {
@@ -64,29 +67,36 @@ public class EnemyOrderManager : MonoBehaviour
         StartCoroutine(OrderStart());
     }
 
-    public void GoToPlayer()
+    private bool IsTargetNull()
     {
 
-        Vector3 dir = Vector3.positiveInfinity;
+        if (target == null
+            || target.gameObject.layer == VariableManager.LAYER_DEAD) return true;
+
+        return false;
+    }
+
+    private void SetTarget()
+    {
 
         if (playerBuildings.Count != 0)
         {
 
-            dir = playerBuildings[Random.Range(0, playerBuildings.Count)].transform.position;
+            target = playerBuildings[Random.Range(0, playerBuildings.Count)].transform;
         }
         else if (playerUnits.Count != 0)
         {
 
-            dir = playerUnits[Random.Range(0, playerUnits.Count)].transform.position;
+            target = playerUnits[Random.Range(0, playerUnits.Count)].transform;
         }
+    }
 
-        if (dir != Vector3.positiveInfinity)
-        {
+    public void GoToPlayer()
+    {
 
-            int unitNum = enemyUnits.Count;
-            if (enemyUnits.Count > ushort.MaxValue) unitNum = enemyUnits.Count;
-            GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, dir, true);
-        }
+        int unitNum = enemyUnits.Count;
+        if (enemyUnits.Count > ushort.MaxValue) unitNum = enemyUnits.Count;
+        GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, target.position, true);
     }
     
     private void GiveCommand(ushort _num, int _type, Vector3 _dir, bool _isUnit)
@@ -152,7 +162,17 @@ public class EnemyOrderManager : MonoBehaviour
                 continue;
             }
 
-            BuildingAction();
+            if (enemyUnits.Count > 20)
+            {
+
+                // 유닛이 n마리가 넘으면
+                // 일정 시간마다 플레이어 강제 공격
+                if (IsTargetNull()) SetTarget();
+                if (target != null) GoToPlayer();
+                continue;
+            }
+
+            
             continue;
         }
     }
@@ -173,6 +193,7 @@ public class EnemyOrderManager : MonoBehaviour
             go.transform.position = randPos;
             var enemyCastle = go.GetComponent<Building>();
             enemyCastle.AfterSettingLayer();
+            enemyCastle.TargetPos = enemyCastle.transform.position;
             return enemyCastle;
         }
         else
@@ -194,7 +215,11 @@ public class EnemyOrderManager : MonoBehaviour
 
         var tech = actions[Random.Range(0, actions.Length)];
         _castle.MyStateAction = tech;
+    }
 
-        Debug.Log($"{tech.name}\n적의 지침이 정해졌습니다.");
+    private void EnemyRespawn()
+    {
+
+
     }
 }

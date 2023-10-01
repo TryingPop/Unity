@@ -29,7 +29,12 @@ public class Building : Selectable
     {
 
         get { return (int)myState; }
-        set { myState = (STATE_BUILDING)value; }
+        set 
+        {
+
+            myTurn = 0;
+            myState = (STATE_BUILDING)value; 
+        }
     }
 
     public BuildingStateAction MyStateAction
@@ -102,7 +107,12 @@ public class Building : Selectable
         myUpgrades = TeamManager.instance.GetUpgradeInfo(myLayer);
         if (ActionManager.instance.ContainsBuilding(this)) ActionManager.instance.RemoveBuilding(this);
         ActionManager.instance.AddBuilding(this);
-        if (myHitBar != null) ActionManager.instance.ClearHitBar(myHitBar);
+        if (myHitBar != null) 
+        { 
+            
+            ActionManager.instance.ClearHitBar(myHitBar);
+            myHitBar = null;
+        }
         MyHitBar = ActionManager.instance.GetHitBar();
     }
 
@@ -116,12 +126,10 @@ public class Building : Selectable
         {
 
             ReadCommand();
+            
         }
-        else
-        {
 
-            myStateAction.Action(this);
-        }
+        myStateAction.Action(this);
     }
 
     protected void Build()
@@ -212,6 +220,8 @@ public class Building : Selectable
         base.Dead();
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
+        ActionManager.instance.ClearHitBar(myHitBar);
+        myHitBar = null;
     }
 
     public override void GiveButtonInfo(ButtonInfo[] buttons)
@@ -254,6 +264,12 @@ public class Building : Selectable
         else if (myState == STATE_BUILDING.DEAD || myState == STATE_BUILDING.UNFINISHED) 
         {
 
+            if (_cmd.type == 0) 
+            { 
+            
+                DisableBuilding(myStat.MyPoolIdx); 
+                // 폭발 effect도 필요하다!
+            }
             _cmd.Canceled();
             return; 
         }
@@ -262,6 +278,13 @@ public class Building : Selectable
         {
 
             cmds.Enqueue(_cmd);
+        }
+        else if (_cmd.type == 0)
+        {
+
+            // 현재 명령 취소
+            MyState = _cmd.type;
+            _cmd.Received(0);
         }
         else
         {

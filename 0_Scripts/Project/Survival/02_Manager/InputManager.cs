@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class InputManager : MonoBehaviour
 {
@@ -124,6 +123,8 @@ public class InputManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Q)) MyState = 6;
             else if (Input.GetKeyDown(KeyCode.W)) MyState = 7;
             else if (Input.GetKeyDown(KeyCode.E)) MyState = 8;
+            else if (Input.GetKeyDown(KeyCode.Escape)) curGroup.GiveCommand(0, false);
+
             // 오른쪽 버튼 클릭
             else if (Input.GetMouseButtonDown(0))
             {

@@ -86,4 +86,5 @@ public class VariableManager
 
     public static readonly int MAX_BUILD_BUILDINGS = 3;
 
+    public static readonly int MIN_DAMAGE = 1;
 }

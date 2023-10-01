@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.WebSockets;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -107,6 +108,25 @@ public class Unit : Selectable
     }
 
     public int Atk => atk;
+
+    public override int MyTurn
+    {
+
+        get
+        {
+
+            return myTurn;
+        }
+
+        set
+        {
+
+            if (value > ushort.MaxValue) value = short.MaxValue;
+            else if (value < ushort.MinValue) value = short.MinValue;
+
+            myTurn = (ushort)value;
+        }
+    }
 
     #endregion 프로퍼티
 
@@ -301,7 +321,8 @@ public class Unit : Selectable
     public override void GetCommand(Command _cmd, bool _add = false)
     {
 
-        if (myState == STATE_UNIT.DEAD) 
+        if (myState == STATE_UNIT.DEAD
+            || _cmd.type == 0) 
         {
 
             _cmd.Canceled();

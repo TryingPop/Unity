@@ -11,7 +11,7 @@ public class UnitAtkPatrol : UnitPatrol
 
 
         base.Action(_unit);
-        // _unit.MyAttacks[0].FindTarget(_unit, true);
+
         _unit.MyAttack.FindTarget(_unit, true);
         if (_unit.Target != null) _unit.ActionDone(STATE_UNIT.ATTACK);
     }

@@ -9,21 +9,21 @@ public abstract class Attack : ScriptableObject
     public int atk;                             // 공격력
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
-    [SerializeField] protected short startAnimTime;                   // 애니메이션 시작 턴
-    [SerializeField] protected short atkTime;                         // 데미지 연산 시작 턴
+    [SerializeField] protected ushort startAnimTime;                   // 애니메이션 시작 턴
+    [SerializeField] protected ushort atkTime;                         // 데미지 연산 시작 턴
 
     public float atkRange;                      // 공격 범위
     public float chaseRange;
 
-    // public LayerMask atkLayers;                 
+    [SerializeField] protected ushort chkTime;
 
     protected static RaycastHit[] hits;
 
     protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
 
-        atkTime = (short)_atkTime;
-        startAnimTime = (short)_animTime;
+        AtkTime = (ushort)_atkTime;
+        StartAnimTime = (ushort)_animTime;
 
         atkRange = _atkRange;
         chaseRange = _chaseRange;
@@ -48,7 +48,7 @@ public abstract class Attack : ScriptableObject
         {
 
             value = value <= 1 ? 1 : value;
-            atkTime = (short)value;
+            atkTime = (ushort)value;
         }
     }
 
@@ -65,7 +65,7 @@ public abstract class Attack : ScriptableObject
         {
 
             value = value <= 1 ? 1 : value;
-            StartAnimTime = value > atkTime ? atkTime : value;
+            startAnimTime = value > atkTime ? atkTime : (ushort)value;
         }
     }
 
@@ -80,7 +80,10 @@ public abstract class Attack : ScriptableObject
 
         // 검사하는 유닛이 박스 콜라이더를 갖고 있어 hits는 최소 크기 1이 보장된다
         if (hits == null) hits = new RaycastHit[25];
-        
+        _unit.MyTurn++;
+        if (_unit.MyTurn < chkTime) return;      // 일정 턴수마다 확인한다!
+        _unit.MyTurn = 0;
+
         int cnt = Physics.SphereCastNonAlloc(_unit.transform.position, _isChase ? 
             chaseRange : atkRange, _unit.transform.forward, hits, 0f, _unit.MyAlliance.GetLayer(_isAlly));
         float minDis = _isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;

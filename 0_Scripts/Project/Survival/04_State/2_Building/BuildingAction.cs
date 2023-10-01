@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BuildingAction : IAction<Building> 
+[CreateAssetMenu(fileName = "None", menuName = "Action/Building/None")]
+public class BuildingAction : IAction<Building> 
 {
 
     [SerializeField] protected short turn;           // »ý»ê ÅÏ
+
+    public override void Action(Building _building) { }
 
     public override void OnEnter(Building _building)
     {

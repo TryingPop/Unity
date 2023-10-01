@@ -57,12 +57,6 @@ public class GroupRecurit : BuildingAction
                 }
             }
 
-            _building.MyTurn = 0;
-        }
-
-        if (_building.MyTurn == 0) 
-        {
-
             OnExit(_building);
         }
     }

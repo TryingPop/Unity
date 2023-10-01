@@ -9,11 +9,13 @@ public class UnitAtkHold : UnitHold
     public override void Action(Unit _unit)
     {
 
-        // Attack unitAttack = _unit.MyAttacks[0];
         Attack unitAttack = _unit.MyAttack;
-        unitAttack.FindTarget(_unit, false);
 
-        if (_unit.Target != null)
+
+        float atkDis = unitAttack.atkRange * unitAttack.atkRange;
+
+        if (_unit.Target != null
+            && Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position) < atkDis)
         {
 
             if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
@@ -21,24 +23,21 @@ public class UnitAtkHold : UnitHold
             _unit.MyRigid.MoveRotation(Quaternion.LookRotation(
                 _unit.Target.transform.position, _unit.transform.up));
 
-            // if (unitAttack.IsAtk)
+
+
             if (_unit.MyTurn != 0)
             {
 
-                // unitAttack.CoolTime++;
                 _unit.MyTurn++;
 
-                // if (unitAttack.CoolTime == unitAttack.StartAnimTime)
                 if (_unit.MyTurn == unitAttack.StartAnimTime)
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
                 }
-                // else if (unitAttack.CoolTime > unitAttack.AtkTime)
                 else if (_unit.MyTurn > unitAttack.AtkTime)
                 {
 
-                    // unitAttack.CoolTime = 0;
                     _unit.MyTurn = 0;
                     unitAttack.OnAttack(_unit);
                 }
@@ -46,13 +45,13 @@ public class UnitAtkHold : UnitHold
             else
             {
 
-                // unitAttack.IsAtk = true;
                 _unit.MyTurn++;
             }
         }
         else
         {
 
+            unitAttack.FindTarget(_unit, false);
             if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
         }
     }

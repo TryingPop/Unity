@@ -9,7 +9,7 @@ public class BuildingStateAction : StateHandler<Building, BuildingAction>
     public override void Action(Building _building)
     {
 
-        int idx = _building.MyState - 1;
+        int idx = _building.MyState;
         if (ChkAction(idx)) actions[idx].Action(_building);
     }
 }

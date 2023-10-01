@@ -22,7 +22,7 @@ public class RandomUpgrade : BuildingAction
             var alliance = _building.MyAlliance;
             _building.MyUpgrades.UpgradeStat(types[rand], amounts[rand]);
             ActionManager.instance.UpgradeChk(alliance);
-            _building.MyTurn = 0;
+            OnExit(_building);
         }
     }
 }

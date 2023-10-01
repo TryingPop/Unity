@@ -67,13 +67,20 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     [SerializeField] protected Selectable target;
     [SerializeField] protected Vector3 targetPos;
 
-    [SerializeField] protected short myTurn;
+    [SerializeField] protected ushort myTurn;
 
-    public int MyTurn
+    public virtual int MyTurn
     {
 
         get { return myTurn; }
-        set { myTurn = (short)value; }
+        set 
+        {
+
+            if (value > ushort.MaxValue) value = ushort.MaxValue;
+            else if (value < ushort.MinValue) value = ushort.MinValue;
+
+            myTurn = (ushort)value; 
+        }
     }
 
     public Selectable Target
@@ -145,7 +152,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
         if (ChkInvincible()) return;
 
-        curHp -= _dmg - def < 0 ? 0 : _dmg - def;
+        curHp -= _dmg - def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - def;
 
         myHitBar.SetHp(curHp);
 
