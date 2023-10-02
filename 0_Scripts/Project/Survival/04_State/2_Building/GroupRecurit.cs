@@ -45,13 +45,13 @@ public class GroupRecurit : BuildingAction
             for (int i = 0; i < selectIdxs.Length; i++)
             {
 
-                var go = PoolManager.instance.GetPrefabs(PrefabIdxs[i], _building.gameObject.layer);
+                var go = PoolManager.instance.GetPrefabs(PrefabIdxs[i], _building.gameObject.layer, _building.transform.position, _building.TargetPos - _building.transform.position);
+
                 Unit unit = go?.GetComponent<Unit>();
                 if (unit)
                 {
 
                     unit.AfterSettingLayer();
-                    unit.transform.position = _building.transform.position;
                     Command cmd = Command.GetCommand(1, VariableManager.MOUSE_R, _building.TargetPos, _building.Target);
                     unit.GetCommand(cmd);
                 }

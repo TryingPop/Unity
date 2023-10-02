@@ -35,13 +35,12 @@ public class RecruitSoldier : BuildingAction
 
             // 여기에 유닛 생성 가능한지 판별해야한다!
 
-            var go = PoolManager.instance.GetPrefabs(PrefabIdx, _building.gameObject.layer);
+            var go = PoolManager.instance.GetPrefabs(PrefabIdx, _building.gameObject.layer, _building.transform.position, _building.TargetPos - _building.transform.position);
             Unit unit = go?.GetComponent<Unit>();
             if (unit)
             {
 
                 unit.AfterSettingLayer();
-                unit.transform.position = _building.transform.position;
                 Command cmd = Command.GetCommand(1, VariableManager.MOUSE_R, _building.TargetPos, _building.Target);
                 unit.GetCommand(cmd);
             }

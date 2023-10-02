@@ -45,14 +45,15 @@ public class BossShot : ISkillAction
 
             _unit.MyAnimator.SetTrigger($"Skill{skillNum}");
 
-            GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, TargetMissile.LAYER_BULLET);
+            Transform unitTrans = _unit.transform;
+            Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
+
+            GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
             if (go)
             {
 
-                Transform unitTrans = _unit.transform;
                 go.SetActive(true);
                 go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - unitTrans.position, atk, waitTurn, moveTurn, _unit.MyAlliance.GetLayer(false));
-                go.transform.position = Quaternion.LookRotation(unitTrans.forward) * offset + unitTrans.position;
             }
         }
         else if (_unit.MyTurn == waitTurn)

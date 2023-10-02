@@ -7,7 +7,10 @@ public class RangeTarget : Attack
 {
 
     [SerializeField] protected ushort missileIdx;
+    [SerializeField] protected Vector3 offset;
+
     protected short prefabIdx = -1;
+    
     protected short PrefabIdx
     {
 
@@ -23,23 +26,21 @@ public class RangeTarget : Attack
             return prefabIdx;
         }
     }
-    [SerializeField] protected Vector3 offset;
+
 
     public override void OnAttack(Unit _unit)
     {
 
-        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, TargetMissile.LAYER_BULLET);
+        Transform unitTrans = _unit.transform;
+
+        Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
+        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
+        
         if (go)
         {
 
-            Transform unitTrans = _unit.transform;
-
             go.SetActive(true);
-            go.GetComponent<TargetMissile>().Init(unitTrans, _unit.Target, _unit.Atk, prefabIdx);
-
-            Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
-
-            go.transform.position = dir + unitTrans.position;
+            go.GetComponent<Missile>().Init(unitTrans, _unit.Target, _unit.Atk, prefabIdx);
         }
     }
 }

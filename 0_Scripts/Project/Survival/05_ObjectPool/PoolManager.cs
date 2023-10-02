@@ -49,7 +49,7 @@ public class PoolManager : MonoBehaviour
         curNums = new int[len];
     }
 
-
+    /*
     /// <summary>
     /// 생성 메서드
     /// </summary>
@@ -78,6 +78,51 @@ public class PoolManager : MonoBehaviour
         go = Instantiate(data[_idx].prefab, transform);
         go.transform.parent = parents[_idx];
         go.layer = _layer;
+        return go;
+    }
+    */
+
+
+    public GameObject GetPrefabs(int _idx, int _layer, Vector3 _pos, Vector3 _forward)
+    {
+
+        if (_idx == -1) return null;
+
+        GameObject go = null;
+        Transform goTrans = null;
+
+        // _idx의 생성된 프리팹 검사
+        if (usedPrefabs[_idx].Count > 0)
+        {
+
+            curNums[_idx]++;
+            go = usedPrefabs[_idx].Pop();
+            go.gameObject.SetActive(true);
+            go.layer = _layer;
+
+            goTrans = go.transform;
+
+            if (_pos != Vector3.positiveInfinity
+                && _pos != Vector3.negativeInfinity) goTrans.position = _pos;
+
+            if (_forward != Vector3.positiveInfinity
+                && _forward != Vector3.negativeInfinity) goTrans.forward = _forward;
+            return go;
+        }
+
+        curNums[_idx]++;
+        go = Instantiate(data[_idx].prefab, transform);
+        go.layer = _layer;
+
+        goTrans = go.transform;
+        goTrans.parent = parents[_idx];
+
+        
+        if (_pos != Vector3.positiveInfinity
+            && _pos != Vector3.negativeInfinity) goTrans.position = _pos;
+
+        if (_forward != Vector3.positiveInfinity
+            && _forward != Vector3.negativeInfinity) goTrans.forward = _forward;
         return go;
     }
 
@@ -128,10 +173,10 @@ public class PoolManager : MonoBehaviour
     /// <summary>
     /// 같은 오브젝트 생성
     /// </summary>
-    public GameObject GetSamePrefabs(Selectable _chkObj, int _layer)
+    public GameObject GetSamePrefabs(Selectable _chkObj, int _layer, Vector3 _pos, Vector3 _forward)
     {
 
         int prefabIdx = ChkIdx(_chkObj.MyStat.SelectIdx);
-        return GetPrefabs(prefabIdx, _layer);
+        return GetPrefabs(prefabIdx, _layer, _pos, _forward);
     }
 }

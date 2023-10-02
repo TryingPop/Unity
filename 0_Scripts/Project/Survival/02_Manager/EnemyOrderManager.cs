@@ -184,13 +184,11 @@ public class EnemyOrderManager : MonoBehaviour
     {
 
         Vector3 randPos = initTrans[Random.Range(0, initTrans.Length)].position;
-
-        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY);
+        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY, randPos, Vector3.positiveInfinity);
         
         if (go)
         {
 
-            go.transform.position = randPos;
             var enemyCastle = go.GetComponent<Building>();
             enemyCastle.AfterSettingLayer();
             enemyCastle.TargetPos = enemyCastle.transform.position;

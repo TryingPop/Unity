@@ -87,4 +87,6 @@ public class VariableManager
     public static readonly int MAX_BUILD_BUILDINGS = 3;
 
     public static readonly int MIN_DAMAGE = 1;
+
+    public static readonly int ONE_MISS_PER_N_TIMES = 5;    // 몇 번 해야지 미스 발생하는지?
 }

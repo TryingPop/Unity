@@ -27,7 +27,7 @@ public class BuildBuilding : IUnitAction
             // 먼저 건설 가능한지 검사
             // 가격 검사 > 위치 검사 순으로 하면 된다!
 
-            var go = PoolManager.instance.GetSamePrefabs(_unit.Target, _unit.gameObject.layer);
+            var go = PoolManager.instance.GetSamePrefabs(_unit.Target, _unit.gameObject.layer, _unit.TargetPos, Vector3.positiveInfinity);
             if (go)
             {
 
