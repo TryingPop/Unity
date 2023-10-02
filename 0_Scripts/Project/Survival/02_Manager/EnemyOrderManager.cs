@@ -184,7 +184,7 @@ public class EnemyOrderManager : MonoBehaviour
     {
 
         Vector3 randPos = initTrans[Random.Range(0, initTrans.Length)].position;
-        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY, randPos, Vector3.positiveInfinity);
+        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY, randPos);
         
         if (go)
         {
