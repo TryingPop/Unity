@@ -27,12 +27,6 @@ public abstract class Attack : ScriptableObject
 
         atkRange = _atkRange;
         chaseRange = _chaseRange;
-
-        if (hits == null)
-        {
-
-            hits = new RaycastHit[25];
-        }
     }
 
     public int AtkTime

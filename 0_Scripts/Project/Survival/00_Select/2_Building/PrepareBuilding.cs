@@ -95,7 +95,7 @@ public class PrepareBuilding : MonoBehaviour
 
         if (!isBuild) return null;
 
-        var go = PoolManager.instance.GetPrefabs(PrefabIdx, TeamManager.instance.ChkTeamNumber(gameObject.layer), transform.position, Vector3.positiveInfinity);
+        var go = PoolManager.instance.GetPrefabs(PrefabIdx, gameObject.layer, transform.position);
 
         return go;
     }

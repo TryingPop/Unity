@@ -11,7 +11,7 @@ public class TargetMissile : Missile
     {
         base.Used();
 
-        var go = PoolManager.instance.GetPrefabs(4, VariableManager.LAYER_BULLET, transform.position + Vector3.up, Vector3.positiveInfinity);
+        var go = PoolManager.instance.GetPrefabs(4, VariableManager.LAYER_BULLET, transform.position + Vector3.up);
     }
 
     protected override void FixedUpdate()

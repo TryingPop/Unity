@@ -33,8 +33,7 @@ public class BulletRotation : MonoBehaviour
     {
 
         Quaternion forward = Quaternion.LookRotation(transform.forward);
-        Debug.Log(forward * powOffset);
-        // 방향과 세기 조절... 필요!
+
         myRigid.AddForce(forward * powOffset, ForceMode.Impulse);
         myRigid.AddTorque(forward * rotOffset, ForceMode.Impulse);
     }

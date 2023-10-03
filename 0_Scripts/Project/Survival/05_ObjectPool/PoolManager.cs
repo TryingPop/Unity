@@ -151,6 +151,8 @@ public class PoolManager : MonoBehaviour
         return VariableManager.POOLMANAGER_NOTEXIST;
     }
 
+    
+
     /// <summary>
     /// 같은 오브젝트 생성
     /// </summary>
@@ -159,5 +161,12 @@ public class PoolManager : MonoBehaviour
 
         int prefabIdx = ChkIdx(_chkObj.MyStat.SelectIdx);
         return GetPrefabs(prefabIdx, _layer, _pos, _forward);
+    }
+
+    public GameObject GetSamePrefabs(Selectable _chkObj, int _layer, Vector3 _pos)
+    {
+
+        int prefabIdx = ChkIdx(_chkObj.MyStat.SelectIdx);
+        return GetPrefabs(prefabIdx, _layer, _pos);
     }
 }

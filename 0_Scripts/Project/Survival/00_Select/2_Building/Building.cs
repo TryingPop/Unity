@@ -18,12 +18,18 @@ public class Building : Selectable
     [SerializeField] protected BuildingStateAction myStateAction;
     [SerializeField] protected SightMesh mySight;
 
-    [SerializeField] protected float increaseY; // Y 증가량
-    protected float initPosY;                   // 시작 y좌표 값
+    [SerializeField] protected BuildOpt opt;
+    
+    // [SerializeField] protected float increaseY; // Y 증가량
+    // protected float initPosY;                   // 시작 y좌표 값
 
-    [SerializeField] protected ushort buildTurn; // 건설 완료까지 걸리는 시간
+    // [SerializeField] protected ushort buildTurn; // 건설 완료까지 걸리는 시간
+    // [SerializeField] protected ushort destroyIdx;
     protected ushort curBuildTurn;               // 건설 진행 시간
+    // protected short destroyPoolIdx = -1;
+
     public static WaitForSeconds completeTimer;
+
 
     public override int MyState
     {
@@ -59,12 +65,11 @@ public class Building : Selectable
         if (cmds == null) cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
         if (completeTimer == null) completeTimer = new WaitForSeconds(0.1f);
 
-        if (buildTurn != 0)
+        if (opt.BuildTurn != 0)
         {
 
-            initPosY = buildingObj.localPosition.y - increaseY;
             Vector3 pos = buildingObj.localPosition;
-            pos.y = initPosY;
+            pos.y = opt.InitPosY;
             buildingObj.localPosition = pos;
         }
     }
@@ -80,7 +85,7 @@ public class Building : Selectable
 
         SetStat();
 
-        if (buildTurn == 0)
+        if (opt.BuildTurn == 0)
         {
 
             myState = STATE_BUILDING.NONE;
@@ -138,13 +143,13 @@ public class Building : Selectable
         curBuildTurn++;
 
         float height;
-        if (curBuildTurn >= buildTurn)
+        if (curBuildTurn >= opt.BuildTurn)
         {
 
             curHp = maxHp;
             myObstacle.carving = true;
             mySight.SetSize(myStat.MySize * 2);
-            height = increaseY;
+            height = opt.IncreaseY;
             myState = STATE_BUILDING.NONE;
 
             if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkSelected(this);
@@ -154,7 +159,7 @@ public class Building : Selectable
         else
         {
 
-            float per = buildTurn != 0 ? curBuildTurn / (float)buildTurn : 1f;
+            float per = opt.BuildTurn != 0 ? curBuildTurn / (float)opt.BuildTurn : 1f;
             if (maxHp != VariableManager.INFINITE) 
             { 
                 
@@ -163,11 +168,11 @@ public class Building : Selectable
                 else if (curHp == maxHp) curHp -= 1;
             }
             
-            height = ((10 * curHp) / maxHp) * 0.1f * increaseY;
+            height = ((10 * curHp) / maxHp) * 0.1f * opt.IncreaseY;
         }
 
         Vector3 pos = buildingObj.localPosition;
-        pos.y = initPosY + height;
+        pos.y = opt.InitPosY + height;
         buildingObj.localPosition = pos;
         myHitBar.SetHp(curHp);
     }
@@ -197,6 +202,14 @@ public class Building : Selectable
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
         PoolManager.instance.UsedPrefab(gameObject, _prefabIdx);
+        gameObject.layer = VariableManager.LAYER_DEAD;
+        
+        if (InputManager.instance.curGroup.IsContains(this))
+        {
+
+            InputManager.instance.curGroup.DeSelect(this);
+            InputManager.instance.ChkSelected();
+        }
     }
 
     private IEnumerator FinishedBuildCoroutine()
@@ -222,6 +235,8 @@ public class Building : Selectable
         ActionManager.instance.RemoveBuilding(this);
         ActionManager.instance.ClearHitBar(myHitBar);
         myHitBar = null;
+
+        PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
     public override void GiveButtonInfo(ButtonInfo[] buttons)
@@ -267,8 +282,9 @@ public class Building : Selectable
             if (_cmd.type == 0) 
             { 
             
-                DisableBuilding(myStat.MyPoolIdx); 
-                // 폭발 effect도 필요하다!
+                DisableBuilding(myStat.MyPoolIdx);
+
+                PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
             }
             _cmd.Canceled();
             return; 

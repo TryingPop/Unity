@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.WebSockets;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,7 +18,6 @@ public class Unit : Selectable
 
     [SerializeField] protected STATE_UNIT myState;
     [SerializeField] protected UnitStateAction myStateAction;
-    // [SerializeField] protected Attack[] myAttacks;
     [SerializeField] protected Attack myAttack;
     [SerializeField] protected SightMesh mySight;
 
@@ -42,6 +40,7 @@ public class Unit : Selectable
 
     public Attack MyAttack => myAttack;
     public UnitStateAction MyStateAction => myStateAction;
+
 
     public Vector3 PatrolPos
     {
