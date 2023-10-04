@@ -17,7 +17,7 @@ public abstract class Attack : ScriptableObject
 
     [SerializeField] protected ushort chkTime;
 
-    protected static RaycastHit[] hits;
+    protected static RaycastHit[] hits = new RaycastHit[25];
 
     protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
@@ -73,19 +73,18 @@ public abstract class Attack : ScriptableObject
     {
 
         // 검사하는 유닛이 박스 콜라이더를 갖고 있어 hits는 최소 크기 1이 보장된다
-        if (hits == null) hits = new RaycastHit[25];
         _unit.MyTurn++;
         if (_unit.MyTurn < chkTime) return;      // 일정 턴수마다 확인한다!
         _unit.MyTurn = 0;
 
-        int cnt = Physics.SphereCastNonAlloc(_unit.transform.position, _isChase ? 
+        int len = Physics.SphereCastNonAlloc(_unit.transform.position, _isChase ? 
             chaseRange : atkRange, _unit.transform.forward, hits, 0f, _unit.MyAlliance.GetLayer(_isAlly));
         float minDis = _isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;
         _unit.Target = null;
 
         Transform target = null;
 
-        for (int i = 0; i < cnt; i++)
+        for (int i = 0; i < len; i++)
         {
 
             if (hits[i].transform == _unit.transform)

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.AI;
 
 public class EnemyOrderManager : MonoBehaviour
 {
@@ -27,6 +27,15 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField] private BuildingStateAction[] actions;
 
     private Transform target;
+
+    [SerializeField] private int respawnEnemyNum = 3;
+    // [SerializeField] private float respawnEnemyAddNum = 0f;
+
+    // 생성 번호
+    [SerializeField] private ushort[] respawnEnemySelectIdxs;
+    private short[] respawnEnemyPoolIdxs;
+
+    private ushort forcedAtkNum;
 
     public short PrefabIdx
     {
@@ -65,6 +74,13 @@ public class EnemyOrderManager : MonoBehaviour
         enemyBuildings = ActionManager.instance.EnemyBuildings;
 
         StartCoroutine(OrderStart());
+
+        respawnEnemyPoolIdxs = new short[respawnEnemySelectIdxs.Length];
+        for (int i = 0; i < respawnEnemyPoolIdxs.Length; i++)
+        {
+
+            respawnEnemyPoolIdxs[i] = PoolManager.instance.ChkIdx(respawnEnemySelectIdxs[i]);
+        }
     }
 
     private bool IsTargetNull()
@@ -134,6 +150,25 @@ public class EnemyOrderManager : MonoBehaviour
         }
     }
 
+    private void GiveCommand(Unit _unit, int _type, Vector3 _dir)
+    {
+
+        Command cmd;
+
+        if (_dir == Vector3.positiveInfinity || _dir == Vector3.negativeInfinity)
+        {
+
+            cmd = Command.GetCommand(1, _type);
+        }
+        else
+        {
+
+            cmd = Command.GetCommand(1, _type, _dir);
+        }
+
+        _unit.GetCommand(cmd, true);
+    }
+
     public void BuildingAction()
     {
 
@@ -162,17 +197,18 @@ public class EnemyOrderManager : MonoBehaviour
                 continue;
             }
 
-            if (enemyUnits.Count > 20)
+            // 강제 공격인원을 넘으면 강제 공격
+            if (enemyUnits.Count > forcedAtkNum)
             {
 
                 // 유닛이 n마리가 넘으면
                 // 일정 시간마다 플레이어 강제 공격
                 if (IsTargetNull()) SetTarget();
                 if (target != null) GoToPlayer();
-                continue;
             }
 
-            
+            // 적 생성
+            RespawnEnemy();
             continue;
         }
     }
@@ -183,7 +219,9 @@ public class EnemyOrderManager : MonoBehaviour
     private Building BuildEnemyCastle()
     {
 
+        
         Vector3 randPos = initTrans[Random.Range(0, initTrans.Length)].position;
+
         var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY, randPos);
         
         if (go)
@@ -215,9 +253,40 @@ public class EnemyOrderManager : MonoBehaviour
         _castle.MyStateAction = tech;
     }
 
-    private void EnemyRespawn()
+    private void RespawnEnemy()
     {
 
+        if (target == null) SetTarget();
 
+        for (int i = 0; i < initTrans.Length; i++)
+        {
+
+            for (int j = 0; j < respawnEnemyNum; j++)
+            {
+
+                Vector3 randPos;
+                while (true)
+                {
+
+                    randPos = initTrans[i].position;
+                    randPos += Random.insideUnitSphere * 8f;
+
+                    if (NavMesh.SamplePosition(randPos, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
+                    {
+
+                        randPos = hit.position;
+                        break;
+                    }
+                }
+
+                var go = PoolManager.instance.GetPrefabs(respawnEnemyPoolIdxs[Random.Range(0, respawnEnemyPoolIdxs.Length)], VariableManager.LAYER_ENEMY, randPos);
+                
+                Unit unit = go.GetComponent<Unit>();
+                
+                if (unit) unit.AfterSettingLayer();
+
+                if (target != null) GiveCommand(unit, 5, target.position);
+            }
+        }
     }
 }

@@ -14,10 +14,16 @@ public class TargetMissile : Missile
         var go = PoolManager.instance.GetPrefabs(4, VariableManager.LAYER_BULLET, transform.position + Vector3.up);
     }
 
-    protected override void FixedUpdate()
+    public override void Action()
     {
 
-        base.FixedUpdate();
+        base.Action();
         myRotation.Rotation();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.transform == target.transform) TargetAttack();
     }
 }

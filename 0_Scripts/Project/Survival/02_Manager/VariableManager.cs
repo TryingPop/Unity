@@ -1,5 +1,7 @@
 
 
+using UnityEditor;
+
 public enum TYPE_SELECTABLE 
 { 
     
@@ -89,4 +91,8 @@ public class VariableManager
     public static readonly int MIN_DAMAGE = 1;
 
     public static readonly int ONE_MISS_PER_N_TIMES = 5;    // 몇 번 해야지 미스 발생하는지?
+
+    public static readonly int INIT_UNIT_LIST_NUM = 50;
+    public static readonly int INIT_BUILDING_LIST_NUM = 20;
+    public static readonly int INIT_MISSILE_LIST_NUM = 50;
 }

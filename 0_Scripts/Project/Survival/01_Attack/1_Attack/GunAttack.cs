@@ -38,7 +38,7 @@ public class GunAttack : RangeTarget
         {
 
             go.SetActive(true);
-            go.GetComponent<Missile>().Init(unitTrans, _unit.Target, _unit.Atk, prefabIdx);
+            go.GetComponent<TargetMissile>().Init(unitTrans, _unit.Target, _unit.Atk, prefabIdx);
             dir = Quaternion.LookRotation(unitTrans.forward) * effectOffset;
 
             GameObject bulletCase = PoolManager.instance.GetPrefabs(EffectPrefabIdx, VariableManager.LAYER_DEAD, unitTrans.position + dir, unitTrans.forward);

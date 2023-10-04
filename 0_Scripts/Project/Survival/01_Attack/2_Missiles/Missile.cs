@@ -30,15 +30,19 @@ public class Missile : MonoBehaviour
         target = _target;
         atk = _atk;
         prefabIdx = _prefabIdx;
+
+        ActionManager.instance.AddMissile(this);
     }
 
     protected virtual void Used()
     {
 
+        myRigid.velocity = Vector3.zero;
+        ActionManager.instance.RemoveMissile(this);
         PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
     }
 
-    protected virtual void FixedUpdate()
+    public virtual void Action()
     {
 
         // À¯µµ !
@@ -55,26 +59,32 @@ public class Missile : MonoBehaviour
         transform.LookAt(target.transform.position);
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
+    protected void ChkMiss(int num = 0)
     {
 
-        if (other.transform == target.transform)
+        int n = (int)(target.transform.position.y - atker.position.y);
+
+        if (n > 0)
         {
 
-            {
-
-                int n = (int)(target.transform.position.y - atker.position.y);
-
-                if (n > 0)
-                {
-
-                    if (Random.Range(0, VariableManager.ONE_MISS_PER_N_TIMES) < n) atk = 0;
-
-                }
-            }
-            target.OnDamaged(atk, atker);
-
-            Used();
+            if (num == 0 && Random.Range(0, VariableManager.ONE_MISS_PER_N_TIMES) < n) atk = 0;
+            else if (num > 0 && Random.Range(0, num) < n) atk = 0;
         }
+    }
+
+    protected virtual void TargetAttack()
+    {
+
+        ChkMiss();
+
+        target.OnDamaged(atk, atker);
+
+        Used();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.transform == target.transform) TargetAttack();
     }
 }

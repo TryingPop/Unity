@@ -15,6 +15,7 @@ public class UnitAtkHold : UnitHold
         float atkDis = unitAttack.atkRange * unitAttack.atkRange;
 
         if (_unit.Target != null
+            && _unit.Target.MyState != -1
             && Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position) < atkDis)
         {
 
@@ -22,8 +23,6 @@ public class UnitAtkHold : UnitHold
 
             _unit.MyRigid.MoveRotation(Quaternion.LookRotation(
                 _unit.Target.transform.position, _unit.transform.up));
-
-
 
             if (_unit.MyTurn != 0)
             {

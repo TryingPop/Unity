@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class ActionManager : MonoBehaviour
@@ -19,6 +20,7 @@ public class ActionManager : MonoBehaviour
     [SerializeField] private HitBar unitHitBar;
     [SerializeField] private Canvas hitBarCanvas;
 
+    private List<Missile> missiles;
 
     public List<Unit> PlayerUnits => playerUnits;
     public List<Unit> EnemyUnits => enemyUnits;
@@ -47,14 +49,16 @@ public class ActionManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        playerUnits = new List<Unit>(VariableManager.MAX_CONTROL_UNITS);
-        playerBuildings = new List<Building>(VariableManager.MAX_BUILDINGS);
+        playerUnits = new List<Unit>(VariableManager.INIT_UNIT_LIST_NUM);
+        playerBuildings = new List<Building>(VariableManager.INIT_BUILDING_LIST_NUM);
         
-        enemyUnits = new List<Unit>(50);
-        enemyBuildings = new List<Building>(50);
+        enemyUnits = new List<Unit>(VariableManager.INIT_UNIT_LIST_NUM);
+        enemyBuildings = new List<Building>(VariableManager.INIT_BUILDING_LIST_NUM);
 
-        usedHitBars = new Stack<HitBar>();
-        hitBars = new List<HitBar>(VariableManager.MAX_CONTROL_UNITS + VariableManager.MAX_BUILDINGS);
+        usedHitBars = new Stack<HitBar>(VariableManager.INIT_UNIT_LIST_NUM + VariableManager.INIT_BUILDING_LIST_NUM);
+        hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM + VariableManager.INIT_BUILDING_LIST_NUM);
+
+        missiles = new List<Missile>(VariableManager.INIT_MISSILE_LIST_NUM);
     }
 
     private void FixedUpdate()
@@ -75,6 +79,11 @@ public class ActionManager : MonoBehaviour
     private void Action()
     {
 
+        for (int i = 0; i < missiles.Count; i++)
+        {
+
+            missiles[i].Action();
+        }
         
         for (int i = 0; i < playerBuildings.Count; i++)
         {
@@ -231,5 +240,17 @@ public class ActionManager : MonoBehaviour
                 enemyUnits[i].SetStat();
             }
         }
+    }
+
+    public void AddMissile(Missile _missile)
+    {
+
+        if (!missiles.Contains(_missile))missiles.Add(_missile);
+    }
+
+    public void RemoveMissile(Missile _missile)
+    {
+
+        missiles.Remove(_missile);
     }
 }

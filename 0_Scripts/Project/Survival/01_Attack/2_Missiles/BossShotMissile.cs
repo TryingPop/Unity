@@ -2,19 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossShotMissile : MonoBehaviour
+public class BossShotMissile : Missile
 {
 
-    [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected Collider myCollider;
-    [SerializeField] protected float moveSpeed;
-
-    [SerializeField] protected byte prefabIdx;
-
-    [SerializeField] protected int atk;
 
     [SerializeField] protected Vector3 dir;
-
     [SerializeField] protected Vector3 sizeUp;
 
     [SerializeField] protected short waitTurn;
@@ -64,9 +57,10 @@ public class BossShotMissile : MonoBehaviour
         myRigid.isKinematic = false;
         engageParticle.SetActive(true);
 
+        ActionManager.instance.AddMissile(this);
     }
 
-    protected void FixedUpdate()
+    public override void Action()
     {
 
         calcTurn++;
@@ -96,15 +90,20 @@ public class BossShotMissile : MonoBehaviour
 
                 myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
             }
-            else 
+            else
             {
 
-                // Destroy(gameObject);
-                PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
+                Used();
             }
         }
 
         myRotation.Rotation();
+    }
+
+    protected override void TargetAttack()
+    {
+
+        target.OnDamaged(atk);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -113,8 +112,7 @@ public class BossShotMissile : MonoBehaviour
         if (other.CompareTag("Wall"))
         {
 
-            // Destroy(gameObject);
-            PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
+            Used();
         }
         else if (other.CompareTag("Unit"))
         {
@@ -125,7 +123,7 @@ public class BossShotMissile : MonoBehaviour
                 if (((1 << other.gameObject.layer) & targetLayer) != 0)
                 {
 
-                    target.OnDamaged(atk);
+                    TargetAttack();
                 }
             }
         }
