@@ -115,7 +115,7 @@ public class UnitAtk : IUnitAction
         if (_unit.Target) _unit.TargetPos = _unit.Target.transform.position;
         _unit.MyTurn = 0;
         _unit.MyAgent.SetDestination(_unit.TargetPos);
-        _unit.MyAnimator.SetFloat("Move", 0.5f);
+        _unit.MyAnimator.SetFloat("Move", 1f);
     }
 
     protected override void OnExit(Unit _unit, STATE_UNIT _nextState = STATE_UNIT.NONE)

@@ -38,6 +38,6 @@ public class UnitMove : IUnitAction
     {
 
         _unit.MyAgent.SetDestination(_unit.TargetPos);
-        _unit.MyAnimator.SetFloat("Move", 0.5f);
+        _unit.MyAnimator.SetFloat("Move", 1f);
     }
 }

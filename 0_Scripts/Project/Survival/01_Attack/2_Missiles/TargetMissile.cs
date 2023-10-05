@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetMissile : Missile
+public class TargetMissile : GuidedMissile
 {
 
     [SerializeField] protected MissileRotation myRotation;

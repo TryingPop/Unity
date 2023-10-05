@@ -6,20 +6,82 @@ public class BossShotMissile : Missile
 {
 
     [SerializeField] protected Collider myCollider;
-
+    [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected Vector3 dir;
     [SerializeField] protected Vector3 sizeUp;
 
-    [SerializeField] protected short waitTurn;
-    [SerializeField] protected short moveTurn;
+    protected short waitTurn;
+    protected short moveTurn;
 
     [SerializeField] protected short calcTurn;
     protected bool isMove = false;
+
+    protected int atk;
+    protected float moveSpeed;
 
     [SerializeField] protected LayerMask targetLayer;
     [SerializeField] protected MissileRotation myRotation;
     [SerializeField] protected GameObject engageParticle;
 
+    protected short prefabIdx;
+
+    public short WaitTurn
+    {
+
+        set 
+        { 
+            
+            waitTurn = value;
+            if (waitTurn != 0)
+            {
+
+                sizeUp = Vector3.one * (1.0f / waitTurn);
+                transform.localScale = Vector3.zero;
+            }
+            else
+            {
+
+                transform.localScale = Vector3.one;
+            }
+        }
+    }
+
+    public short MoveTurn
+    {
+
+        set
+        {
+
+            moveTurn = value;
+        }
+    }
+
+    // public Selectable target;
+
+    public override void Init(Selectable _atker, int _atk, short _prefabIdx)
+    {
+
+        prefabIdx = _prefabIdx;
+        atk = _atk;
+
+        Vector3 destination = _atker.TargetPos;
+        destination.y = 0;
+        dir = destination.normalized;
+
+        targetLayer = _atker.MyAlliance.GetLayer(false);
+
+        transform.LookAt(destination + transform.position);
+
+        calcTurn = 0;
+        isMove = false;
+        myCollider.isTrigger = false;
+        myRigid.isKinematic = false;
+        engageParticle.SetActive(true);
+
+        ActionManager.instance.AddMissile(this);
+    }
+
+    /*
     public void Init(Vector3 _dir, int _atk,
         short _waitTurn, short _moveTurn, LayerMask _targetLayer)
     {
@@ -59,6 +121,8 @@ public class BossShotMissile : Missile
 
         ActionManager.instance.AddMissile(this);
     }
+    */
+
 
     public override void Action()
     {
@@ -100,10 +164,18 @@ public class BossShotMissile : Missile
         myRotation.Rotation();
     }
 
+    protected override void Used()
+    {
+
+        myRigid.velocity = Vector3.zero;
+        ActionManager.instance.RemoveMissile(this);
+        PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
+    }
+
     protected override void TargetAttack()
     {
 
-        target.OnDamaged(atk);
+        // target.OnDamaged(atk);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -123,7 +195,7 @@ public class BossShotMissile : Missile
                 if (((1 << other.gameObject.layer) & targetLayer) != 0)
                 {
 
-                    TargetAttack();
+                    target.OnDamaged(atk);
                 }
             }
         }

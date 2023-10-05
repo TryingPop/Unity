@@ -24,7 +24,7 @@ public class RangeDouble : RangeTarget
         {
 
             go.SetActive(true);
-            go.GetComponent<TargetMissile>().Init(unitTrans, _unit.Target, _unit.Atk, prefabIdx);
+            go.GetComponent<TargetMissile>().Init(_unit, _unit.Atk, prefabIdx);
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletRotation : MonoBehaviour
+public class BulletCase : MonoBehaviour
 {
 
     [SerializeField] private Rigidbody myRigid;

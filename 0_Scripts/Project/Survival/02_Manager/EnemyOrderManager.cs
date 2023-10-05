@@ -112,7 +112,7 @@ public class EnemyOrderManager : MonoBehaviour
 
         int unitNum = enemyUnits.Count;
         if (enemyUnits.Count > ushort.MaxValue) unitNum = enemyUnits.Count;
-        GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, target.position, true);
+        GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, target.position, false);
     }
     
     private void GiveCommand(ushort _num, int _type, Vector3 _dir, bool _isUnit)

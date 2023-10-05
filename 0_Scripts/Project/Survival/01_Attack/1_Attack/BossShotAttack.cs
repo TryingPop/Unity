@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BossShot", menuName = "Attack/BossShot")]
+[Obsolete("안써용")]
 public class BossShotAttack : RangeTarget
 {
 
@@ -14,13 +15,14 @@ public class BossShotAttack : RangeTarget
 
         GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
         
+        // 현재 안쓴다;
         if (go)
         {
 
             go.SetActive(true);
-            go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - unitTrans.position, _unit.Atk, 
-                (short)(atkRange * 50), (short)(chaseRange * 50), 
-                _unit.MyAlliance.GetLayer(false));
+            // go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - unitTrans.position, _unit.Atk, 
+            //     (short)(atkRange * 50), (short)(chaseRange * 50), 
+            //    _unit.MyAlliance.GetLayer(false));
         }
     }
 }

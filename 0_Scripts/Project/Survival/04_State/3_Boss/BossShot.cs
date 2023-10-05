@@ -53,7 +53,10 @@ public class BossShot : ISkillAction
             {
 
                 go.SetActive(true);
-                go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - unitTrans.position, atk, waitTurn, moveTurn, _unit.MyAlliance.GetLayer(false));
+                var missile = go.GetComponent<BossShotMissile>();
+                missile.Init(_unit, atk, PrefabIdx);
+                missile.WaitTurn = waitTurn;
+                missile.MoveTurn = moveTurn;
             }
         }
         else if (_unit.MyTurn == waitTurn)

@@ -91,7 +91,7 @@ public class UnitRepair : IUnitAction
         // fixedupdate 마다 판별하기에 여기서는 판별안한다
         _unit.MyTurn = 0;
         _unit.MyAgent.SetDestination(_unit.Target.transform.position);
-        _unit.MyAnimator.SetFloat("Move", 0.5f);
+        _unit.MyAnimator.SetFloat("Move", 1f);
     }
 
     protected override void OnExit(Unit _unit, STATE_UNIT _nextState = STATE_UNIT.NONE)
