@@ -88,7 +88,7 @@ public class UnitRepair : IUnitAction
     public override void OnEnter(Unit _unit)
     {
 
-        // fixedupdate 마다 판별하기에 여기서는 판별안한다
+        if (_unit.Target == null) OnExit(_unit);
         _unit.MyTurn = 0;
         _unit.MyAgent.SetDestination(_unit.Target.transform.position);
         _unit.MyAnimator.SetFloat("Move", 1f);

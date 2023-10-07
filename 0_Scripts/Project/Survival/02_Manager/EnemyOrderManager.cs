@@ -35,7 +35,7 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField] private ushort[] respawnEnemySelectIdxs;
     private short[] respawnEnemyPoolIdxs;
 
-    private ushort forcedAtkNum;
+    private ushort forcedAtkNum = 30;
 
     public short PrefabIdx
     {
@@ -112,31 +112,35 @@ public class EnemyOrderManager : MonoBehaviour
 
         int unitNum = enemyUnits.Count;
         if (enemyUnits.Count > ushort.MaxValue) unitNum = enemyUnits.Count;
-        GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, target.position, false);
+        GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, target.position, true);
     }
     
     private void GiveCommand(ushort _num, int _type, Vector3 _dir, bool _isUnit)
     {
 
         Command cmd;
-
+        // 명령 생성
         if (_dir == Vector3.positiveInfinity || _dir == Vector3.negativeInfinity)
         {
 
+            // 건물 명령
             cmd = Command.GetCommand(_num, _type);
         }
         else
         {
 
+            // 유닛 명령
             cmd = Command.GetCommand(_num, _type, _dir);
         }
 
+        // 명령 전달인데 예약명령이 아닌 바로 실행할 명령이다!
         if (_isUnit)
         {
+
             for (int i = 0; i < _num; i++)
             {
 
-                enemyUnits[i].GetCommand(cmd, true);
+                enemyUnits[i].GetCommand(cmd, false);
             }
         }
         else
@@ -145,7 +149,7 @@ public class EnemyOrderManager : MonoBehaviour
             for (int i = 0; i < _num; i++)
             {
 
-                enemyBuildings[i].GetCommand(cmd, true);
+                enemyBuildings[i].GetCommand(cmd, false);
             }
         }
     }

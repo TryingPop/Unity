@@ -59,6 +59,8 @@ public class VariableManager
     public static readonly int LAYER_PLAYER = 17;
     public static readonly int LAYER_ENEMY = 18;
     public static readonly int LAYER_NEUTRAL = 19;
+    public static readonly int LAYER_GROUND = 10;
+
 
     // ÆÀ idx
     public static readonly int TEAM_PLAYER = 0;

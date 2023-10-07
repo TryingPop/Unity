@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,6 @@ public class InputManager : MonoBehaviour
     public Selectable worker;
 
     [SerializeField] private Camera cam;
-
     [SerializeField] private Vector3 clickPos;
 
     [SerializeField] private bool isDrag = false;
@@ -131,60 +131,24 @@ public class InputManager : MonoBehaviour
 
                 // 명령이 아닌 선택의 경우 시작지점만 알린다
                 clickPos = Input.mousePosition;
-                isDrag = true;
-
-                if (Time.time - clickTime < clickInterval)
+                if (clickPos.y >= 160)
                 {
 
-                    // 더블클릭 기능 >> 되었다고 알려야한다!
-                    isDoubleClicked = true;
-                    clickTime = -1f;
-                }
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
+                    isDrag = true;
 
-                if (isCommand)
-                {
-
-                    isCommand = false;
-                }
-                else if (Vector3.Distance(clickPos, Input.mousePosition) < 10f)
-                {
-
-                    // 유닛 충돌 체크 없으면 비우지 않는다!
-                    Vector3 pos = Vector3.positiveInfinity;
-                    Selectable target = null;
-
-                    ChkRay(ref pos, ref target);
-
-                    if (target != null
-                        && ((1 << target.gameObject.layer) & selectLayer) != 0)
+                    if (Time.time - clickTime < clickInterval)
                     {
 
-                        // 타겟이 있고, 선택 가능한 유닛인 경우에만 여기로 온다
-                        if (isDoubleClicked)
-                        {
-
-                            // 더블 클릭인지 확인한다
-                            DoubleClickSelect(target.MyStat.SelectIdx);
-                            isDoubleClicked = false;
-                        }
-                        else
-                        {
-
-                            ClickSelect(target);
-                        }
+                        // 더블클릭 기능 >> 되었다고 알려야한다!
+                        isDoubleClicked = true;
+                        clickTime = -1f;
                     }
                 }
-                else
-                {
+            }
+            else if (Input.GetMouseButtonUp(0)) 
+            {
 
-                    // 드래그!
-                    DragSelect();
-                }
-
-                isDrag = false;
+                ClickEvent();
             }
             else if (Input.GetMouseButtonDown(1)) MouseButtonR();
         }
@@ -371,6 +335,55 @@ public class InputManager : MonoBehaviour
         buttonManager.IsActionUI = true;
     }
 
+    public void ClickEvent()
+    {
+
+        // if (myState != STATE_KEY.NONE) return;
+
+
+        if (isCommand)
+        {
+
+            isCommand = false;
+        }
+        else if (Vector3.Distance(clickPos, Input.mousePosition) < 10f)
+        {
+
+            // 유닛 충돌 체크 없으면 비우지 않는다!
+            Vector3 pos = Vector3.positiveInfinity;
+            Selectable target = null;
+
+            ChkRay(ref pos, ref target);
+
+            if (target != null
+                && ((1 << target.gameObject.layer) & selectLayer) != 0)
+            {
+
+                // 타겟이 있고, 선택 가능한 유닛인 경우에만 여기로 온다
+                if (isDoubleClicked)
+                {
+
+                    // 더블 클릭인지 확인한다
+                    DoubleClickSelect(target.MyStat.SelectIdx);
+                    isDoubleClicked = false;
+                }
+                else
+                {
+
+                    ClickSelect(target);
+                }
+            }
+        }
+        else
+        {
+
+            // 드래그!
+            DragSelect();
+        }
+
+        isDrag = false;
+    }
+
     private void ClickSelect(Selectable _target)
     {
 
@@ -500,11 +513,7 @@ public class InputManager : MonoBehaviour
 
             // screenPos1에 대한 지면 좌표 찾기
             Ray ray = cam.ScreenPointToRay(screenPos1);
-            if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer))
-            {
-
-                screenPos1 = hit.point;
-            }
+            if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer)) screenPos1 = hit.point;
             else 
             {
 

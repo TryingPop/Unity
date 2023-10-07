@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
@@ -15,6 +16,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private Vector3 minBound;
     [SerializeField] private Vector3 maxBound;
 
+    [SerializeField] private CinemachineVirtualCamera mainCam;
     [SerializeField] private Camera miniMapCam;
     [SerializeField] private RectTransform miniMapRectTrans;
     [SerializeField] private RectTransform canvasRectTrans;
@@ -38,13 +40,22 @@ public class CameraMovement : MonoBehaviour
     public void Move()
     {
 
-        float x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime + transform.position.x;
-        float y = Input.GetAxis("Mouse ScrollWheel") * -wheelSpeed + transform.position.y;
-        float z = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime + transform.position.z;
+        Vector3 pos = transform.position;
+        float x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime + pos.x;
+        // float y = Input.GetAxis("Mouse ScrollWheel") * -wheelSpeed + transform.position.y;
+        float z = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime + pos.z;
+        
+        float y = Input.GetAxis("Mouse ScrollWheel") * -wheelSpeed;
+        y = y + mainCam.m_Lens.FieldOfView;
+        
+        
 
         ChkBound(ref x, ref y, ref z);
-        dir = new Vector3(x, y, z);
+        dir = new Vector3(x, pos.y, z);
+
         transform.position = dir;
+
+        mainCam.m_Lens.FieldOfView = y;
     }
 
     /// <summary>
@@ -106,5 +117,6 @@ public class CameraMovement : MonoBehaviour
         posZ += miniMapPos.z - camHalfHeight;
 
         transform.position = new Vector3(posX, transform.position.y, posZ);
+        Debug.Log("¿Ãµø");
     }
 }
