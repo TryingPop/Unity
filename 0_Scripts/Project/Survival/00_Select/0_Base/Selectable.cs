@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 /// <summary>
 /// 유닛 사이즈
@@ -212,6 +212,12 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     #region command
     public abstract void GetCommand(Command _cmd, bool _add = false);
 
-    // public abstract void ReadCommand();
     #endregion command
+
+    public void SetHp(Slider _slider)
+    {
+
+        _slider.maxValue = maxHp;
+        _slider.value = curHp;
+    }
 }
