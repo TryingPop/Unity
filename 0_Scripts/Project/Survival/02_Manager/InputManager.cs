@@ -32,14 +32,11 @@ public class InputManager : MonoBehaviour
     private float clickTime;
     [SerializeField] private float clickInterval = 0.3f;
 
-    public enum STATE_KEY 
-    {   
-        
-        NONE = 0, M, S, P, H, A, Q, W, E, 
-        MOUSE_R = VariableManager.MOUSE_R, 
-    }
+    [SerializeField] private CameraMovement camMove;
 
-    [SerializeField] private STATE_KEY myState;
+
+
+    [SerializeField] private TYPE_KEY myState;
 
     public int MyState
     {
@@ -47,14 +44,14 @@ public class InputManager : MonoBehaviour
         set 
         {
 
-            myState = (STATE_KEY)value;
+            myState = (TYPE_KEY)value;
 
             if (curGroup.GetSize() == 0
                 || !buttonManager.ChkButton(value - 1))
             { 
                 
                 // 유닛이 없거나 입력 받을 수 없으면 0으로 강제 초기화 하고 종료
-                myState = STATE_KEY.NONE;
+                myState = TYPE_KEY.NONE;
                 buttonManager.IsActionUI = true;
                 return;
             }
@@ -111,7 +108,7 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
 
-        if (myState == STATE_KEY.NONE)
+        if (myState == TYPE_KEY.NONE)
         {
 
             // 아무상태도 아닐 때
@@ -144,13 +141,42 @@ public class InputManager : MonoBehaviour
                         clickTime = -1f;
                     }
                 }
+                else if (clickPos.x <= 160)
+                {
+
+                    // camMove.transform.position = camMove.MiniMapToWorldMap(clickPos);
+                }
             }
-            else if (Input.GetMouseButtonUp(0)) 
+            else if (Input.GetMouseButtonUp(0))
             {
 
-                ClickEvent();
+                if (isDrag)
+                {
+
+                    ClickEvent();
+                }
             }
-            else if (Input.GetMouseButtonDown(1)) MouseButtonR();
+            else if (Input.GetMouseButtonDown(1))
+            {
+
+                Vector2 otherPos = Input.mousePosition;
+                if (otherPos.y > 160)
+                {
+
+                    MouseButtonR();
+                }
+                else if (otherPos.x <= 160)
+                {
+
+                    // Vector3 pos = camMove.MiniMapToWorldMap(otherPos, true);
+                    // bool putLS = Input.GetKey(KeyCode.LeftShift);
+                    // curGroup.GiveCommand(VariableManager.MOUSE_R, pos, null, putLS);
+
+                    // buttonManager.IsActionUI = true;
+
+                    myState = TYPE_KEY.NONE;
+                }
+            }
         }
         else if (buttonManager.IsBuildUI)
         {
@@ -239,25 +265,41 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            
+
             // 버튼을 누른 상태!
             if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1)) MyState = 0;
             else if (Input.GetMouseButtonDown(0))
             {
 
-
-                // 명령 수행의 경우 누르는 위치에 실행하게 한다
+                Vector3 otherPos = Input.mousePosition;
                 bool putLS = Input.GetKey(KeyCode.LeftShift);
+                
+                if (otherPos.y > 160)
+                {
 
-                Vector3 pos = Vector3.positiveInfinity;
-                Selectable target = null;
+                    // 명령 수행의 경우 누르는 위치에 실행하게 한다
 
-                ChkRay(ref pos, ref target);
-                GiveCommand(putLS, pos, target);
-                isCommand = true;
+                    Vector3 pos = Vector3.positiveInfinity;
+                    Selectable target = null;
+
+                    ChkRay(ref pos, ref target);
+                    GiveCommand(putLS, pos, target);
+                    isCommand = true;
+                }
+                else if (otherPos.x <= 160)
+                {
+
+                    // Vector3 pos = camMove.MiniMapToWorldMap(otherPos, true);
+                    // GiveCommand(putLS, pos);
+                }
             }
         }
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
 
+            
+        }
         
         // 상황 상관없이 체력바를 보여주는 거기에 밑에 따로 빼놨다
         if (Input.GetKeyDown(KeyCode.LeftAlt))
@@ -284,7 +326,7 @@ public class InputManager : MonoBehaviour
 
         buttonManager.IsActionUI = true;
 
-        myState = STATE_KEY.NONE;
+        myState = TYPE_KEY.NONE;
     }
 
     private void ChkRay(ref Vector3 _pos, ref Selectable _target)
@@ -308,11 +350,11 @@ public class InputManager : MonoBehaviour
     private void GiveCommand(bool _reserve, Vector3 _pos, Selectable _target = null)
     {
 
-        if (myState != STATE_KEY.NONE)
+        if (myState != TYPE_KEY.NONE)
         {
 
             curGroup.GiveCommand(MyState, _pos, _target, _reserve);
-            myState = STATE_KEY.NONE;
+            myState = TYPE_KEY.NONE;
         }
 
         buttonManager.IsActionUI = true;
@@ -325,11 +367,11 @@ public class InputManager : MonoBehaviour
     private void GiveCommand(bool _reserve)
     {
 
-        if (myState != STATE_KEY.NONE)
+        if (myState != TYPE_KEY.NONE)
         {
 
             curGroup.GiveCommand(MyState, _reserve);
-            myState = STATE_KEY.NONE;
+            myState = TYPE_KEY.NONE;
         }
 
         buttonManager.IsActionUI = true;
@@ -425,7 +467,10 @@ public class InputManager : MonoBehaviour
 
         // 여기서는 BoxCastNonAlloc을 사용하지 않는다
         // 사용 빈도수도 낮고, 히트의 크기를 정하기가 쉽지 않다
-        ChkBox(clickPos, Input.mousePosition, out RaycastHit[] hits);
+
+        Vector3 otherPos = Input.mousePosition;
+        if (otherPos.y < 160) otherPos.y = 160;
+        ChkBox(clickPos, otherPos, out RaycastHit[] hits);
 
         if (hits != null 
             && hits.Length > 0)
@@ -476,6 +521,8 @@ public class InputManager : MonoBehaviour
         // 화면 크기를 가져온다
         Vector3 rightTop = new Vector3(Screen.width, Screen.height);
         Vector3 leftBottom = Vector3.zero;
+
+        leftBottom.y = 160;
 
         // 여기서 이제 크기?
         ChkBox(rightTop, leftBottom, out RaycastHit[] hits);
@@ -573,8 +620,9 @@ public class InputManager : MonoBehaviour
         if (isDrag)
         {
 
-            DrawRect.DrawDragScreenRect(clickPos, Input.mousePosition);
+            Vector3 otherPos = Input.mousePosition;
+            if (otherPos.y < 160) otherPos.y = 160;
+            DrawRect.DrawDragScreenRect(clickPos, otherPos);
         }
     }
-
 }

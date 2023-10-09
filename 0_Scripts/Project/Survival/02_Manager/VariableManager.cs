@@ -45,7 +45,12 @@ public enum TYPE_UPGRADE
     HP = 3,
 }
 
+public enum TYPE_KEY
+{
 
+    NONE = 0, M, S, P, H, A, Q, W, E,
+    MOUSE_R = VariableManager.MOUSE_R,
+}
 
 /// <summary>
 /// static 변수 보관소

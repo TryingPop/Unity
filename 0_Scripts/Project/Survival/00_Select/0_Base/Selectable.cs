@@ -217,7 +217,12 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     public void SetHp(Slider _slider)
     {
 
-        _slider.maxValue = maxHp;
         _slider.value = curHp;
+    }
+
+    public void SetMaxHp(Slider _slider)
+    {
+
+        _slider.maxValue = maxHp;
     }
 }

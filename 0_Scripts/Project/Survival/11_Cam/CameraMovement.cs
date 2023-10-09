@@ -17,9 +17,9 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private Vector3 maxBound;
 
     [SerializeField] private CinemachineVirtualCamera mainCam;
-    [SerializeField] private Camera miniMapCam;
-    [SerializeField] private RectTransform miniMapRectTrans;
-    [SerializeField] private RectTransform canvasRectTrans;
+    // [SerializeField] private Camera miniMapCam;
+    // [SerializeField] private RectTransform miniMapRectTrans;
+    // [SerializeField] private RectTransform canvasRectTrans;
 
     private void Awake()
     {
@@ -80,43 +80,62 @@ public class CameraMovement : MonoBehaviour
         dir = _dir;
     }
 
-    public void GoPosition()
+    /*
+    private void Init()
     {
 
-        // Time.timeScale = 0f;
-        // 현재 왼쪽 아래만 제대로 작용한다
-        MiniMapToWorldMap(Input.mousePosition);
-        // 마우스 사이즈 && 
-    }
+        // Rect canRect = canvasRectTrans.rect;
+        // float aspectX = canRect.size.x / Screen.width;      // 0.75
+        // float aspectY = canRect.size.y / Screen.height;     // 0.75
 
-    private void MiniMapToWorldMap(Vector2 _mousePos)
+        // Vector2 miniMapAnchoredPos = miniMapRectTrans.anchoredPosition; // 0, 0
+        // float miniMapPosX = _mousePos.x * aspectX - miniMapAnchoredPos.x;   
+        // float miniMapPosY = _mousePos.y * aspectY - miniMapAnchoredPos.y;
+
+        // Rect miniMapRect = miniMapRectTrans.rect;
+        // miniMapPosX = miniMapPosX / miniMapRect.width;                  // 120
+        // miniMapPosY = miniMapPosY / miniMapRect.height;                 // 120
+
+        // float camHalfHeight = miniMapCam.orthographicSize;              // 50
+        // float camHalfWidth = miniMapCam.aspect * camHalfHeight;         // 50
+
+        // float posX = miniMapPosX * camHalfWidth * 2;                    
+        // float posZ = miniMapPosY * camHalfHeight * 2;
+
+        // Vector3 miniMapPos = miniMapCam.transform.position;
+
+        // posX += miniMapPos.x - camHalfWidth;
+        // posZ += miniMapPos.z - camHalfHeight;
+
+        // float miniMapPosX = _mousePos.x * 0.75f / 120;
+        // float miniMapPosY = _mousePos.y * 0.75f / 120;
+
+        // float posX = miniMapPosX * 100 - 50;
+        // float posZ = miniMapPosY * 100 - 50;
+    }
+    */
+    /*
+    public Vector3 MiniMapToWorldMap(Vector2 _mousePos, bool _isGround = false)
     {
 
-        Rect canRect = canvasRectTrans.rect;
-        float aspectX = canRect.size.x / Screen.width;
-        float aspectY = canRect.size.y / Screen.height;
+        // 근사하게 이동한다!
+        float posX = (_mousePos.x * 0.625f) - 50;   // 0.625 = aspect * width * orthographicSize * camAspect;
+        float posZ = (_mousePos.y * 0.625f) - 50;   // 0.625 = aspect * height * orthographicSize;
+        float posY = transform.position.y;
 
-        Vector2 miniMapAnchoredPos = miniMapRectTrans.anchoredPosition;
+        Vector3 result = new Vector3(posX, posY, posZ);
+        
+        if (_isGround)
+        {
 
-        float miniMapPosX = _mousePos.x * aspectX - miniMapAnchoredPos.x;
-        float miniMapPosY = _mousePos.y * aspectY - miniMapAnchoredPos.y;
+            if (Physics.Raycast(result, Vector3.down, out RaycastHit hit, 50f, 1 << VariableManager.LAYER_GROUND))
+            {
 
-        Rect miniMapRect = miniMapRectTrans.rect;
-        miniMapPosX = miniMapPosX / miniMapRect.width;
-        miniMapPosY = miniMapPosY / miniMapRect.height;
+                result = hit.point;
+            }
+        }
 
-        float camHalfHeight = miniMapCam.orthographicSize;
-        float camHalfWidth = miniMapCam.aspect * camHalfHeight;
-
-        float posX = miniMapPosX * camHalfWidth * 2;
-        float posZ = miniMapPosY * camHalfHeight * 2;
-
-        Vector3 miniMapPos = miniMapCam.transform.position;
-
-        posX += miniMapPos.x - camHalfWidth;
-        posZ += miniMapPos.z - camHalfHeight;
-
-        transform.position = new Vector3(posX, transform.position.y, posZ);
-        Debug.Log("이동");
+        return result;
     }
+    */
 }

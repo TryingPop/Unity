@@ -7,7 +7,7 @@ public class ButtonInfo
 {
 
     public TYPE_BUTTON_OPTION buttonOpt;
-    public InputManager.STATE_KEY buttonKey;
+    public TYPE_KEY buttonKey;
 
     private static ButtonInfo empty;
 
@@ -26,7 +26,7 @@ public class ButtonInfo
     }
 
     public ButtonInfo(TYPE_BUTTON_OPTION _buttonOpt = TYPE_BUTTON_OPTION.NULL, 
-        InputManager.STATE_KEY _buttonKey = InputManager.STATE_KEY.NONE)
+        TYPE_KEY _buttonKey = TYPE_KEY.NONE)
     {
 
         buttonOpt = _buttonOpt;

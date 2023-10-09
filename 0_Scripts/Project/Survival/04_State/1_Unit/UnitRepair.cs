@@ -88,8 +88,13 @@ public class UnitRepair : IUnitAction
     public override void OnEnter(Unit _unit)
     {
 
-        if (_unit.Target == null) OnExit(_unit);
         _unit.MyTurn = 0;
+        if (_unit.Target == null) 
+        { 
+            
+            OnExit(_unit);
+            return;
+        }
         _unit.MyAgent.SetDestination(_unit.Target.transform.position);
         _unit.MyAnimator.SetFloat("Move", 1f);
     }
