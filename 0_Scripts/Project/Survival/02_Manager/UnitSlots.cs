@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+// using UnityEngine.UI;
 
-public class SlotManager : MonoBehaviour
+public class UnitSlots : MonoBehaviour
 {
 
     [SerializeField] protected GameObject unitSlotObj;
 
     [SerializeField] protected RectTransform slotUIRectTrans;
 
-    protected List<RectTransform> slots;                            // 크기가 변하므로 리스트로!
+    protected List<Slot> slots;                            // 크기가 변하므로 리스트로!
 
     [SerializeField] protected Vector2 spacing;
 
@@ -20,7 +20,7 @@ public class SlotManager : MonoBehaviour
     protected Vector2 uiSize;
     protected Vector2 slotSize;
 
-    protected List<Selectable> units;
+    // protected List<Selectable> units;
 
     [SerializeField] protected GameObject nextBtn;
     [SerializeField] protected GameObject prevBtn;
@@ -38,29 +38,35 @@ public class SlotManager : MonoBehaviour
     private void Start()
     {
 
-        slots = new List<RectTransform>();
-        units = InputManager.instance.curGroup.Get();
+        slots = new List<Slot>();
+
+        SetScreenSize();
+    }
+
+    /// <summary>
+    /// 화면 크기 조정 시 불러올 함수
+    /// </summary>
+    public void SetScreenSize()
+    {
 
         SetCalcSize();
         SetMaxSlots();
         BatchSlot();
-
-        if (curPage < maxPage) NextPage(0);
     }
 
-    private void Update()
+    /// <summary>
+    /// 유닛 재설정 시 실행하는 함수
+    /// </summary>
+    public void Init(List<Selectable> _curGroup)
     {
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
 
-            SetCalcSize();
-            SetMaxSlots();
-            BatchSlot();
-            if (curPage < maxPage) NextPage(0);
-        }
+        ChkMaxPage(_curGroup);
+        NextPage(_curGroup, int.MinValue);
     }
 
+    /// <summary>
+    /// 연산에 필요한 변수 계산
+    /// </summary>
     private void SetCalcSize()
     {
 
@@ -79,13 +85,10 @@ public class SlotManager : MonoBehaviour
 
         matrixSize[0] = row;
         matrixSize[1] = column;
-
-        curPage = 0;
-        maxPage = (byte)((units.Count - 1) / (row + column));
     }
 
     /// <summary>
-    /// 
+    /// 사이즈에 맞게 슬롯 수 조정
     /// </summary>
     private void SetMaxSlots()
     {
@@ -112,11 +115,15 @@ public class SlotManager : MonoBehaviour
             {
 
                 var go = Instantiate(unitSlotObj, slotUIRectTrans);
-                slots.Add(go.GetComponent<RectTransform>());
+                slots.Add(go.GetComponent<Slot>());
+                go.SetActive(false);
             }
         }
     }
 
+    /// <summary>
+    /// 슬롯 위치 선정
+    /// </summary>
     private void BatchSlot()
     {
 
@@ -137,20 +144,76 @@ public class SlotManager : MonoBehaviour
                 float posY = i * (batchY) - padding.z - (halfSlotSizeY);
 
                 if (j + (i * matrixSize[0]) >= slots.Count) break;
-                slots[j + (i * matrixSize[0])].anchoredPosition = new Vector2(posX, posY);
+                slots[j + (i * matrixSize[0])].myRectTrans.anchoredPosition = new Vector2(posX, posY);
             }
         }
     }
 
+    private void ChkMaxPage(List<Selectable> _curGroup)
+    {
 
-    private void ActiveSlot(int _slotIdx, int _unitIdx, bool _active)
+        maxPage = (byte)((_curGroup.Count - 1) / (matrixSize[0] + matrixSize[1]));
+    }
+
+    /// <summary>
+    /// 현재 페이지에서 step만큼 페이지 넘기기
+    /// </summary>
+    public void NextPage(List<Selectable> _curGroup, int _step)
+    {
+
+        int page = curPage + _step;
+        ChkBtn(page);
+
+        int len = matrixSize[0] * matrixSize[1];
+        for (int i = 0; i < len; i++)
+        {
+
+            if (i >= slots.Count) break;
+            int unitIdx = (len * curPage) + i;
+            if (_curGroup.Count > unitIdx)
+            {
+
+                ActiveSlot(i, _curGroup[unitIdx], true);
+            }
+            else
+            {
+
+                ActiveSlot(i, null, false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 슬롯 활성화 이벤트
+    /// </summary>
+    private void ActiveSlot(int _slotIdx, Selectable _selectable, bool _active)
     {
 
         slots[_slotIdx].gameObject.SetActive(_active);
+
+        if (_active)
+        {
+
+            // select 정보 넘겨주기
+            slots[_slotIdx].Init(_selectable);
+        }
     }
 
-    private void SetBtn(int _num)
+    /// <summary>
+    /// 다음 버튼과 이전 버튼 활성화 여부
+    /// </summary>
+    private void ChkBtn(int _num)
     {
+
+        if (maxPage == 0)
+        {
+
+            curPage = 0;
+            nextBtn.SetActive(false);
+            prevBtn.SetActive(false);
+            return;
+        }
+
 
         if (_num >= maxPage)
         {
@@ -178,31 +241,6 @@ public class SlotManager : MonoBehaviour
         }
 
         curPage = (byte)_num;
-    }
-
-    public void NextPage(int _step)
-    {
-
-        int page = curPage + _step;
-        SetBtn(page);
-
-        int len = matrixSize[0] * matrixSize[1];
-        for (int i = 0; i < len; i++)
-        {
-
-            if (i >= slots.Count) break;
-            int unitIdx = (len * curPage) + i;
-            if (units.Count > unitIdx)
-            {
-
-                ActiveSlot(i, unitIdx, true);
-            }
-            else
-            {
-
-                ActiveSlot(i, unitIdx, false);
-            }
-        }
     }
 }
 

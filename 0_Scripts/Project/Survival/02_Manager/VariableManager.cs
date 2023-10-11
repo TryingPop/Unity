@@ -80,7 +80,7 @@ public class VariableManager
     // 제한
     public static readonly int INFINITE = -100;
     public static readonly short POOLMANAGER_NOTEXIST = -1;
-    public static readonly int MAX_SELECT = 30;
+    public static readonly int MAX_SELECT = 30;             // 최대 선택가능 수
 
     public static readonly int MAX_POPULATION = 200;
     public static readonly int MAX_GOLD = 99_999_999;

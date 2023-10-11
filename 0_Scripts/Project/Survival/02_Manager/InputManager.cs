@@ -21,6 +21,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private Vector3 clickPos;
 
+    [SerializeField] private UnitSlots unitSlots;
+
     [SerializeField] private bool isDrag = false;
     [SerializeField] private LayerMask targetLayer;     // 타겟팅 레이어
     [SerializeField] private LayerMask selectLayer;     // 선택 가능한 레이어
@@ -31,10 +33,6 @@ public class InputManager : MonoBehaviour
     private bool isDoubleClicked;
     private float clickTime;
     [SerializeField] private float clickInterval = 0.3f;
-
-    [SerializeField] private CameraMovement camMove;
-
-
 
     [SerializeField] private TYPE_KEY myState;
 
@@ -414,6 +412,8 @@ public class InputManager : MonoBehaviour
 
                     ClickSelect(target);
                 }
+
+                unitSlots.Init(curGroup.Get());
             }
         }
         else
@@ -421,6 +421,8 @@ public class InputManager : MonoBehaviour
 
             // 드래그!
             DragSelect();
+
+            unitSlots.Init(curGroup.Get());
         }
 
         isDrag = false;

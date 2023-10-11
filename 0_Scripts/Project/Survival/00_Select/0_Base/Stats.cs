@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [CreateAssetMenu(fileName = "Stat", menuName = "Status/Stat")]
 public class Stats : ScriptableObject
 {
@@ -16,6 +15,7 @@ public class Stats : ScriptableObject
 
     [SerializeField] protected ushort selectIdx;
     [SerializeField] protected short myPoolIdx;
+    [SerializeField] protected Sprite mySprite;
 
     public int MaxHp => maxHp;
     public int Def => def;
@@ -50,4 +50,6 @@ public class Stats : ScriptableObject
     }
 
     public TYPE_SELECTABLE MyType => myType;
+
+    public Sprite MySprite => mySprite;
 }
