@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UnitAction", menuName = "StateAction/UnitAction")]
-public class UnitStateAction : StateHandler<Unit, IUnitAction>
-// MonoBehaviour
+public class UnitStateAction : StateHandler<IUnitAction>
 {
 
     /// <summary>
     /// 행동 있으면 행동 실행
     /// </summary>
     /// <param name="_unit"></param>
-    public override void Action(Unit _unit)
+    public void Action(Unit _unit)
     {
 
         int idx = _unit.MyState;
 
-        if (ChkAction(idx))
+        if (ChkIdx(idx))
         {
 
             actions[idx].Action(_unit);
@@ -28,7 +27,7 @@ public class UnitStateAction : StateHandler<Unit, IUnitAction>
     {
 
         int idx = _unit.MyState;
-        if (ChkAction(idx)) actions[idx].OnEnter(_unit);
+        if (ChkIdx(idx)) actions[idx].OnEnter(_unit);
         // else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
     }
 }

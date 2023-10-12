@@ -17,7 +17,7 @@ public class RandomAction : BuildingAction
 
             int next = Random.Range(1, _building.MyStateAction.GetSize());
 
-            OnExit(_building, (STATE_BUILDING)next);
+            OnExit(_building, (STATE_SELECTABLE)next);
         }
     }
 }

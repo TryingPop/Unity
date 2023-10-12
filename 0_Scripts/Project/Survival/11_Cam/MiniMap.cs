@@ -119,7 +119,7 @@ public class MiniMap : MonoBehaviour,
 
             Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
             Vector3 pos = ScaleValueToWorldMap(scaleValue, true);
-            inputManager.curGroup.GiveCommand((int)TYPE_KEY.MOUSE_R, pos, null, add);
+            // inputManager.curGroup.GiveCommand((int)TYPE_KEY.MOUSE_R, pos, null, add);
         }
     }
 }

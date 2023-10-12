@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
 
-public enum STATE_BUILDING { UNFINISHED = -2, DEAD = -1, NONE = 0, ACTION1= 1, ACTION2 = 2, ACTION3 = 3 }
+
 
 public class Building : Selectable
 {
 
     [SerializeField] protected Transform buildingObj;
 
-    [SerializeField] protected STATE_BUILDING myState;
+    [SerializeField] protected STATE_SELECTABLE myState;
 
     [SerializeField] protected NavMeshObstacle myObstacle;
 
@@ -20,13 +20,7 @@ public class Building : Selectable
 
     [SerializeField] protected BuildOpt opt;
     
-    // [SerializeField] protected float increaseY; // Y 증가량
-    // protected float initPosY;                   // 시작 y좌표 값
-
-    // [SerializeField] protected ushort buildTurn; // 건설 완료까지 걸리는 시간
-    // [SerializeField] protected ushort destroyIdx;
     protected ushort curBuildTurn;               // 건설 진행 시간
-    // protected short destroyPoolIdx = -1;
 
     public static WaitForSeconds completeTimer;
 
@@ -39,7 +33,7 @@ public class Building : Selectable
         {
 
             myTurn = 0;
-            myState = (STATE_BUILDING)value; 
+            myState = (STATE_SELECTABLE)value; 
         }
     }
 
@@ -88,14 +82,14 @@ public class Building : Selectable
         if (opt.BuildTurn == 0)
         {
 
-            myState = STATE_BUILDING.NONE;
+            myState = STATE_SELECTABLE.NONE;
             if (maxHp != VariableManager.INFINITE) curHp = maxHp;
         }
         else
         {
 
             if (maxHp != VariableManager.INFINITE) curHp = 1;
-            myState = STATE_BUILDING.UNFINISHED;
+            myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
             GetComponentInChildren<MeshRenderer>().material.color = Color.black;
             curBuildTurn = 0;
         }
@@ -124,10 +118,10 @@ public class Building : Selectable
     public void Action()
     {
 
-        if (myState == STATE_BUILDING.DEAD
-            || myState == STATE_BUILDING.UNFINISHED) return;
+        if (myState == STATE_SELECTABLE.DEAD
+            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
 
-        else if (myState == STATE_BUILDING.NONE)
+        else if (myState == STATE_SELECTABLE.NONE)
         {
 
             ReadCommand();
@@ -150,7 +144,7 @@ public class Building : Selectable
             myObstacle.carving = true;
             mySight.SetSize(myStat.MySize * 2);
             height = opt.IncreaseY;
-            myState = STATE_BUILDING.NONE;
+            myState = STATE_SELECTABLE.NONE;
 
             if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkSelected(this);
 
@@ -180,7 +174,7 @@ public class Building : Selectable
     public override void Heal(int _atk)
     {
 
-        if (myState == STATE_BUILDING.UNFINISHED)
+        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
         {
 
             Build();
@@ -239,35 +233,12 @@ public class Building : Selectable
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
-    public override void GiveButtonInfo(ButtonInfo[] buttons)
-    {
-
-        if (myState == STATE_BUILDING.UNFINISHED
-            || myState == STATE_BUILDING.DEAD)
-        {
-
-            myStateAction.GiveMyButtonInfos(buttons, buttons.Length, 0);
-        }
-        // 이거는 이상없다!
-        else myStateAction.GiveMyButtonInfos(buttons, 5, 0);
-    }
-
-    public override void ChkButtons(ButtonInfo[] buttons)
-    {
-
-        if (myState != STATE_BUILDING.UNFINISHED
-            && myState != STATE_BUILDING.DEAD)
-        {
-
-            // m, s, h, p, a 칸은 비활성화 시킨다
-            myStateAction.ChkButtons(buttons, 5, 0, true);
-        }
-    }
-
     public override void GetCommand(Command _cmd, bool _add = false) 
     {
 
-        if (_cmd.type == VariableManager.MOUSE_R)
+        int idx = (int)_cmd.type;
+
+        if (idx == VariableManager.MOUSE_R)
         {
 
             target = _cmd.target;
@@ -276,7 +247,7 @@ public class Building : Selectable
 
             _cmd.Received(0);    
         }
-        else if (myState == STATE_BUILDING.DEAD || myState == STATE_BUILDING.UNFINISHED) 
+        else if (myState == STATE_SELECTABLE.DEAD || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) 
         {
 
             if (_cmd.type == 0) 
@@ -289,17 +260,17 @@ public class Building : Selectable
             _cmd.Canceled();
             return; 
         }
-        else if (_cmd.type >= 6 && _cmd.type <= 8
+        else if (myStateAction.ChkIdx(idx)
             && cmds.Count < VariableManager.MAX_RESERVE_COMMANDS)
         {
 
             cmds.Enqueue(_cmd);
         }
-        else if (_cmd.type == 0)
+        else if (idx == 0)
         {
 
             // 현재 명령 취소
-            MyState = _cmd.type;
+            MyState = idx;
             _cmd.Received(0);
         }
         else
@@ -316,12 +287,12 @@ public class Building : Selectable
 
         Command cmd = cmds.Dequeue();
 
-        if (cmd.type >= 6 && cmd.type <= 8)
+        int idx = (int)cmd.type;
+
+        if (myStateAction.ChkIdx(idx))
         {
 
-            // Q = 6, W = 7, E = 8
-            // 버튼 누르면 바로 작동하게 하기에 좌표는 안받는다
-            MyState = cmd.type - 5;
+            MyState = idx;
             cmd.Received(0);
         }
         else

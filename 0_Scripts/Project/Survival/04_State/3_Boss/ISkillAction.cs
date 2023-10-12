@@ -49,7 +49,7 @@ public abstract class ISkillAction : IUnitAction
     protected int GetSkillNum(int _unitState)
     {
 
-        int result = _unitState - (int)STATE_UNIT.SKILL0;
+        int result = _unitState - (int)STATE_SELECTABLE.UNIT_SKILL0;
         return result <= 0 ? -1 : result;
     }
 }

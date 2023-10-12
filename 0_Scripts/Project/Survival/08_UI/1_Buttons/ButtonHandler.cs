@@ -1,16 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonManager : MonoBehaviour
+public class ButtonHandler : StateHandler<ButtonInfo>
 {
-
-    public static ButtonManager instance;
-
-    public ButtonInfo[] buttons;
-
-
+    /*
     [SerializeField] private GameObject actionUI;
     [SerializeField] private GameObject cancelUI;
     [SerializeField] private GameObject buildUI;
@@ -22,6 +15,7 @@ public class ButtonManager : MonoBehaviour
     private bool isBuildUI;
 
     [SerializeField] private BuildGroup buildGroup;
+
 
     public bool IsActionUI
     {
@@ -54,43 +48,15 @@ public class ButtonManager : MonoBehaviour
         get { return isBuildUI; }
     }
 
-    private void Awake()
-    {
-
-        if (instance == null)
-        {
-
-            instance = this;
-        }
-        else
-        {
-
-            Destroy(gameObject);
-        }
-
-        buttons = new ButtonInfo[VariableManager.MAX_BUTTONS];
-
-        ClearButton();
-    }
-
-    public void ClearButton()
-    {
-
-        for (int i = 0; i < buttons.Length; i++)
-        {
-
-            buttons[i] = ButtonInfo.Empty;
-        }
-    }
-
-    
     public bool ChkButton(int value)
     {
 
-        if (value >= buttons.Length
+        if (value >= actions.Length
             || value < 0
-            || buttons[value] == null
-            || buttons[value].buttonOpt == TYPE_BUTTON_OPTION.NULL) return false;
+            || actions[value] == null
+            // || buttons[value].buttonOpt == TYPE_BUTTON_OPTION.NULL
+            ) return false;
+            
 
         return true;
     }
@@ -102,15 +68,15 @@ public class ButtonManager : MonoBehaviour
     public void SetButton()
     {
 
-        for (int i = 0; i < buttons.Length; i++)
+        for (int i = 0; i < actions.Length; i++)
         {
 
-            if (buttons[i].buttonOpt == TYPE_BUTTON_OPTION.NULL)
+            // if (buttons[i].buttonOpt == TYPE_BUTTON_OPTION.NULL)
             {
 
                 btnActionImages[i].gameObject.SetActive(false);
             }
-            else
+            // else
             {
 
                 // 순서대로 이미지랑 키를 넣는다
@@ -149,5 +115,53 @@ public class ButtonManager : MonoBehaviour
             || _idx < 0) return null;
 
         return buildGroup.GiveBuilding(_idx);
+    }
+    */
+    
+    protected sbyte[] idxs;
+
+    // 쓰는 키가 많아지면 딕셔너리로 해야한다!
+    public sbyte[] Idxs
+    {
+
+        get
+        {
+
+            if (idxs == null)
+            {
+
+                for (int i = 0; i < idxs.Length; i++)
+                {
+
+                    idxs[i] = -1;
+                }
+
+                for (int i = 0; i < actions.Length; i++)
+                {
+
+                    int key = (int)actions[i].BtnKey;
+                    if (key > idxs.Length
+                        || key <= 0) continue;
+
+                    idxs[key - 1] = (sbyte)i;
+                }
+            }
+
+            return idxs;
+        }
+    }
+
+    public void Action(InputManager _inputManager)
+    {
+
+        int idx = Idxs[_inputManager.MyState - 1];
+        if (ChkIdx(idx)) actions[idx].Action(_inputManager);
+    }
+
+    public void Changed(InputManager _inputManager)
+    {
+
+        int idx = Idxs[_inputManager.MyState - 1];
+        if (ChkIdx(idx)) actions[idx].OnEnter(_inputManager);
     }
 }

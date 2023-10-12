@@ -112,10 +112,10 @@ public class EnemyOrderManager : MonoBehaviour
 
         int unitNum = enemyUnits.Count;
         if (enemyUnits.Count > ushort.MaxValue) unitNum = enemyUnits.Count;
-        GiveCommand((ushort)unitNum, (int)STATE_UNIT.ATTACK, target.position, true);
+        GiveCommand((ushort)unitNum, STATE_SELECTABLE.UNIT_ATTACK, target.position, true);
     }
     
-    private void GiveCommand(ushort _num, int _type, Vector3 _dir, bool _isUnit)
+    private void GiveCommand(ushort _num, STATE_SELECTABLE _type, Vector3 _dir, bool _isUnit)
     {
 
         Command cmd;
@@ -154,7 +154,7 @@ public class EnemyOrderManager : MonoBehaviour
         }
     }
 
-    private void GiveCommand(Unit _unit, int _type, Vector3 _dir)
+    private void GiveCommand(Unit _unit, STATE_SELECTABLE _type, Vector3 _dir)
     {
 
         Command cmd;
@@ -176,7 +176,7 @@ public class EnemyOrderManager : MonoBehaviour
     public void BuildingAction()
     {
 
-        int type = Random.Range((int)STATE_UNIT.SKILL1, (int)STATE_UNIT.SKILL3 + 1);
+        STATE_SELECTABLE type = (STATE_SELECTABLE)Random.Range((int)STATE_SELECTABLE.BUILDING_ACTION1, (int)STATE_SELECTABLE.BUILDING_ACTION3 + 1);
 
         ushort num = (ushort)enemyBuildings.Count;
         GiveCommand(num, type, Vector3.positiveInfinity, false);
@@ -289,7 +289,7 @@ public class EnemyOrderManager : MonoBehaviour
                 
                 if (unit) unit.AfterSettingLayer();
 
-                if (target != null) GiveCommand(unit, 5, target.position);
+                if (target != null) GiveCommand(unit, STATE_SELECTABLE.UNIT_ATTACK, target.position);
             }
         }
     }

@@ -16,7 +16,7 @@ public class Unit : Selectable
     [SerializeField] protected NavMeshAgent myAgent;
     [SerializeField] protected Rigidbody myRigid;
 
-    [SerializeField] protected STATE_UNIT myState;
+    [SerializeField] protected STATE_SELECTABLE myState;
     [SerializeField] protected UnitStateAction myStateAction;
     [SerializeField] protected Attack myAttack;
     [SerializeField] protected SightMesh mySight;
@@ -53,7 +53,7 @@ public class Unit : Selectable
     {
 
         get { return (int)myState; }
-        set { myState = (STATE_UNIT)value; }
+        set { myState = (STATE_SELECTABLE)value; }
     }
 
     public int CurMp
@@ -75,9 +75,9 @@ public class Unit : Selectable
         get
         {
 
-            return myState == STATE_UNIT.SKILL1
-                || myState == STATE_UNIT.SKILL2
-                || myState == STATE_UNIT.SKILL3;
+            return myState == STATE_SELECTABLE.UNIT_SKILL1
+                || myState == STATE_SELECTABLE.UNIT_SKILL2
+                || myState == STATE_SELECTABLE.UNIT_SKILL3;
         }
     }    
 
@@ -90,7 +90,7 @@ public class Unit : Selectable
         get
         {
 
-            return myState == STATE_UNIT.NONE 
+            return myState == STATE_SELECTABLE.NONE 
                 && cmds.Count > 0;
         }
     }
@@ -101,8 +101,8 @@ public class Unit : Selectable
         get
         {
 
-            return myState == STATE_UNIT.NONE
-                || myState == STATE_UNIT.PATROL;
+            return myState == STATE_SELECTABLE.NONE
+                || myState == STATE_SELECTABLE.UNIT_PATROL;
         }
     }
 
@@ -212,7 +212,7 @@ public class Unit : Selectable
     public void Action()
     {
 
-        if (myState == STATE_UNIT.DEAD) return;
+        if (myState == STATE_SELECTABLE.DEAD) return;
 
         // 상태 변화가 있는지
         else if (stateChange)
@@ -233,7 +233,7 @@ public class Unit : Selectable
     /// 행동이 완료 혹은 변경이 필요
     /// </summary>
     /// <param name="_nextState">다음 상태</param>
-    public virtual void ActionDone(STATE_UNIT _nextState = STATE_UNIT.NONE)
+    public virtual void ActionDone(STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
     {
 
         myState = _nextState;
@@ -246,7 +246,7 @@ public class Unit : Selectable
     public override void OnDamaged(int _dmg, Transform _trans = null)
     {
 
-        if (myState == STATE_UNIT.DEAD) return;
+        if (myState == STATE_SELECTABLE.DEAD) return;
 
         base.OnDamaged(_dmg, _trans);
 
@@ -266,7 +266,7 @@ public class Unit : Selectable
             // 공격할 수 없거나 공격한 대상이 아군일 경우 반대 방향으로 도주
             Vector3 dir = (transform.position - _trans.transform.position).normalized;
             targetPos = transform.position + dir * myAgent.speed;
-            ActionDone(STATE_UNIT.MOVE);
+            ActionDone(STATE_SELECTABLE.UNIT_MOVE);
         }
         else
         {
@@ -274,7 +274,7 @@ public class Unit : Selectable
             // 공격할 수 있고 적이 때렸을 경우 맞받아친다!
             target = _trans;
             targetPos = _trans.transform.position;
-            ActionDone(STATE_UNIT.ATTACK);
+            ActionDone(STATE_SELECTABLE.UNIT_ATTACK);
         }
     }
 
@@ -289,24 +289,11 @@ public class Unit : Selectable
             cmds.Dequeue().Canceled();
         }
 
-        ActionDone(STATE_UNIT.DEAD);
+        ActionDone(STATE_SELECTABLE.DEAD);
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
         ActionManager.instance.RemoveUnit(this);
         ActionManager.instance.ClearHitBar(myHitBar);
-    }
-
-    public override void GiveButtonInfo(ButtonInfo[] _buttons)
-    {
-
-        myStateAction.GiveMyButtonInfos(_buttons, 0, 1);
-    }
-
-    public override void ChkButtons(ButtonInfo[] _buttons)
-    {
-
-        // 수정!
-        myStateAction.ChkButtons(_buttons, 5, 6, false);
     }
 
     #region Command
@@ -320,8 +307,10 @@ public class Unit : Selectable
     public override void GetCommand(Command _cmd, bool _add = false)
     {
 
-        if (myState == STATE_UNIT.DEAD
-            || _cmd.type == 0) 
+        int idx = (int)_cmd.type;
+
+        if (myState == STATE_SELECTABLE.DEAD
+            || idx == 0) 
         {
 
             _cmd.Canceled();
@@ -329,7 +318,7 @@ public class Unit : Selectable
         }
 
         // 마우스 R인 경우 명령을 바꾼다!
-        if (_cmd.type == VariableManager.MOUSE_R)
+        if (idx == VariableManager.MOUSE_R)
         {
 
             // 마우스 R버튼을 누른 경우 이동이나 공격 타입으로 바꾼다
@@ -337,25 +326,25 @@ public class Unit : Selectable
             {
 
                 // 공격할 수 없는 경우
-                _cmd.type = 1;
+                _cmd.type = STATE_SELECTABLE.UNIT_MOVE;
             }
             else if (_cmd.target == null)
             {
 
                 // 대상이 없는 경우
-                _cmd.type = 1;
+                _cmd.type = STATE_SELECTABLE.UNIT_MOVE;
             }
             else if ((myAlliance.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
             {
 
                 // 대상이 적이고 공격 가능한 상태면 대상을 공격
-                _cmd.type = 5;
+                _cmd.type = STATE_SELECTABLE.UNIT_ATTACK;
             }
             else
             {
 
                 // 대상이 아군인 경우
-                _cmd.type = 1;
+                _cmd.type = STATE_SELECTABLE.UNIT_MOVE;
             }
         }
 
@@ -376,7 +365,7 @@ public class Unit : Selectable
             // 리지드바디를 다루는 경우도 있기에
             ActionDone();
         } 
-        else if (myState == STATE_UNIT.NONE)
+        else if (myState == STATE_SELECTABLE.NONE)
         {
 
             stateChange = true;
@@ -404,7 +393,7 @@ public class Unit : Selectable
             return; 
         }
 
-        myState = (STATE_UNIT)(cmd.type);       
+        myState = (STATE_SELECTABLE)(cmd.type);       
         target = cmd.target != transform ? cmd.target : null;
         targetPos = cmd.pos;
         cmd.Received(myStat.MySize);
@@ -419,7 +408,7 @@ public class Unit : Selectable
     {
 
         // 마우스 우측이 아닌 경우 행동 가능한지 확인한다
-        return myStateAction.ChkAction(_cmd.type);
+        return myStateAction.ChkIdx((int)_cmd.type);
     }
 
     #endregion Command

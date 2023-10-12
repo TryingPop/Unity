@@ -163,9 +163,6 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         }
     }
 
-    public abstract void GiveButtonInfo(ButtonInfo[] _buttons);
-    public abstract void ChkButtons(ButtonInfo[] _buttons);
-
     /// <summary>
     /// 무적인지 체크
     /// </summary>

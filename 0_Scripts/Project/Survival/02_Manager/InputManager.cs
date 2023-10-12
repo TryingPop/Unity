@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     public SelectedGroup curGroup;
     public SelectedUI selectedUI;
     
-    public ButtonManager buttonManager;
+    public ButtonHandler buttonManager;
     public BuildManager buildManager;
 
 
@@ -36,51 +36,23 @@ public class InputManager : MonoBehaviour
 
     [SerializeField] private TYPE_KEY myState;
 
+    [SerializeField] private ButtonHandler myBtn;
+
     public int MyState
     {
 
         set 
         {
 
-            myState = (TYPE_KEY)value;
-
-            if (curGroup.GetSize() == 0
-                || !buttonManager.ChkButton(value - 1))
+            if (curGroup.GetSize() == 0)
             { 
                 
-                // 유닛이 없거나 입력 받을 수 없으면 0으로 강제 초기화 하고 종료
                 myState = TYPE_KEY.NONE;
-                buttonManager.IsActionUI = true;
                 return;
             }
 
-            // 유닛이 존재하고 입력받을 수 있으므로 상태 변화
-            isDrag = false;
-
-            var btnOpt = buttonManager.buttons[value - 1].buttonOpt;
-
-            if (btnOpt == TYPE_BUTTON_OPTION.NONE)
-            {
-
-                GiveCommand(Input.GetKey(KeyCode.LeftShift));
-            }
-            else if (btnOpt == TYPE_BUTTON_OPTION.BUILD)
-            {
-
-                // 건물 짓기
-                building = null;
-                worker = curGroup.Get()[0];
-                BuildGroup group = buildManager.GetGroup(btnOpt);
-                buttonManager.SetBuildButton(group);
-
-                buttonManager.IsBuildUI = true;
-            }
-            else
-            {
-
-                // 타겟이나 좌표가 필요한 경우
-                buttonManager.IsActionUI = false;
-            }
+            myState = (TYPE_KEY)value;
+            myBtn.Changed(this);
         }
         get { return (int)myState; }
     }
@@ -176,91 +148,6 @@ public class InputManager : MonoBehaviour
                 }
             }
         }
-        else if (buttonManager.IsBuildUI)
-        {
-
-            // Build 타입으로?
-            if (building == null)
-            {
-
-                // 건물 버튼을 안누른 경우
-                if (Input.GetKeyDown(KeyCode.Q)) SetBuild(0);
-                else if (Input.GetKeyDown(KeyCode.W)) SetBuild(1);
-                else if (Input.GetKeyDown(KeyCode.E)) SetBuild(2);
-                else if (Input.GetKeyDown(KeyCode.Escape)) 
-                {
-
-                    buttonManager.IsBuildUI = false;
-                    worker = null;
-                    MyState = 0; 
-                }
-                else if (Input.GetMouseButtonDown(1))
-                {
-
-                    bool putLS = Input.GetKey(KeyCode.LeftShift);
-
-                    Vector3 pos = Vector3.positiveInfinity;
-                    Selectable target = null;
-
-                    ChkRay(ref pos, ref target);
-
-                    curGroup.GiveCommand(VariableManager.MOUSE_R, pos, target, putLS);
-                }
-            }
-            else
-            {
-
-                // 건물 버튼을 누른 경우
-                // 즉 건물 건설 바로 앞 단계!
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-                // 건물 위치를 마우스 위치로!
-                if (Physics.Raycast(ray, out RaycastHit hit, 500f, groundLayer)) 
-                {
-
-                    Vector3 pos = new Vector3(Mathf.FloorToInt(hit.point.x), Mathf.FloorToInt(hit.point.y), Mathf.FloorToInt(hit.point.z));
-                    building.transform.position = pos;
-                }
-
-                if (Input.GetMouseButtonDown(0))
-                {
-
-                    var go = building.Build();
-                    if (go)
-                    {
-
-                        // 건물 건설
-                        Vector3 pos = go.transform.position;
-
-                        Building target = go.GetComponent<Building>();
-                        target.TargetPos = pos;
-                        
-                        target.DisableBuilding(building.PrefabIdx);
-
-                        GiveCommand(Input.GetKey(KeyCode.LeftShift), pos, target);
-
-                        buttonManager.IsBuildUI = false;
-                        building.gameObject.SetActive(false);
-                        building = null;
-                        worker = null;
-
-                        MyState = 0;
-                        // 선택되는거 방지용
-                        isCommand = true;
-                    }
-                }
-                else if (Input.GetKeyDown(KeyCode.Escape) 
-                    || Input.GetMouseButton(1))
-                {
-
-                    buttonManager.IsBuildUI = false;
-                    building.gameObject.SetActive(false);
-                    building = null;
-                    worker = null;
-                    MyState = 0;
-                }
-            }
-        }
         else
         {
 
@@ -281,7 +168,7 @@ public class InputManager : MonoBehaviour
                     Selectable target = null;
 
                     ChkRay(ref pos, ref target);
-                    GiveCommand(putLS, pos, target);
+                    // GiveCommand(pos, target);
                     isCommand = true;
                 }
                 else if (otherPos.x <= 160)
@@ -320,9 +207,7 @@ public class InputManager : MonoBehaviour
 
         ChkRay(ref pos, ref target);
 
-        curGroup.GiveCommand(VariableManager.MOUSE_R, pos, target, putLS);
-
-        buttonManager.IsActionUI = true;
+        // curGroup.GiveCommand(VariableManager.MOUSE_R, pos, target, putLS);
 
         myState = TYPE_KEY.NONE;
     }
@@ -340,39 +225,43 @@ public class InputManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 타겟 혹은 좌표가 필요한 명령 전달
+    /// 
     /// </summary>
-    /// <param name="_pos">좌표</param>
-    /// <param name="_target">대상</param>
-    /// <param name="_reserve">추가명령</param>
-    private void GiveCommand(bool _reserve, Vector3 _pos, Selectable _target = null)
+    public Vector3 MousePositionToGroundPosition()
     {
 
-        if (myState != TYPE_KEY.NONE)
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit result, 500f, groundLayer))
         {
 
-            curGroup.GiveCommand(MyState, _pos, _target, _reserve);
-            myState = TYPE_KEY.NONE;
+            return result.point;
         }
 
-        buttonManager.IsActionUI = true;
+        return new Vector3(0, 100f, 0);
     }
 
-    /// <summary>
-    /// 타겟과 좌표가 필요없는 명령 전달, 
-    /// </summary>
-    /// <param name="_reserve">예약 명령 여부</param>
-    private void GiveCommand(bool _reserve)
+    public void ActionDone(TYPE_KEY _nextKey = TYPE_KEY.NONE)
     {
 
-        if (myState != TYPE_KEY.NONE)
-        {
+        myState = _nextKey;
+    }
 
-            curGroup.GiveCommand(MyState, _reserve);
-            myState = TYPE_KEY.NONE;
-        }
+    public void GiveCommand(STATE_SELECTABLE _type)
+    {
 
-        buttonManager.IsActionUI = true;
+        curGroup.GiveCommand(_type, Input.GetKey(KeyCode.LeftShift));
+    }
+
+    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos)
+    {
+
+        curGroup.GiveCommand(_type, _pos, null, Input.GetKey(KeyCode.LeftShift));
+    }
+
+    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _target)
+    {
+
+        curGroup.GiveCommand(_type, _pos, _target, Input.GetKey(KeyCode.LeftShift));
     }
 
     public void ClickEvent()
@@ -500,13 +389,11 @@ public class InputManager : MonoBehaviour
                 if (curGroup.GetSize() == 1)
                 {
 
-                    select.GiveButtonInfo(buttonManager.buttons);
                 }
                 else
                 {
 
                     // 여기서 버튼 체크 ㄱㄱ
-                    select.ChkButtons(buttonManager.buttons);
                 }
 
             }
@@ -595,24 +482,13 @@ public class InputManager : MonoBehaviour
     public void ChkSelected(Selectable _selectable = null)
     {
 
-        if (_selectable)
-        {
-
-            if (curGroup.GetSize() == 1) _selectable.GiveButtonInfo(buttonManager.buttons);
-            else _selectable.ChkButtons(buttonManager.buttons);
-        }
-
         selectedUI.SetTargets(curGroup.Get());
-        buttonManager.SetButton();
     }
 
     public void SetBuild(int _idx)
     {
 
-        building = buttonManager.GetBuilding(_idx);
         building.gameObject.SetActive(true);
-
-        buttonManager.IsActionUI = false;
     }
 
 

@@ -14,7 +14,7 @@ public class BuildBuilding : IUnitAction
         if (_unit.Target == null)
         {
          
-            OnExit(_unit, STATE_UNIT.NONE);
+            OnExit(_unit, STATE_SELECTABLE.NONE);
             return;
         }
 
@@ -36,13 +36,13 @@ public class BuildBuilding : IUnitAction
                 _unit.Target.AfterSettingLayer();
                 _unit.Target.TargetPos = _unit.Target.transform.position;
                 // 같은 번호를 공유하기에 repair에 Attack이 들어가면 안된다!
-                OnExit(_unit, STATE_UNIT.REPAIR);
+                OnExit(_unit, STATE_SELECTABLE.UNIT_REPAIR);
             }
             else
             {
 
                 // 건설 못한 경우는 일반 상태로 탈출
-                OnExit(_unit, STATE_UNIT.NONE);
+                OnExit(_unit, STATE_SELECTABLE.NONE);
             }
         }
 

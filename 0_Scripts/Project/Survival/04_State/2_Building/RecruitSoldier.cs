@@ -41,7 +41,7 @@ public class RecruitSoldier : BuildingAction
             {
 
                 unit.AfterSettingLayer();
-                Command cmd = Command.GetCommand(1, VariableManager.MOUSE_R, _building.TargetPos, _building.Target);
+                Command cmd = Command.GetCommand(1, STATE_SELECTABLE.UNIT_MOVE, _building.TargetPos, _building.Target);
                 unit.GetCommand(cmd);
             }
 

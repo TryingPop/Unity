@@ -16,7 +16,7 @@ public class BuildingAction : IAction<Building>
         _building.MyTurn = 0;
     }
 
-    protected virtual void OnExit(Building _building, STATE_BUILDING _nextState = STATE_BUILDING.NONE)
+    protected virtual void OnExit(Building _building, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
     {
 
         _building.MyState = (int)_nextState;

@@ -83,7 +83,7 @@ public class BossAtk : IUnitAction
         _unit.MyAgent.ResetPath();
     }
 
-    protected override void OnExit(Unit _unit, STATE_UNIT _nextState = STATE_UNIT.NONE)
+    protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
     {
 
         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;

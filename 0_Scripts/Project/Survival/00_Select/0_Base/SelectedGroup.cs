@@ -125,7 +125,7 @@ public class SelectedGroup
     /// <param name="_pos">좌표</param>
     /// <param name="_trans">대상</param>
     /// <param name="_add">예약 명령 여부</param>
-    public void GiveCommand(int _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
+    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
     {
 
         // 명령 풀링
@@ -152,7 +152,7 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    public void GiveCommand(int _type, bool _add)
+    public void GiveCommand(STATE_SELECTABLE _type, bool _add)
     {
 
         // 명령 풀링

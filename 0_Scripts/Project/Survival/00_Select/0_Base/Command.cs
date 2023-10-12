@@ -18,15 +18,15 @@ public class Command
     public Vector3 pos;
     public Selectable target;
 
-    public int type;
+    public STATE_SELECTABLE type;
 
-    public Command(ushort _unitNums, int _type, Vector3 _pos, Selectable _target = null)
+    public Command(ushort _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
         Set(_unitNums, _type, _pos, _target);
     }
 
-    public Command(ushort _unitNums, int _type)
+    public Command(ushort _unitNums, STATE_SELECTABLE _type)
     {
 
         Set(_unitNums, _type);
@@ -67,17 +67,18 @@ public class Command
         ChkAllReceived();
     }
 
-    public void Set(ushort _unitNums, int _type, Vector3 _pos, Selectable _target = null)
+    public void Set(ushort _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
         unitNums = _unitNums;
         receiveNum = 0;
         type = _type;
+
         target = _target;
         pos = _pos;
     }
 
-    public void Set(ushort _unitNums, int _type)
+    public void Set(ushort _unitNums, STATE_SELECTABLE _type)
     {
 
         unitNums = _unitNums;
@@ -135,7 +136,7 @@ public class Command
         }
     }
 
-    public static Command GetCommand(ushort _unitNums, int _type, Vector3 _pos, Selectable _target = null)
+    public static Command GetCommand(ushort _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
         if (pool == null) pool = new Stack<Command>(VariableManager.MAX_SAVE_COMMANDS);
@@ -155,7 +156,7 @@ public class Command
         else return new Command(_unitNums, _type, _pos, _target);
     }
 
-    public static Command GetCommand(ushort _unitNums, int _type)
+    public static Command GetCommand(ushort _unitNums, STATE_SELECTABLE _type)
     {
 
         if (pool == null) pool = new Stack<Command>(VariableManager.MAX_SAVE_COMMANDS);

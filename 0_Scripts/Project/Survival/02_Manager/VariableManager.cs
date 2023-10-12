@@ -18,6 +18,7 @@ public enum TYPE_SELECTABLE
 public enum TYPE_BUTTON_OPTION
 {
 
+    CANCEL = -2,
     NULL = -1,
     NONE = 0,
     NEED_POS = 1,
@@ -31,12 +32,26 @@ public enum TYPE_BUTTON_OPTION
 /// -1 ~ 5 번까지는 일반 유닛이 갖는 번호
 /// 6번부터는 특수!
 /// </summary>
-public enum STATE_UNIT
+public enum STATE_SELECTABLE
 {
-    DEAD = -1, NONE = 0, MOVE = 1, STOP = 2, PATROL = 3, HOLD = 4, ATTACK = 5, REPAIR = 5, HEAL = 5,
-    SKILL0 = 5, SKILL1 = 6, SKILL2 = 7, SKILL3 = 8
+
+    BUILDING_UNFINISHED = -2,
+    DEAD = -1,
+
+    NONE = 0, 
+    UNIT_MOVE = 1, BUILDING_ACTION1 = 1,
+    UNIT_STOP = 2, BUILDING_ACTION2 = 2,
+    UNIT_PATROL = 3, BUILDING_ACTION3 = 3,
+    UNIT_HOLD = 4, 
+    UNIT_ATTACK = 5, UNIT_REPAIR = 5, UNIT_HEAL = 5, UNIT_SKILL0 = 5, 
+    UNIT_SKILL1 = 6, 
+    UNIT_SKILL2 = 7, 
+    UNIT_SKILL3 = 8,
 }
 
+/// <summary>
+/// 업그레이드 번호
+/// </summary>
 public enum TYPE_UPGRADE
 {
 
@@ -51,6 +66,9 @@ public enum TYPE_KEY
     NONE = 0, M, S, P, H, A, Q, W, E,
     MOUSE_R = VariableManager.MOUSE_R,
 }
+
+    
+
 
 /// <summary>
 /// static 변수 보관소
@@ -91,7 +109,8 @@ public class VariableManager
     public static readonly int MAX_SAVE_COMMANDS = 50;
     public static readonly int MAX_RESERVE_COMMANDS = 5;
 
-    public static readonly int MAX_BUTTONS = 8;
+    public static readonly int MAX_USE_BUTTONS = 8;
+    public static readonly int MAX_KEYS = 8;                // M, S, H, P, A, Q, W, E 더 추가되면 값을 늘린다!
 
     public static readonly int MAX_BUILD_BUILDINGS = 3;
 
