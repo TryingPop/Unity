@@ -10,7 +10,6 @@ public class SelectedUI : MonoBehaviour
 
     protected int selectedNums;
 
-
     private void Awake()
     {
 
@@ -51,7 +50,7 @@ public class SelectedUI : MonoBehaviour
         for (int i = 0; i < selectedNums; i++)
         {
 
-            selectedUIs[i].Batch();
+            selectedUIs[i].SetPos();
         }
     }
 }

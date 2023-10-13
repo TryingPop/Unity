@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrepareBuilding : MonoBehaviour
+public class PrepareBuilding : FollowMouse
 {
 
     [SerializeField] protected MeshRenderer myMesh;
@@ -15,12 +15,7 @@ public class PrepareBuilding : MonoBehaviour
     [SerializeField] protected Transform[] chkGround;
     [SerializeField] protected LayerMask groundLayer;
 
-    // [SerializeField] private ResourceManager.TYPE_RESOURCE costType;
-    // [SerializeField] private int cost;
-
-    // public ResourceManager.TYPE_RESOURCE CostType => costType;
-    // public int Cost => cost;
-    public int PrefabIdx 
+    public int PrefabIdx
     { 
         get 
         { 
@@ -33,6 +28,13 @@ public class PrepareBuilding : MonoBehaviour
 
             return prefabIdx;
         } 
+    }
+
+    public void Init()
+    {
+
+        gameObject.SetActive(true);
+        ActionManager.instance.AddFollowMouse(this);
     }
 
     private void OnTriggerStay(Collider other)
@@ -96,7 +98,13 @@ public class PrepareBuilding : MonoBehaviour
         if (!isBuild) return null;
 
         var go = PoolManager.instance.GetPrefabs(PrefabIdx, gameObject.layer, transform.position);
-
         return go;
+    }
+
+    public void Used()
+    {
+
+        ActionManager.instance.RemoveFollowMouse(this);
+        gameObject.SetActive(false);
     }
 }

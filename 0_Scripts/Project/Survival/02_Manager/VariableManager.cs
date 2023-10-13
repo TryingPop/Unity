@@ -1,7 +1,6 @@
-
-
-using UnityEditor;
-
+/// <summary>
+/// 
+/// </summary>
 public enum TYPE_SELECTABLE 
 { 
     
@@ -67,9 +66,6 @@ public enum TYPE_KEY
     MOUSE_R = VariableManager.MOUSE_R,
 }
 
-    
-
-
 /// <summary>
 /// static 변수 보관소
 /// </summary>
@@ -110,6 +106,7 @@ public class VariableManager
     public static readonly int MAX_RESERVE_COMMANDS = 5;
 
     public static readonly int MAX_USE_BUTTONS = 8;
+    public static readonly int MAX_SUB_BUTTONS = 7;
     public static readonly int MAX_KEYS = 8;                // M, S, H, P, A, Q, W, E 더 추가되면 값을 늘린다!
 
     public static readonly int MAX_BUILD_BUILDINGS = 3;
@@ -121,4 +118,5 @@ public class VariableManager
     public static readonly int INIT_UNIT_LIST_NUM = 50;
     public static readonly int INIT_BUILDING_LIST_NUM = 20;
     public static readonly int INIT_MISSILE_LIST_NUM = 50;
+    public static readonly int INIT_LATE_POS = 50;
 }

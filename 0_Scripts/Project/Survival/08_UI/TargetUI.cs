@@ -47,7 +47,7 @@ public class TargetUI : MonoBehaviour
     /// <summary>
     /// À¯´Ö ¹èÄ¡
     /// </summary>
-    public void Batch()
+    public void SetPos()
     {
 
         if (follow == null) return;
@@ -55,6 +55,5 @@ public class TargetUI : MonoBehaviour
 
         if (follow.Target) target.position = follow.Target.transform.position;
         else target.position = follow.TargetPos;
-
     }
 }

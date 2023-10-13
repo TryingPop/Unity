@@ -28,13 +28,13 @@ public class Slot : MonoBehaviour,
     {
 
         // ÅøÆÁ È°¼ºÈ­
-
+        Debug.Log("À¯´Ö Ä­ ÁøÀÔ");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
         // ÅøÆÁ ºñÈ°¼ºÈ­
-
+        Debug.Log("À¯´Ö Ä­ Å»Ãâ");
     }
 }

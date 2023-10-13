@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("이제는 사용 안해요!")]
 [System.Serializable]
 public class BuildGroup
 {

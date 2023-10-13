@@ -10,6 +10,7 @@ public class BuildOpt : ScriptableObject
     [SerializeField] protected ushort destroyIdx;
     [SerializeField] protected float increaseY;
     [SerializeField] protected float initPosY;
+
     protected short destroyPoolIdx = -1;
 
     public ushort BuildTurn => buildTurn;

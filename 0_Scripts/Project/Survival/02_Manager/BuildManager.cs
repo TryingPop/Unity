@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,19 +6,29 @@ using UnityEngine;
 public class BuildManager : MonoBehaviour
 {
 
-    [SerializeField] private BuildGroup[] groups;
+    [SerializeField] protected PrepareBuilding[] buildings;
 
-    public BuildGroup GetGroup(TYPE_BUTTON_OPTION buttonOpt)
+    public short ChkIdx(ushort _selectIdx)
     {
 
-        switch (buttonOpt) 
+        for (short i = 0; i < buildings.Length; i++)
         {
 
-            case TYPE_BUTTON_OPTION.BUILD:
-                return groups?[0];
+            if (_selectIdx == buildings[i].selectIdx)
+            {
 
-            default:
-                return null;
+                return i;
+            }
         }
+
+        return -1;
+    }
+
+    public PrepareBuilding GetPrepareBuilding(int _idx)
+    {
+
+        if (_idx == -1) return null;
+
+        return buildings[_idx];
     }
 }

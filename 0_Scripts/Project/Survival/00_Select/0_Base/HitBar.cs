@@ -13,7 +13,7 @@ public class HitBar : MonoBehaviour
     private Vector3 offset;
 
 
-    public void SetPosition()
+    public void SetPos()
     {
 
         myTrans.position = target.position + offset;

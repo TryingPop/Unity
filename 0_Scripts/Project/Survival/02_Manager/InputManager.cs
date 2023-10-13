@@ -37,6 +37,9 @@ public class InputManager : MonoBehaviour
     [SerializeField] private TYPE_KEY myState;
 
     [SerializeField] private ButtonHandler myBtn;
+    private STATE_SELECTABLE cmdType;
+
+
 
     public int MyState
     {
@@ -55,6 +58,16 @@ public class InputManager : MonoBehaviour
             myBtn.Changed(this);
         }
         get { return (int)myState; }
+    }
+
+    public STATE_SELECTABLE CmdType
+    {
+
+        set
+        {
+
+            cmdType = value;
+        }
     }
 
     private void Awake()
@@ -167,7 +180,7 @@ public class InputManager : MonoBehaviour
                     Vector3 pos = Vector3.positiveInfinity;
                     Selectable target = null;
 
-                    ChkRay(ref pos, ref target);
+                    ChkRay(out pos, out target);
                     // GiveCommand(pos, target);
                     isCommand = true;
                 }
@@ -180,11 +193,6 @@ public class InputManager : MonoBehaviour
             }
         }
         
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-            
-        }
         
         // 상황 상관없이 체력바를 보여주는 거기에 밑에 따로 빼놨다
         if (Input.GetKeyDown(KeyCode.LeftAlt))
@@ -194,6 +202,77 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    #region Current
+    public void ActiveButtonUI(bool _isActiveMain, bool _isActiveSub, bool _isActiveCancel) { }
+
+    public void ChkRay(out Vector3 _pos)
+    {
+
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit groundHit, 500f, groundLayer)) _pos = groundHit.point;
+        else _pos = new Vector3(0, 100f, 0f);
+    }
+
+
+    public void ChkRay(out Vector3 _pos, out Selectable _target)
+    {
+        
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        
+        // 지면 체크
+        if (Physics.Raycast(ray, out RaycastHit groundHit, 500f, groundLayer)) _pos = groundHit.point;
+        else _pos = new Vector3(0, 100f, 0f);
+
+        // 유닛 체크
+        if (Physics.Raycast(ray, out RaycastHit selectHit, 500f, targetLayer)) _target = selectHit.transform.GetComponent<Selectable>();
+        else _target = null;
+    }
+
+
+    public void ActionDone(TYPE_KEY _nextKey = TYPE_KEY.NONE)
+    {
+
+        myState = _nextKey;
+    }
+
+    public void GiveCommand()
+    {
+
+        if (cmdType != STATE_SELECTABLE.NONE)
+        {
+
+            curGroup.GiveCommand(cmdType, Input.GetKey(KeyCode.LeftShift));
+            cmdType = STATE_SELECTABLE.NONE;
+        }
+    }
+
+    public void GiveCommand(Vector3 _pos)
+    {
+
+        if (cmdType != STATE_SELECTABLE.NONE)
+        {
+
+            curGroup.GiveCommand(cmdType, _pos, null, Input.GetKey(KeyCode.LeftShift));
+            cmdType = STATE_SELECTABLE.NONE;
+        }
+    }
+
+    public void GiveCommand(Vector3 _pos, Selectable _target)
+    {
+
+        if (cmdType != STATE_SELECTABLE.NONE)
+        {
+
+            curGroup.GiveCommand(cmdType, _pos, _target, Input.GetKey(KeyCode.LeftShift));
+            cmdType = STATE_SELECTABLE.NONE;
+        }
+    }
+
+    #endregion
+
+    #region Before
+
     /// <summary>
     /// 마우스 버튼 R을 눌렀을 때
     /// </summary>
@@ -202,67 +281,16 @@ public class InputManager : MonoBehaviour
 
         bool putLS = Input.GetKey(KeyCode.LeftShift);
 
-        Vector3 pos = Vector3.positiveInfinity;
-        Selectable target = null;
+        // Vector3 pos = Vector3.positiveInfinity;
+        // Selectable target = null;
 
-        ChkRay(ref pos, ref target);
+        ChkRay(out Vector3 pos, out Selectable target);
 
         // curGroup.GiveCommand(VariableManager.MOUSE_R, pos, target, putLS);
 
         myState = TYPE_KEY.NONE;
     }
 
-    private void ChkRay(ref Vector3 _pos, ref Selectable _target)
-    {
-        
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        
-        // 지면 체크
-        if (Physics.Raycast(ray, out RaycastHit groundHit, 500f, groundLayer)) _pos = groundHit.point;
-
-        // 유닛 체크
-        if (Physics.Raycast(ray, out RaycastHit selectHit, 500f, targetLayer)) _target = selectHit.transform.GetComponent<Selectable>();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public Vector3 MousePositionToGroundPosition()
-    {
-
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit result, 500f, groundLayer))
-        {
-
-            return result.point;
-        }
-
-        return new Vector3(0, 100f, 0);
-    }
-
-    public void ActionDone(TYPE_KEY _nextKey = TYPE_KEY.NONE)
-    {
-
-        myState = _nextKey;
-    }
-
-    public void GiveCommand(STATE_SELECTABLE _type)
-    {
-
-        curGroup.GiveCommand(_type, Input.GetKey(KeyCode.LeftShift));
-    }
-
-    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos)
-    {
-
-        curGroup.GiveCommand(_type, _pos, null, Input.GetKey(KeyCode.LeftShift));
-    }
-
-    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _target)
-    {
-
-        curGroup.GiveCommand(_type, _pos, _target, Input.GetKey(KeyCode.LeftShift));
-    }
 
     public void ClickEvent()
     {
@@ -278,11 +306,7 @@ public class InputManager : MonoBehaviour
         else if (Vector3.Distance(clickPos, Input.mousePosition) < 10f)
         {
 
-            // 유닛 충돌 체크 없으면 비우지 않는다!
-            Vector3 pos = Vector3.positiveInfinity;
-            Selectable target = null;
-
-            ChkRay(ref pos, ref target);
+            ChkRay(out Vector3 pos, out Selectable target);
 
             if (target != null
                 && ((1 << target.gameObject.layer) & selectLayer) != 0)
@@ -503,4 +527,6 @@ public class InputManager : MonoBehaviour
             DrawRect.DrawDragScreenRect(clickPos, otherPos);
         }
     }
+
+    #endregion Before
 }

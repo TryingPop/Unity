@@ -28,6 +28,8 @@ public class ActionManager : MonoBehaviour
     public List<Building> PlayerBuildings => playerBuildings;
     public List<Building> EnemyBuildings => enemyBuildings;
 
+    public List<FollowMouse> followMouse;
+
     public bool HitBarCanvas
     {
 
@@ -59,6 +61,8 @@ public class ActionManager : MonoBehaviour
         hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM + VariableManager.INIT_BUILDING_LIST_NUM);
 
         missiles = new List<Missile>(VariableManager.INIT_MISSILE_LIST_NUM);
+
+        followMouse = new List<FollowMouse>();
     }
 
     private void FixedUpdate()
@@ -70,7 +74,7 @@ public class ActionManager : MonoBehaviour
     private void LateUpdate()
     {
 
-        SetHitBarPos();
+        SetPos();
     }
 
     /// <summary>
@@ -191,13 +195,26 @@ public class ActionManager : MonoBehaviour
         _hitbar.Used();
     }
 
+    private void SetPos()
+    {
+
+        SetHitBarPos();
+
+        for (int i = 0; i < followMouse.Count; i++)
+        {
+
+            followMouse[i].SetPos();
+        }
+    }
+
     private void SetHitBarPos()
     {
 
+        if (!HitBarCanvas) return;
         for (int i = 0; i < hitBars.Count; i++)
         {
 
-            hitBars[i].SetPosition();
+            hitBars[i].SetPos();
         }
     }
 
@@ -252,5 +269,17 @@ public class ActionManager : MonoBehaviour
     {
 
         missiles.Remove(_missile);
+    }
+
+    public void AddFollowMouse(FollowMouse _followMouse)
+    {
+
+        if (!followMouse.Contains(_followMouse)) followMouse.Add(_followMouse);
+    }
+
+    public void RemoveFollowMouse(FollowMouse _followMouse)
+    {
+
+        followMouse.Remove(_followMouse);
     }
 }

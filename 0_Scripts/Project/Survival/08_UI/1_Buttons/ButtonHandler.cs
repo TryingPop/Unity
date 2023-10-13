@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -120,15 +121,28 @@ public class ButtonHandler : StateHandler<ButtonInfo>
     
     protected sbyte[] idxs;
 
-    // 쓰는 키가 많아지면 딕셔너리로 해야한다!
+    // 쓰는 키가 많아지거나 cmd로 행동을 구분하고 싶을 때는 딕셔너리로 해야한다!
     public sbyte[] Idxs
     {
 
         get
         {
 
+            if (actions == null)
+            {
+
+                idxs = new sbyte[1] { -1 };
+                return idxs;
+            }
+
             if (idxs == null)
             {
+
+                if (actions.Length > VariableManager.MAX_USE_BUTTONS)
+                {
+
+                    Array.Resize(ref actions, VariableManager.MAX_USE_BUTTONS);
+                }
 
                 for (int i = 0; i < idxs.Length; i++)
                 {
@@ -158,6 +172,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         if (ChkIdx(idx)) actions[idx].Action(_inputManager);
     }
 
+    
     public void Changed(InputManager _inputManager)
     {
 
