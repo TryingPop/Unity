@@ -5,10 +5,19 @@ public enum TYPE_SELECTABLE
 { 
     
     NONE = 0, 
-    UNIT = 1, 
-    UNIT_WORKER = 2,
-    UNIT_BOSS = 8,
-    BUILDING = 10,
+    
+    UNIT_NONCOMBAT = 1,
+    UNIT = 2, 
+
+    BUILDING = 3,
+
+
+    UNIT_WORKER = 101,
+    UNIT_BOSS_D = 201,
+
+    BUILDING_FARM = 301,
+    BUILDING_TOWN = 302,
+    BUILDING_ENEMYCASTLE = 351,
 }
 
 /// <summary>
@@ -46,6 +55,8 @@ public enum STATE_SELECTABLE
     UNIT_SKILL1 = 6, 
     UNIT_SKILL2 = 7, 
     UNIT_SKILL3 = 8,
+
+    MOUSE_R = VariableManager.MOUSE_R,          // 건물이랑, 유닛 읽는게 다르다!
 }
 
 /// <summary>
@@ -119,4 +130,7 @@ public class VariableManager
     public static readonly int INIT_BUILDING_LIST_NUM = 20;
     public static readonly int INIT_MISSILE_LIST_NUM = 50;
     public static readonly int INIT_LATE_POS = 50;
+
+    public static readonly int TYPE_SELECTABLE_INTERVAL = 100;
+
 }

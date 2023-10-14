@@ -23,6 +23,7 @@ public class Building : Selectable
 
     public static WaitForSeconds completeTimer;
 
+    protected List<Command> cmds;
 
     public override int MyState
     {
@@ -55,7 +56,7 @@ public class Building : Selectable
     protected void Awake()
     {
 
-        if (cmds == null) cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
+        if (cmds == null) cmds = new List<Command>(VariableManager.MAX_RESERVE_COMMANDS);
         if (completeTimer == null) completeTimer = new WaitForSeconds(0.1f);
 
         if (opt.BuildTurn != 0)
@@ -72,6 +73,7 @@ public class Building : Selectable
 
         Init();
     }
+
 
     protected override void Init()
     {
@@ -123,7 +125,7 @@ public class Building : Selectable
         else if (myState == STATE_SELECTABLE.NONE)
         {
 
-            ReadCommand();
+            ChkReservedCommand();
             
         }
 
@@ -235,69 +237,52 @@ public class Building : Selectable
     public override void GetCommand(Command _cmd, bool _add = false) 
     {
 
-        int idx = (int)_cmd.type;
-
-        if (idx == VariableManager.MOUSE_R)
+        if (!ChkCommand(_cmd))
         {
 
-            target = _cmd.target;
-            if (target != null) targetPos = target.transform.position;
-            else targetPos = _cmd.pos;
-
-            _cmd.Received(0);    
-        }
-        else if (myState == STATE_SELECTABLE.DEAD || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) 
-        {
-
-            if (_cmd.type == 0) 
-            { 
-            
-                DisableBuilding(myStat.MyPoolIdx);
-
-                PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
-            }
             _cmd.Canceled();
             return; 
         }
-        else if (myStateAction.ChkIdx(idx)
-            && cmds.Count < VariableManager.MAX_RESERVE_COMMANDS)
-        {
 
-            cmds.Enqueue(_cmd);
-        }
-        else if (idx == 0)
-        {
-
-            // 현재 명령 취소
-            MyState = idx;
-            _cmd.Received(0);
-        }
-        else
-        {
-
-            _cmd.Canceled();
-        }
+        cmds.Add(_cmd);
     }
 
-    public void ReadCommand()
+    protected override bool ChkCommand(Command _cmd)
+    {
+
+        if (myState == STATE_SELECTABLE.DEAD) return false;
+
+        
+        // 한정 조건
+        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED
+            && _cmd.type != STATE_SELECTABLE.MOUSE_R) return false;
+
+        return true;
+    }
+
+    public void ChkReservedCommand()
     {
 
         if (cmds.Count == 0) return;
 
-        Command cmd = cmds.Dequeue();
+        Command cmd = cmds[0];
+        cmds.RemoveAt(0);
 
-        int idx = (int)cmd.type;
+        ReadCommand(cmd);
+        cmd.Received(0);
+    }
 
-        if (myStateAction.ChkIdx(idx))
+    protected override void ReadCommand(Command _cmd)
+    {
+
+        STATE_SELECTABLE type = _cmd.type;
+
+        if (type == STATE_SELECTABLE.MOUSE_R)
         {
 
-            MyState = idx;
-            cmd.Received(0);
+            type = STATE_SELECTABLE.NONE;
         }
-        else
-        {
 
-            cmd.Canceled();
-        }
+        myState = type;
     }
 }

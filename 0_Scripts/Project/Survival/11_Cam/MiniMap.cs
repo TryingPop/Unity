@@ -78,8 +78,6 @@ public class MiniMap : MonoBehaviour,
             }
         }
 
-
-        Debug.Log(result);
         return result;
     }
 

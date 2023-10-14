@@ -28,6 +28,8 @@ public class Unit : Selectable
     [SerializeField] protected short maxMp;
     protected short curMp;
     protected int atk;
+
+    protected Queue<Command> cmds;
     #endregion 변수
 
 
@@ -69,54 +71,12 @@ public class Unit : Selectable
         }
     }
 
-    protected virtual bool usingSkill
-    {
-
-        get
-        {
-
-            return myState == STATE_SELECTABLE.UNIT_SKILL1
-                || myState == STATE_SELECTABLE.UNIT_SKILL2
-                || myState == STATE_SELECTABLE.UNIT_SKILL3;
-        }
-    }    
-
-    /// <summary>
-    /// 명령 받을 수 있는 상태인지 체크
-    /// </summary>
-    protected virtual bool atCommand
-    {
-
-        get
-        {
-
-            return myState == STATE_SELECTABLE.NONE 
-                && cmds.Count > 0;
-        }
-    }
-
-    protected virtual bool atkReaction
-    {
-
-        get
-        {
-
-            return myState == STATE_SELECTABLE.NONE
-                || myState == STATE_SELECTABLE.UNIT_PATROL;
-        }
-    }
-
     public int Atk => atk;
 
     public override int MyTurn
     {
 
-        get
-        {
-
-            return myTurn;
-        }
-
+        get { return myTurn; }
         set
         {
 
@@ -132,11 +92,6 @@ public class Unit : Selectable
     protected virtual void Awake()
     {
 
-        // transform 은 갖고 다니는거 보다는 사용되는 곳에서 캐싱하자!
-        // 공식문서나 다른 사람들이 확인한 결과 갖고 다니는게 성능은 더 좋다고 한다
-        // https://forum.unity.com/threads/cache-transform-really-needed.356875/
-        // https://geekcoders.tistory.com/56
-        // transform = GetComponent<Transform>();
         cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
     }
 
@@ -220,8 +175,7 @@ public class Unit : Selectable
 
             stateChange = false;
 
-            // 명령이 있고 받을 수 있는지 확인
-            if (atCommand) ReadCommand();
+            ChkReservedCommand();
             myStateAction.Changed(this);
         }
         // 행동 실행
@@ -255,10 +209,17 @@ public class Unit : Selectable
         OnDamageAction(select);
     }
 
+    protected virtual bool ChkDmgReaction()
+    {
+
+        return myState == STATE_SELECTABLE.NONE
+            || myState == STATE_SELECTABLE.UNIT_PATROL;
+    }
+
     protected virtual void OnDamageAction(Selectable _trans)
     {
 
-        if (_trans == null || !atkReaction) return;
+        if (_trans == null || !ChkDmgReaction()) return;
 
         if (myAttack == null || ((1 << _trans.gameObject.layer) & myAlliance.GetLayer(false)) == 0)
         {
@@ -307,45 +268,11 @@ public class Unit : Selectable
     public override void GetCommand(Command _cmd, bool _add = false)
     {
 
-        int idx = (int)_cmd.type;
-
-        if (myState == STATE_SELECTABLE.DEAD
-            || idx == 0) 
+        if (!ChkCommand(_cmd)) 
         {
 
             _cmd.Canceled();
             return; 
-        }
-
-        // 마우스 R인 경우 명령을 바꾼다!
-        if (idx == VariableManager.MOUSE_R)
-        {
-
-            // 마우스 R버튼을 누른 경우 이동이나 공격 타입으로 바꾼다
-            if (myAttack == null)
-            {
-
-                // 공격할 수 없는 경우
-                _cmd.type = STATE_SELECTABLE.UNIT_MOVE;
-            }
-            else if (_cmd.target == null)
-            {
-
-                // 대상이 없는 경우
-                _cmd.type = STATE_SELECTABLE.UNIT_MOVE;
-            }
-            else if ((myAlliance.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
-            {
-
-                // 대상이 적이고 공격 가능한 상태면 대상을 공격
-                _cmd.type = STATE_SELECTABLE.UNIT_ATTACK;
-            }
-            else
-            {
-
-                // 대상이 아군인 경우
-                _cmd.type = STATE_SELECTABLE.UNIT_MOVE;
-            }
         }
 
         // 예약 명령이 아닌 경우 기존에 예약 명령 초기화와
@@ -376,40 +303,64 @@ public class Unit : Selectable
         else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
     }
 
-    /// <summary>
-    /// 명령 읽기
-    /// </summary>
-    public void ReadCommand()
+    protected override bool ChkCommand(Command _cmd)
+    {
+
+        // 읽을 수 있는 상태 판별
+        if (myState == STATE_SELECTABLE.DEAD) return false;
+
+        // 읽을 수 잇는 명령 판별
+        if (_cmd.type == STATE_SELECTABLE.NONE) return false;
+
+        return true;
+    }
+
+    public void ChkReservedCommand()
     {
         
+        // 명령을 읽을 상황인지 확인
+        if (myState == STATE_SELECTABLE.NONE
+            && cmds.Count > 0) return;
+
+        // 예약된 명령 읽기
         Command cmd = cmds.Dequeue();
-
-        // 등록된 행동이 있는지 확인
-        // 읽을 수 없는 행동이면 명령만 사라진다
-        if (!ChkState(cmd)) 
-        {
-
-            cmd.Canceled();
-            return; 
-        }
-
-        myState = (STATE_SELECTABLE)(cmd.type);       
-        target = cmd.target != transform ? cmd.target : null;
-        targetPos = cmd.pos;
-        cmd.Received(myStat.MySize);
+        ReadCommand(cmd);
     }
 
-    /// <summary>
-    /// 행동할 수 있는 상태인지 체크
-    /// </summary>
-    /// <param name="_num">상태 번호</param>
-    /// <returns></returns>
-    protected bool ChkState(Command _cmd)
+    protected override void ReadCommand(Command _cmd)
     {
 
-        // 마우스 우측이 아닌 경우 행동 가능한지 확인한다
-        return myStateAction.ChkIdx((int)_cmd.type);
-    }
+        STATE_SELECTABLE type = _cmd.type;
 
+        if (type == STATE_SELECTABLE.MOUSE_R)
+        {
+
+            // 마우스 R버튼을 누른 경우 이동이나 공격 타입으로 바꾼다
+            if (myAttack == null 
+                ||_cmd.target == null)
+            {
+
+                // 대상이 없거나 공격이 없을 경우
+                type = STATE_SELECTABLE.UNIT_MOVE;
+            }
+            else if ((myAlliance.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
+            {
+
+                // 대상이 공격 해야할 대상이면 공격
+                type = STATE_SELECTABLE.UNIT_ATTACK;
+            }
+            else
+            {
+
+                // 공격 대상이 아니면 따라간다
+                type = STATE_SELECTABLE.UNIT_MOVE;
+            }
+        }
+
+        myState = type;
+        target = _cmd.target != transform ? _cmd.target : null;
+        targetPos = _cmd.pos;
+        _cmd.Received(myStat.MySize);
+    }
     #endregion Command
 }

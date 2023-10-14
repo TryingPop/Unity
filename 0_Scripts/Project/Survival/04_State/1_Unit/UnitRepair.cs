@@ -11,7 +11,6 @@ public class UnitRepair : IUnitAction
 
         // 수리 대상이 없거나 수리를 못학거나 대상이 파괴된(사망인) 상태면 종료
         if (_unit.Target == null
-            || _unit.Target.MyStat.MyType != TYPE_SELECTABLE.BUILDING
             || _unit.Target.gameObject.layer == VariableManager.LAYER_DEAD)
         {
 

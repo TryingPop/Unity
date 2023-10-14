@@ -46,7 +46,10 @@ public class BtnSubBuild : BtnSub
             var target = go.GetComponent<Selectable>();
             
             _inputManager.GiveCommand(target.transform.position, target);
-            OnExit(_inputManager);
+
+            _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used();
+            _inputManager.ActiveButtonUI(true, false, false);
+            _inputManager.ActionDone();
         }
     }
 

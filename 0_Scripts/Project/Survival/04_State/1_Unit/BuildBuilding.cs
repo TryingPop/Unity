@@ -52,8 +52,7 @@ public class BuildBuilding : IUnitAction
     {
 
         // 타겟이 없거나 건물이 아닌 경우 탈출!
-        if (!_unit.Target
-            || _unit.Target.MyStat.MyType != TYPE_SELECTABLE.BUILDING) return;
+        if (!_unit.Target) return;
 
         // 타겟의 장소로 이동!
         _unit.MyAgent.destination = _unit.TargetPos;

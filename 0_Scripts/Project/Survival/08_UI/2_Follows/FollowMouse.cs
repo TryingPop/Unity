@@ -12,7 +12,7 @@ public abstract class FollowMouse : MonoBehaviour
 
         InputManager.instance.ChkRay(out Vector3 pos);
 
-        if (interval >= 0)
+        if (interval > 0)
         {
 
             float div = 1.0f / interval;

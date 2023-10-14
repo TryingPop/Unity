@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [System.Serializable]
 public class SelectedGroup
@@ -10,9 +9,12 @@ public class SelectedGroup
     private List<Selectable> selected;
 
     public bool isOnlySelected = false;
+    private TYPE_SELECTABLE groupType;
 
     public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }
-    
+
+    public TYPE_SELECTABLE GroupType => groupType;
+
     public SelectedGroup()
     {
 
@@ -37,58 +39,53 @@ public class SelectedGroup
             || selected.Contains(_select)                       // 이미 포함되어져 있는 경우거나
             ) return;
 
+
         selected.Add(_select);
-                
+        TYPE_SELECTABLE selectType = _select.MyStat.MyType;
+
         if (selected.Count == 1)
         {
 
             isOnlySelected = _select.IsOnlySelected;
+            groupType = selectType;
         }
-    }
-
-    /*
-    public void DragSelect(RaycastHit[] _hits, LayerMask _selectLayer, bool _add)
-    {
-
-        if (_hits == null) return;
-
-        if (!_add) Clear();
-
-        for (int i = 0; i < _hits.Length; i++)
+        else
         {
 
-            if (((1 << _hits[i].transform.gameObject.layer) & _selectLayer) == 0) continue;
-
-            Selectable select = _hits[i].transform.GetComponent<Selectable>();
-
-            if (select.IsOnlySelected) continue;
-
-            Select(select);
         }
     }
 
-    public void DoubleClickSelect(RaycastHit[] _hits, LayerMask _selectLayer, ushort chkIdx, bool _add)
+    private void SetType(TYPE_SELECTABLE _type)
     {
 
-        if (_hits == null) return;
-
-        if (!_add) Clear();
-
-        for (int i = 0; i < _hits.Length; i++)
+        if (groupType == _type 
+            || groupType == TYPE_SELECTABLE.NONE)
         {
 
-            if (((1 << _hits[i].transform.gameObject.layer) & _selectLayer) == 0) continue;
-
-            Selectable select = _hits[i].transform.GetComponent<Selectable>();
-
-            if (select == null
-                || select.MyStat.SelectIdx != chkIdx
-                ) continue;
-
-            Select(select);
+            return;
         }
+
+        int type = (int)_type;
+        int curType = (int)groupType;
+
+        if (curType == type)
+        {
+
+            groupType = (TYPE_SELECTABLE)type;
+            return;
+        }
+
+        if (curType <= 2 && type <= 2)
+        {
+
+            // UNIT_NONCOMBAT && UNIT_COMBAT인 경우 UNIT_NONCOMBAT으로 한다
+            groupType = TYPE_SELECTABLE.UNIT_NONCOMBAT;
+            return;
+        }
+
+        groupType = TYPE_SELECTABLE.NONE;
     }
-    */
+
 
     // 유닛이 죽으면 해제되게 한다!
     public void DeSelect(Selectable _select)
@@ -96,7 +93,12 @@ public class SelectedGroup
 
         selected.Remove(_select);
 
-        if (selected.Count == 0) isOnlySelected = false;
+        if (selected.Count == 0) 
+        { 
+            
+            isOnlySelected = false;
+            groupType = TYPE_SELECTABLE.NONE;
+        }
     }
 
 
@@ -121,10 +123,6 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    /// <param name="_type">명령 종류</param>
-    /// <param name="_pos">좌표</param>
-    /// <param name="_trans">대상</param>
-    /// <param name="_add">예약 명령 여부</param>
     public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
     {
 

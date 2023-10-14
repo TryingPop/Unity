@@ -1,4 +1,3 @@
-using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,35 +10,77 @@ public class InputManager : MonoBehaviour
     public SelectedGroup curGroup;
     public SelectedUI selectedUI;
     
-    public ButtonHandler buttonManager;
-    public BuildManager buildManager;
-
-
-    public PrepareBuilding building;
-    public Selectable worker;
-
     [SerializeField] private Camera cam;
     [SerializeField] private Vector3 clickPos;
 
     [SerializeField] private UnitSlots unitSlots;
 
-    [SerializeField] private bool isDrag = false;
     [SerializeField] private LayerMask targetLayer;     // 타겟팅 레이어
     [SerializeField] private LayerMask selectLayer;     // 선택 가능한 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
     [SerializeField] private string selectTag;
 
-    private bool isCommand;
-    private bool isDoubleClicked;
     private float clickTime;
     [SerializeField] private float clickInterval = 0.3f;
 
     [SerializeField] private TYPE_KEY myState;
 
-    [SerializeField] private ButtonHandler myBtn;
+    // [SerializeField] private ButtonHandler myBtn;
     private STATE_SELECTABLE cmdType;
 
+    [SerializeField] private ButtonSlots mainBtns;
+    [SerializeField] private ButtonSlots subBtns;
+    [SerializeField] private GameObject cancelBtns;
 
+    [SerializeField] private ButtonManager btnManager;
+
+    public BuildManager buildManager;
+
+    private ButtonHandler mainHandler;
+    private ButtonHandler subHandler;
+
+    private bool isDrag = false;
+    private bool isCommand;
+    private bool isDoubleClicked;
+    private bool isSubBtn;
+
+    public ButtonHandler MainHandler
+    {
+
+        set
+        {
+
+            mainHandler = value;
+            mainBtns.Init(mainHandler);
+        }
+    }
+
+    public ButtonHandler SubHandler
+    {
+
+        set
+        {
+
+            subHandler = value;
+            subBtns.Init(subHandler);
+        }
+    }
+
+    public ButtonHandler MyHandler
+    {
+
+        get
+        {
+
+            if (isSubBtn)
+            {
+
+                return subHandler;
+            }
+
+            return mainHandler;
+        }
+    }
 
     public int MyState
     {
@@ -47,15 +88,10 @@ public class InputManager : MonoBehaviour
         set 
         {
 
-            if (curGroup.GetSize() == 0)
-            { 
-                
-                myState = TYPE_KEY.NONE;
-                return;
-            }
+            if (ChkReturn(value)) return;
 
             myState = (TYPE_KEY)value;
-            myBtn.Changed(this);
+            MyHandler.Changed(this);
         }
         get { return (int)myState; }
     }
@@ -69,6 +105,8 @@ public class InputManager : MonoBehaviour
             cmdType = value;
         }
     }
+
+    public bool IsSubBtn => isSubBtn;
 
     private void Awake()
     {
@@ -103,7 +141,8 @@ public class InputManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Q)) MyState = 6;
             else if (Input.GetKeyDown(KeyCode.W)) MyState = 7;
             else if (Input.GetKeyDown(KeyCode.E)) MyState = 8;
-            else if (Input.GetKeyDown(KeyCode.Escape)) curGroup.GiveCommand(0, false);
+            else if (Input.GetKeyDown(KeyCode.Escape)) Cancel();
+
 
             // 오른쪽 버튼 클릭
             else if (Input.GetMouseButtonDown(0))
@@ -165,7 +204,7 @@ public class InputManager : MonoBehaviour
         {
 
             // 버튼을 누른 상태!
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1)) MyState = 0;
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1)) Cancel();
             else if (Input.GetMouseButtonDown(0))
             {
 
@@ -181,7 +220,7 @@ public class InputManager : MonoBehaviour
                     Selectable target = null;
 
                     ChkRay(out pos, out target);
-                    // GiveCommand(pos, target);
+                    GiveCommand(pos, target);
                     isCommand = true;
                 }
                 else if (otherPos.x <= 160)
@@ -203,7 +242,63 @@ public class InputManager : MonoBehaviour
     }
 
     #region Current
-    public void ActiveButtonUI(bool _isActiveMain, bool _isActiveSub, bool _isActiveCancel) { }
+
+    private bool ChkReturn(int _key)
+    {
+
+        if (curGroup.GetSize() == 0
+            || MyHandler == null
+            || MyHandler.Idxs[_key - 1] == -1
+            || _key == 0)
+        {
+
+            myState = TYPE_KEY.NONE;
+            return true;
+        }
+        else if (myState != TYPE_KEY.NONE)
+        {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void Cancel()
+    {
+
+        if (isSubBtn)
+        {
+
+            if (myState != TYPE_KEY.NONE)
+            {
+
+                // sub인 경우 강제 탈출
+                subHandler.ForcedQuit(this);
+            }
+            else
+            {
+
+                ActiveButtonUI(true, false, false);
+            }
+        }
+        else
+        {
+            
+            mainHandler.ForcedQuit(this);
+        }
+    }
+
+    public void ActiveButtonUI(bool _isActiveMain, bool _isActiveSub, bool _isActiveCancel) 
+    {
+
+        mainBtns.gameObject.SetActive(_isActiveMain);
+
+        subBtns.gameObject.SetActive(_isActiveSub);
+        isSubBtn = _isActiveSub;
+
+        cancelBtns.SetActive(_isActiveCancel);
+    }
 
     public void ChkRay(out Vector3 _pos)
     {
@@ -295,9 +390,6 @@ public class InputManager : MonoBehaviour
     public void ClickEvent()
     {
 
-        // if (myState != STATE_KEY.NONE) return;
-
-
         if (isCommand)
         {
 
@@ -327,6 +419,8 @@ public class InputManager : MonoBehaviour
                 }
 
                 unitSlots.Init(curGroup.Get());
+                MainHandler = btnManager.GetHandler(curGroup.GroupType);
+                ActiveButtonUI(true, false, false);
             }
         }
         else
@@ -334,8 +428,10 @@ public class InputManager : MonoBehaviour
 
             // 드래그!
             DragSelect();
-
+            
             unitSlots.Init(curGroup.Get());
+            MainHandler = btnManager.GetHandler(curGroup.GroupType);
+            ActiveButtonUI(true, false, false);
         }
 
         isDrag = false;
@@ -508,13 +604,6 @@ public class InputManager : MonoBehaviour
 
         selectedUI.SetTargets(curGroup.Get());
     }
-
-    public void SetBuild(int _idx)
-    {
-
-        building.gameObject.SetActive(true);
-    }
-
 
     protected virtual void OnGUI()
     {

@@ -31,7 +31,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     protected UpgradeInfo myUpgrades;
 
     [SerializeField] protected Stats myStat;
-    
+
     public Stats MyStat => myStat;
 
     public virtual void SetStat()
@@ -62,7 +62,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
     public bool FullHp { get { return curHp == maxHp; } }
 
-    protected Queue<Command> cmds;
+
 
     [SerializeField] protected Selectable target;
     [SerializeField] protected Vector3 targetPos;
@@ -207,19 +207,19 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     }
 
     #region command
+    /// <summary>
+    /// 명령을 받는다
+    /// </summary>
     public abstract void GetCommand(Command _cmd, bool _add = false);
 
+    /// <summary>
+    /// 명령을 수행할 수 있는 상태인지 혹은 명령을 수행할 수 잇는지 확인
+    /// </summary>
+    protected abstract bool ChkCommand(Command _cmd);
+
+    /// <summary>
+    /// 예약된 명령을 받을지 확인하고 예약된 명령 시작
+    /// </summary>
+    protected abstract void ReadCommand(Command _cmd);
     #endregion command
-
-    public void SetHp(Slider _slider)
-    {
-
-        _slider.value = curHp;
-    }
-
-    public void SetMaxHp(Slider _slider)
-    {
-
-        _slider.maxValue = maxHp;
-    }
 }

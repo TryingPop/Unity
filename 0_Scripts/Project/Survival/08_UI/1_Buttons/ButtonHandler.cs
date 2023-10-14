@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+[CreateAssetMenu(fileName = "Button", menuName = "StateAction/Button")]
 public class ButtonHandler : StateHandler<ButtonInfo>
 {
     /*
@@ -119,7 +120,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
     }
     */
     
-    protected sbyte[] idxs;
+    [SerializeField] protected sbyte[] idxs = null;
 
     // 쓰는 키가 많아지거나 cmd로 행동을 구분하고 싶을 때는 딕셔너리로 해야한다!
     public sbyte[] Idxs
@@ -131,11 +132,13 @@ public class ButtonHandler : StateHandler<ButtonInfo>
             if (actions == null)
             {
 
+                Debug.Log("actions is Null");
                 idxs = new sbyte[1] { -1 };
                 return idxs;
             }
 
-            if (idxs == null)
+            if (idxs == null
+                || idxs.Length < actions.Length)
             {
 
                 if (actions.Length > VariableManager.MAX_USE_BUTTONS)
@@ -144,6 +147,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
                     Array.Resize(ref actions, VariableManager.MAX_USE_BUTTONS);
                 }
 
+                idxs = new sbyte[VariableManager.MAX_USE_BUTTONS];
                 for (int i = 0; i < idxs.Length; i++)
                 {
 
@@ -165,18 +169,34 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         }
     }
 
+    public int GetIdx(int _key)
+    {
+
+        if (Idxs.Length < _key
+            || _key < 1) return -1;
+
+        return Idxs[_key - 1];
+    }
+
     public void Action(InputManager _inputManager)
     {
 
-        int idx = Idxs[_inputManager.MyState - 1];
-        if (ChkIdx(idx)) actions[idx].Action(_inputManager);
+        int idx = GetIdx(_inputManager.MyState);
+        if (idx != -1) actions[idx].Action(_inputManager);
     }
 
     
     public void Changed(InputManager _inputManager)
     {
 
-        int idx = Idxs[_inputManager.MyState - 1];
-        if (ChkIdx(idx)) actions[idx].OnEnter(_inputManager);
+        int idx = GetIdx(_inputManager.MyState);
+        if (idx != -1) actions[idx].OnEnter(_inputManager);
+    }
+
+    public void ForcedQuit(InputManager _inputManager)
+    {
+
+        int idx = GetIdx(_inputManager.MyState);
+        if (idx != -1) actions[idx].OnExit(_inputManager);
     }
 }
