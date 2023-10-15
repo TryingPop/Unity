@@ -21,8 +21,8 @@ public class UnitAtkHold : UnitHold
 
             if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
 
-            _unit.MyRigid.MoveRotation(Quaternion.LookRotation(
-                _unit.Target.transform.position, _unit.transform.up));
+            _unit.transform.LookAt(_unit.Target.transform.position);
+
 
             if (_unit.MyTurn != 0)
             {

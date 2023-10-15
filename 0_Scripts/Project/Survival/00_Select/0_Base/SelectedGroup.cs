@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,49 +42,52 @@ public class SelectedGroup
 
 
         selected.Add(_select);
-        TYPE_SELECTABLE selectType = _select.MyStat.MyType;
-
+        
+        // 그룹 타입 설정
         if (selected.Count == 1)
         {
 
             isOnlySelected = _select.IsOnlySelected;
-            groupType = selectType;
-        }
-        else
-        {
-
         }
     }
 
-    private void SetType(TYPE_SELECTABLE _type)
+    /// <summary>
+    /// 외부에서 타입 체크!
+    /// </summary>
+    public void ChkGroupType()
     {
 
-        if (groupType == _type 
-            || groupType == TYPE_SELECTABLE.NONE)
+        if (selected.Count == 0)
         {
 
+            groupType = TYPE_SELECTABLE.NONE;
             return;
         }
 
-        int type = (int)_type;
-        int curType = (int)groupType;
+        groupType = selected[0].MyStat.MyType;
 
-        if (curType == type)
+        for (int i = 1; i < selected.Count; i++)
         {
 
-            groupType = (TYPE_SELECTABLE)type;
-            return;
+            var type = selected[i].MyStat.MyType;
+            if (groupType == type) continue;
+            else
+            {
+
+                int groupNum = (int)groupType % VariableManager.TYPE_SELECTABLE_INTERVAL;
+                int typeNum = (int)type % VariableManager.TYPE_SELECTABLE_INTERVAL;
+
+                if (groupNum == typeNum) groupType = (TYPE_SELECTABLE)groupNum;
+                else if ((groupNum == 2 && typeNum == 1)
+                    || (groupNum == 1 && typeNum == 2)) groupType = (TYPE_SELECTABLE)1;
+                else
+                {
+
+                    groupType = TYPE_SELECTABLE.NONE;
+                    break;
+                }
+            }
         }
-
-        if (curType <= 2 && type <= 2)
-        {
-
-            // UNIT_NONCOMBAT && UNIT_COMBAT인 경우 UNIT_NONCOMBAT으로 한다
-            groupType = TYPE_SELECTABLE.UNIT_NONCOMBAT;
-            return;
-        }
-
-        groupType = TYPE_SELECTABLE.NONE;
     }
 
 
@@ -97,7 +101,6 @@ public class SelectedGroup
         { 
             
             isOnlySelected = false;
-            groupType = TYPE_SELECTABLE.NONE;
         }
     }
 
@@ -126,6 +129,9 @@ public class SelectedGroup
     public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
     {
 
+        // 선택된 유닛이 없는 경우 명령 생성 안한다!
+        if (selected.Count == 0) return;
+
         // 명령 풀링
         Command cmd = Command.GetCommand((byte)selected.Count, _type, _pos, _trans);
 
@@ -152,6 +158,9 @@ public class SelectedGroup
     /// </summary>
     public void GiveCommand(STATE_SELECTABLE _type, bool _add)
     {
+
+        // 선택된 유닛이 없는 경우 명령 생성을 안한다!
+        if (selected.Count == 0) return;
 
         // 명령 풀링
         Command cmd = Command.GetCommand((byte)selected.Count, _type);

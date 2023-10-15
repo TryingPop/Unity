@@ -57,6 +57,7 @@ public enum STATE_SELECTABLE
     UNIT_SKILL3 = 8,
 
     MOUSE_R = VariableManager.MOUSE_R,          // 건물이랑, 유닛 읽는게 다르다!
+    BUILDING_CANCEL = 100,                      // 취소
 }
 
 /// <summary>

@@ -119,16 +119,9 @@ public class Building : Selectable
     public void Action()
     {
 
-        if (myState == STATE_SELECTABLE.DEAD
-            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
+        if (myState == STATE_SELECTABLE.DEAD) return;
 
-        else if (myState == STATE_SELECTABLE.NONE)
-        {
-
-            ChkReservedCommand();
-            
-        }
-
+        ChkReservedCommand();
         myStateAction.Action(this);
     }
 
@@ -147,9 +140,8 @@ public class Building : Selectable
             height = opt.IncreaseY;
             myState = STATE_SELECTABLE.NONE;
 
-            if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkSelected(this);
-
             StartCoroutine(FinishedBuildCoroutine());
+            if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
         }
         else
         {
@@ -203,7 +195,7 @@ public class Building : Selectable
         {
 
             InputManager.instance.curGroup.DeSelect(this);
-            InputManager.instance.ChkSelected();
+            InputManager.instance.ChkUIs();
         }
     }
 
@@ -244,18 +236,58 @@ public class Building : Selectable
             return; 
         }
 
+        // 즉시 실행해야 하는 명령
+        var type = _cmd.type;
+        if (type == STATE_SELECTABLE.MOUSE_R)
+        {
+
+            target = _cmd.target;
+            targetPos = _cmd.pos;
+
+            _cmd.Received(0);
+            return;
+        }
+        else if (type == STATE_SELECTABLE.BUILDING_CANCEL)
+        {
+
+            if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
+            {
+
+                curHp = 0;
+                Dead();
+            }
+            else
+            {
+
+                myState = STATE_SELECTABLE.NONE;
+            }
+
+            _cmd.Received(0);
+            return;
+        }
+        
+        // 건물은 예약명령이 없다!
         cmds.Add(_cmd);
     }
 
     protected override bool ChkCommand(Command _cmd)
     {
 
-        if (myState == STATE_SELECTABLE.DEAD) return false;
+        if (myState == STATE_SELECTABLE.DEAD
+            || cmds.Count >= VariableManager.MAX_RESERVE_COMMANDS) return false;
 
-        
+
+        if (_cmd.type != STATE_SELECTABLE.BUILDING_ACTION1
+            && _cmd.type != STATE_SELECTABLE.BUILDING_ACTION2
+            && _cmd.type != STATE_SELECTABLE.BUILDING_ACTION3
+            && _cmd.type != STATE_SELECTABLE.MOUSE_R
+            && _cmd.type != STATE_SELECTABLE.BUILDING_CANCEL) return false;
+
         // 한정 조건
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED
-            && _cmd.type != STATE_SELECTABLE.MOUSE_R) return false;
+            && _cmd.type != STATE_SELECTABLE.MOUSE_R 
+            && _cmd.type != STATE_SELECTABLE.BUILDING_CANCEL) return false;
+
 
         return true;
     }
@@ -263,26 +295,18 @@ public class Building : Selectable
     public void ChkReservedCommand()
     {
 
-        if (cmds.Count == 0) return;
+        if (cmds.Count == 0
+            || myState != STATE_SELECTABLE.NONE) return;
 
-        Command cmd = cmds[0];
-        cmds.RemoveAt(0);
-
-        ReadCommand(cmd);
-        cmd.Received(0);
+        // 가장 앞에것을 준다
+        ReadCommand(cmds[0]);
     }
 
     protected override void ReadCommand(Command _cmd)
     {
 
-        STATE_SELECTABLE type = _cmd.type;
-
-        if (type == STATE_SELECTABLE.MOUSE_R)
-        {
-
-            type = STATE_SELECTABLE.NONE;
-        }
-
-        myState = type;
+        myState = _cmd.type;
+        _cmd.Received(0);
+        cmds.RemoveAt(0);
     }
 }

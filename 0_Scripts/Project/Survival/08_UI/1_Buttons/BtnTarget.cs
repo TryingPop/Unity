@@ -9,12 +9,14 @@ public class BtnTarget : BtnPos
     public override void Action(InputManager _inputManager)
     {
 
-        _inputManager.ChkRay(out Vector3 pos, out Selectable target);
+        _inputManager.SavePointToRay(true, true);
+        Selectable target = _inputManager.CmdTarget;
         if (target) 
         {
 
             _inputManager.CmdType = cmdType;
-            _inputManager.GiveCommand(pos, target);
+            Vector3 pos = _inputManager.CmdPos;
+            _inputManager.GiveCmd(true, true);
             OnExit(_inputManager);
         }
     }

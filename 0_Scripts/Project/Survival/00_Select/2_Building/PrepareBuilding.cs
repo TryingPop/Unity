@@ -101,10 +101,11 @@ public class PrepareBuilding : FollowMouse
         return go;
     }
 
-    public void Used()
+    public void Used(Building _building)
     {
 
         ActionManager.instance.RemoveFollowMouse(this);
+        _building?.DisableBuilding(prefabIdx);
         gameObject.SetActive(false);
     }
 }

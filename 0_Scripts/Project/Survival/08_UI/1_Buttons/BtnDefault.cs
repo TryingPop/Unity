@@ -16,7 +16,7 @@ public class BtnDefault : ButtonInfo
     {
 
         _inputManager.CmdType = cmdType;
-        _inputManager.GiveCommand();
+        _inputManager.GiveCmd();
         OnExit(_inputManager);
     }
 }

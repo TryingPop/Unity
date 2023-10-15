@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public abstract class StateHandler<T> : ScriptableObject
 {
 
     public T[] actions;
+
 
 
     // public abstract void Action(T _param);
@@ -18,21 +21,16 @@ public abstract class StateHandler<T> : ScriptableObject
     public void AddActions(int _idx, T _action)
     {
 
-        if (ChkIdx(_idx)) actions[_idx] = _action;
+        if (actions != null
+            && _idx < actions.Length
+            && 0 <= _idx) actions[_idx] = _action;
     }
 
     /// <summary>
-    /// index 있는지 확인
+    /// 해당 _idx가 사용가능한지 판별
+    /// 사용 불가능한 경우 -1 반환
     /// </summary>
-    public bool ChkIdx(int _idx)
-    {
-
-        if (_idx < 0 
-            || _idx >= actions.Length
-            || actions[_idx] == null) return false;
-        
-        return true;
-    }
+    public abstract int GetIdx(int _idx);
 
     public int GetSize()
     {

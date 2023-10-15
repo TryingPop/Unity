@@ -193,7 +193,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         { 
             
             InputManager.instance.curGroup.DeSelect(this);
-            InputManager.instance.ChkSelected();
+            InputManager.instance.ChkUIs();
         }
         StartCoroutine(Disabled());
     }

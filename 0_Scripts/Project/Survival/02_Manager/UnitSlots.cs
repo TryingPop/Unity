@@ -31,15 +31,24 @@ public class UnitSlots : MonoBehaviour
     /// <summary>
     /// 0 : maxRow, 1 : maxColumn
     /// </summary>
-    protected int[] matrixSize = new int[2];  
+    protected int[] matrixSize = new int[2];
 
+    protected List<Selectable> curGroup;
+    public List<Selectable> CurGroup
+    {
+
+        set
+        {
+
+            curGroup = value;
+        }
+    }
 
 
     private void Start()
     {
 
         slots = new List<Slot>();
-
         SetScreenSize();
     }
 
@@ -57,11 +66,11 @@ public class UnitSlots : MonoBehaviour
     /// <summary>
     /// 유닛 재설정 시 실행하는 함수
     /// </summary>
-    public void Init(List<Selectable> _curGroup)
+    public void Init()
     {
 
-        ChkMaxPage(_curGroup);
-        NextPage(_curGroup, int.MinValue);
+        ChkMaxPage();
+        NextPage(int.MinValue);
     }
 
     /// <summary>
@@ -149,16 +158,16 @@ public class UnitSlots : MonoBehaviour
         }
     }
 
-    private void ChkMaxPage(List<Selectable> _curGroup)
+    private void ChkMaxPage()
     {
 
-        maxPage = (byte)((_curGroup.Count - 1) / (matrixSize[0] + matrixSize[1]));
+        maxPage = (byte)((curGroup.Count - 1) / (matrixSize[0] + matrixSize[1]));
     }
 
     /// <summary>
     /// 현재 페이지에서 step만큼 페이지 넘기기
     /// </summary>
-    public void NextPage(List<Selectable> _curGroup, int _step)
+    public void NextPage(int _step)
     {
 
         int page = curPage + _step;
@@ -170,10 +179,10 @@ public class UnitSlots : MonoBehaviour
 
             if (i >= slots.Count) break;
             int unitIdx = (len * curPage) + i;
-            if (_curGroup.Count > unitIdx)
+            if (curGroup.Count > unitIdx)
             {
 
-                ActiveSlot(i, _curGroup[unitIdx], true);
+                ActiveSlot(i, curGroup[unitIdx], true);
             }
             else
             {
@@ -182,6 +191,7 @@ public class UnitSlots : MonoBehaviour
             }
         }
     }
+
 
     /// <summary>
     /// 슬롯 활성화 이벤트

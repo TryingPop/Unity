@@ -16,8 +16,6 @@ public class ButtonSlots : MonoBehaviour
         if (_handler == null)
         {
 
-            Debug.Log("hanlder is Null!");
-            
             for (int i = 0; i < btnImgs.Length; i++)
             {
 

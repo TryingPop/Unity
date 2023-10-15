@@ -43,11 +43,11 @@ public class BtnSubBuild : BtnSub
         if (go)
         {
 
-            var target = go.GetComponent<Selectable>();
+            var target = go.GetComponent<Building>();
             
-            _inputManager.GiveCommand(target.transform.position, target);
+            _inputManager.GiveCmd(target.transform.position, target);
 
-            _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used();
+            _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used(target);
             _inputManager.ActiveButtonUI(true, false, false);
             _inputManager.ActionDone();
         }
@@ -57,7 +57,7 @@ public class BtnSubBuild : BtnSub
     {
 
         // OnEnter에서 걸러지기에 null 체크 안한다!
-        _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used();
+        _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used(null);
         base.OnExit(_inputManager, _nextKey);
     }
 }

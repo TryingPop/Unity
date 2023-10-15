@@ -15,12 +15,14 @@ public class BtnPos : ButtonInfo
     public override void Action(InputManager _inputManager)
     {
 
-        _inputManager.ChkRay(out Vector3 pos);
+        _inputManager.SavePointToRay(true, false);
+        Vector3 pos = _inputManager.CmdPos;
+
         if (pos.y < 100f) 
         {
 
             _inputManager.CmdType = cmdType;
-            _inputManager.GiveCommand(pos);
+            _inputManager.GiveCmd(true, false);
             OnExit(_inputManager);
         }
     }

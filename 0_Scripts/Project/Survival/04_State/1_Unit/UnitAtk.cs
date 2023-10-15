@@ -75,6 +75,7 @@ public class UnitAtk : IUnitAction
 
                         _unit.MyAnimator.SetTrigger($"Skill0");
                         _unit.MyTurn++;
+                        _unit.transform.LookAt(_unit.Target.transform.position);
                     }
                     else if (_unit.MyTurn > unitAttack.AtkTime)
                     {
@@ -87,6 +88,7 @@ public class UnitAtk : IUnitAction
                     else
                     {
 
+                        _unit.transform.LookAt(_unit.Target.transform.position);
                         _unit.MyTurn++;
                     }
                 }

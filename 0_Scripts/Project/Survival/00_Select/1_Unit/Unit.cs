@@ -286,41 +286,41 @@ public class Unit : Selectable
                 cmds.Dequeue().Canceled();
             }
 
-            // 스킬 사용 중에는 명령들 삭제만하고 명령 실행은 안되게 탈출!
-            // if (usingSkill) return;
-
-            // 리지드바디를 다루는 경우도 있기에
             ActionDone();
         } 
+        // 대기상태에서 shift로 명령을 넣었을 경우
         else if (myState == STATE_SELECTABLE.NONE)
         {
 
             stateChange = true;
         }
 
-        // 명령 등록, 예약 명령인 경우 최대 수 확인 한다
-        if (cmds.Count < VariableManager.MAX_RESERVE_COMMANDS) cmds.Enqueue(_cmd);
-        else Debug.Log($"{gameObject.name}의 명령어가 가득 찼습니다.");
+        // 명령 등록
+        cmds.Enqueue(_cmd);
     }
 
     protected override bool ChkCommand(Command _cmd)
     {
 
         // 읽을 수 있는 상태 판별
-        if (myState == STATE_SELECTABLE.DEAD) return false;
+        if (myState == STATE_SELECTABLE.DEAD
+            && cmds.Count > VariableManager.MAX_RESERVE_COMMANDS) return false;
 
         // 읽을 수 잇는 명령 판별
-        if (_cmd.type == STATE_SELECTABLE.NONE) return false;
+        if (_cmd.type == STATE_SELECTABLE.NONE
+            || _cmd.type == STATE_SELECTABLE.BUILDING_CANCEL) return false;
 
         return true;
     }
 
+
     public void ChkReservedCommand()
     {
-        
+
         // 명령을 읽을 상황인지 확인
-        if (myState == STATE_SELECTABLE.NONE
-            && cmds.Count > 0) return;
+        if (myState != STATE_SELECTABLE.NONE
+            || cmds.Count == 0) return;
+
 
         // 예약된 명령 읽기
         Command cmd = cmds.Dequeue();

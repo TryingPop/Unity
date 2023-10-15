@@ -6,6 +6,15 @@ using UnityEngine;
 public class UnitStateAction : StateHandler<IUnitAction>
 {
 
+    public override int GetIdx(int _idx)
+    {
+
+        if (actions.Length <= _idx
+            || _idx < 0) return -1;
+
+        return _idx;
+    }
+
     /// <summary>
     /// 행동 있으면 행동 실행
     /// </summary>
@@ -13,9 +22,9 @@ public class UnitStateAction : StateHandler<IUnitAction>
     public void Action(Unit _unit)
     {
 
-        int idx = _unit.MyState;
+        int idx = GetIdx(_unit.MyState);
 
-        if (ChkIdx(idx))
+        if (idx != -1)
         {
 
             actions[idx].Action(_unit);
@@ -26,8 +35,8 @@ public class UnitStateAction : StateHandler<IUnitAction>
     public void Changed(Unit _unit)
     {
 
-        int idx = _unit.MyState;
-        if (ChkIdx(idx)) actions[idx].OnEnter(_unit);
+        int idx = GetIdx(_unit.MyState);
+        if (idx != -1) actions[idx].OnEnter(_unit);
         // else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
     }
 }

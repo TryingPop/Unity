@@ -26,6 +26,10 @@ public class SelectedUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 해당 유닛들에게 선택되었다는 UI 배치
+    /// </summary>
+    /// <param name="targets">선택된 그룹</param>
     public void SetTargets(List<Selectable> targets)
     {
 

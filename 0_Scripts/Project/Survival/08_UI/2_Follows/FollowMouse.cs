@@ -10,22 +10,26 @@ public abstract class FollowMouse : MonoBehaviour
     public void SetPos()
     {
 
-        InputManager.instance.ChkRay(out Vector3 pos);
+        InputManager.instance.MouseToWorldPosition(out Vector3 pos);
 
-        if (interval > 0)
+        if (pos.y < 100f)
         {
 
-            float div = 1.0f / interval;
+            if (interval > 0)
+            {
 
-            pos = new Vector3(
+                float div = 1.0f / interval;
 
-                Calc(pos.x, interval, div),
-                Calc(pos.y, interval, div),
-                Calc(pos.z, interval, div)
-                );
+                pos = new Vector3(
+
+                    Calc(pos.x, interval, div),
+                    Calc(pos.y, interval, div),
+                    Calc(pos.z, interval, div)
+                    );
+            }
+
+            transform.position = pos;
         }
-
-        transform.position = pos;
     }
 
     protected int Calc(float _num, int _interval, float _div)

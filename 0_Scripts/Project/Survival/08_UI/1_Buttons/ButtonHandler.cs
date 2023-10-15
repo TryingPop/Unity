@@ -5,122 +5,8 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "Button", menuName = "StateAction/Button")]
 public class ButtonHandler : StateHandler<ButtonInfo>
 {
-    /*
-    [SerializeField] private GameObject actionUI;
-    [SerializeField] private GameObject cancelUI;
-    [SerializeField] private GameObject buildUI;
 
-    [SerializeField] private Image[] btnActionImages;
-    [SerializeField] private Image[] btnBuildImages;
-
-    private bool isActionUI;
-    private bool isBuildUI;
-
-    [SerializeField] private BuildGroup buildGroup;
-
-
-    public bool IsActionUI
-    {
-
-        set
-        {
-
-            isActionUI = value;
-            actionUI.SetActive(isActionUI);
-            cancelUI.SetActive(!isActionUI);
-
-            buildUI.SetActive(false);
-        }
-
-        get { return isActionUI; }
-    }
-
-    public bool IsBuildUI
-    { 
-
-        set
-        {
-
-            isBuildUI = value;
-            buildUI.SetActive(isBuildUI);
-            cancelUI.SetActive(!isBuildUI);
-
-            actionUI.SetActive(false);
-        }
-        get { return isBuildUI; }
-    }
-
-    public bool ChkButton(int value)
-    {
-
-        if (value >= actions.Length
-            || value < 0
-            || actions[value] == null
-            // || buttons[value].buttonOpt == TYPE_BUTTON_OPTION.NULL
-            ) return false;
-            
-
-        return true;
-    }
-
-
-    /// <summary>
-    /// 버튼 설정
-    /// </summary>
-    public void SetButton()
-    {
-
-        for (int i = 0; i < actions.Length; i++)
-        {
-
-            // if (buttons[i].buttonOpt == TYPE_BUTTON_OPTION.NULL)
-            {
-
-                btnActionImages[i].gameObject.SetActive(false);
-            }
-            // else
-            {
-
-                // 순서대로 이미지랑 키를 넣는다
-                btnActionImages[i].gameObject.SetActive(true);
-            }
-        }
-    }
-
-    public void SetBuildButton(BuildGroup _buildGroup)
-    {
-
-        buildGroup = _buildGroup;
-        int len = buildGroup.GetSize();
-
-        len = len > VariableManager.MAX_BUILD_BUILDINGS ? VariableManager.MAX_BUILD_BUILDINGS : len;
-
-        for (int i = 0; i < len; i++)
-        {
-
-            btnBuildImages[i].gameObject.SetActive(true);
-        }
-
-        for (int i = len; i < btnBuildImages.Length; i++)
-        {
-
-            btnBuildImages[i].gameObject.SetActive(false);
-        }
-    }
-
-    public PrepareBuilding GetBuilding(int _idx)
-    {
-
-        int maxIdx = buildGroup.GetSize();
-        maxIdx = VariableManager.MAX_BUILD_BUILDINGS > maxIdx ? maxIdx : VariableManager.MAX_BUILD_BUILDINGS;
-        if (_idx >= maxIdx
-            || _idx < 0) return null;
-
-        return buildGroup.GiveBuilding(_idx);
-    }
-    */
-    
-    [SerializeField] protected sbyte[] idxs = null;
+    protected sbyte[] idxs = null;
 
     // 쓰는 키가 많아지거나 cmd로 행동을 구분하고 싶을 때는 딕셔너리로 해야한다!
     public sbyte[] Idxs
@@ -132,7 +18,6 @@ public class ButtonHandler : StateHandler<ButtonInfo>
             if (actions == null)
             {
 
-                Debug.Log("actions is Null");
                 idxs = new sbyte[1] { -1 };
                 return idxs;
             }
@@ -141,6 +26,8 @@ public class ButtonHandler : StateHandler<ButtonInfo>
                 || idxs.Length < actions.Length)
             {
 
+                // 여기서 MAX_USE_BUTTONS과 유닛이 취할 수 있는 최대 상태와 같기에 버튼으로 그대로 둔다
+                // 다른 경우 override되게 해야한다!
                 if (actions.Length > VariableManager.MAX_USE_BUTTONS)
                 {
 
@@ -168,16 +55,6 @@ public class ButtonHandler : StateHandler<ButtonInfo>
             return idxs;
         }
     }
-
-    public int GetIdx(int _key)
-    {
-
-        if (Idxs.Length < _key
-            || _key < 1) return -1;
-
-        return Idxs[_key - 1];
-    }
-
     public void Action(InputManager _inputManager)
     {
 
@@ -198,5 +75,14 @@ public class ButtonHandler : StateHandler<ButtonInfo>
 
         int idx = GetIdx(_inputManager.MyState);
         if (idx != -1) actions[idx].OnExit(_inputManager);
+    }
+
+    public override int GetIdx(int _idx)
+    {
+
+        if (Idxs.Length < _idx
+            || _idx < 1) return -1;
+
+        return Idxs[_idx - 1];
     }
 }

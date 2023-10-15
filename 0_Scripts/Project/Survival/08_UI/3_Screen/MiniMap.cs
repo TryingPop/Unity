@@ -50,12 +50,19 @@ public class MiniMap : MonoBehaviour,
         miniMapSize.y = miniMapRect.y * screenRatio.y;
     }
 
+    /// <summary>
+    /// 미니맵 안의 마우스 좌표를 스케일링한 포인트로 바꾼다
+    /// </summary>
     public Vector2 GetMiniMapScaleValue(Vector2 _mousePos)
     {
 
         return (_mousePos - miniMapOffset) / miniMapSize;
     }
 
+    /// <summary>
+    /// 스케일된 좌표를 월드맵의 xz로 맞춰준다
+    /// onGround는 반환하는 y값에 영향을 주는데 true인 경우 월드맵 위치고, false면 미니맵 캠의 위치가된다
+    /// </summary>
     public Vector3 ScaleValueToWorldMap(Vector2 _scaleValue, bool _onGround)
     {
 
@@ -71,7 +78,8 @@ public class MiniMap : MonoBehaviour,
         if (_onGround)
         {
 
-            if (Physics.Raycast(result, Vector3.down, out RaycastHit hit, 50f, 1 << VariableManager.LAYER_GROUND))
+            // 위에서 바라보기에 down으로 검색한다
+            if (Physics.Raycast(result, Vector3.down, out RaycastHit hit, 70f, 1 << VariableManager.LAYER_GROUND))
             {
 
                 result = hit.point;
@@ -98,26 +106,36 @@ public class MiniMap : MonoBehaviour,
         if (eventData.button == PointerEventData.InputButton.Left)
         {
 
+            Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
+
             if (inputManager.MyState == 0)
             {
 
-                Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
                 camFollow.position = ScaleValueToWorldMap(scaleValue, false);
             }
             else
             {
 
-                
+                Vector3 pos = ScaleValueToWorldMap(scaleValue, true);
+                inputManager.GiveCmd(pos);
             }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
 
-            bool add = Input.GetKey(KeyCode.LeftShift);
+            if (inputManager.MyState == 0)
+            {
 
-            Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
-            Vector3 pos = ScaleValueToWorldMap(scaleValue, true);
-            // inputManager.curGroup.GiveCommand((int)TYPE_KEY.MOUSE_R, pos, null, add);
+                bool add = Input.GetKey(KeyCode.LeftShift);
+
+                Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
+                Vector3 pos = ScaleValueToWorldMap(scaleValue, true);
+
+                // 해당 좌표로 이동?
+                inputManager.CmdType = STATE_SELECTABLE.MOUSE_R;
+                inputManager.GiveCmd(pos);
+            }
+            else inputManager.Cancel();
         }
     }
 }
