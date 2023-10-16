@@ -6,7 +6,7 @@ using UnityEngine;
 public class RandomUpgrade : BuildingAction
 {
 
-    [SerializeField] protected TYPE_UPGRADE[] types;
+    [SerializeField] protected TYPE_MANAGEMENT[] types;
     [SerializeField] protected short[] amounts;
 
     public override void Action(Building _building)

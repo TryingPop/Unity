@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
-
-
+using UnityEngine.UI;
 
 public class Unit : Selectable
 {
@@ -104,8 +102,9 @@ public class Unit : Selectable
 
     public override void SetStat()
     {
+
         base.SetStat();
-        atk = myAttack.atk;
+        if (myAttack != null) atk = myAttack.atk;
 
         if (myUpgrades != null)
         {
@@ -146,19 +145,25 @@ public class Unit : Selectable
         else if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
 
-            mySight.isStop = true;
+            mySight.IsActive = true;
             mySight.SetSize(myAttack == null ? 10 : myAttack.chaseRange);
         }
         else
         {
 
-            mySight.isStop = false;
+            mySight.IsActive = false;
         }
 
         if (ActionManager.instance.ContainsUnit(this)) ActionManager.instance.RemoveUnit(this);
         if (myHitBar != null) ActionManager.instance.ClearHitBar(myHitBar);
+        
         ActionManager.instance.AddUnit(this);
         MyHitBar = ActionManager.instance.GetHitBar();
+
+        Color teamColor;
+        if (myAlliance != null) teamColor = myAlliance.TeamColor;
+        else teamColor = Color.yellow;
+        myMinimap.SetColor(teamColor);
     }
 
     /// <summary>
@@ -255,6 +260,12 @@ public class Unit : Selectable
         myAnimator.SetBool("Die", true);
         ActionManager.instance.RemoveUnit(this);
         ActionManager.instance.ClearHitBar(myHitBar);
+    }
+
+    public override void SetInfo(Text _txt)
+    {
+
+        _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}\nAtk : {atk}\nDef : {def}";
     }
 
     #region Command

@@ -174,7 +174,7 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
 
-            ActionManager.instance.HitBarCanvas = !ActionManager.instance.HitBarCanvas;
+            // ActionManager.instance.HitBarCanvas = !ActionManager.instance.HitBarCanvas;
         }
     }
 

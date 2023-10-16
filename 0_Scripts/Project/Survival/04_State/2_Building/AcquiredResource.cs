@@ -7,7 +7,7 @@ public class AcquiredResource : BuildingAction
 {
     
     [SerializeField] protected short amount;
-    [SerializeField] protected ResourceManager.TYPE_RESOURCE type;
+    [SerializeField] protected TYPE_MANAGEMENT type;
 
     public override void Action(Building _building)
     {

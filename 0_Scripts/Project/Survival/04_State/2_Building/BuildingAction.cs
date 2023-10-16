@@ -6,13 +6,14 @@ using UnityEngine;
 public class BuildingAction : IAction<Building> 
 {
 
-    [SerializeField] protected short turn;           // 생산 턴
+    [SerializeField] protected ushort turn;           // 생산 턴
 
     public override void Action(Building _building) { }
 
     public override void OnEnter(Building _building)
     {
 
+        _building.MaxTurn = turn;
         _building.MyTurn = 0;
     }
 

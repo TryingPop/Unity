@@ -7,13 +7,13 @@ public class MiniMap : MonoBehaviour,
     IPointerDownHandler, IDragHandler
 {
 
-    [SerializeField] private RectTransform canvasRectTrans;
+    // [SerializeField] private RectTransform canvasRectTrans;
     [SerializeField] protected RectTransform myRectTrans;
     [SerializeField] protected Transform camFollow;
     [SerializeField] protected InputManager inputManager;
     [SerializeField] private Camera cam;
 
-    protected Vector2 screenRatio;
+    // protected Vector2 screenRatio;
     protected Vector2 miniMapOffset;
     protected Vector2 miniMapSize;
     
@@ -27,10 +27,9 @@ public class MiniMap : MonoBehaviour,
     /// <summary>
     /// 변수 선언
     /// </summary>
-    public void Init(Vector2 _screenRatio, Vector2 _miniMapOffset, Vector2 _miniMapSize)
+    public void Init(Vector2 _miniMapOffset, Vector2 _miniMapSize)
     {
 
-        screenRatio = _screenRatio;
         miniMapOffset = _miniMapOffset;
         miniMapSize = _miniMapSize;
     }
@@ -38,11 +37,7 @@ public class MiniMap : MonoBehaviour,
     protected void SetMiniMapPos()
     {
 
-        var canvasRect = canvasRectTrans.sizeDelta;
-        
-        screenRatio.x = Screen.width / canvasRect.x;
-        screenRatio.y = Screen.height / canvasRect.y;
-
+        Vector2 screenRatio = UIManager.instance.screenRatio;
         miniMapOffset = myRectTrans.anchoredPosition * screenRatio;
 
         var miniMapRect = myRectTrans.sizeDelta;

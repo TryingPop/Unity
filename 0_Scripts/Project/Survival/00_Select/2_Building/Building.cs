@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
-
+using UnityEngine.UI;
 
 public class Building : Selectable
 {
@@ -19,10 +18,10 @@ public class Building : Selectable
 
     [SerializeField] protected BuildOpt opt;
     
-    protected ushort curBuildTurn;               // 건설 진행 시간
+    protected ushort curBuildTurn;              // 건설 진행 시간
+    protected ushort maxTurn;                   // 행동 최대 턴
 
     public static WaitForSeconds completeTimer;
-
     protected List<Command> cmds;
 
     public override int MyState
@@ -40,17 +39,20 @@ public class Building : Selectable
     public BuildingStateAction MyStateAction
     {
 
+        get { return myStateAction; }
         set
         {
 
             myTurn = 0;
             myStateAction = value;
         }
-        get
-        {
+    }
 
-            return myStateAction;
-        }
+    public ushort MaxTurn
+    {
+
+        get { return maxTurn;}
+        set { maxTurn = value; }
     }
 
     protected void Awake()
@@ -113,6 +115,7 @@ public class Building : Selectable
             ActionManager.instance.ClearHitBar(myHitBar);
             myHitBar = null;
         }
+
         MyHitBar = ActionManager.instance.GetHitBar();
     }
 
@@ -224,6 +227,26 @@ public class Building : Selectable
         myHitBar = null;
 
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
+    }
+
+    public override void SetInfo(Text _txt)
+    {
+
+        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
+        {
+
+            _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}\nBuild : {curBuildTurn} / {opt.BuildTurn}";
+        }
+        else if (myState == STATE_SELECTABLE.NONE)
+        {
+
+            _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}";
+        }
+        else
+        {
+
+            _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}\n{myState} : {myTurn} : {maxTurn}";
+        }
     }
 
     public override void GetCommand(Command _cmd, bool _add = false) 

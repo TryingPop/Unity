@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +31,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     protected UpgradeInfo myUpgrades;
 
     [SerializeField] protected Stats myStat;
-
+    [SerializeField] protected SightMesh myMinimap;
     public Stats MyStat => myStat;
 
     public virtual void SetStat()
@@ -97,7 +97,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         get { return targetPos; }
         set { targetPos = value; }
     }
-
+   
     public HitBar MyHitBar
     {
 
@@ -114,6 +114,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
             myHitBar = value; 
         }
     }
+
 
     public abstract int MyState { set; get; }
 
@@ -154,7 +155,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
         curHp -= _dmg - def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - def;
 
-        myHitBar.SetHp(curHp);
+        // myHitBar.SetHp(curHp);
 
         if (curHp <= 0)
         {
@@ -205,6 +206,8 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
         gameObject.SetActive(false);
     }
+
+    public abstract void SetInfo(Text _txt);
 
     #region command
     /// <summary>

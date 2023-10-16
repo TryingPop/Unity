@@ -7,7 +7,7 @@ public class GameScreen : MonoBehaviour,
     IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
 
-    [SerializeField] private InputManager inputManager;
+    // [SerializeField] private InputManager inputManager;
     [SerializeField] private RectTransform canvasRectTrans;
     [SerializeField] private RectTransform myRectTrans;
     
@@ -18,7 +18,7 @@ public class GameScreen : MonoBehaviour,
     private bool chkDoubleClick = false;
 
     // ui 크기
-    private Vector2 screenRatio;
+    // private Vector2 screenRatio;
     private Vector2 myLeftBottom;
     private Vector2 myRightTop;
 
@@ -36,9 +36,11 @@ public class GameScreen : MonoBehaviour,
     public void GetMyUIPos()
     {
 
-        var canvasRect = canvasRectTrans.sizeDelta;
-        screenRatio.x = Screen.width / canvasRect.x;
-        screenRatio.y = Screen.height / canvasRect.y;
+        // var canvasRect = canvasRectTrans.sizeDelta;
+        // screenRatio.x = Screen.width / canvasRect.x;
+        // screenRatio.y = Screen.height / canvasRect.y;
+
+        Vector2 screenRatio = UIManager.instance.screenRatio;
 
         myLeftBottom = myRectTrans.anchoredPosition * screenRatio;
         myRightTop = myLeftBottom;
@@ -55,6 +57,8 @@ public class GameScreen : MonoBehaviour,
             
             // 클릭 지점 저장
             clickPos = eventData.position;
+
+            InputManager inputManager = InputManager.instance;
 
             // 키입력이 없는 상태로 클릭
             if (inputManager.MyState == 0)
@@ -82,6 +86,8 @@ public class GameScreen : MonoBehaviour,
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
 
+            InputManager inputManager = InputManager.instance;
+
             if (inputManager.MyState == 0)
             {
 
@@ -104,6 +110,8 @@ public class GameScreen : MonoBehaviour,
             {
 
                 Vector2 nowPos = eventData.position;
+
+                InputManager inputManager = InputManager.instance;
 
                 if (Vector2.SqrMagnitude(clickPos - nowPos) < 100f)
                 {

@@ -1,5 +1,5 @@
 /// <summary>
-/// 
+/// Selectable 종류
 /// </summary>
 public enum TYPE_SELECTABLE 
 { 
@@ -11,8 +11,9 @@ public enum TYPE_SELECTABLE
 
     BUILDING = 3,
 
-
     UNIT_WORKER = 101,
+    ANIMAL_CHICKEN = 102,
+
     UNIT_BOSS_D = 201,
 
     BUILDING_FARM = 301,
@@ -63,12 +64,15 @@ public enum STATE_SELECTABLE
 /// <summary>
 /// 업그레이드 번호
 /// </summary>
-public enum TYPE_UPGRADE
+public enum TYPE_MANAGEMENT
 {
 
-    ATK = 1,
-    DEF = 2,
-    HP = 3,
+    UP_ATK = 1,
+    UP_DEF = 2,
+    UP_HP = 3,
+    
+    GOLD = 101,
+    POPULATION = 102,
 }
 
 public enum TYPE_KEY
@@ -76,6 +80,16 @@ public enum TYPE_KEY
 
     NONE = 0, M, S, P, H, A, Q, W, E,
     MOUSE_R = VariableManager.MOUSE_R,
+}
+
+public enum STATE_GAME
+{
+
+    NONE = 0,
+    PAUSE = 1,
+
+    LOSE = 2,
+    WIN = 3,
 }
 
 /// <summary>
@@ -91,7 +105,6 @@ public class VariableManager
     public static readonly int LAYER_ENEMY = 18;
     public static readonly int LAYER_NEUTRAL = 19;
     public static readonly int LAYER_GROUND = 10;
-
 
     // 팀 idx
     public static readonly int TEAM_PLAYER = 0;
@@ -131,6 +144,7 @@ public class VariableManager
     public static readonly int INIT_BUILDING_LIST_NUM = 20;
     public static readonly int INIT_MISSILE_LIST_NUM = 50;
     public static readonly int INIT_LATE_POS = 50;
+    public static readonly int INIT_NEUTRAL_LIST_NUM = 20;
 
     public static readonly int TYPE_SELECTABLE_INTERVAL = 100;
 

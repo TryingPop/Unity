@@ -8,6 +8,7 @@ public class AllianceInfo
 
     [SerializeField] private LayerMask allyLayer;
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private Color teamColor;
 
     public void SetAlly(int _layer)
     {
@@ -29,4 +30,6 @@ public class AllianceInfo
 
         return _isAlly ? allyLayer : enemyLayer;
     }
+
+    public Color TeamColor => teamColor;
 }

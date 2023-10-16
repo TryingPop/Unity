@@ -9,13 +9,14 @@ public class ActionManager : MonoBehaviour
 
     private List<Unit> playerUnits;
     private List<Unit> enemyUnits;
+    private List<Unit> neutralUnits;
 
     private List<Building> playerBuildings;
     private List<Building> enemyBuildings;
 
     private Stack<HitBar> usedHitBars;
     private List<HitBar> hitBars;
-
+    
     [SerializeField] private HitBar unitHitBar;
     [SerializeField] private Canvas hitBarCanvas;
 
@@ -23,12 +24,13 @@ public class ActionManager : MonoBehaviour
 
     public List<Unit> PlayerUnits => playerUnits;
     public List<Unit> EnemyUnits => enemyUnits;
+    public List<Unit> NeutralUnits => neutralUnits;
 
     public List<Building> PlayerBuildings => playerBuildings;
     public List<Building> EnemyBuildings => enemyBuildings;
 
     public List<FollowMouse> followMouse;
-
+   
     public bool HitBarCanvas
     {
 
@@ -56,8 +58,14 @@ public class ActionManager : MonoBehaviour
         enemyUnits = new List<Unit>(VariableManager.INIT_UNIT_LIST_NUM);
         enemyBuildings = new List<Building>(VariableManager.INIT_BUILDING_LIST_NUM);
 
-        usedHitBars = new Stack<HitBar>(VariableManager.INIT_UNIT_LIST_NUM + VariableManager.INIT_BUILDING_LIST_NUM);
-        hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM + VariableManager.INIT_BUILDING_LIST_NUM);
+        neutralUnits = new List<Unit>(VariableManager.INIT_NEUTRAL_LIST_NUM);
+
+        usedHitBars = new Stack<HitBar>(VariableManager.INIT_UNIT_LIST_NUM 
+            + VariableManager.INIT_BUILDING_LIST_NUM
+            + VariableManager.INIT_NEUTRAL_LIST_NUM);
+        hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM 
+            + VariableManager.INIT_BUILDING_LIST_NUM
+            + VariableManager.INIT_NEUTRAL_LIST_NUM);
 
         missiles = new List<Missile>(VariableManager.INIT_MISSILE_LIST_NUM);
 
@@ -128,6 +136,8 @@ public class ActionManager : MonoBehaviour
             && playerUnits.Count < VariableManager.MAX_CONTROL_UNITS) playerUnits.Add(_unit);
 
         else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Add(_unit);
+
+        else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Add(_unit);
     }
 
     /// <summary>
@@ -139,13 +149,16 @@ public class ActionManager : MonoBehaviour
         if (_unit.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerUnits.Remove(_unit);
 
         else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Remove(_unit);
+
+        else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
     }
 
     public bool ContainsUnit(Unit _unit)
     {
 
         return playerUnits.Contains(_unit) 
-            || enemyUnits.Contains(_unit);
+            || enemyUnits.Contains(_unit)
+            || neutralUnits.Contains(_unit);
     }
 
     public bool ContainsBuilding(Building _building)
@@ -169,7 +182,6 @@ public class ActionManager : MonoBehaviour
         if (_building.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
         else if (_building.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
     }
-
 
     public HitBar GetHitBar()
     {
@@ -216,7 +228,7 @@ public class ActionManager : MonoBehaviour
             hitBars[i].SetPos();
         }
     }
-
+    
     /// <summary>
     /// 리스트에 해당 체력바 등록
     /// </summary>
@@ -234,6 +246,7 @@ public class ActionManager : MonoBehaviour
 
         return hitBars.Contains(_hitBar);
     }
+
 
     public void UpgradeChk(AllianceInfo _compareInfo)
     {

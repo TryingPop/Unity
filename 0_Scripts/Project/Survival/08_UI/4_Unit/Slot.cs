@@ -9,7 +9,9 @@ public class Slot : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler
 {
 
-    [SerializeField] protected Slider hpSlider;
+    // info로 대체해서 현재 연동안한다!
+    // [SerializeField] protected Slider hpSlider;
+
     [SerializeField] protected Image img;
     
     public RectTransform myRectTrans;
@@ -28,13 +30,14 @@ public class Slot : MonoBehaviour,
     {
 
         // 툴팁 활성화
-        Debug.Log("유닛 칸 진입");
+        Vector2 pos;
+        pos = eventData.position;
+        UIManager.instance.EnterInfo(target, pos);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
-        // 툴팁 비활성화
-        Debug.Log("유닛 칸 탈출");
+        UIManager.instance.ExitInfo();
     }
 }

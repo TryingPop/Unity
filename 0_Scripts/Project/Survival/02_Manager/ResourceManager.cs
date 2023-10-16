@@ -34,9 +34,9 @@ public class ResourceManager : MonoBehaviour
         UpdateText();
     }
 
-    public enum TYPE_RESOURCE { GOLD, POPULATION };
 
-    public bool ChkResource(TYPE_RESOURCE _type, int _price)
+
+    public bool ChkResource(TYPE_MANAGEMENT _type, int _price)
     {
 
         if (_price < 0) _price = 0;
@@ -44,11 +44,11 @@ public class ResourceManager : MonoBehaviour
         switch (_type)
         {
 
-            case TYPE_RESOURCE.GOLD:
+            case TYPE_MANAGEMENT.GOLD:
 
                 return goldAmount >= _price;
 
-            case TYPE_RESOURCE.POPULATION:
+            case TYPE_MANAGEMENT.POPULATION:
 
                 return maxPopulation - curPopulation >= _price;
 
@@ -61,7 +61,7 @@ public class ResourceManager : MonoBehaviour
     /// <summary>
     /// ÀÚ¿ø »ç¿ë
     /// </summary>
-    public void UseResources(TYPE_RESOURCE _type, int _amount)
+    public void UseResources(TYPE_MANAGEMENT _type, int _amount)
     {
 
         if (_amount < 0) _amount = 0;
@@ -69,13 +69,13 @@ public class ResourceManager : MonoBehaviour
         switch (_type) 
         {
 
-            case TYPE_RESOURCE.GOLD:
+            case TYPE_MANAGEMENT.GOLD:
 
                 goldAmount -= _amount;
                 UpdateText();
                 break;
 
-            case TYPE_RESOURCE.POPULATION:
+            case TYPE_MANAGEMENT.POPULATION:
 
                 maxPopulation -= _amount;
                 UpdateText();
@@ -89,7 +89,7 @@ public class ResourceManager : MonoBehaviour
     /// <summary>
     /// ÀÚ¿ø È¹µæ
     /// </summary>
-    public void AddResources(TYPE_RESOURCE _type, int _amount)
+    public void AddResources(TYPE_MANAGEMENT _type, int _amount)
     {
 
         if (_amount < 0) _amount = 0;
@@ -97,14 +97,14 @@ public class ResourceManager : MonoBehaviour
         switch (_type)
         {
 
-            case TYPE_RESOURCE.GOLD:
+            case TYPE_MANAGEMENT.GOLD:
 
                 goldAmount += _amount;
                 if (goldAmount > VariableManager.MAX_GOLD) goldAmount = VariableManager.MAX_GOLD;
                 UpdateText();
                 break;
 
-            case TYPE_RESOURCE.POPULATION:
+            case TYPE_MANAGEMENT.POPULATION:
 
                 maxPopulation += _amount;
                 if (maxPopulation > VariableManager.MAX_POPULATION) maxPopulation = VariableManager.MAX_POPULATION;

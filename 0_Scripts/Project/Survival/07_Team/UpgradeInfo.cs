@@ -14,21 +14,21 @@ public class UpgradeInfo
     public int AddDef => addDef;
     public int AddHp => addHp;
 
-    public void UpgradeStat(TYPE_UPGRADE _type, int _grade)
+    public void UpgradeStat(TYPE_MANAGEMENT _type, int _grade)
     {
 
         switch (_type)
         {
 
-            case TYPE_UPGRADE.ATK:
+            case TYPE_MANAGEMENT.UP_ATK:
                 addAtk += _grade;
                 return;
 
-            case TYPE_UPGRADE.DEF:
+            case TYPE_MANAGEMENT.UP_DEF:
                 addDef += _grade;
                 return;
 
-            case TYPE_UPGRADE.HP:
+            case TYPE_MANAGEMENT.UP_HP:
                 addHp += _grade;
                 return;
 

@@ -6,7 +6,7 @@ using UnityEngine;
 public class UpgradeStat : BuildingAction
 {
 
-    [SerializeField] private TYPE_UPGRADE upgradeType;
+    [SerializeField] private TYPE_MANAGEMENT upgradeType;
 
     [SerializeField] private short add;
 
