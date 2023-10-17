@@ -12,46 +12,27 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField] private List<Building> playerBuildings;
     [SerializeField] private List<Building> enemyBuildings;
 
+
+    [SerializeField, Range(5f, 600f)] private float waveStartTime;
     [SerializeField, Range(5, 20)] private float thinkMinTime = 10f;
     [SerializeField, Range(20, 40)] private float thinkMaxTime = 20f;
 
     [SerializeField, Range(1, 10)] private short maxRandomTimes;
     private WaitForSeconds[] times;
 
+    private Vector3[] initPos;
+
     private bool waveStart = false;
-
-    [SerializeField] private Transform[] initTrans;
-    [SerializeField] private ushort enemyCastleIdx;
-    private short prefabIdx = -1;
-
-    [SerializeField] private BuildingStateAction[] actions;
 
     private Transform target;
 
-    [SerializeField] private int respawnEnemyNum = 3;
-    // [SerializeField] private float respawnEnemyAddNum = 0f;
+    [SerializeField] private int respawnEnemyNum = 2;
 
     // 생성 번호
     [SerializeField] private ushort[] respawnEnemySelectIdxs;
     private short[] respawnEnemyPoolIdxs;
 
     private ushort forcedAtkNum = 30;
-
-    public short PrefabIdx
-    {
-
-        get
-        {
-
-            if (prefabIdx == -1)
-            {
-
-                prefabIdx = PoolManager.instance.ChkIdx(enemyCastleIdx);
-            }
-
-            return prefabIdx;
-        }
-    }
 
     private void Awake()
     {
@@ -185,21 +166,24 @@ public class EnemyOrderManager : MonoBehaviour
     private IEnumerator OrderStart()
     {
 
-        while (true)
+        waveStart = false;
+        initPos = new Vector3[3];
+
+        Vector3 pos = enemyBuildings[0].transform.position;
+        for (int i = 0; i < 3; i++)
         {
 
-            if (!waveStart) yield return new WaitForSeconds(1f);
-            else yield return times[Random.Range(0, maxRandomTimes)];
+            initPos[i] = SetRandPos(pos, 15f);
+        }
 
+        yield return new WaitForSeconds(waveStartTime);
 
-            if (!waveStart)
-            {
+        waveStart = true;
 
-                var castle = BuildEnemyCastle();
-                SetTech(castle);
-                waveStart = true;
-                continue;
-            }
+        while (GameManager.instance.IsGameOver)
+        {
+
+            if (forcedAtkNum >= VariableManager.MAX_ENEMY_UNITS) forcedAtkNum = (ushort)VariableManager.MAX_ENEMY_UNITS;
 
             // 강제 공격인원을 넘으면 강제 공격
             if (enemyUnits.Count > forcedAtkNum)
@@ -213,75 +197,26 @@ public class EnemyOrderManager : MonoBehaviour
 
             // 적 생성
             RespawnEnemy();
-            continue;
+         
+            yield return times[Random.Range(0, maxRandomTimes)];
         }
     }
 
-    /// <summary>
-    /// 적 성 건설
-    /// </summary>
-    private Building BuildEnemyCastle()
-    {
-
-        
-        Vector3 randPos = initTrans[Random.Range(0, initTrans.Length)].position;
-
-        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_ENEMY, randPos);
-        
-        if (go)
-        {
-
-            var enemyCastle = go.GetComponent<Building>();
-            enemyCastle.AfterSettingLayer();
-            enemyCastle.TargetPos = enemyCastle.transform.position;
-            return enemyCastle;
-        }
-        else
-        {
-
-            Debug.Log("적 성이 생성 안되었습니다. prefabIdx를 확인해주세요.");
-            return null;
-        }
-
-    }
-
-
-    private void SetTech(Building _castle)
-    {
-
-        if (_castle == null
-            || actions == null
-            || actions.Length == 0) return;
-
-        var tech = actions[Random.Range(0, actions.Length)];
-        _castle.MyStateAction = tech;
-    }
 
     private void RespawnEnemy()
     {
 
+        if (enemyUnits.Count >= VariableManager.MAX_ENEMY_UNITS) return;
+
         if (target == null) SetTarget();
 
-        for (int i = 0; i < initTrans.Length; i++)
+        for (int i = 0; i < initPos.Length; i++)
         {
 
             for (int j = 0; j < respawnEnemyNum; j++)
             {
 
-                Vector3 randPos;
-                while (true)
-                {
-
-                    randPos = initTrans[i].position;
-                    randPos += Random.insideUnitSphere * 8f;
-
-                    if (NavMesh.SamplePosition(randPos, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
-                    {
-
-                        randPos = hit.position;
-                        break;
-                    }
-                }
+                Vector3 randPos = SetRandPos(initPos[i], 8f);
 
                 var go = PoolManager.instance.GetPrefabs(respawnEnemyPoolIdxs[Random.Range(0, respawnEnemyPoolIdxs.Length)], VariableManager.LAYER_ENEMY, randPos);
                 
@@ -290,6 +225,24 @@ public class EnemyOrderManager : MonoBehaviour
                 if (unit) unit.AfterSettingLayer();
 
                 if (target != null) GiveCommand(unit, STATE_SELECTABLE.UNIT_ATTACK, target.position);
+            }
+        }
+    }
+
+    private Vector3 SetRandPos(Vector3 _randPos, float _range)
+    {
+
+        Vector3 randPos;
+        while (true)
+        {
+
+            randPos = _randPos;
+            randPos += Random.insideUnitSphere * _range;
+
+            if (NavMesh.SamplePosition(randPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+            {
+
+                return hit.position;
             }
         }
     }

@@ -21,4 +21,19 @@ public class BuildingStateAction : StateHandler<BuildingAction>
 
         return _idx - 1;
     }
+
+    public void Changed(Building _building)
+    {
+
+        int idx = GetIdx(_building.MyState);
+        if (idx != -1) actions[idx].OnEnter(_building);
+        // else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
+    }
+
+    public void ForcedQuit(Building _building)
+    {
+
+        int idx = GetIdx(_building.MyState);
+        if (idx != -1) actions[idx].ForcedQuit(_building);
+    }
 }

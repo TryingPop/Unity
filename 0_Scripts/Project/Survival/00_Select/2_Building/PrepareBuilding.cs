@@ -14,6 +14,7 @@ public class PrepareBuilding : FollowMouse
 
     [SerializeField] protected Transform[] chkGround;
     [SerializeField] protected LayerMask groundLayer;
+    [SerializeField] protected int interval;
 
     public int PrefabIdx
     { 
@@ -92,20 +93,56 @@ public class PrepareBuilding : FollowMouse
     }
 
 
-    public GameObject Build()
+    public Building Build()
     {
 
         if (!isBuild) return null;
 
         var go = PoolManager.instance.GetPrefabs(PrefabIdx, gameObject.layer, transform.position);
-        return go;
+        Building building = go.GetComponent<Building>();
+        building?.DisableSelectable();
+
+        return building;
     }
 
-    public void Used(Building _building)
+    public void Used()
     {
 
+        
         ActionManager.instance.RemoveFollowMouse(this);
-        _building?.DisableBuilding(prefabIdx);
         gameObject.SetActive(false);
+    }
+
+    
+
+    public override void SetPos()
+    {
+
+        InputManager.instance.MouseToWorldPosition(out Vector3 pos);
+
+        if (pos.y < 100f)
+        {
+
+            if (interval > 0)
+            {
+
+                float div = 1.0f / interval;
+
+                pos = new Vector3(
+
+                    Calc(pos.x, interval, div),
+                    Calc(pos.y, interval, div),
+                    Calc(pos.z, interval, div)
+                    );
+            }
+
+            transform.position = pos;
+        }
+    }
+
+    protected int Calc(float _num, int _interval, float _div)
+    {
+
+        return Mathf.FloorToInt(_num * _div) * _interval;
     }
 }

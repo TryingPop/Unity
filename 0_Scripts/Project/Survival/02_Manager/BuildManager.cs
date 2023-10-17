@@ -7,6 +7,7 @@ public class BuildManager : MonoBehaviour
 {
 
     [SerializeField] protected PrepareBuilding[] buildings;
+    private PrepareBuilding curBuilding;
 
     public short ChkIdx(ushort _selectIdx)
     {
@@ -29,6 +30,18 @@ public class BuildManager : MonoBehaviour
 
         if (_idx == -1) return null;
 
-        return buildings[_idx];
+        curBuilding = buildings[_idx];
+        return curBuilding;
+    }
+
+    public void UsedPrepareBuilding()
+    {
+
+        if (curBuilding) 
+        { 
+            
+            curBuilding.Used();
+            curBuilding = null;
+        }
     }
 }

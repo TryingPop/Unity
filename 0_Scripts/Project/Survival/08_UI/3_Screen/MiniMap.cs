@@ -37,7 +37,7 @@ public class MiniMap : MonoBehaviour,
     protected void SetMiniMapPos()
     {
 
-        Vector2 screenRatio = UIManager.instance.screenRatio;
+        Vector2 screenRatio = InfoManager.instance.screenRatio;
         miniMapOffset = myRectTrans.anchoredPosition * screenRatio;
 
         var miniMapRect = myRectTrans.sizeDelta;
@@ -90,6 +90,8 @@ public class MiniMap : MonoBehaviour,
         if (eventData.button == PointerEventData.InputButton.Left)
         {
 
+            if (GameManager.instance.IsStop) return;
+
             Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
             camFollow.position = ScaleValueToWorldMap(scaleValue, false);
         }
@@ -100,6 +102,8 @@ public class MiniMap : MonoBehaviour,
 
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+
+            if (GameManager.instance.IsStop) return;
 
             Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
 
@@ -117,6 +121,8 @@ public class MiniMap : MonoBehaviour,
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
+
+            if (GameManager.instance.IsStop) return;
 
             if (inputManager.MyState == 0)
             {

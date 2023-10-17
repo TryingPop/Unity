@@ -17,7 +17,6 @@ public class BtnTargetOrPos : BtnPos
             || target)
         {
 
-            _inputManager.CmdType = cmdType;
             _inputManager.GiveCmd(true, true);
             OnExit(_inputManager);
         }

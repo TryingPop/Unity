@@ -22,4 +22,6 @@ public class BuildingAction : IAction<Building>
 
         _building.MyState = (int)_nextState;
     }
+
+    public virtual void ForcedQuit(Building _building) { }
 }

@@ -16,6 +16,65 @@ public class SelectedGroup
 
     public TYPE_SELECTABLE GroupType => groupType;
 
+    private bool IsBuildingType
+    {
+
+        get
+        {
+
+            int typeNum = GetBaseTypeNum(groupType);
+
+            return typeNum == (int)TYPE_SELECTABLE.BUILDING
+                || typeNum == (int)TYPE_SELECTABLE.UNFINISHED_BUILDING;
+        }
+    }
+
+    /// <summary>
+    /// 모든 유닛이 건설안된 건물인지 체크
+    /// </summary>
+    private bool IsUnfinishedbuildType
+    {
+
+        get
+        {
+
+            for (int i = 0; i < selected.Count; i++)
+            {
+
+                if (selected[i].MyState != (int)STATE_SELECTABLE.BUILDING_UNFINISHED)
+                {
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 취소 버튼 필요한지 확인
+    /// </summary>
+    public bool IsCancelBtn
+    {
+
+        get
+        {
+
+            for (int i = 0; i < selected.Count; i++)
+            {
+
+                if (selected[i].IsCancelBtn)
+                {
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     public SelectedGroup()
     {
 
@@ -63,33 +122,48 @@ public class SelectedGroup
             groupType = TYPE_SELECTABLE.NONE;
             return;
         }
-
+        
         groupType = selected[0].MyStat.MyType;
 
         for (int i = 1; i < selected.Count; i++)
         {
 
-            var type = selected[i].MyStat.MyType;
+
+            TYPE_SELECTABLE type = selected[i].MyStat.MyType;
+            
+            int groupNum = GetBaseTypeNum(groupType);
+            int typeNum = GetBaseTypeNum(type);
+
             if (groupType == type) continue;
+
+            if (groupNum == typeNum) groupType = (TYPE_SELECTABLE)groupNum;
+                
+            // 전투 유닛과 비전투 유닛이 섞인 그룹이면 비전투 유닛 버튼을 준다
+            else if ((groupNum == (int)TYPE_SELECTABLE.UNIT && typeNum == (int)TYPE_SELECTABLE.NONCOMBAT)
+                || (groupNum == (int)TYPE_SELECTABLE.NONCOMBAT && typeNum == (int)TYPE_SELECTABLE.UNIT)) groupType = TYPE_SELECTABLE.NONCOMBAT;
+
             else
             {
 
-                int groupNum = (int)groupType % VariableManager.TYPE_SELECTABLE_INTERVAL;
-                int typeNum = (int)type % VariableManager.TYPE_SELECTABLE_INTERVAL;
-
-                if (groupNum == typeNum) groupType = (TYPE_SELECTABLE)groupNum;
-                else if ((groupNum == 2 && typeNum == 1)
-                    || (groupNum == 1 && typeNum == 2)) groupType = (TYPE_SELECTABLE)1;
-                else
-                {
-
-                    groupType = TYPE_SELECTABLE.NONE;
-                    break;
-                }
+                // 건물과 유닛이 섞여있는 경우 NONE 이고 바로 탈출한다
+                groupType = TYPE_SELECTABLE.NONE;
+                return;
             }
         }
+
+        // 마지막으로 건물이면 미완성 타입인지 확인
+        if (IsBuildingType && IsUnfinishedbuildType) groupType = TYPE_SELECTABLE.UNFINISHED_BUILDING;
     }
 
+
+    private int GetBaseTypeNum(TYPE_SELECTABLE _type)
+    {
+
+        // 100 미만의 숫자들은 각 타입의 Base 타입을 나타내는데, 해당 타입을 찾아준다
+        int type = (int)_type;
+        if (type >= VariableManager.TYPE_SELECTABLE_INTERVAL) return type /= VariableManager.TYPE_SELECTABLE_INTERVAL;
+        else return type;
+    }
 
     // 유닛이 죽으면 해제되게 한다!
     public void DeSelect(Selectable _select)
@@ -126,14 +200,17 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _trans = null, bool _add = false)
+    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _trans = null, bool _add = false, int _num = -1)
     {
 
         // 선택된 유닛이 없는 경우 명령 생성 안한다!
         if (selected.Count == 0) return;
 
+        if (_num >= 0) _num = (_num > selected.Count ? selected.Count : _num);
+        else _num = selected.Count;
+
         // 명령 풀링
-        Command cmd = Command.GetCommand((byte)selected.Count, _type, _pos, _trans);
+        Command cmd = Command.GetCommand(_num, _type, _pos, _trans);
 
         // 명령 생성에서 최대 명령 수 초과하면 null을 생성하므로 
         if (cmd != null)
@@ -156,14 +233,17 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    public void GiveCommand(STATE_SELECTABLE _type, bool _add)
+    public void GiveCommand(STATE_SELECTABLE _type, bool _add, int _num = -1)
     {
 
         // 선택된 유닛이 없는 경우 명령 생성을 안한다!
         if (selected.Count == 0) return;
 
+        if (_num >= 0) _num = (_num > selected.Count ? selected.Count : _num);
+        else _num = selected.Count;
+
         // 명령 풀링
-        Command cmd = Command.GetCommand((byte)selected.Count, _type);
+        Command cmd = Command.GetCommand(_num, _type);
 
         // 명령 생성에서 최대 명령 수 초과하면 null을 생성하므로 
         if (cmd != null)

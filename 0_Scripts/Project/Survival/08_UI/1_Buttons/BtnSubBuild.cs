@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Build", menuName = "Button/Sub/Build")]
-public class BtnSubBuild : BtnSub
+public class BtnSubBuild : ButtonInfo
 {
 
     [SerializeField] protected ushort selectIdx;
@@ -38,17 +38,13 @@ public class BtnSubBuild : BtnSub
     {
 
         // OnEnter에서 걸러지기에 null 체크 안한다
-        var building = _inputManager.buildManager.GetPrepareBuilding(prepareIdx);
-        var go = building.Build();
-        if (go)
+        var prebuilding = _inputManager.buildManager.GetPrepareBuilding(prepareIdx);
+        var building = prebuilding.Build();
+        if (building)
         {
 
-            var target = go.GetComponent<Building>();
-            
-            _inputManager.GiveCmd(target.transform.position, target);
-
-            _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used(target);
-            _inputManager.ActiveButtonUI(true, false, false);
+            _inputManager.GiveCmd(building.transform.position, building);
+            _inputManager.buildManager.UsedPrepareBuilding();
             _inputManager.ActionDone();
         }
     }
@@ -57,7 +53,7 @@ public class BtnSubBuild : BtnSub
     {
 
         // OnEnter에서 걸러지기에 null 체크 안한다!
-        _inputManager.buildManager.GetPrepareBuilding(prepareIdx).Used(null);
+        _inputManager.buildManager.UsedPrepareBuilding();
         base.OnExit(_inputManager, _nextKey);
     }
 }

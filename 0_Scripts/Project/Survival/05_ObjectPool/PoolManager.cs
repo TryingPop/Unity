@@ -52,9 +52,6 @@ public class PoolManager : MonoBehaviour
     /// <summary>
     /// 생성 메서드
     /// </summary>
-    /// <param name="_idx"></param>
-    /// <param name="_layer"></param>
-    /// <returns></returns>
     public GameObject GetPrefabs(int _idx, int _layer)
     {
 
@@ -78,6 +75,17 @@ public class PoolManager : MonoBehaviour
         go.transform.parent = parents[_idx];
         go.layer = _layer;
         return go;
+    }
+
+    /// <summary>
+    /// 인덱스로 데이터 정보 가져오기
+    /// </summary>
+    public GameObject GetData(int _idx)
+    {
+
+        if (_idx == -1) return null;
+
+        return data[_idx].prefab;
     }
 
     public GameObject GetPrefabs(int _idx, int _layer, Vector3 _pos)

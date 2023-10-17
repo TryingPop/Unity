@@ -14,6 +14,8 @@ public enum STATE_SIZE { SMALL = 1, MEDIUM = 2, LARGE = 3, XLARGE = 4 }
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
 /// </summary>
+[RequireComponent(typeof(Stats)),
+    RequireComponent(typeof(SightMesh))]
 public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 transform 을 이용할 예정
                                     IDamagable      // 모든 유닛은 피격 가능하다!
 {
@@ -34,6 +36,12 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     [SerializeField] protected SightMesh myMinimap;
     public Stats MyStat => myStat;
 
+    [SerializeField] protected Selectable target;
+    [SerializeField] protected Vector3 targetPos;
+
+    [SerializeField] protected ushort myTurn;
+
+    [SerializeField] protected bool isStarting = false;
     public virtual void SetStat()
     {
          
@@ -62,12 +70,10 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
     public bool FullHp { get { return curHp == maxHp; } }
 
-
-
-    [SerializeField] protected Selectable target;
-    [SerializeField] protected Vector3 targetPos;
-
-    [SerializeField] protected ushort myTurn;
+    /// <summary>
+    /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
+    /// </summary>
+    public virtual bool IsCancelBtn => false;
 
     public virtual int MyTurn
     {
@@ -155,13 +161,8 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
         curHp -= _dmg - def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - def;
 
-        // myHitBar.SetHp(curHp);
-
-        if (curHp <= 0)
-        {
-
-            Dead();
-        }
+        if (curHp <= 0) Dead();
+        else myHitBar.SetHp(curHp);
     }
 
     /// <summary>
@@ -187,7 +188,8 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
     {
 
         curHp = 0;
-        
+        myHitBar.SetHp(curHp);
+
         // 시체 레이어로 변경
         gameObject.layer = VariableManager.LAYER_DEAD;
         if (InputManager.instance.curGroup.IsContains(this)) 
@@ -196,15 +198,16 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
             InputManager.instance.curGroup.DeSelect(this);
             InputManager.instance.ChkUIs();
         }
+
         StartCoroutine(Disabled());
     }
 
     protected IEnumerator Disabled()
     {
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(myStat.DisableTime);
 
-        gameObject.SetActive(false);
+        PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
     public abstract void SetInfo(Text _txt);

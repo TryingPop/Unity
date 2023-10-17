@@ -39,6 +39,7 @@ public class HitBar : MonoBehaviour
     public void Used()
     {
 
+        target = null;
         myImgs[0].enabled = false;
         myImgs[1].enabled = false;
     }

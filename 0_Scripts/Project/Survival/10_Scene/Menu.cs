@@ -12,6 +12,7 @@ public class Menu : MonoBehaviour
     public void NextScene(string _sceneName)
     {
 
+        Time.timeScale = 1.0f;
         SceneManager.LoadScene(_sceneName);
     }
 
@@ -28,7 +29,11 @@ public class Menu : MonoBehaviour
         panelMenu.SetActive(!_active);
     }
 
-    // option에서할 행동! 사운드 조절 <<< 배경음과, 효과음들
-    // 그리고 Save 할 때 음량 조절 하는거
+    public void OpenMenu(bool _active)
+    {
+
+        panelMenu.SetActive(_active);
+        panelOpt.SetActive(false);
+    }
 }
 

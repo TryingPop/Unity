@@ -40,7 +40,7 @@ public class GameScreen : MonoBehaviour,
         // screenRatio.x = Screen.width / canvasRect.x;
         // screenRatio.y = Screen.height / canvasRect.y;
 
-        Vector2 screenRatio = UIManager.instance.screenRatio;
+        Vector2 screenRatio = InfoManager.instance.screenRatio;
 
         myLeftBottom = myRectTrans.anchoredPosition * screenRatio;
         myRightTop = myLeftBottom;
@@ -54,7 +54,9 @@ public class GameScreen : MonoBehaviour,
 
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            
+
+            if (GameManager.instance.IsStop) return;
+
             // 클릭 지점 저장
             clickPos = eventData.position;
 
@@ -86,6 +88,8 @@ public class GameScreen : MonoBehaviour,
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
 
+            if (GameManager.instance.IsStop) return;
+
             InputManager inputManager = InputManager.instance;
 
             if (inputManager.MyState == 0)
@@ -105,6 +109,8 @@ public class GameScreen : MonoBehaviour,
 
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+
+            if (GameManager.instance.IsStop) return;
 
             if (chkSelect)
             {

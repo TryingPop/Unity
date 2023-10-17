@@ -53,8 +53,34 @@ public class InputManager : MonoBehaviour
             savePos = value;
         }
     }
-    public Vector3 CmdPos => cmdPos;
-    public Selectable CmdTarget => cmdTarget;
+    public Vector3 CmdPos
+    {
+
+        get { return cmdPos; }
+        set 
+        { 
+            
+            // 미니맵에서 사용한다! 이 경우 타겟은 지정 안된다!
+            cmdPos = value;
+            cmdTarget = null;
+        }
+    }
+
+    /// <summary>
+    /// 강제로 설정하는 경우에는 레이를 쏠 수 있는 상황이 아니므로 CmdTarget의 좌표도 받는다!
+    /// </summary>
+    public Selectable CmdTarget
+    {
+
+        get { return cmdTarget; }
+        set 
+        { 
+
+            // 유닛 슬롯 클릭 시 사용할 예정 해당 유닛으로 갈 예정이기에 해당 유닛의 좌표도 강제 지정한다!
+            cmdTarget = value;
+            cmdPos = value.transform.position;
+        }
+    }
 
     /// <summary>
     /// cmdTarget이 있고 선택가능한 유닛이면 true
@@ -114,6 +140,7 @@ public class InputManager : MonoBehaviour
         set 
         {
 
+            if (GameManager.instance.IsStop) return;
             if (ChkReturn(value)) return;
 
             myState = (TYPE_KEY)value;
@@ -125,11 +152,7 @@ public class InputManager : MonoBehaviour
     public STATE_SELECTABLE CmdType
     {
 
-        set
-        {
-
-            cmdType = value;
-        }
+        set { cmdType = value; }
     }
 
     public bool IsSubBtn => isSubBtn;
@@ -171,10 +194,11 @@ public class InputManager : MonoBehaviour
         
         // 상황 상관없이 체력바를 보여주는 거기에 밑에 따로 빼놨다
         if (Input.GetKeyDown(KeyCode.Escape)) Cancel();
+        
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
 
-            // ActionManager.instance.HitBarCanvas = !ActionManager.instance.HitBarCanvas;
+            ActionManager.instance.HitBarCanvas = !ActionManager.instance.HitBarCanvas;
         }
     }
 
@@ -202,30 +226,28 @@ public class InputManager : MonoBehaviour
     public void Cancel()
     {
 
+        if (GameManager.instance.IsStop) return;
+
         if (isSubBtn)
         {
 
-            if (myState != TYPE_KEY.NONE)
-            {
-
-                // sub인 경우 강제 탈출
-                subHandler.ForcedQuit(this);
-            }
-            else
-            {
-
-                ActiveButtonUI(true, false, false);
-            }
+            // 서브 행동 중이면 해당 서브 행동만 강제 탈출
+            if (myState != TYPE_KEY.NONE) subHandler.ForcedQuit(this);
+            // 서브 행동 중이 아니면 서브 버튼 완전히 탈출
+            else ActiveButtonUI(true, false, false);
         }
-        else
-        {
-            
-            mainHandler.ForcedQuit(this);
-        }
+        // 이외는 메인 핸들러 탈출이다!
+        else mainHandler?.ForcedQuit(this);
+        
+        // 취소 버튼이 활성화 되어져 있는 경우 취소 명령을 보낸다
+        if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, Input.GetKey(KeyCode.LeftShift));
     }
 
     public void ActiveButtonUI(bool _isActiveMain, bool _isActiveSub, bool _isActiveCancel)
     {
+
+        // 전부다 미완성이므로 강제로 안되게 한다!
+        if (curGroup.GroupType == TYPE_SELECTABLE.UNFINISHED_BUILDING && _isActiveMain) _isActiveMain = false;
 
         mainBtns.gameObject.SetActive(_isActiveMain);
 
@@ -264,7 +286,7 @@ public class InputManager : MonoBehaviour
         _pos = UIPosToWorldPos(Input.mousePosition);
     }
 
-    private Vector3 UIPosToWorldPos(Vector2 _uiPos)
+    private Vector3 UIPosToWorldPos(Vector3 _uiPos)
     {
 
         Ray ray = cam.ScreenPointToRay(_uiPos);
@@ -285,7 +307,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="_usePos">저장된 좌표 사용</param>
     /// <param name="_useTarget">저장된 타겟을 사용</param>
-    public void GiveCmd(bool _usePos = false, bool _useTarget = false)
+    public void GiveCmd(bool _usePos = false, bool _useTarget = false, int _num = -1)
     {
 
         bool add = Input.GetKey(KeyCode.LeftShift);
@@ -321,16 +343,19 @@ public class InputManager : MonoBehaviour
         cmdType = STATE_SELECTABLE.NONE;
         cmdPos.Set(0f, 100f, 0f);
         cmdTarget = null;
+        myState = TYPE_KEY.NONE;
+        ActiveButtonUI(true, false, curGroup.IsCancelBtn);
     }
 
 
     /// <summary>
     /// 지정된 좌표와 유닛으로 명령 전달
     /// </summary>
-    public void GiveCmd(Vector3 _pos, Selectable _target = null)
+    public void GiveCmd(Vector3 _pos, Selectable _target = null, int _num = -1)
     {
 
         curGroup.GiveCommand(cmdType, _pos, _target, Input.GetKey(KeyCode.LeftShift));
+        MyHandler?.ForcedQuit(this);
         ResetCmd();
     }
 
@@ -512,7 +537,8 @@ public class InputManager : MonoBehaviour
         selectedUI.SetTargets(curGroup.Get());
         unitSlots.Init();
         curGroup.ChkGroupType();
+
         MainHandler = btnManager.GetHandler(curGroup.GroupType);
-        ActiveButtonUI(true, false, false);
+        ActiveButtonUI(true, false, curGroup.IsCancelBtn);
     }
 }

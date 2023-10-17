@@ -29,15 +29,12 @@ public class Slot : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
 
-        // ÅøÆÁ È°¼ºÈ­
-        Vector2 pos;
-        pos = eventData.position;
-        UIManager.instance.EnterInfo(target, pos);
+        InfoManager.instance.EnterUIInfo(target, eventData.position);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
-        UIManager.instance.ExitInfo();
+        InfoManager.instance.ExitUIInfo();
     }
 }

@@ -14,7 +14,6 @@ public class BtnTarget : BtnPos
         if (target) 
         {
 
-            _inputManager.CmdType = cmdType;
             Vector3 pos = _inputManager.CmdPos;
             _inputManager.GiveCmd(true, true);
             OnExit(_inputManager);

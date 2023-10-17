@@ -6,12 +6,14 @@ using UnityEngine;
 public class TargetUnit : Mission
 {
 
-    [SerializeField] protected Unit[] objUnits;
-    [SerializeField] protected int[] targetLayers;
+    [SerializeField] protected Selectable target;
+    [SerializeField] protected int targetLayer;
     [SerializeField] protected Vector3[] initPos;
-    protected List<Unit> targets;
+    [SerializeField] protected int targetNum;
+    protected int curNum;
 
-    public override bool IsSucess => targets.Count == 0;
+
+    public override bool IsSucess => curNum >= targetNum;
 
     /// <summary>
     /// 타겟 설정
@@ -20,38 +22,37 @@ public class TargetUnit : Mission
     {
         
         // 유닛 생성 해야한다!
-        if (targets == null) targets = new List<Unit>(objUnits.Length);
+        ushort selectIdx = target.MyStat.SelectIdx;
+        short prefabIdx = PoolManager.instance.ChkIdx(selectIdx);
 
-        for (int i = 0; i < objUnits.Length; i++)
+        curNum = 0;
+
+        for (int i = 0; i < targetNum; i++)
         {
 
-            ushort selectIdx = objUnits[i].MyStat.SelectIdx;
-            short prefabIdx = PoolManager.instance.ChkIdx(selectIdx);
 
-            Unit building = null;
+            Selectable genTarget = null;
 
             if (prefabIdx != -1)
             {
 
-                var go = PoolManager.instance.GetPrefabs(prefabIdx, targetLayers[i]);
+                var go = PoolManager.instance.GetPrefabs(prefabIdx, targetLayer);
                 if (go)
                 {
 
-                    building = go.GetComponent<Unit>();
+                    genTarget = go.GetComponent<Selectable>();
                 }
             }
 
-            if (building == null)
+            if (genTarget == null)
             {
 
-                building = GameObject.Instantiate(objUnits[i]);
-                building.gameObject.layer = targetLayers[i];
+                genTarget = GameObject.Instantiate(target);
+                genTarget.gameObject.layer = targetLayer;
             }
 
-            building.transform.position = initPos[i];
-            building.AfterSettingLayer();
-
-            targets.Add(building);
+            genTarget.transform.position = initPos[i];
+            genTarget.AfterSettingLayer();
         }
     }
 
@@ -63,16 +64,17 @@ public class TargetUnit : Mission
 
         if (_unit == null) return;
 
-        for (int i = 0; i < targets.Count; i++)
+        if (_unit.MyStat.SelectIdx == target.MyStat.SelectIdx
+            && TeamManager.instance.CompareTeam(_unit.MyAlliance, targetLayer))
         {
 
-            if (targets[i] == _unit)
-            {
-
-                targets.RemoveAt(i);
-                return;
-            }
+            curNum++;
         }
+    }
 
+    public override string GetMissionObjectText()
+    {
+
+        return $"{target.MyStat.MyType} : {curNum} / {targetNum}";
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -55,6 +56,8 @@ public class Building : Selectable
         set { maxTurn = value; }
     }
 
+    public override bool IsCancelBtn => true;
+
     protected void Awake()
     {
 
@@ -97,8 +100,12 @@ public class Building : Selectable
             curBuildTurn = 0;
         }
 
-        AfterSettingLayer();
-        SetStat();
+        if (isStarting)
+        {
+         
+            AfterSettingLayer();
+            isStarting = false;
+        }
     }
 
     public override void AfterSettingLayer()
@@ -107,25 +114,30 @@ public class Building : Selectable
         int myLayer = gameObject.layer;
         myAlliance = TeamManager.instance.GetTeamInfo(myLayer);
         myUpgrades = TeamManager.instance.GetUpgradeInfo(myLayer);
-        if (ActionManager.instance.ContainsBuilding(this)) ActionManager.instance.RemoveBuilding(this);
-        ActionManager.instance.AddBuilding(this);
-        if (myHitBar != null) 
-        { 
-            
-            ActionManager.instance.ClearHitBar(myHitBar);
-            myHitBar = null;
-        }
 
+        ActionManager.instance.AddBuilding(this);
         MyHitBar = ActionManager.instance.GetHitBar();
+
+        Color teamColor;
+        if (myAlliance != null) teamColor = myAlliance.TeamColor;
+        else teamColor = Color.yellow;
+
+        myMinimap.SetColor(teamColor);
     }
 
     public void Action()
     {
 
-        if (myState == STATE_SELECTABLE.DEAD) return;
+        if (myState == STATE_SELECTABLE.DEAD
+            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
 
-        ChkReservedCommand();
-        myStateAction.Action(this);
+        if (cmds.Count > 0
+            && myState == STATE_SELECTABLE.NONE)
+        {
+            
+            ChkReservedCommand();
+        }
+        else myStateAction.Action(this);
     }
 
     protected void Build()
@@ -142,6 +154,7 @@ public class Building : Selectable
             mySight.SetSize(myStat.MySize * 2);
             height = opt.IncreaseY;
             myState = STATE_SELECTABLE.NONE;
+            myStat.ApplyResources(true, false, true);
 
             StartCoroutine(FinishedBuildCoroutine());
             if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
@@ -183,23 +196,12 @@ public class Building : Selectable
         }
     }
 
-    public void DisableBuilding(int _prefabIdx)
+    public void DisableSelectable()
     {
 
-        myHitBar.SetHp(0);
-        ActionManager.instance.ClearHitBar(myHitBar);
-        myHitBar = null;
         myObstacle.carving = false;
-        ActionManager.instance.RemoveBuilding(this);
-        PoolManager.instance.UsedPrefab(gameObject, _prefabIdx);
         gameObject.layer = VariableManager.LAYER_DEAD;
-        
-        if (InputManager.instance.curGroup.IsContains(this))
-        {
-
-            InputManager.instance.curGroup.DeSelect(this);
-            InputManager.instance.ChkUIs();
-        }
+        PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
     private IEnumerator FinishedBuildCoroutine()
@@ -221,45 +223,40 @@ public class Building : Selectable
     {
 
         base.Dead();
+
+        for (int i = 0; i < cmds.Count; i++)
+        {
+
+            cmds[i].Canceled();
+        }
+        cmds.Clear();
+
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
         ActionManager.instance.ClearHitBar(myHitBar);
+        
         myHitBar = null;
+        myStat.ApplyResources(false);
 
+        // 파괴 이벤트
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
     public override void SetInfo(Text _txt)
     {
 
-        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
-        {
+        string hp = maxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {maxHp}";
 
-            _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}\nBuild : {curBuildTurn} / {opt.BuildTurn}";
-        }
-        else if (myState == STATE_SELECTABLE.NONE)
-        {
-
-            _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}";
-        }
-        else
-        {
-
-            _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}\n{myState} : {myTurn} : {maxTurn}";
-        }
+        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"Hp : {hp}\nBuild : {100 * curBuildTurn / opt.BuildTurn}%";
+        else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"Hp : {hp}";
+        else _txt.text = $"Hp : {hp}\nAction : {100 * myTurn / maxTurn}%";
     }
 
     public override void GetCommand(Command _cmd, bool _add = false) 
     {
 
-        if (!ChkCommand(_cmd))
-        {
-
-            _cmd.Canceled();
-            return; 
-        }
-
-        // 즉시 실행해야 하는 명령
+        // 먼저 상태 체크부터.. 해야할 필요가 있다;
+        // 즉시 실행해야 하는 명령인지부터 확인
         var type = _cmd.type;
         if (type == STATE_SELECTABLE.MOUSE_R)
         {
@@ -276,19 +273,27 @@ public class Building : Selectable
             if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
             {
 
-                curHp = 0;
+                // 기본 40% 환불!
+                int refundCost = Mathf.FloorToInt(myStat.Cost * 0.4f);
+                myStat.ApplyResources(false, true, false, false, refundCost);
                 Dead();
             }
             else
             {
 
-                myState = STATE_SELECTABLE.NONE;
+                myStateAction.ForcedQuit(this);
             }
 
             _cmd.Received(0);
             return;
         }
-        
+        else if (!ChkCommand(_cmd))
+        {
+
+            _cmd.Canceled();
+            return; 
+        }
+
         // 건물은 예약명령이 없다!
         cmds.Add(_cmd);
     }
@@ -299,30 +304,15 @@ public class Building : Selectable
         if (myState == STATE_SELECTABLE.DEAD
             || cmds.Count >= VariableManager.MAX_RESERVE_COMMANDS) return false;
 
-
-        if (_cmd.type != STATE_SELECTABLE.BUILDING_ACTION1
-            && _cmd.type != STATE_SELECTABLE.BUILDING_ACTION2
-            && _cmd.type != STATE_SELECTABLE.BUILDING_ACTION3
-            && _cmd.type != STATE_SELECTABLE.MOUSE_R
-            && _cmd.type != STATE_SELECTABLE.BUILDING_CANCEL) return false;
-
-        // 한정 조건
-        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED
-            && _cmd.type != STATE_SELECTABLE.MOUSE_R 
-            && _cmd.type != STATE_SELECTABLE.BUILDING_CANCEL) return false;
-
-
         return true;
     }
 
     public void ChkReservedCommand()
     {
 
-        if (cmds.Count == 0
-            || myState != STATE_SELECTABLE.NONE) return;
-
         // 가장 앞에것을 준다
         ReadCommand(cmds[0]);
+        myStateAction.Changed(this);
     }
 
     protected override void ReadCommand(Command _cmd)

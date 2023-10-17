@@ -9,13 +9,13 @@ public class BtnDefault : ButtonInfo
     public override void OnEnter(InputManager _inputManager)
     {
 
+        _inputManager.CmdType = cmdType;
         Action(_inputManager);
     }
 
     public override void Action(InputManager _inputManager)
     {
 
-        _inputManager.CmdType = cmdType;
         _inputManager.GiveCmd();
         OnExit(_inputManager);
     }

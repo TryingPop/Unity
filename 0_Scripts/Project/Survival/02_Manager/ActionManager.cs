@@ -146,11 +146,12 @@ public class ActionManager : MonoBehaviour
     /// <param name="_unit"></param>
     public void RemoveUnit(Unit _unit)
     {
+
         if (_unit.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerUnits.Remove(_unit);
-
         else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Remove(_unit);
-
         else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
+
+        GameManager.instance.Chk(_unit, null);
     }
 
     public bool ContainsUnit(Unit _unit)
@@ -181,6 +182,8 @@ public class ActionManager : MonoBehaviour
 
         if (_building.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
         else if (_building.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
+
+        GameManager.instance.Chk(null, _building);
     }
 
     public HitBar GetHitBar()

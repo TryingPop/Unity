@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UI;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Soldier", menuName = "Action/Building/Soldier")]
@@ -8,6 +9,14 @@ public class RecruitSoldier : BuildingAction
 
     [SerializeField] protected ushort selectIdx;
     protected short prefabIdx = -1;
+
+
+    [Tooltip("유닛에 내장된 스텟으로 가져올지 혹은 건물껄 이용할지 결정한다")]
+    [SerializeField] protected bool useStatCost;
+    [SerializeField] protected byte refund;
+    [SerializeField] protected ushort cost;
+
+    protected Stats targetStat;
 
     public int PrefabIdx
     {
@@ -25,24 +34,59 @@ public class RecruitSoldier : BuildingAction
         }
     }
 
+    protected void Init()
+    {
+
+        var data = PoolManager.instance.GetData(PrefabIdx);
+        var selectable = data?.GetComponent<Selectable>();
+
+        if (selectable)
+        {
+
+            targetStat = selectable.MyStat;
+        }
+    }
+
+    protected int Cost
+    {
+
+        get
+        {
+
+            if (useStatCost)
+            {
+
+                return targetStat.Cost;
+            }
+
+            return cost;
+        }
+    }
+
     public override void Action(Building _building)
     {
 
-        _building.MyTurn++;
+
+        if (_building.MyTurn < turn) _building.MyTurn++;
 
         if (_building.MyTurn >= turn)
         {
 
-            // 여기에 유닛 생성 가능한지 판별해야한다!
-
             var go = PoolManager.instance.GetPrefabs(PrefabIdx, _building.gameObject.layer, _building.transform.position);
-            Unit unit = go?.GetComponent<Unit>();
+            // 이게 없다면 다른 것들 실행 안되어서 딱히 ActionManager에서 제거할 필요도 없다!
+            Selectable unit = go?.GetComponent<Selectable>();
             if (unit)
             {
 
                 unit.AfterSettingLayer();
-                Command cmd = Command.GetCommand(1, STATE_SELECTABLE.UNIT_MOVE, _building.TargetPos, _building.Target);
-                unit.GetCommand(cmd);
+                Command cmd = Command.GetCommand(1, STATE_SELECTABLE.MOUSE_R, _building.TargetPos, _building.Target);
+                unit.GetCommand(cmd);  
+            }
+            else
+            {
+
+                if (go) PoolManager.instance.UsedPrefab(go, PrefabIdx);
+                ForcedQuit(_building);
             }
 
             _building.MyTurn = 0;
@@ -53,5 +97,40 @@ public class RecruitSoldier : BuildingAction
 
             OnExit(_building);
         }
+    }
+
+    public override void ForcedQuit(Building _building)
+    {
+
+        ushort refundCost = (ushort)Mathf.FloorToInt(refund * Cost * 0.01f);
+        targetStat.ApplyResources(false, true, true, false, refundCost);
+        OnExit(_building);
+    }
+
+    public override void OnEnter(Building _building)
+    {
+
+        base.OnEnter(_building);
+
+        if (targetStat == null)
+        {
+
+            Init();
+            if (targetStat == null)
+            {
+
+                OnExit(_building);
+                return;
+            }
+        }
+
+        
+        if (!targetStat.ApplyResources(true, true, true, useStatCost, cost))
+        {
+
+            OnExit(_building);
+            return;
+        }
+
     }
 }

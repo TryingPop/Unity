@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SightMesh)),
+    RequireComponent(typeof(Animator)),
+    RequireComponent(typeof(NavMeshAgent)),
+    RequireComponent(typeof(Rigidbody)),
+    RequireComponent(typeof(UnitStateAction))]
 public class Unit : Selectable
 {
 
@@ -125,13 +130,13 @@ public class Unit : Selectable
         myAnimator.SetBool("Die", false);
         myAgent.enabled = true;
         ActionDone();
-        cmds.Clear();
-    }
+        
+        if (isStarting)
+        {
 
-    protected void Start()
-    {
-
-        AfterSettingLayer();
+            AfterSettingLayer();
+            isStarting = false;
+        }
     }
 
     /// <summary>
@@ -141,8 +146,8 @@ public class Unit : Selectable
     {
 
         myAlliance = TeamManager.instance?.GetTeamInfo(gameObject.layer);
-        if (mySight == null) { }
-        else if (gameObject.layer == VariableManager.LAYER_PLAYER)
+
+        if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
 
             mySight.IsActive = true;
@@ -154,9 +159,6 @@ public class Unit : Selectable
             mySight.IsActive = false;
         }
 
-        if (ActionManager.instance.ContainsUnit(this)) ActionManager.instance.RemoveUnit(this);
-        if (myHitBar != null) ActionManager.instance.ClearHitBar(myHitBar);
-        
         ActionManager.instance.AddUnit(this);
         MyHitBar = ActionManager.instance.GetHitBar();
 
@@ -260,12 +262,15 @@ public class Unit : Selectable
         myAnimator.SetBool("Die", true);
         ActionManager.instance.RemoveUnit(this);
         ActionManager.instance.ClearHitBar(myHitBar);
+        myHitBar = null;
+        myStat.ApplyResources(false);
     }
 
     public override void SetInfo(Text _txt)
     {
 
-        _txt.text = $"{myStat.MyType}\nHp : {curHp} / {maxHp}\nAtk : {atk}\nDef : {def}";
+        string hp = maxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {maxHp}";
+        _txt.text = $"Hp : {hp}\nAtk : {atk}\nDef : {def}";
     }
 
     #region Command

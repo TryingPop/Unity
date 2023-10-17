@@ -12,8 +12,8 @@ public class ResourceManager : MonoBehaviour
 
     public int goldAmount;              // 현재 보유 중인 골드양
 
-    public int curPopulation;           // 현재 유지 중인 인구
-    public int maxPopulation;           // 최대 인구
+    public int curSupply;           // 현재 유지 중인 인구
+    public int maxSupply;           // 최대 인구
 
     [SerializeField] private Text goldText;
     [SerializeField] private Text populationText;
@@ -35,8 +35,10 @@ public class ResourceManager : MonoBehaviour
     }
 
 
-
-    public bool ChkResource(TYPE_MANAGEMENT _type, int _price)
+    /// <summary>
+    /// 골드와 인구 확인
+    /// </summary>
+    public bool ChkResources(TYPE_MANAGEMENT _type, int _price)
     {
 
         if (_price < 0) _price = 0;
@@ -48,14 +50,19 @@ public class ResourceManager : MonoBehaviour
 
                 return goldAmount >= _price;
 
-            case TYPE_MANAGEMENT.POPULATION:
+            case TYPE_MANAGEMENT.SUPPLY:
 
-                return maxPopulation - curPopulation >= _price;
-
+                return maxSupply - curSupply >= _price;
             default:
-
                 return false;
         }
+    }
+
+    public bool ChkResources(int _gold, int _supply)
+    {
+
+        return _gold <= goldAmount
+            && _supply <= maxSupply - curSupply;
     }
 
     /// <summary>
@@ -64,26 +71,40 @@ public class ResourceManager : MonoBehaviour
     public void UseResources(TYPE_MANAGEMENT _type, int _amount)
     {
 
-        if (_amount < 0) _amount = 0;
-
         switch (_type) 
         {
 
             case TYPE_MANAGEMENT.GOLD:
 
-                goldAmount -= _amount;
-                UpdateText();
+                UseResources(_amount, 0);
                 break;
 
-            case TYPE_MANAGEMENT.POPULATION:
+            case TYPE_MANAGEMENT.SUPPLY:
 
-                maxPopulation -= _amount;
-                UpdateText();
+                UseResources(0, _amount);
                 break;
 
             default:
                 break;
         }
+    }
+
+    public void UseResources(int _gold, int _supply)
+    {
+
+        if (_gold < 0) _gold = 0;
+
+        goldAmount -= _gold;
+
+        if (_supply < 0)
+        {
+
+            maxSupply -= _supply;
+            if (maxSupply > VariableManager.MAX_SUPPLY) maxSupply = VariableManager.MAX_SUPPLY;
+        }
+        else curSupply += _supply;
+
+        UpdateText();
     }
 
     /// <summary>
@@ -92,23 +113,17 @@ public class ResourceManager : MonoBehaviour
     public void AddResources(TYPE_MANAGEMENT _type, int _amount)
     {
 
-        if (_amount < 0) _amount = 0;
-
         switch (_type)
         {
 
             case TYPE_MANAGEMENT.GOLD:
 
-                goldAmount += _amount;
-                if (goldAmount > VariableManager.MAX_GOLD) goldAmount = VariableManager.MAX_GOLD;
-                UpdateText();
+                AddResources(_amount, 0);
                 break;
 
-            case TYPE_MANAGEMENT.POPULATION:
+            case TYPE_MANAGEMENT.SUPPLY:
 
-                maxPopulation += _amount;
-                if (maxPopulation > VariableManager.MAX_POPULATION) maxPopulation = VariableManager.MAX_POPULATION;
-                UpdateText();
+                AddResources(0, _amount);
                 break;
 
             default:
@@ -116,10 +131,32 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    public void AddResources(int _gold, int _supply)
+    {
+
+        if (_gold < 0) _gold = 0;
+        goldAmount += _gold;
+
+        if (_supply < 0)
+        {
+
+            maxSupply += _supply;
+            if (maxSupply < 0) maxSupply = 0;
+        }
+        else 
+        { 
+            
+            curSupply -= _supply; 
+            if (curSupply < 0) curSupply = 0;
+        }
+
+        UpdateText();
+    }
+
     private void UpdateText()
     {
 
         goldText.text = goldAmount.ToString();
-        populationText.text = $"{curPopulation} / {maxPopulation}";
+        populationText.text = $"{curSupply} / {maxSupply}";
     }
 }

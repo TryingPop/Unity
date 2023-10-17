@@ -4,21 +4,23 @@
 public enum TYPE_SELECTABLE 
 { 
     
+    UNFINISHED_BUILDING = -2,
+
     NONE = 0, 
     
-    UNIT_NONCOMBAT = 1,
+    NONCOMBAT = 1,
     UNIT = 2, 
 
     BUILDING = 3,
 
-    UNIT_WORKER = 101,
-    ANIMAL_CHICKEN = 102,
+    WORKER = 101,
+    CHICKEN = 102,
 
-    UNIT_BOSS_D = 201,
+    BOSS_D = 201,
 
-    BUILDING_FARM = 301,
-    BUILDING_TOWN = 302,
-    BUILDING_ENEMYCASTLE = 351,
+    FARM = 301,
+    TOWN = 302,
+    ENEMYCASTLE = 351,
 }
 
 /// <summary>
@@ -72,7 +74,7 @@ public enum TYPE_MANAGEMENT
     UP_HP = 3,
     
     GOLD = 101,
-    POPULATION = 102,
+    SUPPLY = 102,
 }
 
 public enum TYPE_KEY
@@ -86,10 +88,9 @@ public enum STATE_GAME
 {
 
     NONE = 0,
-    PAUSE = 1,
 
-    LOSE = 2,
-    WIN = 3,
+    LOSE = 1,
+    WIN = 2,
 }
 
 /// <summary>
@@ -121,11 +122,12 @@ public class VariableManager
     public static readonly short POOLMANAGER_NOTEXIST = -1;
     public static readonly int MAX_SELECT = 30;             // 최대 선택가능 수
 
-    public static readonly int MAX_POPULATION = 200;
+    public static readonly int MAX_SUPPLY = 200;
     public static readonly int MAX_GOLD = 99_999_999;
 
     public static readonly int MAX_CONTROL_UNITS = 200;
     public static readonly int MAX_BUILDINGS = 100;
+    public static readonly int MAX_ENEMY_UNITS = 50;
 
     public static readonly int MAX_SAVE_COMMANDS = 50;
     public static readonly int MAX_RESERVE_COMMANDS = 5;
@@ -135,6 +137,8 @@ public class VariableManager
     public static readonly int MAX_KEYS = 8;                // M, S, H, P, A, Q, W, E 더 추가되면 값을 늘린다!
 
     public static readonly int MAX_BUILD_BUILDINGS = 3;
+
+    public static readonly int MAX_MISSIONS = 2;
 
     public static readonly int MIN_DAMAGE = 1;
 

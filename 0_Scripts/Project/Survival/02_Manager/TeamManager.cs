@@ -66,4 +66,10 @@ public class TeamManager : MonoBehaviour
 
         return upgrades[teamNum];
     }
+
+    public bool CompareTeam(AllianceInfo _allianceInfo, int _layer)
+    {
+
+        return _allianceInfo.TeamLayer == _layer;
+    }
 }
