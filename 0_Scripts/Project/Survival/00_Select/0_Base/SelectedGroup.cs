@@ -7,14 +7,14 @@ using UnityEngine;
 public class SelectedGroup
 {
 
-    private List<Selectable> selected;
+    private List<Selectable> selected;                          // 현재 선택된 그룹
 
-    public bool isOnlySelected = false;
-    private TYPE_SELECTABLE groupType;
+    public bool isOnlySelected = false;                         // 혼자 선택할 수 있는 유닛?
+    private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
 
-    public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }
+    public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }  // 비었는지 확인
 
-    public TYPE_SELECTABLE GroupType => groupType;
+    public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
 
     private bool IsBuildingType
     {
@@ -75,12 +75,18 @@ public class SelectedGroup
         }
     }
 
+    /// <summary>
+    /// 생성자
+    /// </summary>
     public SelectedGroup()
     {
 
         selected = new List<Selectable>(VariableManager.MAX_SELECT);
     }
 
+    /// <summary>
+    /// 선택 그룹 초기화
+    /// </summary>
     public void Clear()
     {
 
@@ -136,6 +142,7 @@ public class SelectedGroup
 
             if (groupType == type) continue;
 
+            // 그룹 타입이 같은지 확인
             if (groupNum == typeNum) groupType = (TYPE_SELECTABLE)groupNum;
                 
             // 전투 유닛과 비전투 유닛이 섞인 그룹이면 비전투 유닛 버튼을 준다
@@ -179,18 +186,28 @@ public class SelectedGroup
     }
 
 
+    /// <summary>
+    /// 해당 유닛 포함 여부
+    /// </summary>
     public bool IsContains(Selectable _select)
     {
 
         return selected.Contains(_select);
     }
 
+
+    /// <summary>
+    /// 선택 유닛 정보 넘긴다 유닛 슬롯쪽에서 활용
+    /// </summary>
     public List<Selectable> Get()
     {
 
         return selected;
     }
 
+    /// <summary>
+    /// 선택 그룹 사이즈 가져온다
+    /// </summary>
     public int GetSize()
     {
 

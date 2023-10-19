@@ -6,6 +6,9 @@ using UnityEngine;
 public class RandomAction : BuildingAction
 {
 
+    /// <summary>
+    /// ¾Ç¸¶ ¼º ¿ëµµ
+    /// </summary>
     public override void Action(Building _building)
     {
 

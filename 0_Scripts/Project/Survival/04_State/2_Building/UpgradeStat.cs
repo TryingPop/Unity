@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 대장간용도
+/// </summary>
 [CreateAssetMenu(fileName = "Upgrade", menuName = "Action/Building/Upgrade")]
 public class UpgradeStat : BuildingAction
 {

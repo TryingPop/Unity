@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 업그레이드 정보
+/// </summary>
 [System.Serializable]
 public class UpgradeInfo
 {

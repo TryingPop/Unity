@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 다음 버튼으로 Composite랑 같다
+/// </summary>
 [CreateAssetMenu(fileName = "GoNext", menuName = "Button/Main/GoNext")]
 public class BtnGoNext : ButtonInfo
 {
 
     [SerializeField] protected ButtonHandler nextBtns;
 
+    /// <summary>
+    /// 길이 8 이상이면 null 반환!
+    /// </summary>
     public ButtonHandler NextBtns
     {
 

@@ -8,22 +8,22 @@ using UnityEngine.UI;
 public class Building : Selectable
 {
 
-    [SerializeField] protected Transform buildingObj;
+    [SerializeField] protected Transform buildingObj;               // 건물 생성과 관련된 옵션
 
     [SerializeField] protected STATE_SELECTABLE myState;
 
-    [SerializeField] protected NavMeshObstacle myObstacle;
+    [SerializeField] protected NavMeshObstacle myObstacle;          // 완성 시 비켜 지나가게 설정
 
-    [SerializeField] protected BuildingStateAction myStateAction;
-    [SerializeField] protected SightMesh mySight;
+    [SerializeField] protected BuildingStateAction myStateAction;   // 빌딩의 행동
+    [SerializeField] protected SightMesh mySight;                   // 시야
 
     [SerializeField] protected BuildOpt opt;
     
-    protected ushort curBuildTurn;              // 건설 진행 시간
-    protected ushort maxTurn;                   // 행동 최대 턴
+    protected ushort curBuildTurn;                                  // 건설 진행 시간
+    protected ushort maxTurn;                                       // 행동 최대 턴
 
-    public static WaitForSeconds completeTimer;
-    protected List<Command> cmds;
+    public static WaitForSeconds completeTimer;                     // 완성 알려주는 시간
+    protected List<Command> cmds;                                   // 명령
 
     public override int MyState
     {
@@ -47,7 +47,7 @@ public class Building : Selectable
             myTurn = 0;
             myStateAction = value;
         }
-    }
+    }                   // 외부에서 강제로 행동을 바꿀 때
 
     public ushort MaxTurn
     {
@@ -125,6 +125,9 @@ public class Building : Selectable
         myMinimap.SetColor(teamColor);
     }
 
+    /// <summary>
+    /// 미완성 시와 사망 시 아무런 행동도 안한다
+    /// </summary>
     public void Action()
     {
 
@@ -140,6 +143,9 @@ public class Building : Selectable
         else myStateAction.Action(this);
     }
 
+    /// <summary>
+    /// 건물 건설, opt 타이밍에 맞춰 건설한다
+    /// </summary>
     protected void Build()
     {
 
@@ -180,6 +186,9 @@ public class Building : Selectable
         myHitBar.SetHp(curHp);
     }
 
+    /// <summary>
+    /// 수리는 유닛의 수리 속도에, 건물 건설은 건물의 정보에서 한다
+    /// </summary>
     public override void Heal(int _atk)
     {
 
@@ -196,6 +205,9 @@ public class Building : Selectable
         }
     }
 
+    /// <summary>
+    /// 건물 건설에서 사용한다
+    /// </summary>
     public void DisableSelectable()
     {
 
@@ -204,6 +216,9 @@ public class Building : Selectable
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
+    /// <summary>
+    /// 완성되었음을 알리는 코루틴
+    /// </summary>
     private IEnumerator FinishedBuildCoroutine()
     {
 
@@ -219,6 +234,9 @@ public class Building : Selectable
         myMesh.material.color = Color.white;
     }
 
+    /// <summary>
+    /// 사망 
+    /// </summary>
     public override void Dead()
     {
 
@@ -242,6 +260,9 @@ public class Building : Selectable
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
+    /// <summary>
+    /// 유닛 슬롯에서 출력
+    /// </summary>
     public override void SetInfo(Text _txt)
     {
 
@@ -252,6 +273,9 @@ public class Building : Selectable
         else _txt.text = $"Hp : {hp}\nAction : {100 * myTurn / maxTurn}%";
     }
 
+    /// <summary>
+    /// 유닛과 달리 건물은 mouse R은 받자마자 바로 실행!
+    /// </summary>
     public override void GetCommand(Command _cmd, bool _add = false) 
     {
 

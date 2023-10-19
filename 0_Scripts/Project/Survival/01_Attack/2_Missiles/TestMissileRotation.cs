@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 회전 테스트 용도
+/// </summary>
 public class TestMissileRotation : MonoBehaviour
 {
 

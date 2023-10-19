@@ -6,7 +6,8 @@ using UnityEngine;
 public class UnitHold : IUnitAction
 {
 
-    public override void Action(Unit _unit) { _unit.MyTurn++; }
+    // 그냥 제자리에 서있는다
+    public override void Action(Unit _unit) { }
 
     public override void OnEnter(Unit _unit)
     {

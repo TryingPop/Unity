@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 팀 정보 보유 클래스
+/// </summary>
 public class TeamManager : MonoBehaviour
 {
 
     public static TeamManager instance;
-    [SerializeField] private AllianceInfo[] teams;
+    [SerializeField] private AllianceInfo[] teams;      // 팀 상태
 
-    [SerializeField] private UpgradeInfo[] upgrades;
+    [SerializeField] private UpgradeInfo[] upgrades;    // 업글 상태
 
     public AllianceInfo PlayerTeamInfo => teams[VariableManager.TEAM_PLAYER];
     public AllianceInfo EnemyTeamInfo => teams[VariableManager.TEAM_ENEMY];
@@ -45,6 +48,9 @@ public class TeamManager : MonoBehaviour
         else return -1;
     }
 
+    /// <summary>
+    /// 레이어로 팀 정보 찾기
+    /// </summary>
     public AllianceInfo GetTeamInfo(int _layer)
     {
 
@@ -56,6 +62,9 @@ public class TeamManager : MonoBehaviour
         return teams[teamNum];
     }
 
+    /// <summary>
+    /// 레이어로 업그레이드 정보 찾기
+    /// </summary>
     public UpgradeInfo GetUpgradeInfo(int _layer)
     {
 
@@ -67,6 +76,9 @@ public class TeamManager : MonoBehaviour
         return upgrades[teamNum];
     }
 
+    /// <summary>
+    /// 팀 정보와 레이어 정보 비교 -> 미션 확인용!
+    /// </summary>
     public bool CompareTeam(AllianceInfo _allianceInfo, int _layer)
     {
 

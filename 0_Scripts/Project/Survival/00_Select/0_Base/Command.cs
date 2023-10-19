@@ -2,34 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 명령 전달용 클래스
+/// </summary>
 public class Command
 {
 
+    // 풀링 스텍
     private static Stack<Command> pool = null;
-    // private static int curCommand = 0;
 
+    // 회오리 모양 배치에 쓰이는 변수
     public static float xBatchSize = 2f;
     public static float zBatchSize = 2f;
 
-    public ushort unitNums;
-    protected ushort receiveNum;
-    public Vector3 pos;
-    public Selectable target;
+    
+    public ushort unitNums;             // 전달할 유닛 수
+    protected ushort receiveNum;        // 받은 변수, 풀링확인용
+    public Vector3 pos;                 // 명령의 목적지
+    public Selectable target;           // 명령의 표적
 
-    public STATE_SELECTABLE type;
+    public STATE_SELECTABLE type;       // 명령 타입
 
+    // 생성자
     public Command(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
-        Set(_unitNums, _type, _pos, _target);
+        Init(_unitNums, _type, _pos, _target);
     }
+
 
     public Command(int _unitNums, STATE_SELECTABLE _type)
     {
 
-        Set(_unitNums, _type);
+        Init(_unitNums, _type);
     }
 
+
+    /// <summary>
+    /// 명령 무사히 수령 이후 회오리 배치 할지 묻는다
+    /// </summary>
+    /// <param name="_size"></param>
     public void Received(int _size) 
     {
 
@@ -65,7 +77,10 @@ public class Command
         ChkAllReceived();
     }
 
-    public void Set(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
+    /// <summary>
+    /// 초기화
+    /// </summary>
+    public void Init(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
         unitNums = (ushort)_unitNums;
@@ -76,7 +91,10 @@ public class Command
         pos = _pos;
     }
 
-    public void Set(int _unitNums, STATE_SELECTABLE _type)
+    /// <summary>
+    /// 초기화
+    /// </summary>
+    public void Init(int _unitNums, STATE_SELECTABLE _type)
     {
 
         unitNums = (ushort)_unitNums;
@@ -134,6 +152,9 @@ public class Command
         }
     }
 
+    /// <summary>
+    /// 명령 생성, 여기서 풀링
+    /// </summary>
     public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
@@ -146,14 +167,16 @@ public class Command
         {
 
             Command cmd = pool.Pop();
-            cmd.Set(_unitNums, _type, _pos, _target);
+            cmd.Init(_unitNums, _type, _pos, _target);
             return cmd;
         }
 
-        // else if (curCommand + pool.Count > VariableManager.MAX_COMMANDS) return null;
         else return new Command(_unitNums, _type, _pos, _target);
     }
 
+    /// <summary>
+    /// 명령 생성, 여기서 풀링
+    /// </summary>
     public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type)
     {
 
@@ -165,11 +188,10 @@ public class Command
         {
 
             Command cmd = pool.Pop();
-            cmd.Set(_unitNums, _type);
+            cmd.Init(_unitNums, _type);
             return cmd;
         }
 
-        // else if (curCommand + pool.Count > VariableManager.MAX_COMMANDS) return null;
         else return new Command(_unitNums, _type);
     }
 }

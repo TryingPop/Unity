@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
 using System.IO;
-using Unity.VisualScripting;
 
+/// <summary>
+/// 이미지 캡처용
+/// </summary>
 public class CaptureManager : MonoBehaviour
 {
 

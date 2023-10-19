@@ -95,6 +95,7 @@ public class GameScreen : MonoBehaviour,
             if (inputManager.MyState == 0)
             {
 
+                //명령 수행
                 inputManager.SavePos = eventData.position;
                 inputManager.CmdType = STATE_SELECTABLE.MOUSE_R;
                 inputManager.SavePointToRay(true, true);
@@ -115,13 +116,16 @@ public class GameScreen : MonoBehaviour,
             if (chkSelect)
             {
 
+                // 유닛 선택인지 확인
                 Vector2 nowPos = eventData.position;
 
                 InputManager inputManager = InputManager.instance;
 
+                // 드래그 범위가 일정 크기 되는지 확인
                 if (Vector2.SqrMagnitude(clickPos - nowPos) < 100f)
                 {
 
+                    // 그냥 선택 or 더블클릭 선택 확인
                     inputManager.SavePos = eventData.position;
                     inputManager.SavePointToRay(false, true);
 
@@ -131,6 +135,8 @@ public class GameScreen : MonoBehaviour,
                         if (chkDoubleClick)
                         {
 
+                            // 0.3초안에 두번 눌렀으면 더블클릭 인정
+                            // 화면 범위 안에 같은 유닛을 선택한다
                             inputManager.DoubleClickSelect(myRightTop, myLeftBottom);
                             chkDoubleClick = false;
                         }
@@ -142,6 +148,7 @@ public class GameScreen : MonoBehaviour,
                         }
                     }
                 }
+                // 드래그 선택
                 else inputManager.DragSelect(clickPos, nowPos);
 
                 chkSelect = false;
@@ -149,6 +156,7 @@ public class GameScreen : MonoBehaviour,
         }
     }
 
+    // 드래그 취소
     public void OnPointerExit(PointerEventData eventData)
     {
 

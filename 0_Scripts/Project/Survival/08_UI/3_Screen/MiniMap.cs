@@ -34,6 +34,9 @@ public class MiniMap : MonoBehaviour,
         miniMapSize = _miniMapSize;
     }
 
+    /// <summary>
+    /// 미니맵 크기 계산
+    /// </summary>
     protected void SetMiniMapPos()
     {
 
@@ -92,6 +95,7 @@ public class MiniMap : MonoBehaviour,
 
             if (GameManager.instance.IsStop) return;
 
+            // 화면 이동용도
             Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
             camFollow.position = ScaleValueToWorldMap(scaleValue, false);
         }
@@ -110,11 +114,13 @@ public class MiniMap : MonoBehaviour,
             if (inputManager.MyState == 0)
             {
 
+                // 캠이동
                 camFollow.position = ScaleValueToWorldMap(scaleValue, false);
             }
             else
             {
 
+                // 명령 수행
                 Vector3 pos = ScaleValueToWorldMap(scaleValue, true);
                 inputManager.GiveCmd(pos);
             }
@@ -127,6 +133,7 @@ public class MiniMap : MonoBehaviour,
             if (inputManager.MyState == 0)
             {
 
+                // 명령 수행
                 bool add = Input.GetKey(KeyCode.LeftShift);
 
                 Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
@@ -136,6 +143,7 @@ public class MiniMap : MonoBehaviour,
                 inputManager.CmdType = STATE_SELECTABLE.MOUSE_R;
                 inputManager.GiveCmd(pos);
             }
+            // 현재 키입력 취소
             else inputManager.Cancel();
         }
     }

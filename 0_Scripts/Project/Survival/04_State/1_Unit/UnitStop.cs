@@ -9,12 +9,14 @@ public class UnitStop : IUnitAction
     public override void Action(Unit _unit)
     {
 
+        // 한턴 쉬고 바로 탈출!
         OnExit(_unit);
     }
 
     public override void OnEnter(Unit _unit)
     {
 
+        
         _unit.TargetPos = _unit.transform.position;
         _unit.MyAnimator.SetFloat("Move", 0f);
     }

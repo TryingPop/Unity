@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// ¿Ø¥÷¿« «‡µø
+/// </summary>
 public abstract class IUnitAction : IAction<Unit>
 {
 

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 따라다니는 낱개
+/// </summary>
 public class TargetUI : MonoBehaviour
 {
 

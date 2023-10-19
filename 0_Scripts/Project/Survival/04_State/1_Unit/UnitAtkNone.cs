@@ -6,9 +6,11 @@ using UnityEngine;
 public class UnitAtkNone : UnitNone
 {
 
+    
     public override void Action(Unit _unit)
     {
 
+        // 경계 적 발견 시 공격!
         _unit.MyAttack.FindTarget(_unit, true);
         if (_unit.Target != null) OnExit(_unit, STATE_SELECTABLE.UNIT_ATTACK);
     }

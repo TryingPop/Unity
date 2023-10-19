@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+/// <summary>
+/// 풀링 오브젝트! -> 유니티 pooling 기법을 보고 비슷하게 작성
+/// </summary>
 public class PoolManager : MonoBehaviour
 {
 
     public static PoolManager instance;
     [SerializeField] private PoolingData[] data;
-    private Transform[] parents;
-    private Stack<GameObject>[] usedPrefabs;
+    private Transform[] parents;                // 해당 prefabIdx의 부모 객체
+    private Stack<GameObject>[] usedPrefabs;    // 사용된 프리팹 모음집
     [SerializeField] private int[] curNums;
 
     
@@ -88,6 +91,9 @@ public class PoolManager : MonoBehaviour
         return data[_idx].prefab;
     }
 
+    /// <summary>
+    /// 해당 좌표로 유닛 생성
+    /// </summary>
     public GameObject GetPrefabs(int _idx, int _layer, Vector3 _pos)
     {
 
@@ -101,6 +107,9 @@ public class PoolManager : MonoBehaviour
         return go;
     }
 
+    /// <summary>
+    /// 해당 좌표와 바라보는 방향 설정해서 좌표 obj 생성
+    /// </summary>
     public GameObject GetPrefabs(int _idx, int _layer, Vector3 _pos, Vector3 _forward)
     {
 
@@ -115,6 +124,9 @@ public class PoolManager : MonoBehaviour
         return go;
     }
 
+    /// <summary>
+    ///  다 사용 했을 경우
+    /// </summary>
     public void UsedPrefab(GameObject _prefab, int _idx)
     {
 
@@ -171,6 +183,9 @@ public class PoolManager : MonoBehaviour
         return GetPrefabs(prefabIdx, _layer, _pos, _forward);
     }
 
+    /// <summary>
+    /// 같은 오브젝트 생성
+    /// </summary>
     public GameObject GetSamePrefabs(Selectable _chkObj, int _layer, Vector3 _pos)
     {
 

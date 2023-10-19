@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 화면에 드래그할 때 영역 그리는 용도
+/// OnGui아니면 에러 뜬다!
+/// </summary>
 public class DrawRect
 {
 

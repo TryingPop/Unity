@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 범위 공격
+/// </summary>
 [CreateAssetMenu(fileName = "MeleeArea", menuName = "Attack/MeleeArea")]
 public class MeleeArea : MeleeTarget
 {

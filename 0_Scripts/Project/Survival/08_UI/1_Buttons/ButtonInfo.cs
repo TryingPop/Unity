@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 버튼 정보
+/// </summary>
 public abstract class ButtonInfo : IAction<InputManager>
 {
 

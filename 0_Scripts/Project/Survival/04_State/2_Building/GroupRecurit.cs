@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 여러명 동시 생산
+/// </summary>
 [CreateAssetMenu(fileName = "GroupRecruit", menuName = "Action/Building/GroupRecruit")]
 public class GroupRecurit : BuildingAction
 {
@@ -51,6 +54,7 @@ public class GroupRecurit : BuildingAction
                 if (unit)
                 {
 
+                    // 목표 지점 이동 명령어
                     unit.AfterSettingLayer();
                     Command cmd = Command.GetCommand(1, STATE_SELECTABLE.UNIT_MOVE, _building.TargetPos, _building.Target);
                     unit.GetCommand(cmd);

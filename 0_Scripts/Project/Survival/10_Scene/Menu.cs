@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// 설정 누르면 활성화할꺼
+/// </summary>
 public class Menu : MonoBehaviour
 {
 

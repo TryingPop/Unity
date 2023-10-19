@@ -11,7 +11,7 @@ public class UnitAtkPatrol : UnitPatrol
 
 
         base.Action(_unit);
-
+        // 경계하면서 순찰
         _unit.MyAttack.FindTarget(_unit, true);
         if (_unit.Target != null) _unit.ActionDone(STATE_SELECTABLE.UNIT_ATTACK);
     }

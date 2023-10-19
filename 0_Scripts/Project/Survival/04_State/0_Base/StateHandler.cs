@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
+/// <summary>
+/// 행동 모음집
+/// </summary>
 public abstract class StateHandler<T> : ScriptableObject
 {
 

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 건물 건설 버튼 건물과 매칭 시켜줘야한다
+/// </summary>
 [CreateAssetMenu(fileName = "Build", menuName = "Button/Sub/Build")]
 public class BtnSubBuild : ButtonInfo
 {

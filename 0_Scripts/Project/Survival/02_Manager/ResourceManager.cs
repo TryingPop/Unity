@@ -131,6 +131,9 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 해당 수치만큼 자원 획득
+    /// </summary>
     public void AddResources(int _gold, int _supply)
     {
 
@@ -153,6 +156,9 @@ public class ResourceManager : MonoBehaviour
         UpdateText();
     }
 
+    /// <summary>
+    /// 자원 현황 갱신
+    /// </summary>
     private void UpdateText()
     {
 

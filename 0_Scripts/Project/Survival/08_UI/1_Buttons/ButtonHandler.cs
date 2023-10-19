@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 버튼 모음집!
+/// </summary>
 [CreateAssetMenu(fileName = "Button", menuName = "StateAction/Button")]
 public class ButtonHandler : StateHandler<ButtonInfo>
 {
@@ -55,6 +58,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
             return idxs;
         }
     }
+
     public void Action(InputManager _inputManager)
     {
 
@@ -62,7 +66,9 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         if (idx != -1) actions[idx].Action(_inputManager);
     }
 
-    
+    /// <summary>
+    /// 즉발형 확인
+    /// </summary>
     public void Changed(InputManager _inputManager)
     {
 
@@ -70,6 +76,9 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         if (idx != -1) actions[idx].OnEnter(_inputManager);
     }
 
+    /// <summary>
+    /// 강제 종료
+    /// </summary>
     public void ForcedQuit(InputManager _inputManager)
     {
 

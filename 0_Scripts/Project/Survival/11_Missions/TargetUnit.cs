@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// ÇØ´ç Å¸ÀÔÀÇ À¯´Ö ÆÄ±«
+/// </summary>
 [CreateAssetMenu(fileName = "TargetUnit", menuName = "Mission/TargetUnit")]
 public class TargetUnit : Mission
 {
 
-    [SerializeField] protected Selectable target;
-    [SerializeField] protected int targetLayer;
-    [SerializeField] protected Vector3[] initPos;
-    [SerializeField] protected int targetNum;
+    [SerializeField] protected Selectable target;   // Å¸°Ù À¯´Ö
+    [SerializeField] protected int targetLayer;     // Å¸°ÙÀÇ ÆÀ Á¤º¸
+    [SerializeField] protected Vector3[] initPos;   // ½ÃÀÛ ½Ã »ý¼ºÇÒ À§Ä¡
+    [SerializeField] protected int targetNum;       // Å¸°Ù ¼ö
     protected int curNum;
 
 
@@ -27,6 +30,7 @@ public class TargetUnit : Mission
 
         curNum = 0;
 
+        // Å¸°Ù ¼ö ¸¸Å­ À¯´Ö »ý¼º
         for (int i = 0; i < targetNum; i++)
         {
 
@@ -72,6 +76,7 @@ public class TargetUnit : Mission
         }
     }
 
+    // »óÅÂ ¼³¸í
     public override string GetMissionObjectText()
     {
 

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,32 +15,36 @@ public enum STATE_SIZE { SMALL = 1, MEDIUM = 2, LARGE = 3, XLARGE = 4 }
 /// </summary>
 [RequireComponent(typeof(Stats)),
     RequireComponent(typeof(SightMesh))]
-public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 transform 을 이용할 예정
-                                    IDamagable      // 모든 유닛은 피격 가능하다!
+public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
+                                    IDamagable          // 모든 유닛은 피격 가능하다!
 {
 
     [Header("생존 관련 변수")]
-    protected int maxHp;                            // 최대 체력 - 스크립터블 오브젝트로 받아 올 예정이지만
-                                                    // 업그레이드로 증가가능하게 따로 변수 추가했다
+    protected int maxHp;                                // 최대 체력 - 스크립터블 오브젝트로 받아 올 예정이지만
+                                                        // 업그레이드로 증가가능하게 따로 변수 추가했다
     
-    protected int curHp;
-    protected int def;
+    protected int curHp;                                // 현재 Hp
+    protected int def;                                  // 방어력
 
-    protected HitBar myHitBar;
+    protected HitBar myHitBar;                          // 체력바
 
-    protected AllianceInfo myAlliance;
-    protected UpgradeInfo myUpgrades;
+    protected AllianceInfo myAlliance;                  // 팀 정보
+    protected UpgradeInfo myUpgrades;                   // 업그레이드 정보
 
-    [SerializeField] protected Stats myStat;
+    [SerializeField] protected Stats myStat;            // 스텟
     [SerializeField] protected SightMesh myMinimap;
-    public Stats MyStat => myStat;
+    public Stats MyStat => myStat;                      
 
-    [SerializeField] protected Selectable target;
-    [SerializeField] protected Vector3 targetPos;
+    [SerializeField] protected Selectable target;       // 목표물
+    [SerializeField] protected Vector3 targetPos;       // 목표 좌표
 
-    [SerializeField] protected ushort myTurn;
+    [SerializeField] protected ushort myTurn;           // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
 
-    [SerializeField] protected bool isStarting = false;
+    [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
+
+    /// <summary>
+    /// 스텟 설정
+    /// </summary>
     public virtual void SetStat()
     {
          
@@ -59,6 +62,9 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         }
     }
 
+    /// <summary>
+    /// 체력 회복
+    /// </summary>
     public virtual void Heal(int _atk)
     {
 
@@ -68,6 +74,9 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         myHitBar.SetHp(curHp);
     }
 
+    /// <summary>
+    /// 풀 Hp 인지 확인
+    /// </summary>
     public bool FullHp { get { return curHp == maxHp; } }
 
     /// <summary>
@@ -126,6 +135,7 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
 
     /// <summary>
     /// 5만번대 이상은 혼자 선택가능!
+    /// 스타 1에서 건물 여러 개 선택 안되는 걸 따왔다
     /// </summary>
     public bool IsOnlySelected
     {
@@ -149,6 +159,9 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         curHp = maxHp;
     }
 
+    /// <summary>
+    /// 유닛 생성하고, 레이어 바꾼뒤 실행할 기능들 모아둔 메서드
+    /// </summary>
     public abstract void AfterSettingLayer();
 
     /// <summary>
@@ -202,6 +215,9 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         StartCoroutine(Disabled());
     }
 
+    /// <summary>
+    /// 사망 시 사망 모션 얼마나 볼건지 설정
+    /// </summary>
     protected IEnumerator Disabled()
     {
 
@@ -210,6 +226,9 @@ public abstract class Selectable : MonoBehaviour,   // 선택되었다는 UI 에서 tran
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
+    /// <summary>
+    /// 유닛 슬롯 UI에 현재 정보 넘길 때 사용하는 메서드
+    /// </summary>
     public abstract void SetInfo(Text _txt);
 
     #region command

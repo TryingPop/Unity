@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 랜덤 업그레이드 악마성 용도
+/// </summary>
 [CreateAssetMenu(fileName ="RandomUpgrade", menuName = "Action/Building/RandomUpgrade")]
 public class RandomUpgrade : BuildingAction
 {

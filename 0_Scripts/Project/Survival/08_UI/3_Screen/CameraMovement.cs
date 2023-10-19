@@ -1,6 +1,9 @@
 using Cinemachine;
 using UnityEngine;
 
+/// <summary>
+/// 카메라가 쫓는 대상
+/// </summary>
 public class CameraMovement : MonoBehaviour
 {
 
@@ -44,7 +47,6 @@ public class CameraMovement : MonoBehaviour
         
         float y = Input.GetAxis("Mouse ScrollWheel") * -wheelSpeed;
         y = y + mainCam.m_Lens.FieldOfView;
-        
         
 
         ChkBound(ref x, ref y, ref z);

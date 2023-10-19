@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// 적 명령 클래스
+/// </summary>
 public class EnemyOrderManager : MonoBehaviour
 {
 
@@ -13,30 +16,31 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField] private List<Building> enemyBuildings;
 
 
-    [SerializeField, Range(5f, 600f)] private float waveStartTime;
-    [SerializeField, Range(5, 20)] private float thinkMinTime = 10f;
-    [SerializeField, Range(20, 40)] private float thinkMaxTime = 20f;
+    [SerializeField, Range(5f, 600f)] private float waveStartTime;          // 적 활동 시작 시간
+    [SerializeField, Range(5, 20)] private float thinkMinTime = 10f;        // 최소 반복 간격
+    [SerializeField, Range(20, 40)] private float thinkMaxTime = 20f;       // 최대 반복 간격
 
-    [SerializeField, Range(1, 10)] private short maxRandomTimes;
-    private WaitForSeconds[] times;
+    [SerializeField, Range(1, 10)] private short maxRandomTimes;            // 보관할 시간들 개수
+    private WaitForSeconds[] times;                                         // 보관된 시간
 
-    private Vector3[] initPos;
+    private Vector3[] initPos;                                              // 생성 위치
 
-    private bool waveStart = false;
+    public bool waveStart = false;                                         // 확인용
 
-    private Transform target;
+    private Transform target;                                               // 공격 대상
 
-    [SerializeField] private int respawnEnemyNum = 2;
+    [SerializeField] private int respawnEnemyNum = 2;                       // 리젠 포스에서 생성할 숫자
 
     // 생성 번호
-    [SerializeField] private ushort[] respawnEnemySelectIdxs;
-    private short[] respawnEnemyPoolIdxs;
+    [SerializeField] private ushort[] respawnEnemySelectIdxs;               // 생성할 적 idx
+    private short[] respawnEnemyPoolIdxs;                                   
 
-    private ushort forcedAtkNum = 30;
+    private ushort forcedAtkNum = 30;                                       // 강제 공격할 숫자
 
     private void Awake()
     {
 
+        // 랜덤 생각 시간 세팅(캐싱)
         times = new WaitForSeconds[maxRandomTimes];
         for (int i = 0; i < maxRandomTimes; i++)
         {
@@ -64,6 +68,10 @@ public class EnemyOrderManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 타겟이 죽었거나 없는 거 확인
+    /// </summary>
+    /// <returns></returns>
     private bool IsTargetNull()
     {
 
@@ -73,6 +81,9 @@ public class EnemyOrderManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// 새로운 타겟 설정 건물 > 유닛 순서다
+    /// </summary>
     private void SetTarget()
     {
 
@@ -88,6 +99,9 @@ public class EnemyOrderManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// command 를 이용해 플레이어로 공격!
+    /// </summary>
     public void GoToPlayer()
     {
 
@@ -96,6 +110,9 @@ public class EnemyOrderManager : MonoBehaviour
         GiveCommand((ushort)unitNum, STATE_SELECTABLE.UNIT_ATTACK, target.position, true);
     }
     
+    /// <summary>
+    /// 적의 명령 주기!
+    /// </summary>
     private void GiveCommand(ushort _num, STATE_SELECTABLE _type, Vector3 _dir, bool _isUnit)
     {
 
@@ -154,6 +171,9 @@ public class EnemyOrderManager : MonoBehaviour
         _unit.GetCommand(cmd, true);
     }
 
+    /// <summary>
+    /// 악마성의 행동
+    /// </summary>
     public void BuildingAction()
     {
 
@@ -163,6 +183,9 @@ public class EnemyOrderManager : MonoBehaviour
         GiveCommand(num, type, Vector3.positiveInfinity, false);
     }
     
+    /// <summary>
+    /// 악마성이 터질 때 까지 반복
+    /// </summary>
     private IEnumerator OrderStart()
     {
 
@@ -176,11 +199,12 @@ public class EnemyOrderManager : MonoBehaviour
             initPos[i] = SetRandPos(pos, 15f);
         }
 
+        // 처음 대기 시간
         yield return new WaitForSeconds(waveStartTime);
 
         waveStart = true;
 
-        while (GameManager.instance.IsGameOver)
+        while (!GameManager.instance.IsGameOver)
         {
 
             if (forcedAtkNum >= VariableManager.MAX_ENEMY_UNITS) forcedAtkNum = (ushort)VariableManager.MAX_ENEMY_UNITS;
@@ -203,6 +227,9 @@ public class EnemyOrderManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// 적 생성
+    /// </summary>
     private void RespawnEnemy()
     {
 
@@ -229,6 +256,9 @@ public class EnemyOrderManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 주변에 랜덤 좌표 찾기
+    /// </summary>
     private Vector3 SetRandPos(Vector3 _randPos, float _range)
     {
 

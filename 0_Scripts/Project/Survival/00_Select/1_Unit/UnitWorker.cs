@@ -4,6 +4,10 @@ using UnityEngine;
 public class UnitWorker : Unit
 {
 
+    /// <summary>
+    /// 데미지 반응
+    /// </summary>
+    /// <param name="_trans"></param>
     protected override void OnDamageAction(Selectable _trans)
     {
 
@@ -15,6 +19,10 @@ public class UnitWorker : Unit
         ActionDone(STATE_SELECTABLE.UNIT_MOVE);
     }
 
+    /// <summary>
+    /// 공격이 수리므로 따로 설정
+    /// </summary>
+    /// <param name="_cmd"></param>
     protected override void ReadCommand(Command _cmd)
     {
 

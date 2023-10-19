@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 유도 미사일
+/// </summary>
 public class GuidedMissile : Missile
 {
 
-    protected Transform atker;
-    protected Selectable target;
+    protected Transform atker;          // 공격자
+    protected Selectable target;        // 대상
 
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected float moveSpeed;
@@ -48,6 +51,9 @@ public class GuidedMissile : Missile
     }
 
 
+    /// <summary>
+    /// 재활용
+    /// </summary>
     protected override void Used()
     {
 
@@ -56,6 +62,9 @@ public class GuidedMissile : Missile
         PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
     }
 
+    /// <summary>
+    /// 유도
+    /// </summary>
     public override void Action()
     {
 
@@ -73,6 +82,9 @@ public class GuidedMissile : Missile
         transform.LookAt(target.transform.position);
     }
 
+    /// <summary>
+    /// 언덕 보정 용도
+    /// </summary>
     protected void ChkMiss(int num = 0)
     {
 

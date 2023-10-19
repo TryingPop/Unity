@@ -5,7 +5,5 @@ using UnityEngine;
 public abstract class FollowMouse : MonoBehaviour
 {
 
-
-
     public abstract void SetPos();
 }

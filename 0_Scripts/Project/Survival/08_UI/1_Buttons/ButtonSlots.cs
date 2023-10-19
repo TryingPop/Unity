@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 버튼 활성화
+/// </summary>
 public class ButtonSlots : MonoBehaviour
 {
 
     [SerializeField] private Image[] btnImgs;
     [SerializeField] private GameObject[] btns;
     [SerializeField] private RectTransform[] btnRectTrans;
+
+    /// <summary>
+    /// 핸들러의 버튼 만큼 활성화
+    /// </summary>
     public void Init(ButtonHandler _handler)
     {
 

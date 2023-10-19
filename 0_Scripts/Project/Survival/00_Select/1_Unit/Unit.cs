@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
+/// <summary>
+/// 이 클래스를 상속받은 클래스들의 행동을 수행할 수 있는 가장 작은 클래스
+/// </summary>
 [RequireComponent(typeof(SightMesh)),
     RequireComponent(typeof(Animator)),
     RequireComponent(typeof(NavMeshAgent)),
@@ -15,24 +18,24 @@ public class Unit : Selectable
     #region 변수
     [Header("참조 변수")]
     [SerializeField] protected Animator myAnimator;
-    [SerializeField] protected Collider myCollider;
-    [SerializeField] protected NavMeshAgent myAgent;
-    [SerializeField] protected Rigidbody myRigid;
+    [SerializeField] protected Collider myCollider;                 // 사망 시 비활성화
+    [SerializeField] protected NavMeshAgent myAgent;                // 이동
+    [SerializeField] protected Rigidbody myRigid;                   
 
-    [SerializeField] protected STATE_SELECTABLE myState;
-    [SerializeField] protected UnitStateAction myStateAction;
-    [SerializeField] protected Attack myAttack;
-    [SerializeField] protected SightMesh mySight;
+    [SerializeField] protected STATE_SELECTABLE myState;            // 현재 상태 == 이게 명령 타입
+    [SerializeField] protected UnitStateAction myStateAction;       // 상태 패턴으로 구현된 행동
+    [SerializeField] protected Attack myAttack;                     // 공격 방법 및 공격 정보
+    [SerializeField] protected SightMesh mySight;                   // 시야
 
     [SerializeField] protected Vector3 patrolPos;
     
     [Header("값 변수")]
-    [SerializeField] protected bool stateChange;
-    [SerializeField] protected short maxMp;
+    [SerializeField] protected bool stateChange;                    // 행동 변화 감지
+    [SerializeField] protected short maxMp; 
     protected short curMp;
     protected int atk;
 
-    protected Queue<Command> cmds;
+    protected Queue<Command> cmds;                                  // 예약된 명령
     #endregion 변수
 
 
@@ -61,6 +64,9 @@ public class Unit : Selectable
         set { myState = (STATE_SELECTABLE)value; }
     }
 
+    /// <summary>
+    /// 스킬용인데 당장은 안쓴다
+    /// </summary>
     public int CurMp
     {
 
@@ -98,13 +104,18 @@ public class Unit : Selectable
         cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
     }
 
-
+    /// <summary>
+    /// 생성 시 초기화
+    /// </summary>
     protected virtual void OnEnable()
     {
 
         Init();
     }
 
+    /// <summary>
+    /// 스텟 설정
+    /// </summary>
     public override void SetStat()
     {
 
@@ -131,6 +142,8 @@ public class Unit : Selectable
         myAgent.enabled = true;
         ActionDone();
         
+        // 처음 배치된 유닛 확인
+        // 다음 진입은 풀링에서 꺼내질 때므로 못하게 막아야한다
         if (isStarting)
         {
 
@@ -216,6 +229,9 @@ public class Unit : Selectable
         OnDamageAction(select);
     }
 
+    /// <summary>
+    /// 피격 액션해야하는가
+    /// </summary>
     protected virtual bool ChkDmgReaction()
     {
 
@@ -223,6 +239,9 @@ public class Unit : Selectable
             || myState == STATE_SELECTABLE.UNIT_PATROL;
     }
 
+    /// <summary>
+    /// 피격 후 액션
+    /// </summary>
     protected virtual void OnDamageAction(Selectable _trans)
     {
 
@@ -266,6 +285,10 @@ public class Unit : Selectable
         myStat.ApplyResources(false);
     }
 
+    /// <summary>
+    /// 유닛 Type과 hp, 공격력 방어력 출력
+    /// </summary>
+    /// <param name="_txt"></param>
     public override void SetInfo(Text _txt)
     {
 
@@ -329,7 +352,9 @@ public class Unit : Selectable
         return true;
     }
 
-
+    /// <summary>
+    /// 예약 명령 읽을 상황?
+    /// </summary>
     public void ChkReservedCommand()
     {
 
@@ -343,6 +368,10 @@ public class Unit : Selectable
         ReadCommand(cmd);
     }
 
+    /// <summary>
+    /// 명령 읽기
+    /// </summary>
+    /// <param name="_cmd"></param>
     protected override void ReadCommand(Command _cmd)
     {
 

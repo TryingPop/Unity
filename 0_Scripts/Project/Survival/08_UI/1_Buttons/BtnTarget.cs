@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 타겟이 필요한 버튼
+/// </summary>
 [CreateAssetMenu(fileName = "Target", menuName = "Button/Main/Target")]
 public class BtnTarget : BtnPos
 {

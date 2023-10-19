@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Audio;
 using UnityEngine;
 
+/// <summary>
+/// ÃÑ¾Ë »ý¼º
+/// </summary>
 [CreateAssetMenu(fileName = "Gun", menuName = "Attack/Gun")]
 public class GunAttack : RangeTarget
 {
 
-    [SerializeField] protected ushort effectIdx;
+    [SerializeField] protected ushort effectIdx;            // ÅºÇÇ ÀÌÆåÆ®
     protected short effectPrefabIdx = -1;
 
-    [SerializeField] protected Vector3 effectOffset;
+    [SerializeField] protected Vector3 effectOffset;        // ÀÌÆåÆ® ½ÃÀÛ À§Ä¡
 
     protected short EffectPrefabIdx
     {
@@ -26,6 +28,9 @@ public class GunAttack : RangeTarget
         } 
     }
 
+    /// <summary>
+    /// °ø°Ý ÅºÇÇ »ý¼º
+    /// </summary>
     public override void OnAttack(Unit _unit)
     {
 

@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.UI;
 using UnityEngine;
 
+/// <summary>
+/// 유저 유닛 고용
+/// </summary>
 [CreateAssetMenu(fileName = "Soldier", menuName = "Action/Building/Soldier")]
 public class RecruitSoldier : BuildingAction
 {
@@ -102,6 +104,7 @@ public class RecruitSoldier : BuildingAction
     public override void ForcedQuit(Building _building)
     {
 
+        // 강제 종료 시 환불
         ushort refundCost = (ushort)Mathf.FloorToInt(refund * Cost * 0.01f);
         targetStat.ApplyResources(false, true, true, false, refundCost);
         OnExit(_building);
@@ -124,7 +127,7 @@ public class RecruitSoldier : BuildingAction
             }
         }
 
-        
+        // 자원 확인 및 바로 소모
         if (!targetStat.ApplyResources(true, true, true, useStatCost, cost))
         {
 

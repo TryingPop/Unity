@@ -5,9 +5,10 @@ using UnityEngine;
 public class BulletCase : MonoBehaviour
 {
 
+
     [SerializeField] private Rigidbody myRigid;
-    [SerializeField] private Vector3 powOffset;
-    [SerializeField] private Vector3 rotOffset;
+    [SerializeField] private Vector3 powOffset;     // 튕기는 파워
+    [SerializeField] private Vector3 rotOffset;     // 튕기는 회전력
 
     [SerializeField] private ushort prefabIdx;
     protected short poolIdx = -1;
@@ -28,7 +29,9 @@ public class BulletCase : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// 시작에서만 한다
+    /// </summary>
     public void Init()
     {
 

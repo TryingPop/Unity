@@ -10,18 +10,19 @@ public class UnitSlots : MonoBehaviour
 
     [SerializeField] protected RectTransform slotUIRectTrans;
 
-    protected List<Slot> slots;                            // 크기가 변하므로 리스트로!
+    protected List<Slot> slots;                             // 크기가 변하므로 리스트로!
 
-    [SerializeField] protected Vector2 spacing;
+    [SerializeField] protected Vector2 spacing;             // 공간
 
     [Tooltip("x : left, y : right, z : top, w : bottom")]
-    [SerializeField] protected Vector4 padding;
+    [SerializeField] protected Vector4 padding;             // 초기 띄울 간격
 
-    protected Vector2 uiSize;
+    protected Vector2 uiSize;                               
     protected Vector2 slotSize;
 
     // protected List<Selectable> units;
 
+    // 유닛 슬롯 
     [SerializeField] protected GameObject nextBtn;
     [SerializeField] protected GameObject prevBtn;
 
@@ -34,6 +35,7 @@ public class UnitSlots : MonoBehaviour
     protected int[] matrixSize = new int[2];
 
     protected List<Selectable> curGroup;
+    // 현재 선택된 유닛 정보
     public List<Selectable> CurGroup
     {
 

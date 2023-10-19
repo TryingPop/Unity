@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 선택 유닛을 알려주는 ui ( 파티클이다!)
+/// </summary>
 public class SelectedUI : MonoBehaviour
 {
 

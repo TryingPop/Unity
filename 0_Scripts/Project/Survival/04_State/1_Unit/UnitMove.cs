@@ -9,15 +9,18 @@ public class UnitMove : IUnitAction
     public override void Action(Unit _unit)
     {
 
+        // 길 연산 중에는 패스 해당 구문 없으면 제대로 이동을 안한다!
         if (_unit.MyAgent.pathPending) return;
 
         if (_unit.Target != null)
         {
 
+            // 대상이 살아있는지 확인
             if (_unit.Target.gameObject.activeSelf
                 && _unit.Target.gameObject.layer != VariableManager.LAYER_DEAD)
             {
 
+                // 대상으로 이동
                 _unit.TargetPos = _unit.Target.transform.position;
                 _unit.MyAgent.SetDestination(_unit.TargetPos);
             }

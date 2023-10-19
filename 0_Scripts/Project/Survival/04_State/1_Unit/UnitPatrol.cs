@@ -6,6 +6,7 @@ using UnityEngine;
 public class UnitPatrol : IUnitAction
 {
 
+    // 두지점 반복
     public override void Action(Unit _unit)
     {
 
@@ -14,6 +15,7 @@ public class UnitPatrol : IUnitAction
         if (_unit.MyAgent.remainingDistance < 0.1f)
         {
 
+            //swap!
             _unit.TargetPos = _unit.PatrolPos;
             _unit.PatrolPos = _unit.MyAgent.destination;
             _unit.MyAgent.SetDestination(_unit.TargetPos);

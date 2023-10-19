@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 빌딩 행동 모음
+/// </summary>
 [CreateAssetMenu(fileName = "BuildingAction", menuName = "StateAction/BuildingAction")]
 public class BuildingStateAction : StateHandler<BuildingAction>
 {
@@ -29,7 +32,11 @@ public class BuildingStateAction : StateHandler<BuildingAction>
         if (idx != -1) actions[idx].OnEnter(_building);
         // else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
     }
-
+    
+    /// <summary>
+    /// 해당 행동 강제 종료
+    /// </summary>
+    /// <param name="_building"></param>
     public void ForcedQuit(Building _building)
     {
 

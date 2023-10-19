@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 유닛 정보 알려주는 창
+/// </summary>
 public class InfoManager : FollowMouse
 {
 
@@ -42,6 +45,9 @@ public class InfoManager : FollowMouse
         SetRatio();
     }
 
+    /// <summary>
+    /// 화면 비율 설정
+    /// </summary>
     public void SetRatio()
     {
 
@@ -52,6 +58,9 @@ public class InfoManager : FollowMouse
         screenRatio.y = Screen.height / canvasRect.y;
     }
 
+    /// <summary>
+    /// 유닛 슬롯에 들어가면 활성화!
+    /// </summary>
     public void EnterUIInfo(Selectable _target, Vector2 _infoPos)
     {
 
@@ -64,6 +73,9 @@ public class InfoManager : FollowMouse
         target.SetInfo(infoTxt);
     }
 
+    /// <summary>
+    /// 바뀌는 값만 수정
+    /// </summary>
     public override void SetPos()
     {
 
@@ -73,6 +85,9 @@ public class InfoManager : FollowMouse
         target.SetInfo(infoTxt);
     }
 
+    /// <summary>
+    /// 탈출
+    /// </summary>
     public void ExitUIInfo()
     {
 
@@ -81,6 +96,10 @@ public class InfoManager : FollowMouse
         uiCanvas.enabled = false;
     }
 
+    /// <summary>
+    /// 경고문 자원 부족 등을 알리기 위해  쓸 예정
+    /// </summary>
+    /// <param name="_str"></param>
     public void SetWarningTxt(string _str)
     {
 

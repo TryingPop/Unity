@@ -22,9 +22,11 @@ public class BuildBuilding : IUnitAction
         if (_unit.MyAgent.remainingDistance < _unit.Target.MyStat.MySize * 0.5f)
         {
 
+            // 일정 거리 안에 들어오면 이동 초기화
             _unit.MyAgent.ResetPath();
             _unit.MyAnimator.SetFloat("Move", 0f);
 
+            // 돈 확인
             if (_unit.Target.MyStat.ApplyResources(true, true, false, true))
             {
 
@@ -58,6 +60,7 @@ public class BuildBuilding : IUnitAction
         // 타겟이 없거나 건물이 아닌 경우 탈출!
         if (!_unit.Target) return;
 
+        
         // 타겟의 장소로 이동!
         _unit.MyAgent.destination = _unit.TargetPos;
         _unit.MyAnimator.SetFloat("Move", 1f);

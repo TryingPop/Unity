@@ -1,43 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Experimental.AI;
 
+/// <summary>
+/// 치킨
+/// </summary>
 public class Animal : Unit
 {
 
-    [SerializeField] protected AnimalOpt opt;
+    [SerializeField] protected AnimalOpt opt;               // 동물 옵션 - 동물은 2가지 행동 밖에 없다 이동할 좌표설정 & 대기
 
     protected override void OnEnable()
     {
 
         base.OnEnable();
 
-        StartCoroutine(Actions());
+        StartCoroutine(Actions());                          // FixedCoroutine이 아닌 랜덤 시간 대기해서 활동한다
     }
 
-    public override void OnDamaged(int _dmg, Transform _trans = null)
-    {
-
-        if (_trans) target = _trans.GetComponent<Selectable>();
-        base.OnDamaged(_dmg, _trans);
-    }
-
+    /// <summary>
+    /// 플레이어가 죽이면 골드 올라오는 이펙트생성과 골드 준다
+    /// </summary>
     public override void Dead()
     {
+
         base.Dead();
 
         if (target
             && target.gameObject.layer == VariableManager.LAYER_PLAYER)
         {
 
-            PoolManager.instance.GetPrefabs(opt.PrefabIdx, VariableManager.LAYER_DEAD);
+            var go = PoolManager.instance.GetPrefabs(opt.PrefabIdx, VariableManager.LAYER_DEAD);
+            go.transform.position = transform.position;
             ResourceManager.instance.AddResources(TYPE_MANAGEMENT.GOLD, opt.KillGold);
+
         }
     }
 
+    /// <summary>
+    /// 죽을 때까지 행동
+    /// </summary>
     protected IEnumerator Actions()
     {
 
@@ -48,6 +51,7 @@ public class Animal : Unit
 
             yield return opt.WaitTime;
 
+            if (myState == STATE_SELECTABLE.DEAD) yield break;
 
 
             int num = opt.RandActions;

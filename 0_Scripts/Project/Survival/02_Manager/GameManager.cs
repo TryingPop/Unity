@@ -12,15 +12,16 @@ public class GameManager : MonoBehaviour
 
     public STATE_GAME MyState => myState;
 
-    [SerializeField] protected List<Mission> playerMissions;
-    [SerializeField] protected List<Mission> enemyMissions;
+    
+    [SerializeField] protected List<Mission> playerMissions;        // 플레이어 승리 미션
+    [SerializeField] protected List<Mission> enemyMissions;         // 플레이어 패배 미션
 
-    [SerializeField] protected Text winTxt;
-    [SerializeField] protected Text loseTxt;
+    [SerializeField] protected Text winTxt;                         // 승리 조건용 텍스트
+    [SerializeField] protected Text loseTxt;                        // 패배 조건용 텍스트
 
-    [SerializeField] protected Text gameOverText;
+    [SerializeField] protected Text gameOverText;                   // 게임 끝났음을 알리는 텍스트
 
-    private bool isStop;
+    private bool isStop;                                            // 메뉴 활성화 중?
 
     public bool IsGameOver
     {
@@ -65,6 +66,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // 승리 조건은 최대 2개!
         if (playerMissions.Count > VariableManager.MAX_MISSIONS)
         {
 
@@ -75,6 +77,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
+
+        // 패배 조건은 최대 2개!
         if (enemyMissions.Count > VariableManager.MAX_MISSIONS)
         {
 
@@ -84,6 +88,9 @@ public class GameManager : MonoBehaviour
                 enemyMissions.RemoveAt(i);
             }
         }
+
+        //마우스 화면 밖 못 나가게 설정
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     private void Start()
@@ -92,6 +99,10 @@ public class GameManager : MonoBehaviour
         Init();
     }
 
+    /// <summary>
+    /// 미션 시작 시 행동 시작
+    /// 시작에서 잡아야할 유닛을 생성한다!
+    /// </summary>
     private void Init()
     {
 
@@ -128,6 +139,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 승리 확인
+    /// </summary>
     private bool ChkWin(List<Mission> _missions)
     {
 
@@ -140,6 +154,9 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// 조건 달성했는지 확인
+    /// </summary>
     public void Chk(Unit _unit, Building _building)
     {
 
@@ -156,6 +173,9 @@ public class GameManager : MonoBehaviour
         if (ChkWin(enemyMissions)) GameOver(false);
     }
 
+    /// <summary>
+    /// 게임 끝?
+    /// </summary>
     private void GameOver(bool _isWin)
     {
 
@@ -167,6 +187,9 @@ public class GameManager : MonoBehaviour
         gameOverText.text = $"{myState}";
     }
 
+    /// <summary>
+    /// 일시 정지에서 미션 오브젝트 키면 나오는 문구 설정
+    /// </summary>
     public void SetMissionObjectText()
     {
 

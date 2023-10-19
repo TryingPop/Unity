@@ -6,8 +6,8 @@ using UnityEngine;
 public class AcquiredResource : BuildingAction
 {
     
-    [SerializeField] protected short amount;
-    [SerializeField] protected TYPE_MANAGEMENT type;
+    [SerializeField] protected short amount;            // 자원 량
+    [SerializeField] protected TYPE_MANAGEMENT type;    // 자원 타입
 
     public override void Action(Building _building)
     {

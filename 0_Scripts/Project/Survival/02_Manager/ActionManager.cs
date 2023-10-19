@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// FixedUpdate, LateUpdate등 일괄 실행하기 위해 만든 클래스
+/// 유닛, 건물, 미사일이 여기서 일괄 행동한다!
+/// 실제로 성능 향상에 엄청 도움됐다
+/// </summary>
 public class ActionManager : MonoBehaviour
 {
 
@@ -14,6 +19,9 @@ public class ActionManager : MonoBehaviour
     private List<Building> playerBuildings;
     private List<Building> enemyBuildings;
 
+    /// <summary>
+    /// 유닛 히트바 풀링
+    /// </summary>
     private Stack<HitBar> usedHitBars;
     private List<HitBar> hitBars;
     

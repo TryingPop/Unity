@@ -6,9 +6,9 @@ using UnityEngine;
 public class BuildOpt : ScriptableObject
 {
 
-    [SerializeField] protected ushort buildTurn;
-    [SerializeField] protected ushort destroyIdx;
-    [SerializeField] protected float increaseY;
+    [SerializeField] protected ushort buildTurn;            // 생산에 걸리는 턴
+    [SerializeField] protected ushort destroyIdx;           // 파괴 이펙트 인덱스
+    [SerializeField] protected float increaseY;             // 건설 시 진행 정도를 보여주기 위해 메시 오브젝트를 조금씩 상승시킨다
     [SerializeField] protected float initPosY;
 
     protected short destroyPoolIdx = -1;

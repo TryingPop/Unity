@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 건물 건설 전 지을 수 있는지 확인용 스크립트
+/// </summary>
 public class PrepareBuilding : FollowMouse
 {
 
-    [SerializeField] protected MeshRenderer myMesh;
+    [SerializeField] protected MeshRenderer myMesh;         // 색상 변경용
 
-    [SerializeField] protected bool isBuild = true;
+    [SerializeField] protected bool isBuild = true;         // 건설가능 상태?
 
-    [SerializeField] public ushort selectIdx;
+    [SerializeField] public ushort selectIdx;               // 생성할 건물 idx
     [SerializeField] protected short prefabIdx = -1;
 
-    [SerializeField] protected Transform[] chkGround;
-    [SerializeField] protected LayerMask groundLayer;
-    [SerializeField] protected int interval;
+    [SerializeField] protected Transform[] chkGround;       // 현재 사용 X
+    [SerializeField] protected LayerMask groundLayer;       // 현재 사용 X
+    [SerializeField] protected int interval;                // 단위 배치용도 0.2 0.4f 자리 안가게 설정
 
     public int PrefabIdx
     { 
@@ -31,13 +34,19 @@ public class PrepareBuilding : FollowMouse
         } 
     }
 
+    /// <summary>
+    /// 초기화
+    /// </summary>
     public void Init()
     {
 
         gameObject.SetActive(true);
-        ActionManager.instance.AddFollowMouse(this);
+        ActionManager.instance.AddFollowMouse(this);        // ActionManager에서 마우스 쫓아가기 활성화
     }
 
+    /// <summary>
+    /// 충돌 판정
+    /// </summary>
     private void OnTriggerStay(Collider other)
     {
 
@@ -49,6 +58,9 @@ public class PrepareBuilding : FollowMouse
         }
     }
 
+    /// <summary>
+    /// 탈출 충돌 판정
+    /// </summary>
     private void OnTriggerExit(Collider other)
     {
         
@@ -60,6 +72,9 @@ public class PrepareBuilding : FollowMouse
         }
     }
 
+    /// <summary>
+    /// 색상 설정
+    /// </summary>
     protected void SetColor()
     {
 
@@ -80,6 +95,9 @@ public class PrepareBuilding : FollowMouse
     }
 
 
+    /// <summary>
+    /// 지면 확인, 현재는 사용 X
+    /// </summary>
     protected bool ChkGround()
     {
 
@@ -93,6 +111,9 @@ public class PrepareBuilding : FollowMouse
     }
 
 
+    /// <summary>
+    /// 건물 지을 수 잇는 공간이면 Target으로 넘겨준다 
+    /// </summary>
     public Building Build()
     {
 
@@ -105,6 +126,9 @@ public class PrepareBuilding : FollowMouse
         return building;
     }
 
+    /// <summary>
+    /// 사용 완료
+    /// </summary>
     public void Used()
     {
 
@@ -114,7 +138,9 @@ public class PrepareBuilding : FollowMouse
     }
 
     
-
+    /// <summary>
+    /// 마우스 쫓아가기
+    /// </summary>
     public override void SetPos()
     {
 
@@ -139,7 +165,9 @@ public class PrepareBuilding : FollowMouse
             transform.position = pos;
         }
     }
-
+    /// <summary>
+    /// 배치 간격
+    /// </summary>
     protected int Calc(float _num, int _interval, float _div)
     {
 

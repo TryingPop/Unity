@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 보스 공굴리는 스킬
+/// </summary>
 public class BossShotMissile : Missile
 {
 
     [SerializeField] protected Collider myCollider;
     [SerializeField] protected Rigidbody myRigid;
-    [SerializeField] protected Vector3 dir;
-    [SerializeField] protected Vector3 sizeUp;
+    [SerializeField] protected Vector3 dir;         // 연산용
+    [SerializeField] protected Vector3 sizeUp;      // 사이즈 업
 
-    protected short waitTurn;
-    protected short moveTurn;
+    protected short waitTurn;                       // 기 모으는 턴
+    protected short moveTurn;                       // 이동 턴
 
-    [SerializeField] protected short calcTurn;
-    protected bool isMove = false;
+    [SerializeField] protected short calcTurn;      // 연산용
+    protected bool isMove = false;                  // 연산용
 
     protected int atk;
     protected float moveSpeed;
@@ -58,6 +61,9 @@ public class BossShotMissile : Missile
 
     // public Selectable target;
 
+    /// <summary>
+    /// 초기화 및 기본 변수 세팅
+    /// </summary>
     public override void Init(Selectable _atker, int _atk, short _prefabIdx)
     {
 
@@ -123,7 +129,9 @@ public class BossShotMissile : Missile
     }
     */
 
-
+    /// <summary>
+    /// 행동
+    /// </summary>
     public override void Action()
     {
 
@@ -164,6 +172,9 @@ public class BossShotMissile : Missile
         myRotation.Rotation();
     }
 
+    /// <summary>
+    /// 재활용 준비
+    /// </summary>
     protected override void Used()
     {
 

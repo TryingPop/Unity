@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// À¯´Ö ½½·Ô
+/// </summary>
 public class Slot : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler
 {
@@ -29,12 +31,14 @@ public class Slot : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
 
+        // »óÅÂ Ç¥Çö
         InfoManager.instance.EnterUIInfo(target, eventData.position);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
+        // Á¾·á
         InfoManager.instance.ExitUIInfo();
     }
 }

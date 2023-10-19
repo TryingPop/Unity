@@ -17,8 +17,11 @@ public abstract class Attack : ScriptableObject
 
     [SerializeField] protected ushort chkTime;
 
-    protected static RaycastHit[] hits = new RaycastHit[25];
+    protected static RaycastHit[] hits = new RaycastHit[25];            // 타겟 찾기에서 공통으로 쓴다
 
+    /// <summary>
+    /// 혹시 몰라 세팅용
+    /// </summary>
     protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
 
@@ -29,6 +32,9 @@ public abstract class Attack : ScriptableObject
         chaseRange = _chaseRange;
     }
 
+    /// <summary>
+    /// 공격 타이밍
+    /// </summary>
     public int AtkTime
     {
 
@@ -46,6 +52,9 @@ public abstract class Attack : ScriptableObject
         }
     }
 
+    /// <summary>
+    /// 애니메이션 시작 타이밍
+    /// </summary>
     public int StartAnimTime
     {
 
@@ -63,6 +72,9 @@ public abstract class Attack : ScriptableObject
         }
     }
 
+    /// <summary>
+    /// 공격! - 데미지 주거나 미사일 생성
+    /// </summary>
     public abstract void OnAttack(Unit _unit);
 
     /// <summary>

@@ -20,9 +20,6 @@ public class BossShotAttack : RangeTarget
         {
 
             go.SetActive(true);
-            // go.GetComponent<BossShotMissile>().Init(_unit.TargetPos - unitTrans.position, _unit.Atk, 
-            //     (short)(atkRange * 50), (short)(chaseRange * 50), 
-            //    _unit.MyAlliance.GetLayer(false));
         }
     }
 }

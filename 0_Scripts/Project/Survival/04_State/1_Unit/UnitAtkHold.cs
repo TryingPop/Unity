@@ -19,6 +19,7 @@ public class UnitAtkHold : UnitHold
             && Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position) < atkDis)
         {
 
+            // 적이 살아있고 공격 범위 안이면 대상을 바라보면서 공격
             if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
 
             _unit.transform.LookAt(_unit.Target.transform.position);
@@ -50,6 +51,7 @@ public class UnitAtkHold : UnitHold
         else
         {
 
+            // 대상이 빠져나온 경우
             unitAttack.FindTarget(_unit, false);
             if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
         }
