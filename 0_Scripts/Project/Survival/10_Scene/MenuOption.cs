@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 public class MenuOption : MonoBehaviour
 {
 
-    private List<Resolution> resolutions = new List<Resolution>();
+    private Resolution[] resolutions; // SerializeField로 인스펙터 창에 나오지 않는다
     [SerializeField] private Dropdown resolutionDropdown;         // 연동시킬 드랍다운
     [SerializeField] private Toggle fullScreenBtn;               // 풀스크린 확인용 토글 키
 
@@ -19,10 +20,32 @@ public class MenuOption : MonoBehaviour
 
     // [SerializeField] private Text test;
 
+
+    private void Awake()
+    {
+
+        resolutions = new Resolution[7];
+        SetResolution(0, 1920, 1080, 60);
+        SetResolution(1, 720, 480, 60);
+        SetResolution(2, 720, 576, 60);
+        SetResolution(3, 1024, 768, 60);
+        SetResolution(4, 1280, 720, 60);
+        SetResolution(5, 1280, 768, 60);
+        SetResolution(6, 1280, 800, 60);
+    }
+
     private void Start()
     {
 
         InitUI();
+    }
+
+    private void SetResolution(int _idx, int _width, int _height, int _refreshRate)
+    {
+
+        resolutions[_idx].width = _width;
+        resolutions[_idx].height = _height;
+        resolutions[_idx].refreshRate = _refreshRate;
     }
 
     /// <summary>
@@ -31,32 +54,24 @@ public class MenuOption : MonoBehaviour
     private void InitUI()
     {
 
-
-        // resolutions.AddRange(Screen.resolutions);    // 화면 정보를 다 받아온다
-
-        // 60hz만 받아온다
-        for (int i = 0; i < Screen.resolutions.Length; i++)
-        {
-
-            if (Screen.resolutions[i].refreshRate == 60) resolutions.Add(Screen.resolutions[i]);
-        }
-
         resolutionDropdown.options.Clear();
-
         int optionNum = 0;
-        for (int i = 0; i < resolutions.Count; i++)
+
+        for (int i = 0; i < resolutions.Length; i++)
         {
 
-            // 설정 가능한 화면 정보들 다 나온다
-            // Debug.Log($"{resolutions[i].width} X {resolutions[i].height} {resolutions[i].refreshRate}");
-            
             Dropdown.OptionData option = new Dropdown.OptionData();
-            // option.text = $"{resolutions[i].width} X {resolutions[i].height} {resolutions[i].refreshRate}hz";
-            // 위와 같은 문장
-            option.text = resolutions[i].ToString();
-            resolutionDropdown.options.Add(option);
+            if (i == 0) option.text = "Full Screen";
+            else option.text = resolutions[i].ToString();
 
-            if (resolutions[i].width == Screen.width && resolutions[i].height == Screen.height)
+            resolutionDropdown.options.Add(option);
+            if (i == 0
+                && Screen.fullScreenMode == screenMode)
+            {
+
+                resolutionDropdown.value = optionNum;
+            }
+            else if (resolutions[i].width == Screen.width && resolutions[i].height == Screen.height)
             {
 
                 resolutionDropdown.value = optionNum;
@@ -84,23 +99,16 @@ public class MenuOption : MonoBehaviour
     /// <summary>
     /// 저장 버튼과 연동
     /// </summary>
-    public void OkBNtnClick()
+    public void OkBtnClick()
     {
+
+        screenMode = selectNum == 0 ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
 
         Screen.SetResolution(resolutions[selectNum].width,
             resolutions[selectNum].height,
             screenMode);
 
         StartCoroutine(AfterScreenChaned());
-    }
-
-    /// <summary>
-    /// 풀 스크린 버튼 - 현재 사용 X
-    /// </summary>
-    public void FullScreenBtn(bool isFull)
-    {
-
-        screenMode = isFull ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
     }
 
     /// <summary>
