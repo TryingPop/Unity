@@ -25,18 +25,21 @@ public class MenuOption : MonoBehaviour
     {
 
         resolutions = new Resolution[7];
-        SetResolution(0, 1920, 1080, 60);
+
+    }
+
+    private void Start()
+    {
+
+        // 풀 스크린
+        SetResolution(0, Screen.width, Screen.height, 60);
+        // 입력 스크린
         SetResolution(1, 720, 480, 60);
         SetResolution(2, 720, 576, 60);
         SetResolution(3, 1024, 768, 60);
         SetResolution(4, 1280, 720, 60);
         SetResolution(5, 1280, 768, 60);
         SetResolution(6, 1280, 800, 60);
-    }
-
-    private void Start()
-    {
-
         InitUI();
     }
 
