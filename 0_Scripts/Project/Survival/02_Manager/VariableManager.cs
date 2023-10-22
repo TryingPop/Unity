@@ -24,6 +24,26 @@ public enum TYPE_SELECTABLE
 }
 
 /// <summary>
+/// 유닛 사이즈
+/// Small : 1(기본 유닛), Medium : 2(?), Large : 3(보스몹, 건물), XLarge = 4
+/// </summary>
+public enum STATE_SIZE 
+{ 
+    
+    UNIT_SMALL = 1, 
+    UNIT_MEDIUM = 2, 
+    UNIT_LARGE = 3, 
+    UNIT_XLARGE = 4,
+
+    BUILDING_SMALL = 3,
+    BUILDING_MEDIUM = 4,
+    BUILDING_LARGET = 5,
+    BUILDING_XLARGE = 6,
+    BUILDING_XXLARGE = 7,
+}
+
+
+/// <summary>
 /// 버튼 옵션
 /// </summary>
 public enum TYPE_BUTTON_OPTION

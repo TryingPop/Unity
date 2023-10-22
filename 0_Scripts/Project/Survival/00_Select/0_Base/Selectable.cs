@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 유닛 사이즈
-/// Small : 1(기본 유닛), Medium : 2(?), Large : 3(보스몹, 건물), XLarge = 4
-/// </summary>
-public enum STATE_SIZE { SMALL = 1, MEDIUM = 2, LARGE = 3, XLARGE = 4 }
+
 
 /// <summary>
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
 /// </summary>
-[RequireComponent(typeof(Stats)),
-    RequireComponent(typeof(SightMesh))]
+// [RequireComponent(typeof(Stats)),
+//     RequireComponent(typeof(SightMesh))]
 public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
                                     IDamagable          // 모든 유닛은 피격 가능하다!
 {
