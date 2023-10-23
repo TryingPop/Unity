@@ -9,7 +9,7 @@ public class Stats : ScriptableObject
     [SerializeField] protected int maxHp;
     [SerializeField] protected int def;
 
-    [SerializeField] protected STATE_SIZE mySize;           // 유닛 사이즈 유니티 사이즈 1과 같다!
+    [SerializeField] protected TYPE_SIZE mySize;           // 유닛 사이즈 유니티 사이즈 1과 같다!
     [SerializeField] protected TYPE_SELECTABLE myType;
 
     [SerializeField] protected ushort selectIdx;            // 오브젝트 번호

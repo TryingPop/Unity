@@ -21,25 +21,25 @@ public enum TYPE_SELECTABLE
     FARM = 301,
     TOWN = 302,
     ENEMYCASTLE = 351,
+
+    BLACKSMITH = 303,
+    WALL = 304,
+    WINDMILL = 305,
+    GUILD = 306,
 }
 
 /// <summary>
-/// 유닛 사이즈
-/// Small : 1(기본 유닛), Medium : 2(?), Large : 3(보스몹, 건물), XLarge = 4
+/// 사이즈
 /// </summary>
-public enum STATE_SIZE 
+public enum TYPE_SIZE 
 { 
     
-    UNIT_SMALL = 1, 
-    UNIT_MEDIUM = 2, 
-    UNIT_LARGE = 3, 
-    UNIT_XLARGE = 4,
-
-    BUILDING_SMALL = 3,
-    BUILDING_MEDIUM = 4,
-    BUILDING_LARGET = 5,
-    BUILDING_XLARGE = 6,
-    BUILDING_XXLARGE = 7,
+    TINY = 1,
+    SMALL = 2, 
+    STANDARD = 3, 
+    LARGE = 4, 
+    HUGE = 5,
+    GIANT = 6,
 }
 
 
