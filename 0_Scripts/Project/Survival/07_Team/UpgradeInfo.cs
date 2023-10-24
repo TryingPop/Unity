@@ -9,34 +9,10 @@ using UnityEngine;
 public class UpgradeInfo
 {
 
-    [SerializeField] private int addAtk = 0;
-    [SerializeField] private int addDef = 0;
-    [SerializeField] private int addHp = 0;
+    public int addAtk = 0;              // 추가 공격력
+    public int addDef = 0;              // 추가 방어력
+    public int addHp = 0;               // 추가 체력
 
-    public int AddAtk => addAtk;
-    public int AddDef => addDef;
-    public int AddHp => addHp;
-
-    public void UpgradeStat(TYPE_MANAGEMENT _type, int _grade)
-    {
-
-        switch (_type)
-        {
-
-            case TYPE_MANAGEMENT.UP_ATK:
-                addAtk += _grade;
-                return;
-
-            case TYPE_MANAGEMENT.UP_DEF:
-                addDef += _grade;
-                return;
-
-            case TYPE_MANAGEMENT.UP_HP:
-                addHp += _grade;
-                return;
-
-            default:
-                return;
-        }
-    }
+    public int addGetGold = 0;          // 획득 골드 추가
+    public int addSupply = 0;           // 추가 인구
 }

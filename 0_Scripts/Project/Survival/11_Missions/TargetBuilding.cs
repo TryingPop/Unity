@@ -15,7 +15,7 @@ public class TargetBuilding : TargetUnit
         if (_building == null) return;
 
         if (_building.MyStat.SelectIdx == target.MyStat.SelectIdx 
-            && TeamManager.instance.CompareTeam(_building.MyAlliance, targetLayer))
+            && TeamManager.instance.CompareTeam(_building.MyTeam, targetLayer))
         {
 
             curNum++;

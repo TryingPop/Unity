@@ -16,16 +16,11 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 {
 
     [Header("생존 관련 변수")]
-    protected int maxHp;                                // 최대 체력 - 스크립터블 오브젝트로 받아 올 예정이지만
-                                                        // 업그레이드로 증가가능하게 따로 변수 추가했다
-    
     protected int curHp;                                // 현재 Hp
-    protected int def;                                  // 방어력
 
     protected HitBar myHitBar;                          // 체력바
 
-    protected AllianceInfo myAlliance;                  // 팀 정보
-    protected UpgradeInfo myUpgrades;                   // 업그레이드 정보
+    protected TeamInfo myTeam;                          // 팀 정보
 
     [SerializeField] protected Stats myStat;            // 스텟
     [SerializeField] protected SightMesh myMinimap;
@@ -44,18 +39,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     public virtual void SetStat()
     {
          
-        if (myStat.MaxHp == VariableManager.INFINITE) maxHp = myStat.MaxHp;
-        else maxHp = myStat.MaxHp;
-
-
-        def = myStat.Def;
-
-        if (myUpgrades != null) 
-        { 
-
-            maxHp += myUpgrades.AddHp;
-            def += myUpgrades.AddDef;
-        }
     }
 
     /// <summary>
@@ -66,14 +49,17 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         _atk = _atk < 0 ? 0 : _atk;
         curHp += _atk;
-        if (curHp > maxHp) curHp = maxHp;
+        if (curHp > MaxHp) curHp = MaxHp;
         myHitBar.SetHp(curHp);
     }
 
     /// <summary>
     /// 풀 Hp 인지 확인
     /// </summary>
-    public bool FullHp { get { return curHp == maxHp; } }
+    public bool FullHp { get { return curHp == MaxHp; } }
+
+    public int MaxHp { get { return myStat.MaxHp + myTeam.AddedHp; } }
+    public int Def { get { return myStat.Def + myTeam.AddedDef; } }
 
     /// <summary>
     /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
@@ -119,7 +105,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             if (value != null)
             {
 
-                value.Init(transform, maxHp, myStat.MySize);
+                value.Init(transform, MaxHp, myStat.MySize);
                 value.SetHp(curHp);
             }
             myHitBar = value; 
@@ -143,8 +129,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         }
     }
 
-    public AllianceInfo MyAlliance => myAlliance;
-    public UpgradeInfo MyUpgrades => myUpgrades;
+    public TeamInfo MyTeam => myTeam;
 
     /// <summary>
     /// 초기화 메서드
@@ -152,7 +137,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected virtual void Init()
     {
 
-        curHp = maxHp;
+        curHp = MaxHp;
     }
 
     /// <summary>
@@ -168,7 +153,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         if (ChkInvincible()) return;
 
-        curHp -= _dmg - def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - def;
+        curHp -= _dmg - Def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - Def;
 
         if (curHp <= 0) Dead();
         else myHitBar.SetHp(curHp);
@@ -181,7 +166,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected bool ChkInvincible()
     {
 
-        if (maxHp == VariableManager.INFINITE)
+        if (MaxHp == VariableManager.INFINITE)
         {
 
             return true;

@@ -69,7 +69,7 @@ public class TargetUnit : Mission
         if (_unit == null) return;
 
         if (_unit.MyStat.SelectIdx == target.MyStat.SelectIdx
-            && TeamManager.instance.CompareTeam(_unit.MyAlliance, targetLayer))
+            && TeamManager.instance.CompareTeam(_unit.MyTeam, targetLayer))
         {
 
             curNum++;

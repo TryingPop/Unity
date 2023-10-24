@@ -74,7 +74,7 @@ public class BossShotMissile : Missile
         destination.y = 0;
         dir = destination.normalized;
 
-        targetLayer = _atker.MyAlliance.GetLayer(false);
+        targetLayer = _atker.MyTeam.EnemyLayer;
 
         transform.LookAt(destination + transform.position);
 

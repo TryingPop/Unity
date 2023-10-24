@@ -7,6 +7,7 @@ public class AcquiredResource : BuildingAction
 {
     
     [SerializeField] protected short amount;            // 자원 량
+    [SerializeField] protected short cost;              // 소모하는 자원량
     [SerializeField] protected TYPE_MANAGEMENT type;    // 자원 타입
 
     public override void Action(Building _building)

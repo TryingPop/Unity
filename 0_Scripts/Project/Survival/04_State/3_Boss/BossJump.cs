@@ -35,7 +35,7 @@ public class BossJump : ISkillAction
             // unitAttack.OnAttack(_unit);
 
             RaycastHit[] hits = Physics.SphereCastAll(_unit.transform.position, 
-                atkRange, _unit.transform.forward, 0f, _unit.MyAlliance.GetLayer(false));
+                atkRange, _unit.transform.forward, 0f, _unit.MyTeam.EnemyLayer);
 
             if (hits.Length > 1)
             {

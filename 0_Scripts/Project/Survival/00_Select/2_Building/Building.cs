@@ -88,12 +88,12 @@ public class Building : Selectable
         {
 
             myState = STATE_SELECTABLE.NONE;
-            if (maxHp != VariableManager.INFINITE) curHp = maxHp;
+            if (MaxHp != VariableManager.INFINITE) curHp = MaxHp;
         }
         else
         {
 
-            if (maxHp != VariableManager.INFINITE) curHp = 1;
+            if (MaxHp != VariableManager.INFINITE) curHp = 1;
             myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
             GetComponentInChildren<MeshRenderer>().material.color = Color.black;
             curBuildTurn = 0;
@@ -111,14 +111,13 @@ public class Building : Selectable
     {
 
         int myLayer = gameObject.layer;
-        myAlliance = TeamManager.instance.GetTeamInfo(myLayer);
-        myUpgrades = TeamManager.instance.GetUpgradeInfo(myLayer);
+        // myTeam = TeamManager.instance.GetTeamInfo(myLayer);
 
         ActionManager.instance.AddBuilding(this);
         MyHitBar = ActionManager.instance.GetHitBar();
 
         Color teamColor;
-        if (myAlliance != null) teamColor = myAlliance.TeamColor;
+        if (myTeam != null) teamColor = myTeam.TeamColor;
         else teamColor = Color.yellow;
 
         myMinimap.SetColor(teamColor);
@@ -154,7 +153,7 @@ public class Building : Selectable
         if (curBuildTurn >= opt.BuildTurn)
         {
 
-            curHp = maxHp;
+            curHp = MaxHp;
             myObstacle.carving = true;
             mySight.SetSize(myStat.MySize * 2);
             height = opt.IncreaseY;
@@ -168,15 +167,15 @@ public class Building : Selectable
         {
 
             float per = opt.BuildTurn != 0 ? curBuildTurn / (float)opt.BuildTurn : 1f;
-            if (maxHp != VariableManager.INFINITE) 
+            if (MaxHp != VariableManager.INFINITE) 
             { 
                 
-                curHp = Mathf.FloorToInt(maxHp * per);
+                curHp = Mathf.FloorToInt(MaxHp * per);
                 if (curHp == 0) curHp = 1;
-                else if (curHp == maxHp) curHp -= 1;
+                else if (curHp == MaxHp) curHp -= 1;
             }
             
-            height = ((10 * curHp) / maxHp) * 0.1f * opt.IncreaseY;
+            height = ((10 * curHp) / MaxHp) * 0.1f * opt.IncreaseY;
         }
 
         Vector3 pos = buildingObj.localPosition;
@@ -265,7 +264,7 @@ public class Building : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = maxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {maxHp}";
+        string hp = myStat.MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
 
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"Hp : {hp}\nBuild : {100 * curBuildTurn / opt.BuildTurn}%";
         else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"Hp : {hp}";

@@ -139,13 +139,14 @@ public class ActionManager : MonoBehaviour
     {
 
         if (!_unit) return;
-
-        if (_unit.MyAlliance == TeamManager.instance.PlayerTeamInfo
+        /*
+        if (_unit.MyTeam == TeamManager.instance.PlayerTeamInfo
             && playerUnits.Count < VariableManager.MAX_CONTROL_UNITS) playerUnits.Add(_unit);
 
         else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Add(_unit);
 
         else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Add(_unit);
+        */
     }
 
     /// <summary>
@@ -155,10 +156,11 @@ public class ActionManager : MonoBehaviour
     public void RemoveUnit(Unit _unit)
     {
 
+        /*
         if (_unit.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerUnits.Remove(_unit);
         else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Remove(_unit);
         else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
-
+        */
         GameManager.instance.Chk(_unit, null);
     }
 
@@ -180,17 +182,20 @@ public class ActionManager : MonoBehaviour
     public void AddBuilding(Building _building)
     {
 
+        /*
         if (_building.MyAlliance == TeamManager.instance.PlayerTeamInfo
             && playerBuildings.Count < VariableManager.MAX_BUILDINGS) playerBuildings.Add(_building);
         else if (_building.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Add(_building);
+        */
     }
 
     public void RemoveBuilding(Building _building)
     {
 
+        /*
         if (_building.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
         else if (_building.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
-
+        */
         GameManager.instance.Chk(null, _building);
     }
 
@@ -256,30 +261,6 @@ public class ActionManager : MonoBehaviour
     {
 
         return hitBars.Contains(_hitBar);
-    }
-
-
-    public void UpgradeChk(AllianceInfo _compareInfo)
-    {
-
-        if (playerUnits.Count > 0 && playerUnits[0].MyAlliance == _compareInfo)
-        {
-
-            for (int i = 0; i < playerUnits.Count; i++)
-            {
-
-                playerUnits[i].SetStat();
-            }
-        }
-        else if (enemyUnits.Count > 0 && enemyUnits[0].MyAlliance == _compareInfo)
-        {
-
-            for (int i = 0; i < enemyUnits.Count; i++)
-            {
-
-                enemyUnits[i].SetStat();
-            }
-        }
     }
 
     public void AddMissile(Missile _missile)

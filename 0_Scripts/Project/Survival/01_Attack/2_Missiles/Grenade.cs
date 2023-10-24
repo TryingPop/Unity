@@ -38,7 +38,7 @@ public class Grenade : Missile
         else destination = _atker.TargetPos;
 
         atk = _atk;
-        targetMask = _atker.MyAlliance.GetLayer(false);
+        targetMask = _atker.MyTeam.EnemyLayer;
         prefabIdx = _prefabIdx;
 
         curTurn = 0;

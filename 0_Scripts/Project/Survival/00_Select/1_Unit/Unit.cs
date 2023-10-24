@@ -122,13 +122,7 @@ public class Unit : Selectable
         base.SetStat();
         if (myAttack != null) atk = myAttack.atk;
 
-        if (myUpgrades != null)
-        {
-
-            atk = myUpgrades.AddAtk;
-        }
-        
-        myHitBar?.SetMaxHp(maxHp);
+        myHitBar?.SetMaxHp(MaxHp);
     }
 
     protected override void Init()
@@ -158,7 +152,7 @@ public class Unit : Selectable
     public override void AfterSettingLayer()
     {
 
-        myAlliance = TeamManager.instance?.GetTeamInfo(gameObject.layer);
+        // myTeam = TeamManager.instance?.GetTeamInfo(gameObject.layer);
 
         if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
@@ -176,7 +170,7 @@ public class Unit : Selectable
         MyHitBar = ActionManager.instance.GetHitBar();
 
         Color teamColor;
-        if (myAlliance != null) teamColor = myAlliance.TeamColor;
+        if (myTeam != null) teamColor = myTeam.TeamColor;
         else teamColor = Color.yellow;
         myMinimap.SetColor(teamColor);
     }
@@ -247,7 +241,7 @@ public class Unit : Selectable
 
         if (_trans == null || !ChkDmgReaction()) return;
 
-        if (myAttack == null || ((1 << _trans.gameObject.layer) & myAlliance.GetLayer(false)) == 0)
+        if (myAttack == null || ((1 << _trans.gameObject.layer) & myTeam.AllyLayer) == 0)
         {
 
             // 공격할 수 없거나 공격한 대상이 아군일 경우 반대 방향으로 도주
@@ -292,8 +286,8 @@ public class Unit : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = maxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {maxHp}";
-        _txt.text = $"Hp : {hp}\nAtk : {atk}\nDef : {def}";
+        string hp = MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
+        _txt.text = $"Hp : {hp}\nAtk : {atk}\nDef : {Def}";
     }
 
     #region Command
@@ -388,7 +382,7 @@ public class Unit : Selectable
                 // 대상이 없거나 공격이 없을 경우
                 type = STATE_SELECTABLE.UNIT_MOVE;
             }
-            else if ((myAlliance.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
+            else if ((myTeam.EnemyLayer & (1 << _cmd.target.gameObject.layer)) != 0)
             {
 
                 // 대상이 공격 해야할 대상이면 공격

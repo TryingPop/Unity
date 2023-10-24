@@ -21,8 +21,7 @@ public class UpgradeStat : BuildingAction
         if (_building.MyTurn >= turn)
         {
 
-            _building.MyUpgrades.UpgradeStat(upgradeType, add);
-            ActionManager.instance.UpgradeChk(_building.MyAlliance);
+            _building.MyTeam.Upgrade(upgradeType, add);
             _building.MyTurn = 0;
         }
 

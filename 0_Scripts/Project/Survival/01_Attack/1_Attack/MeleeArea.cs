@@ -32,10 +32,8 @@ public class MeleeArea : MeleeTarget
     public override void OnAttack(Unit _unit)
     {
 
-        
-
         int len = Physics.SphereCastNonAlloc(_unit.transform.position, 
-            atkRange, _unit.transform.forward, atkHits, 0f, _unit.MyAlliance.GetLayer(false));
+            atkRange, _unit.transform.forward, atkHits, 0f, _unit.MyTeam.EnemyLayer);
 
         for (int i = 0; i < len; i++)
         {

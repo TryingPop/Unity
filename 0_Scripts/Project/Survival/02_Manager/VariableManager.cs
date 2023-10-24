@@ -92,9 +92,14 @@ public enum TYPE_MANAGEMENT
     UP_ATK = 1,
     UP_DEF = 2,
     UP_HP = 3,
-    
+    UP_SUPPLY = 4,      // 최대 인구! 제한은 못뚫는다!
+    UP_GOLD = 5,
+
     GOLD = 101,
-    SUPPLY = 102,
+    SUPPLY = 102,       // 행동, 스텟에 사용하는 Supply
+
+    CUR_SUPPLY = 104,   // 게임 상에서 사용
+    MAX_SUPPLY = 105,   // 게임 상에서 사용
 }
 
 public enum TYPE_KEY
