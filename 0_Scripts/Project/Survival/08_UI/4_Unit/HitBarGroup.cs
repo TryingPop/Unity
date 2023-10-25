@@ -17,8 +17,6 @@ public class HitBarGroup : MonoBehaviour
             + VariableManager.INIT_BUILDING_LIST_NUM
             + VariableManager.INIT_NEUTRAL_LIST_NUM);
 
-    public bool isActive = true;
-
 
     /// <summary>
     /// 체력 바 생성
@@ -52,10 +50,9 @@ public class HitBarGroup : MonoBehaviour
     /// <summary>
     /// 좌표 배치
     /// </summary>
-    public void ChkPos()
+    public void SetPos()
     {
 
-        if (!isActive) return;
         for (int i = 0; i < hitBars.Count; i++)
         {
 

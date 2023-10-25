@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 /// <summary>
@@ -10,21 +11,41 @@ public class UIManager : MonoBehaviour
 
     public static UIManager instance;
 
-    [SerializeField] private RectTransform frameRectTrans;
-
     [SerializeField] private UIInfo info;
     [SerializeField] private HitBarGroup hitbars;
+
+    [SerializeField] private Canvas infoCanvas;
+    [SerializeField] private Canvas hitBarCanvas;
     
-    // [SerializeField] private Text warningTxt;
+    private bool activeInfo = true;
+    private bool activeHitBar = true;
 
-    public bool HitBarCanvas
-    {
-
-        get { return false; }
-        set { }
-    }
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
+
+    public bool ActiveInfo
+    {
+
+        get { return activeInfo; }
+        set 
+        {
+
+            activeInfo = value;
+            infoCanvas.enabled = activeInfo;
+        }
+    }
+
+    public bool ActiveHitBar
+    {
+
+        get { return activeHitBar; }
+        set 
+        {
+
+            activeHitBar = value;
+            hitBarCanvas.enabled = activeHitBar;
+        }
+    }
 
 
     private void Awake()
@@ -49,14 +70,22 @@ public class UIManager : MonoBehaviour
         // Start에서 해줘야 안막힌다!
         SetRatio();
     }
-    
 
-    private void LateUpdate()
+    public void LateUpdate()
     {
-
         
-    }
+        if (activeInfo)
+        {
 
+            info.SetPos();
+        }
+        
+        if (activeHitBar)
+        {
+
+            hitbars.SetPos();
+        }
+    }
 
     /// <summary>
     /// 화면 비율 설정
@@ -64,17 +93,19 @@ public class UIManager : MonoBehaviour
     public void SetRatio()
     {
 
-        var canvasRect = frameRectTrans.sizeDelta;
-
-        screenRatio.x = Screen.width / canvasRect.x;
-        screenRatio.y = Screen.height / canvasRect.y;
+        var rectTrans = infoCanvas.GetComponent<RectTransform>();
+        var canvasRect = rectTrans.sizeDelta;
+        
+        // 반대로 하니 나눗셈 연산량이 많아 져서 곱센 연산량이 되게 변환
+        screenRatio.x = canvasRect.x / Screen.width;
+        screenRatio.y = canvasRect.y / Screen.height;
     }
 
 
     public Vector3 MouseToUIPos(Vector2 _mousePosition)
     {
 
-        return _mousePosition /= screenRatio;
+        return _mousePosition *= screenRatio;
     }
 
 
@@ -87,5 +118,34 @@ public class UIManager : MonoBehaviour
 
         // warningTxt.enabled = true;
         // warningTxt.text = _str;
+    }
+
+    public void EnterInfo(Selectable _target)
+    {
+
+        ActiveInfo = true;
+        Vector2 uiPos = MouseToUIPos(Input.mousePosition);
+        info.EnterUIInfo(_target, uiPos);
+    }
+
+    public void ExitInfo()
+    {
+
+        ActiveInfo = false;
+        info.ExitUIInfo();
+    }
+
+
+    public void AddHitBar(Selectable _target)
+    {
+
+        _target.MyHitBar = hitbars.GetHitBar();
+    }
+
+    public void RemoveHitBar(Selectable _target)
+    {
+
+        hitbars.UsedHitBar(_target.MyHitBar);
+        _target.MyHitBar = null;
     }
 }

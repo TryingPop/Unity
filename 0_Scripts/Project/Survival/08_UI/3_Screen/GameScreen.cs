@@ -42,11 +42,11 @@ public class GameScreen : MonoBehaviour,
 
         Vector2 screenRatio = UIManager.instance.screenRatio;
 
-        myLeftBottom = myRectTrans.anchoredPosition * screenRatio;
+        myLeftBottom = myRectTrans.anchoredPosition / screenRatio;
         myRightTop = myLeftBottom;
         myRightTop.x += myRectTrans.rect.width;
         myRightTop.y += myRectTrans.rect.height;
-        myRightTop *= screenRatio;
+        myRightTop /= screenRatio;
     }
 
     public void OnPointerDown(PointerEventData eventData)

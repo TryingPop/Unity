@@ -114,7 +114,8 @@ public class Building : Selectable
         }
 
         ActionManager.instance.AddBuilding(this);
-        MyHitBar = ActionManager.instance.GetHitBar();
+        UIManager.instance.AddHitBar(this);
+        // MyHitBar = ActionManager.instance.GetHitBar();
 
         Color teamColor;
         if (myTeam != null) teamColor = myTeam.TeamColor;
@@ -253,7 +254,8 @@ public class Building : Selectable
 
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
-        ActionManager.instance.ClearHitBar(myHitBar);
+        // ActionManager.instance.ClearHitBar(myHitBar);
+        UIManager.instance.RemoveHitBar(this);
         
         myHitBar = null;
 

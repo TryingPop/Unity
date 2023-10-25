@@ -21,14 +21,6 @@ public class ActionManager : MonoBehaviour
 
     private List<Missile> missiles;
 
-    /// <summary>
-    /// UI 부분
-    /// </summary>
-    private Stack<HitBar> usedHitBars;
-    private List<HitBar> hitBars;
-    
-    [SerializeField] private HitBar unitHitBar;
-    [SerializeField] private Canvas hitBarCanvas;
     public List<Follower> followMouse;
 
 
@@ -41,13 +33,6 @@ public class ActionManager : MonoBehaviour
     public List<Building> EnemyBuildings => enemyBuildings;
 
    
-    public bool HitBarCanvas
-    {
-
-        get { return hitBarCanvas.enabled; }
-        set { hitBarCanvas.enabled = value; }
-    }
-
     private void Awake()
     {
 
@@ -69,13 +54,6 @@ public class ActionManager : MonoBehaviour
         enemyBuildings = new List<Building>(VariableManager.INIT_BUILDING_LIST_NUM);
 
         neutralUnits = new List<Unit>(VariableManager.INIT_NEUTRAL_LIST_NUM);
-
-        usedHitBars = new Stack<HitBar>(VariableManager.INIT_UNIT_LIST_NUM 
-            + VariableManager.INIT_BUILDING_LIST_NUM
-            + VariableManager.INIT_NEUTRAL_LIST_NUM);
-        hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM 
-            + VariableManager.INIT_BUILDING_LIST_NUM
-            + VariableManager.INIT_NEUTRAL_LIST_NUM);
 
         missiles = new List<Missile>(VariableManager.INIT_MISSILE_LIST_NUM);
 
@@ -195,68 +173,15 @@ public class ActionManager : MonoBehaviour
         GameManager.instance.Chk(null, _building);
     }
 
-    public HitBar GetHitBar()
-    {
-
-        if (!usedHitBars.TryPop(out HitBar hitbar))
-        {
-
-            var go = Instantiate(unitHitBar, this.transform);
-            hitbar = go.GetComponent<HitBar>();
-        }
-
-        hitBars.Add(hitbar);
-        
-        return hitbar;
-    }
-
-    public void ClearHitBar(HitBar _hitbar)
-    {
-
-        hitBars.Remove(_hitbar);
-        usedHitBars.Push(_hitbar);
-        _hitbar.Used();
-    }
-
     private void SetPos()
     {
 
-        SetHitBarPos();
 
         for (int i = 0; i < followMouse.Count; i++)
         {
 
             followMouse[i].SetPos();
         }
-    }
-
-    private void SetHitBarPos()
-    {
-
-        if (!HitBarCanvas) return;
-        for (int i = 0; i < hitBars.Count; i++)
-        {
-
-            hitBars[i].SetPos();
-        }
-    }
-    
-    /// <summary>
-    /// 리스트에 해당 체력바 등록
-    /// </summary>
-    public void AddHitBar(HitBar _hitBar)
-    {
-
-        if (hitBars.Count < VariableManager.MAX_CONTROL_UNITS) hitBars.Add(_hitBar);
-    }
-
-    /// <summary>
-    /// 이미 포함되어져 있는지 확인
-    /// </summary>
-    public bool ContainsHitBar(HitBar _hitBar)
-    {
-
-        return hitBars.Contains(_hitBar);
     }
 
     public void AddMissile(Missile _missile)

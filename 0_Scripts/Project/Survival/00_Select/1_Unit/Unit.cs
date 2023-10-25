@@ -161,7 +161,8 @@ public class Unit : Selectable
         }
 
         ActionManager.instance.AddUnit(this);
-        MyHitBar = ActionManager.instance.GetHitBar();
+        // MyHitBar = ActionManager.instance.GetHitBar();
+        UIManager.instance.AddHitBar(this);
 
         Color teamColor;
         if (myTeam != null) teamColor = myTeam.TeamColor;
@@ -269,8 +270,8 @@ public class Unit : Selectable
         myAnimator.SetBool("Die", true);
 
         ActionManager.instance.RemoveUnit(this);
-        ActionManager.instance.ClearHitBar(myHitBar);
-
+        // ActionManager.instance.ClearHitBar(myHitBar);
+        UIManager.instance.RemoveHitBar(this);
         // ºñ¿ì±â
         myHitBar = null;
     }
