@@ -6,18 +6,18 @@ using UnityEngine;
 public class BossShot : ISkillAction
 {
 
-    [SerializeField] protected short startAnimTime;
+    [SerializeField] protected int startAnimTime;
 
-    [SerializeField] protected ushort missileIdx;
-    protected short prefabIdx = -1;
+    [SerializeField] protected int missileIdx;
+    protected int prefabIdx = -1;
 
-    [SerializeField] protected short waitTurn;
-    [SerializeField] protected short moveTurn;
+    [SerializeField] protected int waitTurn;
+    [SerializeField] protected int moveTurn;
 
     [SerializeField] protected Vector3 offset;
     [SerializeField] protected int atk;
 
-    protected short PrefabIdx
+    protected int PrefabIdx
     {
 
         get

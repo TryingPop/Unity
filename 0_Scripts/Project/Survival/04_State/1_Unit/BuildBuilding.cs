@@ -26,9 +26,16 @@ public class BuildBuilding : IUnitAction
             _unit.MyAgent.ResetPath();
             _unit.MyAnimator.SetFloat("Move", 0f);
 
-            // µ∑ »Æ¿Œ
-            if (_unit.Target.MyStat.ApplyResources(true, true, false, true))
+            // µ∑, ¿Œ±∏ »Æ¿Œ
+            int supply = _unit.Target.MyStat.Supply;
+            int gold = _unit.Target.MyStat.Cost;
+
+            if (_unit.MyTeam.ChkSupply(supply)
+                && _unit.MyTeam.ChkGold(gold))
             {
+
+                // ∞ÒµÂ º“∏
+                _unit.MyTeam.AddGold(-gold);
 
                 var go = PoolManager.instance.GetSamePrefabs(_unit.Target, _unit.gameObject.layer, _unit.TargetPos);
 

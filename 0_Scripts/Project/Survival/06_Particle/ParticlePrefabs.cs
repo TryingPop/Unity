@@ -8,10 +8,10 @@ using UnityEngine;
 public class ParticlePrefabs : MonoBehaviour
 {
 
-    [SerializeField] private ushort prefabIdx;
-    protected short poolIdx = -1;
+    [SerializeField] private int prefabIdx;
+    protected int poolIdx = -1;
 
-    public short PoolIdx
+    public int PoolIdx
     {
 
         get

@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Missile : MonoBehaviour
 {
 
-    public abstract void Init(Selectable _atker, int _atk, short _prefabIdx);
+    public abstract void Init(Selectable _atker, int _atk, int _prefabIdx);
 
     protected abstract void Used();
 

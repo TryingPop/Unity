@@ -82,22 +82,7 @@ public class Building : Selectable
     protected override void Init()
     {
 
-        SetStat();
-
-        if (opt.BuildTurn == 0)
-        {
-
-            myState = STATE_SELECTABLE.NONE;
-            if (MaxHp != VariableManager.INFINITE) curHp = MaxHp;
-        }
-        else
-        {
-
-            if (MaxHp != VariableManager.INFINITE) curHp = 1;
-            myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
-            GetComponentInChildren<MeshRenderer>().material.color = Color.black;
-            curBuildTurn = 0;
-        }
+        myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
 
         if (isStarting)
         {
@@ -111,7 +96,22 @@ public class Building : Selectable
     {
 
         int myLayer = gameObject.layer;
-        // myTeam = TeamManager.instance.GetTeamInfo(myLayer);
+
+        myTeam = TeamManager.instance.GetTeamInfo(myLayer);
+
+        if (opt.BuildTurn == 0)
+        {
+
+            myState = STATE_SELECTABLE.NONE;
+            if (myStat.MaxHp != VariableManager.INFINITE) curHp = MaxHp;
+        }
+        else
+        {
+
+            if (myStat.MaxHp != VariableManager.INFINITE) curHp = 1;
+            GetComponentInChildren<MeshRenderer>().material.color = Color.black;
+            curBuildTurn = 0;
+        }
 
         ActionManager.instance.AddBuilding(this);
         MyHitBar = ActionManager.instance.GetHitBar();
@@ -158,7 +158,11 @@ public class Building : Selectable
             mySight.SetSize(myStat.MySize * 2);
             height = opt.IncreaseY;
             myState = STATE_SELECTABLE.NONE;
-            myStat.ApplyResources(true, false, true);
+
+            // 인구 추가
+            int supply = myStat.Supply;
+            if (supply < 0) myTeam.AddMaxSupply(-supply);
+            else myTeam.AddCurSupply(supply);
 
             StartCoroutine(FinishedBuildCoroutine());
             if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
@@ -252,7 +256,6 @@ public class Building : Selectable
         ActionManager.instance.ClearHitBar(myHitBar);
         
         myHitBar = null;
-        myStat.ApplyResources(false);
 
         // 파괴 이벤트
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
@@ -297,7 +300,7 @@ public class Building : Selectable
 
                 // 기본 40% 환불!
                 int refundCost = Mathf.FloorToInt(myStat.Cost * 0.4f);
-                myStat.ApplyResources(false, true, false, false, refundCost);
+                myTeam.AddGold(refundCost);
                 Dead();
             }
             else

@@ -9,12 +9,12 @@ using UnityEngine;
 public class RangeTarget : Attack
 {
 
-    [SerializeField] protected ushort missileIdx;       // 固荤老 积己
+    [SerializeField] protected int missileIdx;       // 固荤老 积己
     [SerializeField] protected Vector3 offset;          // 积己 困摹
 
-    protected short prefabIdx = -1;
+    protected int prefabIdx = -1;
     
-    protected short PrefabIdx
+    protected int PrefabIdx
     {
 
         get

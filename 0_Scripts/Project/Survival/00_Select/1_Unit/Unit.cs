@@ -33,7 +33,7 @@ public class Unit : Selectable
     [SerializeField] protected bool stateChange;                    // 행동 변화 감지
     [SerializeField] protected short maxMp; 
     protected short curMp;
-    protected int atk;
+    // protected int atk;
 
     protected Queue<Command> cmds;                                  // 예약된 명령
     #endregion 변수
@@ -80,7 +80,16 @@ public class Unit : Selectable
         }
     }
 
-    public int Atk => atk;
+    public int Atk
+    {
+
+        get
+        {
+
+            int atk = myAttack.atk + myTeam.AddedAtk;
+            return atk;
+        }
+    }
 
     public override int MyTurn
     {
@@ -113,24 +122,8 @@ public class Unit : Selectable
         Init();
     }
 
-    /// <summary>
-    /// 스텟 설정
-    /// </summary>
-    public override void SetStat()
-    {
-
-        base.SetStat();
-        if (myAttack != null) atk = myAttack.atk;
-
-        myHitBar?.SetMaxHp(MaxHp);
-    }
-
     protected override void Init()
     {
-
-        SetStat();
-        base.Init();
-        curMp = maxMp;
         
         myAnimator.SetBool("Die", false);
         myAgent.enabled = true;
@@ -152,7 +145,8 @@ public class Unit : Selectable
     public override void AfterSettingLayer()
     {
 
-        // myTeam = TeamManager.instance?.GetTeamInfo(gameObject.layer);
+        myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
+        curHp = MaxHp;
 
         if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
@@ -171,7 +165,7 @@ public class Unit : Selectable
 
         Color teamColor;
         if (myTeam != null) teamColor = myTeam.TeamColor;
-        else teamColor = Color.yellow;
+        else teamColor = Color.black;
         myMinimap.SetColor(teamColor);
     }
 
@@ -273,10 +267,12 @@ public class Unit : Selectable
         ActionDone(STATE_SELECTABLE.DEAD);
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
+
         ActionManager.instance.RemoveUnit(this);
         ActionManager.instance.ClearHitBar(myHitBar);
+
+        // 비우기
         myHitBar = null;
-        myStat.ApplyResources(false);
     }
 
     /// <summary>
@@ -287,7 +283,7 @@ public class Unit : Selectable
     {
 
         string hp = MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
-        _txt.text = $"Hp : {hp}\nAtk : {atk}\nDef : {Def}";
+        _txt.text = $"Hp : {hp}\nAtk : {Atk}\nDef : {Def}";
     }
 
     #region Command

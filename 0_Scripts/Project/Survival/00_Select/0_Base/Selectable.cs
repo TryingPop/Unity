@@ -36,10 +36,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 스텟 설정
     /// </summary>
-    public virtual void SetStat()
-    {
-         
-    }
+    // public abstract void SetStat();
 
     /// <summary>
     /// 체력 회복
@@ -134,11 +131,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 초기화 메서드
     /// </summary>
-    protected virtual void Init()
-    {
-
-        curHp = MaxHp;
-    }
+    protected abstract void Init();
 
     /// <summary>
     /// 유닛 생성하고, 레이어 바꾼뒤 실행할 기능들 모아둔 메서드
@@ -176,7 +169,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     }
 
     /// <summary>
-    /// 사망 처리 메서드
+    /// 사망 처리 메서드, hp바 표시, 현재 선택되면 해제, 그리고 인구조절
     /// </summary>
     public virtual void Dead()
     {
@@ -186,6 +179,13 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         // 시체 레이어로 변경
         gameObject.layer = VariableManager.LAYER_DEAD;
+
+        // 인구 깎는다
+        int supply = myStat.Supply;
+        if (supply < 0) myTeam.AddMaxSupply(supply);
+        else myTeam.AddCurSupply(-supply);
+
+        // 현재 선택 중이면 해제한다!
         if (InputManager.instance.curGroup.IsContains(this)) 
         { 
             

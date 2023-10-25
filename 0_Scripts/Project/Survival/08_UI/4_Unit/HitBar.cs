@@ -12,7 +12,6 @@ using UnityEngine.UI;
     RequireComponent(typeof(Image[]))]
 public class HitBar : MonoBehaviour
 {
-
     
     [SerializeField] private Slider mySlider;               // 유닛 남은 체력 슬라이더
     [SerializeField] private Transform target;              // 따라갈 타겟

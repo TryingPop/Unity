@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class TeamInfo
@@ -50,8 +51,6 @@ public class TeamInfo
     }
 
 
-
-
     // 자원
     public int MaxSupply
     {
@@ -59,7 +58,7 @@ public class TeamInfo
         get
         {
 
-            int result = resourcesInfo.maxSupply;
+            int result = resourcesInfo.maxSupply + upgradeInfo.addSupply;
             if (result > VariableManager.MAX_SUPPLY) result = VariableManager.MAX_SUPPLY;
             return result;
         }
@@ -91,8 +90,22 @@ public class TeamInfo
 
         resourcesInfo.maxSupply += _amount;
     }
+    /// <summary>
+    /// 인구 확인
+    /// </summary>
+    public bool ChkSupply(int _supply)
+    {
 
+        return MaxSupply - resourcesInfo.curSupply >= _supply;
+    }
+    /// <summary>
+    /// 해당 골드 이상 보유 중인지 체크
+    /// </summary>
+    public bool ChkGold(int _gold)
+    {
 
+        return resourcesInfo.gold >= _gold;
+    }
 
     // 동맹
     public LayerMask AllyLayer => allianceInfo.allyLayer;

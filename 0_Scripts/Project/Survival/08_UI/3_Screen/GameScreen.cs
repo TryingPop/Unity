@@ -40,7 +40,7 @@ public class GameScreen : MonoBehaviour,
         // screenRatio.x = Screen.width / canvasRect.x;
         // screenRatio.y = Screen.height / canvasRect.y;
 
-        Vector2 screenRatio = InfoManager.instance.screenRatio;
+        Vector2 screenRatio = UIManager.instance.screenRatio;
 
         myLeftBottom = myRectTrans.anchoredPosition * screenRatio;
         myRightTop = myLeftBottom;

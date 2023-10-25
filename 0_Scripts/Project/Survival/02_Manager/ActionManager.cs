@@ -19,16 +19,19 @@ public class ActionManager : MonoBehaviour
     private List<Building> playerBuildings;
     private List<Building> enemyBuildings;
 
+    private List<Missile> missiles;
+
     /// <summary>
-    /// 유닛 히트바 풀링
+    /// UI 부분
     /// </summary>
     private Stack<HitBar> usedHitBars;
     private List<HitBar> hitBars;
     
     [SerializeField] private HitBar unitHitBar;
     [SerializeField] private Canvas hitBarCanvas;
+    public List<Follower> followMouse;
 
-    private List<Missile> missiles;
+
 
     public List<Unit> PlayerUnits => playerUnits;
     public List<Unit> EnemyUnits => enemyUnits;
@@ -37,7 +40,6 @@ public class ActionManager : MonoBehaviour
     public List<Building> PlayerBuildings => playerBuildings;
     public List<Building> EnemyBuildings => enemyBuildings;
 
-    public List<FollowMouse> followMouse;
    
     public bool HitBarCanvas
     {
@@ -77,7 +79,7 @@ public class ActionManager : MonoBehaviour
 
         missiles = new List<Missile>(VariableManager.INIT_MISSILE_LIST_NUM);
 
-        followMouse = new List<FollowMouse>();
+        followMouse = new List<Follower>();
     }
 
     private void FixedUpdate()
@@ -139,14 +141,13 @@ public class ActionManager : MonoBehaviour
     {
 
         if (!_unit) return;
-        /*
+
         if (_unit.MyTeam == TeamManager.instance.PlayerTeamInfo
             && playerUnits.Count < VariableManager.MAX_CONTROL_UNITS) playerUnits.Add(_unit);
 
-        else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Add(_unit);
+        else if (_unit.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyUnits.Add(_unit);
 
-        else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Add(_unit);
-        */
+        else if (_unit.MyTeam == TeamManager.instance.NeutralTeamInfo) neutralUnits.Add(_unit);
     }
 
     /// <summary>
@@ -156,11 +157,10 @@ public class ActionManager : MonoBehaviour
     public void RemoveUnit(Unit _unit)
     {
 
-        /*
-        if (_unit.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerUnits.Remove(_unit);
-        else if (_unit.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyUnits.Remove(_unit);
-        else if (_unit.MyAlliance == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
-        */
+        if (_unit.MyTeam == TeamManager.instance.PlayerTeamInfo) playerUnits.Remove(_unit);
+        else if (_unit.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyUnits.Remove(_unit);
+        else if (_unit.MyTeam == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
+
         GameManager.instance.Chk(_unit, null);
     }
 
@@ -182,20 +182,16 @@ public class ActionManager : MonoBehaviour
     public void AddBuilding(Building _building)
     {
 
-        /*
-        if (_building.MyAlliance == TeamManager.instance.PlayerTeamInfo
+        if (_building.MyTeam == TeamManager.instance.PlayerTeamInfo
             && playerBuildings.Count < VariableManager.MAX_BUILDINGS) playerBuildings.Add(_building);
-        else if (_building.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Add(_building);
-        */
+        else if (_building.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Add(_building);
     }
 
     public void RemoveBuilding(Building _building)
     {
 
-        /*
-        if (_building.MyAlliance == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
-        else if (_building.MyAlliance == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
-        */
+        if (_building.MyTeam == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
+        else if (_building.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
         GameManager.instance.Chk(null, _building);
     }
 
@@ -275,13 +271,13 @@ public class ActionManager : MonoBehaviour
         missiles.Remove(_missile);
     }
 
-    public void AddFollowMouse(FollowMouse _followMouse)
+    public void AddFollowMouse(Follower _followMouse)
     {
 
         if (!followMouse.Contains(_followMouse)) followMouse.Add(_followMouse);
     }
 
-    public void RemoveFollowMouse(FollowMouse _followMouse)
+    public void RemoveFollowMouse(Follower _followMouse)
     {
 
         followMouse.Remove(_followMouse);

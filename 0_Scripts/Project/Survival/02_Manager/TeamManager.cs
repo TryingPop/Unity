@@ -9,19 +9,12 @@ public class TeamManager : MonoBehaviour
 {
 
     public static TeamManager instance;
-    //[SerializeField] private AllianceInfo[] teams;      // 팀 상태
-    // [SerializeField] private UpgradeInfo[] upgrades;    // 업글 상태
 
-    // public AllianceInfo PlayerTeamInfo => teams[VariableManager.TEAM_PLAYER];
-    // public AllianceInfo EnemyTeamInfo => teams[VariableManager.TEAM_ENEMY];
-    // public AllianceInfo NeutralTeamInfo => teams[VariableManager.TEAM_NEUTRAL];
+    public TeamInfo PlayerTeamInfo => teams[VariableManager.TEAM_PLAYER];
+    public TeamInfo EnemyTeamInfo => teams[VariableManager.TEAM_ENEMY];
+    public TeamInfo NeutralTeamInfo => teams[VariableManager.TEAM_NEUTRAL];
 
-    // public UpgradeInfo PlayerUpgradeInfo => upgrades[VariableManager.TEAM_PLAYER];
-    // public UpgradeInfo EnemyUpgradeInfo => upgrades[VariableManager.TEAM_ENEMY];
-    // public UpgradeInfo NeutralUpgradeInfo => upgrades[VariableManager.TEAM_NEUTRAL];
-
-    [SerializeField] private TeamInfo[] teams;
-
+    [SerializeField] private TeamInfo[] teams;                  // 팀 정보들
 
     private void Awake()
     {
@@ -50,36 +43,6 @@ public class TeamManager : MonoBehaviour
         else return -1;
     }
 
-    /*
-    /// <summary>
-    /// 레이어로 팀 정보 찾기
-    /// </summary>
-    public AllianceInfo GetTeamInfo(int _layer)
-    {
-
-        int teamNum = ChkTeamNumber(_layer);
-
-        if (teamNum == -1
-            || teamNum >= teams.Length) return null;
-
-        return teams[teamNum];
-    }
-
-    /// <summary>
-    /// 레이어로 업그레이드 정보 찾기
-    /// </summary>
-    public UpgradeInfo GetUpgradeInfo(int _layer)
-    {
-
-        int teamNum = ChkTeamNumber(_layer);
-
-        if (teamNum == -1
-            || teamNum >= upgrades.Length) return null;
-
-        return upgrades[teamNum];
-    }
-    */
-
     /// <summary>
     /// 팀 정보와 레이어 정보 비교 -> 미션 확인용!
     /// </summary>
@@ -87,5 +50,15 @@ public class TeamManager : MonoBehaviour
     {
 
         return _teamInfo.TeamLayerNumber == _layer;
+    }
+
+    public TeamInfo GetTeamInfo(int _layer)
+    {
+
+        int idx = ChkTeamNumber(_layer);
+
+        if (idx == -1) return null;
+
+        return teams[idx];
     }
 }

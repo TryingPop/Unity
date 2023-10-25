@@ -479,7 +479,7 @@ public class InputManager : MonoBehaviour
         // 추가 유무 판단
         if (!add) curGroup.Clear();
 
-        ushort chkIdx = cmdTarget.MyStat.SelectIdx;
+        int chkIdx = cmdTarget.MyStat.SelectIdx;
 
         for (int i = 0; i < hits.Length; i++)
         {

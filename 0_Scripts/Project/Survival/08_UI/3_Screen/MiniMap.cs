@@ -40,7 +40,7 @@ public class MiniMap : MonoBehaviour,
     protected void SetMiniMapPos()
     {
 
-        Vector2 screenRatio = InfoManager.instance.screenRatio;
+        Vector2 screenRatio = UIManager.instance.screenRatio;
         miniMapOffset = myRectTrans.anchoredPosition * screenRatio;
 
         var miniMapRect = myRectTrans.sizeDelta;

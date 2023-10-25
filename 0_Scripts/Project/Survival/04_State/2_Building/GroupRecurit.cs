@@ -8,10 +8,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GroupRecruit", menuName = "Action/Building/GroupRecruit")]
 public class GroupRecurit : BuildingAction
 {
-    [SerializeField] ushort[] selectIdxs;
-    protected short[] prefabIdxs;
+    [SerializeField] int[] selectIdxs;
+    protected int[] prefabIdxs;
 
-    public short[] PrefabIdxs
+    public int[] PrefabIdxs
     {
 
         get
@@ -21,7 +21,7 @@ public class GroupRecurit : BuildingAction
                 || prefabIdxs.Length != selectIdxs.Length)
             {
 
-                prefabIdxs = new short[selectIdxs.Length];
+                prefabIdxs = new int[selectIdxs.Length];
 
                 for (int i = 0; i < selectIdxs.Length; i++)
                 {

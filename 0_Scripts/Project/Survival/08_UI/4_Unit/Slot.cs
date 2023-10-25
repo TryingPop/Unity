@@ -32,13 +32,14 @@ public class Slot : MonoBehaviour,
     {
 
         // 상태 표현
-        InfoManager.instance.EnterUIInfo(target, eventData.position);
+        // Vector3 uiPos = UIManager.instance.MouseToUIPos(eventData.position);
+        // 여기서 상태 넘기기
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
         // 종료
-        InfoManager.instance.ExitUIInfo();
+        // UIManager.instance.ExitUIInfo();
     }
 }

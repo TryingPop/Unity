@@ -96,10 +96,8 @@ public enum TYPE_MANAGEMENT
     UP_GOLD = 5,
 
     GOLD = 101,
-    SUPPLY = 102,       // 행동, 스텟에 사용하는 Supply
-
-    CUR_SUPPLY = 104,   // 게임 상에서 사용
-    MAX_SUPPLY = 105,   // 게임 상에서 사용
+    CUR_SUPPLY = 102,   // 게임 상에서 사용
+    MAX_SUPPLY = 103,   // 게임 상에서 사용
 }
 
 public enum TYPE_KEY
@@ -143,7 +141,7 @@ public class VariableManager
     public const int MOUSE_R = 30;
 
     // 제한
-    public static readonly int INFINITE = -100;
+    public static readonly int INFINITE = -100;                 // 무적
     public static readonly short POOLMANAGER_NOTEXIST = -1;
     public static readonly int MAX_SELECT = 30;             // 최대 선택가능 수
 
@@ -176,5 +174,7 @@ public class VariableManager
     public static readonly int INIT_NEUTRAL_LIST_NUM = 20;
 
     public static readonly int TYPE_SELECTABLE_INTERVAL = 100;
+
+    public static readonly float REFUND_RATE = 0.6f;
 
 }

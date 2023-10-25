@@ -10,10 +10,10 @@ public class BulletCase : MonoBehaviour
     [SerializeField] private Vector3 powOffset;     // 튕기는 파워
     [SerializeField] private Vector3 rotOffset;     // 튕기는 회전력
 
-    [SerializeField] private ushort prefabIdx;
-    protected short poolIdx = -1;
+    [SerializeField] private int prefabIdx;
+    protected int poolIdx = -1;
 
-    public short PoolIdx
+    public int PoolIdx
     {
 
         get

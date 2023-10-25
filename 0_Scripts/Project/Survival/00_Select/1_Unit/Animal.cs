@@ -20,21 +20,20 @@ public class Animal : Unit
     }
 
     /// <summary>
-    /// 플레이어가 죽이면 골드 올라오는 이펙트생성과 골드 준다
+    /// 죽이면 골드 올라오는 이펙트 생성과 죽인 유저에게 골드 준다
     /// </summary>
-    public override void Dead()
+    public override void OnDamaged(int _dmg, Transform _trans = null)
     {
+        base.OnDamaged(_dmg, _trans);
 
-        base.Dead();
-
-        if (target
-            && target.gameObject.layer == VariableManager.LAYER_PLAYER)
+        if (myState == STATE_SELECTABLE.DEAD
+            && target)
         {
 
             var go = PoolManager.instance.GetPrefabs(opt.PrefabIdx, VariableManager.LAYER_DEAD);
             go.transform.position = transform.position;
-            ResourceManager.instance.AddResources(TYPE_MANAGEMENT.GOLD, opt.KillGold);
-
+            var TeamInfo = TeamManager.instance.GetTeamInfo(target.gameObject.layer);
+            TeamInfo?.AddGold(opt.KillGold);
         }
     }
 
