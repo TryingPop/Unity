@@ -14,7 +14,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private UIInfo info;
     [SerializeField] private UIResources resources;
+    [SerializeField] private UIButton btns;
     [SerializeField] private HitBarGroup hitbars;
+    [SerializeField] private UnitSlots slots;
 
     [SerializeField] private Canvas infoCanvas;
     [SerializeField] private Canvas hitBarCanvas;
@@ -96,6 +98,18 @@ public class UIManager : MonoBehaviour
     public void LateUpdate()
     {
         
+        if (btns.IsChanged)
+        {
+
+            btns.SetBtns();
+        }
+
+        if (slots.IsChanged)
+        {
+
+            slots.Init();
+        }
+
         if (activeInfo)
         {
 
@@ -175,6 +189,4 @@ public class UIManager : MonoBehaviour
         hitbars.UsedHitBar(_target.MyHitBar);
         _target.MyHitBar = null;
     }
-
-
 }

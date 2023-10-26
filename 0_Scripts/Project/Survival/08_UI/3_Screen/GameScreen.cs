@@ -60,7 +60,7 @@ public class GameScreen : MonoBehaviour,
             // 클릭 지점 저장
             clickPos = eventData.position;
 
-            SelectManager inputManager = SelectManager.instance;
+            InputManager inputManager = InputManager.instance;
 
             // 키입력이 없는 상태로 클릭
             if (inputManager.MyState == 0)
@@ -90,7 +90,7 @@ public class GameScreen : MonoBehaviour,
 
             if (GameManager.instance.IsStop) return;
 
-            SelectManager inputManager = SelectManager.instance;
+            InputManager inputManager = InputManager.instance;
 
             if (inputManager.MyState == 0)
             {
@@ -101,7 +101,7 @@ public class GameScreen : MonoBehaviour,
                 inputManager.SavePointToRay(true, true);
                 inputManager.GiveCmd(true, true);
             }
-            else inputManager.Cancel();
+            else inputManager.MyState = (int)TYPE_INPUT.CANCEL;
         }
     }
 
@@ -119,7 +119,7 @@ public class GameScreen : MonoBehaviour,
                 // 유닛 선택인지 확인
                 Vector2 nowPos = eventData.position;
 
-                SelectManager inputManager = SelectManager.instance;
+                InputManager inputManager = InputManager.instance;
 
                 // 드래그 범위가 일정 크기 되는지 확인
                 if (Vector2.SqrMagnitude(clickPos - nowPos) < 100f)

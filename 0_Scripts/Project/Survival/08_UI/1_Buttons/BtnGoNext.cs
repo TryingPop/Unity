@@ -35,13 +35,13 @@ public class BtnGoNext : ButtonInfo
         }
     }
 
-    public override void OnEnter(SelectManager _inputManager)
+    public override void OnEnter(InputManager _inputManager)
     {
 
         Action(_inputManager);
     }
 
-    public override void Action(SelectManager _inputManager)
+    public override void Action(InputManager _inputManager)
     {
 
         ButtonHandler btns = NextBtns;
@@ -52,7 +52,8 @@ public class BtnGoNext : ButtonInfo
         {
 
             // 서브 btn의 크기가 8이 넘어가거나, subBtn 재진입에는 사용 못한다!
-            _inputManager.ActiveButtonUI(false, true, true);
+            // _inputManager.ActiveButtonUI(false, true, true);
+            _inputManager.ActiveBtns(false, true, true);
             _inputManager.SubHandler = btns;
             _inputManager.CmdType = cmdType;
         }

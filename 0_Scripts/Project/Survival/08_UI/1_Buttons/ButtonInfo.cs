@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 버튼 정보
 /// </summary>
-public abstract class ButtonInfo : IAction<SelectManager>
+public abstract class ButtonInfo : IAction<InputManager>
 {
 
     [SerializeField] protected TYPE_INPUT btnKey;
@@ -20,7 +20,7 @@ public abstract class ButtonInfo : IAction<SelectManager>
     /// <summary>
     /// 외부에서는 강제 탈출할 때 사용하는 메서드
     /// </summary>
-    public virtual void OnExit(SelectManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
+    public virtual void OnExit(InputManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
     {
 
         _inputManager.ActionDone(_nextKey);

@@ -12,7 +12,7 @@ public class BtnSubBuild : ButtonInfo
     [SerializeField] protected ushort selectIdx;
     protected short prepareIdx = -1;
 
-    public override void OnEnter(SelectManager _inputManager)
+    public override void OnEnter(InputManager _inputManager)
     {
 
         BuildManager buildManager = _inputManager.buildManager;
@@ -37,7 +37,7 @@ public class BtnSubBuild : ButtonInfo
         }
     }
 
-    public override void Action(SelectManager _inputManager)
+    public override void Action(InputManager _inputManager)
     {
 
         // OnEnter에서 걸러지기에 null 체크 안한다
@@ -52,7 +52,7 @@ public class BtnSubBuild : ButtonInfo
         }
     }
 
-    public override void OnExit(SelectManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
+    public override void OnExit(InputManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
     {
 
         // OnEnter에서 걸러지기에 null 체크 안한다!

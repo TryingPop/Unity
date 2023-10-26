@@ -26,8 +26,8 @@ public class UnitSlots : MonoBehaviour
     [SerializeField] protected GameObject nextBtn;
     [SerializeField] protected GameObject prevBtn;
 
-    protected byte curPage;
-    protected byte maxPage;
+    protected int curPage;
+    protected int maxPage;
 
     /// <summary>
     /// 0 : maxRow, 1 : maxColumn
@@ -44,6 +44,14 @@ public class UnitSlots : MonoBehaviour
 
             curGroup = value;
         }
+    }
+
+    private bool isChange;
+    public bool IsChanged 
+    { 
+    
+        get { return isChange; } 
+        set { isChange = value; }
     }
 
 
@@ -163,7 +171,7 @@ public class UnitSlots : MonoBehaviour
     private void ChkMaxPage()
     {
 
-        maxPage = (byte)((curGroup.Count - 1) / (matrixSize[0] + matrixSize[1]));
+        maxPage = ((curGroup.Count - 1) / (matrixSize[0] + matrixSize[1]));
     }
 
     /// <summary>
@@ -176,6 +184,8 @@ public class UnitSlots : MonoBehaviour
         ChkBtn(page);
 
         int len = matrixSize[0] * matrixSize[1];
+        
+        // 버튼에 유닛 할당
         for (int i = 0; i < len; i++)
         {
 
@@ -252,7 +262,7 @@ public class UnitSlots : MonoBehaviour
             prevBtn.SetActive(true);
         }
 
-        curPage = (byte)_num;
+        curPage = _num;
     }
 }
 

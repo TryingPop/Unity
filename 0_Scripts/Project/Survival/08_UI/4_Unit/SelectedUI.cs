@@ -8,10 +8,14 @@ using UnityEngine;
 public class SelectedUI : MonoBehaviour
 {
 
-    [SerializeField] protected GameObject selectedUIobj;
-    protected TargetUI[] selectedUIs;
+    [SerializeField] private GameObject selectedUIobj;
+    private TargetUI[] selectedUIs;
 
-    protected int selectedNums;
+
+    private List<Selectable> curGroup;
+    public List<Selectable> CurGroup { set { curGroup = value; } }
+
+    private int selectedNums;
 
     private void Awake()
     {
@@ -32,19 +36,18 @@ public class SelectedUI : MonoBehaviour
     /// <summary>
     /// 해당 유닛들에게 선택되었다는 UI 배치
     /// </summary>
-    /// <param name="targets">선택된 그룹</param>
-    public void SetTargets(List<Selectable> targets)
+    public void ResetGroup()
     {
 
-        selectedNums = targets.Count;
-        for (int i = 0; i < targets.Count; i++)
+        selectedNums = curGroup.Count;
+        for (int i = 0; i < curGroup.Count; i++)
         {
 
-            selectedUIs[i].Init(targets[i]);
+            selectedUIs[i].Init(curGroup[i]);
             selectedUIs[i].gameObject.SetActive(true);
         }
 
-        for (int i = targets.Count; i < selectedUIs.Length; i++)
+        for (int i = curGroup.Count; i < selectedUIs.Length; i++)
         {
 
             selectedUIs[i].gameObject.SetActive(false);
