@@ -25,8 +25,8 @@ public class TargetUnit : Mission
     {
         
         // 유닛 생성 해야한다!
-        ushort selectIdx = target.MyStat.SelectIdx;
-        short prefabIdx = PoolManager.instance.ChkIdx(selectIdx);
+        int selectIdx = target.MyStat.SelectIdx;
+        int prefabIdx = PoolManager.instance.ChkIdx(selectIdx);
 
         curNum = 0;
 
@@ -69,7 +69,7 @@ public class TargetUnit : Mission
         if (_unit == null) return;
 
         if (_unit.MyStat.SelectIdx == target.MyStat.SelectIdx
-            && TeamManager.instance.CompareTeam(_unit.MyAlliance, targetLayer))
+            && TeamManager.instance.CompareTeam(_unit.MyTeam, targetLayer))
         {
 
             curNum++;

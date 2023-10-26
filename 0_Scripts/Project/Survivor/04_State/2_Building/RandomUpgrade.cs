@@ -22,9 +22,8 @@ public class RandomUpgrade : BuildingAction
 
             int rand = Random.Range(0, types.Length);
 
-            var alliance = _building.MyAlliance;
-            _building.MyUpgrades.UpgradeStat(types[rand], amounts[rand]);
-            ActionManager.instance.UpgradeChk(alliance);
+            var alliance = _building.MyTeam;
+            _building.MyTeam.Upgrade(types[rand], amounts[rand]);
             OnExit(_building);
         }
     }

@@ -33,7 +33,7 @@ public class Unit : Selectable
     [SerializeField] protected bool stateChange;                    // 행동 변화 감지
     [SerializeField] protected short maxMp; 
     protected short curMp;
-    protected int atk;
+    // protected int atk;
 
     protected Queue<Command> cmds;                                  // 예약된 명령
     #endregion 변수
@@ -80,7 +80,16 @@ public class Unit : Selectable
         }
     }
 
-    public int Atk => atk;
+    public int Atk
+    {
+
+        get
+        {
+
+            int atk = myAttack.atk + myTeam.AddedAtk;
+            return atk;
+        }
+    }
 
     public override int MyTurn
     {
@@ -113,30 +122,8 @@ public class Unit : Selectable
         Init();
     }
 
-    /// <summary>
-    /// 스텟 설정
-    /// </summary>
-    public override void SetStat()
-    {
-
-        base.SetStat();
-        if (myAttack != null) atk = myAttack.atk;
-
-        if (myUpgrades != null)
-        {
-
-            atk = myUpgrades.AddAtk;
-        }
-        
-        myHitBar?.SetMaxHp(maxHp);
-    }
-
     protected override void Init()
     {
-
-        SetStat();
-        base.Init();
-        curMp = maxMp;
         
         myAnimator.SetBool("Die", false);
         myAgent.enabled = true;
@@ -158,7 +145,8 @@ public class Unit : Selectable
     public override void AfterSettingLayer()
     {
 
-        myAlliance = TeamManager.instance?.GetTeamInfo(gameObject.layer);
+        myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
+        curHp = MaxHp;
 
         if (gameObject.layer == VariableManager.LAYER_PLAYER)
         {
@@ -173,11 +161,12 @@ public class Unit : Selectable
         }
 
         ActionManager.instance.AddUnit(this);
-        MyHitBar = ActionManager.instance.GetHitBar();
+        // MyHitBar = ActionManager.instance.GetHitBar();
+        UIManager.instance.AddHitBar(this);
 
         Color teamColor;
-        if (myAlliance != null) teamColor = myAlliance.TeamColor;
-        else teamColor = Color.yellow;
+        if (myTeam != null) teamColor = myTeam.TeamColor;
+        else teamColor = Color.black;
         myMinimap.SetColor(teamColor);
     }
 
@@ -247,7 +236,7 @@ public class Unit : Selectable
 
         if (_trans == null || !ChkDmgReaction()) return;
 
-        if (myAttack == null || ((1 << _trans.gameObject.layer) & myAlliance.GetLayer(false)) == 0)
+        if (myAttack == null || ((1 << _trans.gameObject.layer) & myTeam.AllyLayer) == 0)
         {
 
             // 공격할 수 없거나 공격한 대상이 아군일 경우 반대 방향으로 도주
@@ -279,10 +268,12 @@ public class Unit : Selectable
         ActionDone(STATE_SELECTABLE.DEAD);
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
+
         ActionManager.instance.RemoveUnit(this);
-        ActionManager.instance.ClearHitBar(myHitBar);
+        // ActionManager.instance.ClearHitBar(myHitBar);
+        UIManager.instance.RemoveHitBar(this);
+        // 비우기
         myHitBar = null;
-        myStat.ApplyResources(false);
     }
 
     /// <summary>
@@ -292,8 +283,8 @@ public class Unit : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = maxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {maxHp}";
-        _txt.text = $"Hp : {hp}\nAtk : {atk}\nDef : {def}";
+        string hp = MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
+        _txt.text = $"Hp : {hp}\nAtk : {Atk}\nDef : {Def}";
     }
 
     #region Command
@@ -388,7 +379,7 @@ public class Unit : Selectable
                 // 대상이 없거나 공격이 없을 경우
                 type = STATE_SELECTABLE.UNIT_MOVE;
             }
-            else if ((myAlliance.GetLayer(false) & (1 << _cmd.target.gameObject.layer)) != 0)
+            else if ((myTeam.EnemyLayer & (1 << _cmd.target.gameObject.layer)) != 0)
             {
 
                 // 대상이 공격 해야할 대상이면 공격

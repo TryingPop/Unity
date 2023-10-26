@@ -14,7 +14,7 @@ public class GuidedMissile : Missile
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected float moveSpeed;
 
-    [SerializeField] protected short prefabIdx;
+    [SerializeField] protected int prefabIdx;
 
     protected int atk;
 
@@ -39,7 +39,7 @@ public class GuidedMissile : Missile
     }
     */
 
-    public override void Init(Selectable _atker, int _atk, short _prefabIdx)
+    public override void Init(Selectable _atker, int _atk, int _prefabIdx)
     {
 
         atker = _atker.transform;

@@ -9,9 +9,9 @@ using UnityEngine;
 public class UpgradeStat : BuildingAction
 {
 
-    [SerializeField] private TYPE_MANAGEMENT upgradeType;
-
-    [SerializeField] private short add;
+    [SerializeField] protected TYPE_MANAGEMENT upgradeType;
+    [SerializeField] protected int cost;
+    [SerializeField] protected int add;
 
     public override void Action(Building _building)
     {
@@ -21,8 +21,7 @@ public class UpgradeStat : BuildingAction
         if (_building.MyTurn >= turn)
         {
 
-            _building.MyUpgrades.UpgradeStat(upgradeType, add);
-            ActionManager.instance.UpgradeChk(_building.MyAlliance);
+            _building.MyTeam.Upgrade(upgradeType, add);
             _building.MyTurn = 0;
         }
 
@@ -31,6 +30,29 @@ public class UpgradeStat : BuildingAction
 
             OnExit(_building);
         }
-            
+    }
+
+    public override void ForcedQuit(Building _building)
+    {
+
+        // 환불
+        int refundCost = Mathf.FloorToInt(VariableManager.REFUND_RATE * cost);
+        _building.MyTeam.AddGold(refundCost);
+        OnExit(_building);
+    }
+
+    public override void OnEnter(Building _building)
+    {
+
+        // 골드 확인
+        if (!_building.MyTeam.ChkGold(cost))
+        {
+
+            OnExit(_building);
+            return;
+        }
+
+
+        base.OnEnter(_building);
     }
 }

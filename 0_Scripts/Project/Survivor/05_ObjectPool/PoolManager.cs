@@ -153,10 +153,10 @@ public class PoolManager : MonoBehaviour
     /// -1인경우 존재 X
     /// </summary>
     /// <returns>현재 인덱스</returns>
-    public short ChkIdx(ushort _idx)
+    public int ChkIdx(int _idx)
     {
 
-        for (short i = 0; i < data.Length; i++)
+        for (int i = 0; i < data.Length; i++)
         {
 
             // 여기 방법을 바꿔야한다

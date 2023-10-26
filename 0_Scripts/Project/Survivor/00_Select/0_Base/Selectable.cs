@@ -3,33 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 유닛 사이즈
-/// Small : 1(기본 유닛), Medium : 2(?), Large : 3(보스몹, 건물), XLarge = 4
-/// </summary>
-public enum STATE_SIZE { SMALL = 1, MEDIUM = 2, LARGE = 3, XLARGE = 4 }
+
 
 /// <summary>
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
 /// </summary>
-[RequireComponent(typeof(Stats)),
-    RequireComponent(typeof(SightMesh))]
+// [RequireComponent(typeof(Stats)),
+//     RequireComponent(typeof(SightMesh))]
 public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
                                     IDamagable          // 모든 유닛은 피격 가능하다!
 {
 
     [Header("생존 관련 변수")]
-    protected int maxHp;                                // 최대 체력 - 스크립터블 오브젝트로 받아 올 예정이지만
-                                                        // 업그레이드로 증가가능하게 따로 변수 추가했다
-    
     protected int curHp;                                // 현재 Hp
-    protected int def;                                  // 방어력
 
     protected HitBar myHitBar;                          // 체력바
 
-    protected AllianceInfo myAlliance;                  // 팀 정보
-    protected UpgradeInfo myUpgrades;                   // 업그레이드 정보
+    protected TeamInfo myTeam;                          // 팀 정보
 
     [SerializeField] protected Stats myStat;            // 스텟
     [SerializeField] protected SightMesh myMinimap;
@@ -45,22 +36,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 스텟 설정
     /// </summary>
-    public virtual void SetStat()
-    {
-         
-        if (myStat.MaxHp == VariableManager.INFINITE) maxHp = myStat.MaxHp;
-        else maxHp = myStat.MaxHp;
-
-
-        def = myStat.Def;
-
-        if (myUpgrades != null) 
-        { 
-
-            maxHp += myUpgrades.AddHp;
-            def += myUpgrades.AddDef;
-        }
-    }
+    // public abstract void SetStat();
 
     /// <summary>
     /// 체력 회복
@@ -70,14 +46,17 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         _atk = _atk < 0 ? 0 : _atk;
         curHp += _atk;
-        if (curHp > maxHp) curHp = maxHp;
+        if (curHp > MaxHp) curHp = MaxHp;
         myHitBar.SetHp(curHp);
     }
 
     /// <summary>
     /// 풀 Hp 인지 확인
     /// </summary>
-    public bool FullHp { get { return curHp == maxHp; } }
+    public bool FullHp { get { return curHp == MaxHp; } }
+
+    public int MaxHp { get { return myStat.MaxHp + myTeam.AddedHp; } }
+    public int Def { get { return myStat.Def + myTeam.AddedDef; } }
 
     /// <summary>
     /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
@@ -123,7 +102,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             if (value != null)
             {
 
-                value.Init(transform, maxHp, myStat.MySize);
+                value.Init(transform, MaxHp, myStat.MySize);
                 value.SetHp(curHp);
             }
             myHitBar = value; 
@@ -147,17 +126,12 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         }
     }
 
-    public AllianceInfo MyAlliance => myAlliance;
-    public UpgradeInfo MyUpgrades => myUpgrades;
+    public TeamInfo MyTeam => myTeam;
 
     /// <summary>
     /// 초기화 메서드
     /// </summary>
-    protected virtual void Init()
-    {
-
-        curHp = maxHp;
-    }
+    protected abstract void Init();
 
     /// <summary>
     /// 유닛 생성하고, 레이어 바꾼뒤 실행할 기능들 모아둔 메서드
@@ -172,7 +146,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         if (ChkInvincible()) return;
 
-        curHp -= _dmg - def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - def;
+        curHp -= _dmg - Def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - Def;
 
         if (curHp <= 0) Dead();
         else myHitBar.SetHp(curHp);
@@ -185,7 +159,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected bool ChkInvincible()
     {
 
-        if (maxHp == VariableManager.INFINITE)
+        if (MaxHp == VariableManager.INFINITE)
         {
 
             return true;
@@ -195,7 +169,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     }
 
     /// <summary>
-    /// 사망 처리 메서드
+    /// 사망 처리 메서드, hp바 표시, 현재 선택되면 해제, 그리고 인구조절
     /// </summary>
     public virtual void Dead()
     {
@@ -205,6 +179,13 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         // 시체 레이어로 변경
         gameObject.layer = VariableManager.LAYER_DEAD;
+
+        // 인구 깎는다
+        int supply = myStat.Supply;
+        if (supply < 0) myTeam.AddMaxSupply(supply);
+        else myTeam.AddCurSupply(-supply);
+
+        // 현재 선택 중이면 해제한다!
         if (InputManager.instance.curGroup.IsContains(this)) 
         { 
             

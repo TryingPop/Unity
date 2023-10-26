@@ -9,12 +9,12 @@ using UnityEngine;
 public class GunAttack : RangeTarget
 {
 
-    [SerializeField] protected ushort effectIdx;            // ≈∫«« ¿Ã∆Â∆Æ
-    protected short effectPrefabIdx = -1;
+    [SerializeField] protected int effectIdx;            // ≈∫«« ¿Ã∆Â∆Æ
+    protected int effectPrefabIdx = -1;
 
     [SerializeField] protected Vector3 effectOffset;        // ¿Ã∆Â∆Æ Ω√¿€ ¿ßƒ°
 
-    protected short EffectPrefabIdx
+    protected int EffectPrefabIdx
     {
         get 
         {

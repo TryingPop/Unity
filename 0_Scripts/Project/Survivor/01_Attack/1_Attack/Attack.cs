@@ -90,7 +90,7 @@ public abstract class Attack : ScriptableObject
         _unit.MyTurn = 0;
 
         int len = Physics.SphereCastNonAlloc(_unit.transform.position, _isChase ? 
-            chaseRange : atkRange, _unit.transform.forward, hits, 0f, _unit.MyAlliance.GetLayer(_isAlly));
+            chaseRange : atkRange, _unit.transform.forward, hits, 0f, _isAlly ? _unit.MyTeam.AllyLayer : _unit.MyTeam.EnemyLayer);
         float minDis = _isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;
         _unit.Target = null;
 

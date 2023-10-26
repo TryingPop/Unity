@@ -9,14 +9,13 @@ using UnityEngine;
 public class RecruitSoldier : BuildingAction
 {
 
-    [SerializeField] protected ushort selectIdx;
-    protected short prefabIdx = -1;
+    [SerializeField] protected int selectIdx;
+    protected int prefabIdx = -1;
 
 
     [Tooltip("유닛에 내장된 스텟으로 가져올지 혹은 건물껄 이용할지 결정한다")]
     [SerializeField] protected bool useStatCost;
-    [SerializeField] protected byte refund;
-    [SerializeField] protected ushort cost;
+    [SerializeField] protected int cost;
 
     protected Stats targetStat;
 
@@ -105,8 +104,9 @@ public class RecruitSoldier : BuildingAction
     {
 
         // 강제 종료 시 환불
-        ushort refundCost = (ushort)Mathf.FloorToInt(refund * Cost * 0.01f);
-        targetStat.ApplyResources(false, true, true, false, refundCost);
+        int refundCost = Mathf.FloorToInt(VariableManager.REFUND_RATE * Cost);
+        _building.MyTeam.AddGold(refundCost);
+
         OnExit(_building);
     }
 
@@ -127,13 +127,16 @@ public class RecruitSoldier : BuildingAction
             }
         }
 
-        // 자원 확인 및 바로 소모
-        if (!targetStat.ApplyResources(true, true, true, useStatCost, cost))
+        // 골드가 확인
+        if (!_building.MyTeam.ChkGold(cost))
         {
 
+            // 없으면 탈출
             OnExit(_building);
             return;
         }
 
+        // 골드 즉시 사용
+        _building.MyTeam.AddGold(-cost);
     }
 }

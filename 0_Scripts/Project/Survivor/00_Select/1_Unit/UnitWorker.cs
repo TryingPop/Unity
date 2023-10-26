@@ -45,7 +45,7 @@ public class UnitWorker : Unit
                 // 대상이 없는 경우
                 type = STATE_SELECTABLE.UNIT_MOVE;
             }
-            else if ((myAlliance.GetLayer(true) & (1 << _cmd.target.gameObject.layer)) != 0)
+            else if ((myTeam.AllyLayer & (1 << _cmd.target.gameObject.layer)) != 0)
             {
 
                 // 대상이 팀인 경우 힐 or 수리? 하러 간다!

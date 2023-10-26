@@ -8,11 +8,11 @@ using UnityEngine;
 public abstract class ButtonInfo : IAction<InputManager>
 {
 
-    [SerializeField] protected TYPE_KEY btnKey;
+    [SerializeField] protected TYPE_INPUT btnKey;
     [SerializeField] protected Sprite btnSprite;
     [SerializeField] protected STATE_SELECTABLE cmdType;
     
-    public TYPE_KEY BtnKey => btnKey;
+    public TYPE_INPUT BtnKey => btnKey;
 
     public int CmdType => (int)cmdType;
     public Sprite BtnSprite => btnSprite;
@@ -20,7 +20,7 @@ public abstract class ButtonInfo : IAction<InputManager>
     /// <summary>
     /// 외부에서는 강제 탈출할 때 사용하는 메서드
     /// </summary>
-    public virtual void OnExit(InputManager _inputManager, TYPE_KEY _nextKey = TYPE_KEY.NONE)
+    public virtual void OnExit(InputManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
     {
 
         _inputManager.ActionDone(_nextKey);

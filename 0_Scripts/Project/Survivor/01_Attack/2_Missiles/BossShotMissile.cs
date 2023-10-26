@@ -13,10 +13,10 @@ public class BossShotMissile : Missile
     [SerializeField] protected Vector3 dir;         // 연산용
     [SerializeField] protected Vector3 sizeUp;      // 사이즈 업
 
-    protected short waitTurn;                       // 기 모으는 턴
-    protected short moveTurn;                       // 이동 턴
+    protected int waitTurn;                       // 기 모으는 턴
+    protected int moveTurn;                       // 이동 턴
 
-    [SerializeField] protected short calcTurn;      // 연산용
+    [SerializeField] protected int calcTurn;      // 연산용
     protected bool isMove = false;                  // 연산용
 
     protected int atk;
@@ -26,9 +26,9 @@ public class BossShotMissile : Missile
     [SerializeField] protected MissileRotation myRotation;
     [SerializeField] protected GameObject engageParticle;
 
-    protected short prefabIdx;
+    protected int prefabIdx;
 
-    public short WaitTurn
+    public int WaitTurn
     {
 
         set 
@@ -49,7 +49,7 @@ public class BossShotMissile : Missile
         }
     }
 
-    public short MoveTurn
+    public int MoveTurn
     {
 
         set
@@ -64,7 +64,7 @@ public class BossShotMissile : Missile
     /// <summary>
     /// 초기화 및 기본 변수 세팅
     /// </summary>
-    public override void Init(Selectable _atker, int _atk, short _prefabIdx)
+    public override void Init(Selectable _atker, int _atk, int _prefabIdx)
     {
 
         prefabIdx = _prefabIdx;
@@ -74,7 +74,7 @@ public class BossShotMissile : Missile
         destination.y = 0;
         dir = destination.normalized;
 
-        targetLayer = _atker.MyAlliance.GetLayer(false);
+        targetLayer = _atker.MyTeam.EnemyLayer;
 
         transform.LookAt(destination + transform.position);
 
@@ -86,48 +86,6 @@ public class BossShotMissile : Missile
 
         ActionManager.instance.AddMissile(this);
     }
-
-    /*
-    public void Init(Vector3 _dir, int _atk,
-        short _waitTurn, short _moveTurn, LayerMask _targetLayer)
-    {
-
-        _dir.y = 0;
-        dir = _dir.normalized;
-        
-        atk = _atk;
-
-        waitTurn = _waitTurn;
-        moveTurn = _moveTurn;
-
-        targetLayer = _targetLayer;
-
-
-        if (waitTurn != 0)
-        {
-
-            sizeUp = Vector3.one * (1.0f / waitTurn);
-            transform.localScale = Vector3.zero;
-        }
-        else
-        {
-
-            transform.localScale = Vector3.one;
-        }
-        
-        myRigid.velocity = Vector3.zero;
-
-        transform.LookAt(_dir + transform.position);
-
-        calcTurn = 0;
-        isMove = false;
-        myCollider.isTrigger = false;
-        myRigid.isKinematic = false;
-        engageParticle.SetActive(true);
-
-        ActionManager.instance.AddMissile(this);
-    }
-    */
 
     /// <summary>
     /// 행동

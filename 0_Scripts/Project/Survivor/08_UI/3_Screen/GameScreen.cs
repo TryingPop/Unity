@@ -40,13 +40,13 @@ public class GameScreen : MonoBehaviour,
         // screenRatio.x = Screen.width / canvasRect.x;
         // screenRatio.y = Screen.height / canvasRect.y;
 
-        Vector2 screenRatio = InfoManager.instance.screenRatio;
+        Vector2 screenRatio = UIManager.instance.screenRatio;
 
-        myLeftBottom = myRectTrans.anchoredPosition * screenRatio;
+        myLeftBottom = myRectTrans.anchoredPosition / screenRatio;
         myRightTop = myLeftBottom;
         myRightTop.x += myRectTrans.rect.width;
         myRightTop.y += myRectTrans.rect.height;
-        myRightTop *= screenRatio;
+        myRightTop /= screenRatio;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -101,7 +101,7 @@ public class GameScreen : MonoBehaviour,
                 inputManager.SavePointToRay(true, true);
                 inputManager.GiveCmd(true, true);
             }
-            else inputManager.Cancel();
+            else inputManager.MyState = (int)TYPE_INPUT.CANCEL;
         }
     }
 

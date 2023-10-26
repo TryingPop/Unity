@@ -13,7 +13,7 @@ public class BtnPos : ButtonInfo
     {
 
         _inputManager.CmdType = cmdType;
-        _inputManager.ActiveButtonUI(false, false, true);
+        _inputManager.ActiveBtns(false, false, true);
     }
 
     public override void Action(InputManager _inputManager)

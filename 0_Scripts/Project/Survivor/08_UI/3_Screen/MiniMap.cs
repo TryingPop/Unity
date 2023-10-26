@@ -15,7 +15,7 @@ public class MiniMap : MonoBehaviour,
 
     // protected Vector2 screenRatio;
     protected Vector2 miniMapOffset;
-    protected Vector2 miniMapSize;
+    protected Vector2 miniMapScale;
     
 
     private void Start()
@@ -31,7 +31,7 @@ public class MiniMap : MonoBehaviour,
     {
 
         miniMapOffset = _miniMapOffset;
-        miniMapSize = _miniMapSize;
+        miniMapScale = _miniMapSize;
     }
 
     /// <summary>
@@ -40,12 +40,12 @@ public class MiniMap : MonoBehaviour,
     protected void SetMiniMapPos()
     {
 
-        Vector2 screenRatio = InfoManager.instance.screenRatio;
-        miniMapOffset = myRectTrans.anchoredPosition * screenRatio;
+        Vector2 screenRatio = UIManager.instance.screenRatio;
+        miniMapOffset = myRectTrans.anchoredPosition / screenRatio;
 
         var miniMapRect = myRectTrans.sizeDelta;
-        miniMapSize.x = miniMapRect.x * screenRatio.x;
-        miniMapSize.y = miniMapRect.y * screenRatio.y;
+
+        miniMapScale = screenRatio / miniMapRect;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class MiniMap : MonoBehaviour,
     public Vector2 GetMiniMapScaleValue(Vector2 _mousePos)
     {
 
-        return (_mousePos - miniMapOffset) / miniMapSize;
+        return (_mousePos - miniMapOffset) * miniMapScale;
     }
 
     /// <summary>

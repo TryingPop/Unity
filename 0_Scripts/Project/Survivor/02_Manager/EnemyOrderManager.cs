@@ -20,7 +20,7 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField, Range(5, 20)] private float thinkMinTime = 10f;        // 최소 반복 간격
     [SerializeField, Range(20, 40)] private float thinkMaxTime = 20f;       // 최대 반복 간격
 
-    [SerializeField, Range(1, 10)] private short maxRandomTimes;            // 보관할 시간들 개수
+    [SerializeField, Range(1, 10)] private int maxRandomTimes;            // 보관할 시간들 개수
     private WaitForSeconds[] times;                                         // 보관된 시간
 
     private Vector3[] initPos;                                              // 생성 위치
@@ -32,10 +32,10 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField] private int respawnEnemyNum = 2;                       // 리젠 포스에서 생성할 숫자
 
     // 생성 번호
-    [SerializeField] private ushort[] respawnEnemySelectIdxs;               // 생성할 적 idx
-    private short[] respawnEnemyPoolIdxs;                                   
+    [SerializeField] private int[] respawnEnemySelectIdxs;               // 생성할 적 idx
+    private int[] respawnEnemyPoolIdxs;                                   
 
-    private ushort forcedAtkNum = 30;                                       // 강제 공격할 숫자
+    private int forcedAtkNum = 30;                                       // 강제 공격할 숫자
 
     private void Awake()
     {
@@ -60,7 +60,7 @@ public class EnemyOrderManager : MonoBehaviour
 
         StartCoroutine(OrderStart());
 
-        respawnEnemyPoolIdxs = new short[respawnEnemySelectIdxs.Length];
+        respawnEnemyPoolIdxs = new int[respawnEnemySelectIdxs.Length];
         for (int i = 0; i < respawnEnemyPoolIdxs.Length; i++)
         {
 

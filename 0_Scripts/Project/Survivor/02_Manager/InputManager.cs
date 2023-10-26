@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -10,27 +12,21 @@ public class InputManager : MonoBehaviour
     public SelectedGroup curGroup;
     public SelectedUI selectedUI;
     
-    [SerializeField] private Camera cam;
+    [SerializeField] private Camera cam;                // 월드맵 캠
     [SerializeField] private Vector3 clickPos;
 
     [SerializeField] private UnitSlots unitSlots;
 
-    [SerializeField] private LayerMask targetLayer;     // 타겟팅 레이어
-    [SerializeField] private LayerMask selectLayer;     // 선택 가능한 레이어
+
+    [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
+    [SerializeField] private LayerMask teamLayer;       // 선택 가능한 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
-    [SerializeField] private string selectTag;
 
+    [SerializeField] private TYPE_INPUT myState;
 
-    [SerializeField] private TYPE_KEY myState;
-
-    // [SerializeField] private ButtonHandler myBtn;
     private STATE_SELECTABLE cmdType;
 
-    [SerializeField] private ButtonSlots mainBtns;
-    [SerializeField] private ButtonSlots subBtns;
-    [SerializeField] private GameObject cancelBtns;
-
-    [SerializeField] private ButtonManager btnManager;
+    [SerializeField] private UIButton btns;
 
     public BuildManager buildManager;
 
@@ -44,15 +40,7 @@ public class InputManager : MonoBehaviour
     private Vector3 cmdPos;
     private Selectable cmdTarget;
 
-    public Vector2 SavePos
-    {
-
-        set
-        {
-
-            savePos = value;
-        }
-    }
+    public Vector2 SavePos { set { savePos = value; } }
     public Vector3 CmdPos
     {
 
@@ -92,7 +80,7 @@ public class InputManager : MonoBehaviour
         {
 
             return cmdTarget != null
-                && ((1 << cmdTarget.gameObject.layer) & selectLayer) != 0;
+                && ((1 << cmdTarget.gameObject.layer) & teamLayer) != 0;
         }
     }
 
@@ -103,7 +91,7 @@ public class InputManager : MonoBehaviour
         {
 
             mainHandler = value;
-            mainBtns.Init(mainHandler);
+            btns.SetHandler(mainHandler, true);
         }
     }
 
@@ -114,7 +102,7 @@ public class InputManager : MonoBehaviour
         {
 
             subHandler = value;
-            subBtns.Init(subHandler);
+            btns.SetHandler(subHandler, false);
         }
     }
 
@@ -141,9 +129,15 @@ public class InputManager : MonoBehaviour
         {
 
             if (GameManager.instance.IsStop) return;
+            if (value == -1) 
+            { 
+                
+                Cancel();
+                return;
+            }
             if (ChkReturn(value)) return;
 
-            myState = (TYPE_KEY)value;
+            myState = (TYPE_INPUT)value;
             MyHandler.Changed(this);
         }
         get { return (int)myState; }
@@ -172,33 +166,38 @@ public class InputManager : MonoBehaviour
         }
 
         curGroup = new SelectedGroup();
-        unitSlots.CurGroup = curGroup.Get();
+        
+        var group = curGroup.Get();
+        unitSlots.CurGroup = group;
+        selectedUI.CurGroup = group;
     }
 
     private void Update()
     {
 
-        if (myState == TYPE_KEY.NONE)
+        // 입력 현황 받아오기
+        // MyState = (int)inputManager.MyState;
+        if (myState == TYPE_INPUT.NONE)
         {
 
             // 아무상태도 아닐 때만 키입력이 가능하다!
-            if (Input.GetKeyDown(KeyCode.M)) MyState = 1;
-            else if (Input.GetKeyDown(KeyCode.S)) MyState = 2;
-            else if (Input.GetKeyDown(KeyCode.P)) MyState = 3;
-            else if (Input.GetKeyDown(KeyCode.H)) MyState = 4;
-            else if (Input.GetKeyDown(KeyCode.A)) MyState = 5;
-            else if (Input.GetKeyDown(KeyCode.Q)) MyState = 6;
-            else if (Input.GetKeyDown(KeyCode.W)) MyState = 7;
-            else if (Input.GetKeyDown(KeyCode.E)) MyState = 8;
+            if (Input.GetKeyDown(KeyCode.M)) MyState = (int)TYPE_INPUT.KEY_M;
+            else if (Input.GetKeyDown(KeyCode.S)) MyState = (int)TYPE_INPUT.KEY_S;
+            else if (Input.GetKeyDown(KeyCode.P)) MyState = (int)TYPE_INPUT.KEY_P;
+            else if (Input.GetKeyDown(KeyCode.H)) MyState = (int)TYPE_INPUT.KEY_H;
+            else if (Input.GetKeyDown(KeyCode.A)) MyState = (int)TYPE_INPUT.KEY_A;
+            else if (Input.GetKeyDown(KeyCode.Q)) MyState = (int)TYPE_INPUT.KEY_Q;
+            else if (Input.GetKeyDown(KeyCode.W)) MyState = (int)TYPE_INPUT.KEY_W;
+            else if (Input.GetKeyDown(KeyCode.E)) MyState = (int)TYPE_INPUT.KEY_E;
         }
-        
-        // 상황 상관없이 체력바를 보여주는 거기에 밑에 따로 빼놨다
-        if (Input.GetKeyDown(KeyCode.Escape)) Cancel();
-        
+
+        if (Input.GetKeyDown(KeyCode.Escape)) MyState = (int)TYPE_INPUT.CANCEL;
+
+        // 히트바는 바로 끄고 켠다!
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
 
-            ActionManager.instance.HitBarCanvas = !ActionManager.instance.HitBarCanvas;
+            UIManager.instance.ActiveHitBar = !UIManager.instance.ActiveHitBar;
         }
     }
 
@@ -206,15 +205,15 @@ public class InputManager : MonoBehaviour
     {
 
         if (curGroup.GetSize() == 0
+            || _key == 0
             || MyHandler == null
-            || MyHandler.Idxs[_key - 1] == -1
-            || _key == 0)
+            || MyHandler.Idxs[_key - 1] == -1)
         {
 
-            myState = TYPE_KEY.NONE;
+            myState = TYPE_INPUT.NONE;
             return true;
         }
-        else if (myState != TYPE_KEY.NONE)
+        else if (myState != TYPE_INPUT.NONE)
         {
 
             return true;
@@ -232,29 +231,15 @@ public class InputManager : MonoBehaviour
         {
 
             // 서브 행동 중이면 해당 서브 행동만 강제 탈출
-            if (myState != TYPE_KEY.NONE) subHandler.ForcedQuit(this);
+            if (myState != TYPE_INPUT.NONE) subHandler.ForcedQuit(this);
             // 서브 행동 중이 아니면 서브 버튼 완전히 탈출
-            else ActiveButtonUI(true, false, false);
+            else btns.ActiveBtns(true, false, false);
         }
         // 이외는 메인 핸들러 탈출이다!
         else mainHandler?.ForcedQuit(this);
-        
+
         // 취소 버튼이 활성화 되어져 있는 경우 취소 명령을 보낸다
         if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, Input.GetKey(KeyCode.LeftShift));
-    }
-
-    public void ActiveButtonUI(bool _isActiveMain, bool _isActiveSub, bool _isActiveCancel)
-    {
-
-        // 전부다 미완성이므로 강제로 안되게 한다!
-        if (curGroup.GroupType == TYPE_SELECTABLE.UNFINISHED_BUILDING && _isActiveMain) _isActiveMain = false;
-
-        mainBtns.gameObject.SetActive(_isActiveMain);
-
-        subBtns.gameObject.SetActive(_isActiveSub);
-        isSubBtn = _isActiveSub;
-
-        cancelBtns.SetActive(_isActiveCancel);
     }
 
     /// <summary>
@@ -273,20 +258,20 @@ public class InputManager : MonoBehaviour
 
         // 유닛 체크
         if (_chkUnit
-            && Physics.Raycast(ray, out RaycastHit selectHit, 500f, targetLayer)) cmdTarget = selectHit.transform.GetComponent<Selectable>();
+            && Physics.Raycast(ray, out RaycastHit selectHit, 500f, selectLayer)) cmdTarget = selectHit.transform.GetComponent<Selectable>();
         else cmdTarget = null;
     }
 
     /// <summary>
     /// 마우스가 가리키는 월드 좌표
     /// </summary>
-    public void MouseToWorldPosition(out Vector3 _pos)
+    public void MouseToWorldPos(out Vector3 _pos)
     {
 
-        _pos = UIPosToWorldPos(Input.mousePosition);
+        _pos = MouseToWorldPos(Input.mousePosition);
     }
 
-    private Vector3 UIPosToWorldPos(Vector3 _uiPos)
+    private Vector3 MouseToWorldPos(Vector3 _uiPos)
     {
 
         Ray ray = cam.ScreenPointToRay(_uiPos);
@@ -295,7 +280,7 @@ public class InputManager : MonoBehaviour
         else return new Vector3(0, 100f, 0f);
     }
 
-    public void ActionDone(TYPE_KEY _nextKey = TYPE_KEY.NONE)
+    public void ActionDone(TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
     {
 
         myState = _nextKey;
@@ -343,8 +328,9 @@ public class InputManager : MonoBehaviour
         cmdType = STATE_SELECTABLE.NONE;
         cmdPos.Set(0f, 100f, 0f);
         cmdTarget = null;
-        myState = TYPE_KEY.NONE;
-        ActiveButtonUI(true, false, curGroup.IsCancelBtn);
+        myState = TYPE_INPUT.NONE;
+        // ActiveButtonUI(true, false, curGroup.IsCancelBtn);
+        ActiveBtns(true, false, false);
     }
 
 
@@ -424,7 +410,7 @@ public class InputManager : MonoBehaviour
             for (int i = 0; i < hits.Length; i++)
             {
 
-                if (((1 << hits[i].transform.gameObject.layer) & selectLayer) == 0) continue;
+                if (((1 << hits[i].transform.gameObject.layer) & teamLayer) == 0) continue;
 
                 Selectable select = hits[i].transform.GetComponent<Selectable>();
 
@@ -479,13 +465,13 @@ public class InputManager : MonoBehaviour
         // 추가 유무 판단
         if (!add) curGroup.Clear();
 
-        ushort chkIdx = cmdTarget.MyStat.SelectIdx;
+        int chkIdx = cmdTarget.MyStat.SelectIdx;
 
         for (int i = 0; i < hits.Length; i++)
         {
 
             // 선택 가능한 경우 확인
-            if (((1 << hits[i].transform.gameObject.layer) & selectLayer) == 0) continue;
+            if (((1 << hits[i].transform.gameObject.layer) & teamLayer) == 0) continue;
 
             Selectable select = hits[i].transform.GetComponent<Selectable>();
 
@@ -500,6 +486,58 @@ public class InputManager : MonoBehaviour
     }
 
 
+    public void UISelect(Selectable _select)
+    {
+
+        bool deselect = Input.GetKey(KeyCode.LeftShift);
+
+        if (deselect)
+        {
+
+            if (curGroup.IsContains(_select)) curGroup.DeSelect(_select);
+
+        }
+        else
+        {
+
+            curGroup.Clear();
+            curGroup.Select(_select);
+        }
+
+        ChkUIs();
+    }
+
+    public void UIGroupSelect(Selectable _select)
+    {
+
+        bool deselect = Input.GetKey(KeyCode.LeftShift);
+
+        if (deselect)
+        {
+
+            if (curGroup.IsContains(_select)) curGroup.DeSelect(_select);
+        }
+        else
+        {
+
+            int selectIdx = _select.MyStat.SelectIdx;
+
+            int len = curGroup.GetSize();
+            var group = curGroup.Get();
+            for (int i = len - 1; i >= 0; i--)
+            {
+
+                if (selectIdx != group[i].MyStat.SelectIdx)
+                {
+
+                    curGroup.DeSelect(group[i]);
+                }
+            }
+        }
+
+        ChkUIs();
+    }
+
     /// <summary>
     /// 두 화면 좌표 사이에 선택가능한 레이어의 유닛을 모두 찾는다
     /// </summary>
@@ -507,14 +545,14 @@ public class InputManager : MonoBehaviour
     private void ChkBox(Vector3 screenPos1, Vector3 screenPos2, out RaycastHit[] hits) 
     {
 
-        Vector3 pos1 = UIPosToWorldPos(screenPos1);
+        Vector3 pos1 = MouseToWorldPos(screenPos1);
         if (pos1.y >= 90f) 
         { 
 
             hits = null;
             return;
         }
-        Vector3 pos2 = UIPosToWorldPos(screenPos2);
+        Vector3 pos2 = MouseToWorldPos(screenPos2);
         if (pos2.y >= 90f)
         {
 
@@ -525,7 +563,7 @@ public class InputManager : MonoBehaviour
         Vector3 center = (pos1 + pos2) * 0.5f;
         Vector3 half = new Vector3(Mathf.Abs(pos1.x - pos2.x), 60f, Mathf.Abs(pos1.z - pos2.z)) * 0.5f;
 
-        hits = Physics.BoxCastAll(center, half, Vector3.up, Quaternion.identity, 0f, targetLayer);
+        hits = Physics.BoxCastAll(center, half, Vector3.up, Quaternion.identity, 0f, selectLayer);
     }
 
     /// <summary>
@@ -534,11 +572,32 @@ public class InputManager : MonoBehaviour
     public void ChkUIs()
     {
 
-        selectedUI.SetTargets(curGroup.Get());
-        unitSlots.Init();
-        curGroup.ChkGroupType();
 
-        MainHandler = btnManager.GetHandler(curGroup.GroupType);
-        ActiveButtonUI(true, false, curGroup.IsCancelBtn);
+
+        curGroup.ChkGroupType();
+        
+        // 핸들러 가져오기 + 여기서 핸들러 등록 및 ui
+        MainHandler = btns.GetHandler(curGroup.GroupType);
+
+        // 유닛 슬롯 초기화
+        // unitSlots.Init();
+        unitSlots.IsChanged = true;
+
+        // 스크린의 ui 초기화
+        selectedUI.ResetGroup();
+
+        // 버튼 활성화 수정
+        ActiveBtns(true, false, curGroup.IsCancelBtn);
+    }
+
+    /// <summary>
+    /// 버튼 활성화 수정
+    /// </summary>
+    public void ActiveBtns(bool _activeMain, bool _activeSub, bool _activeCancel)
+    {
+
+        isSubBtn = _activeSub;
+        bool activeCancel = _activeCancel || curGroup.IsCancelBtn;
+        btns.ActiveBtns(_activeMain, _activeSub, activeCancel);
     }
 }

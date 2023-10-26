@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -83,22 +82,7 @@ public class Building : Selectable
     protected override void Init()
     {
 
-        SetStat();
-
-        if (opt.BuildTurn == 0)
-        {
-
-            myState = STATE_SELECTABLE.NONE;
-            if (maxHp != VariableManager.INFINITE) curHp = maxHp;
-        }
-        else
-        {
-
-            if (maxHp != VariableManager.INFINITE) curHp = 1;
-            myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
-            GetComponentInChildren<MeshRenderer>().material.color = Color.black;
-            curBuildTurn = 0;
-        }
+        myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
 
         if (isStarting)
         {
@@ -112,14 +96,29 @@ public class Building : Selectable
     {
 
         int myLayer = gameObject.layer;
-        myAlliance = TeamManager.instance.GetTeamInfo(myLayer);
-        myUpgrades = TeamManager.instance.GetUpgradeInfo(myLayer);
+
+        myTeam = TeamManager.instance.GetTeamInfo(myLayer);
+
+        if (opt.BuildTurn == 0)
+        {
+
+            myState = STATE_SELECTABLE.NONE;
+            if (myStat.MaxHp != VariableManager.INFINITE) curHp = MaxHp;
+        }
+        else
+        {
+
+            if (myStat.MaxHp != VariableManager.INFINITE) curHp = 1;
+            GetComponentInChildren<MeshRenderer>().material.color = Color.black;
+            curBuildTurn = 0;
+        }
 
         ActionManager.instance.AddBuilding(this);
-        MyHitBar = ActionManager.instance.GetHitBar();
+        UIManager.instance.AddHitBar(this);
+        // MyHitBar = ActionManager.instance.GetHitBar();
 
         Color teamColor;
-        if (myAlliance != null) teamColor = myAlliance.TeamColor;
+        if (myTeam != null) teamColor = myTeam.TeamColor;
         else teamColor = Color.yellow;
 
         myMinimap.SetColor(teamColor);
@@ -155,12 +154,16 @@ public class Building : Selectable
         if (curBuildTurn >= opt.BuildTurn)
         {
 
-            curHp = maxHp;
+            curHp = MaxHp;
             myObstacle.carving = true;
             mySight.SetSize(myStat.MySize * 2);
             height = opt.IncreaseY;
             myState = STATE_SELECTABLE.NONE;
-            myStat.ApplyResources(true, false, true);
+
+            // 인구 추가
+            int supply = myStat.Supply;
+            if (supply < 0) myTeam.AddMaxSupply(-supply);
+            else myTeam.AddCurSupply(supply);
 
             StartCoroutine(FinishedBuildCoroutine());
             if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
@@ -169,15 +172,15 @@ public class Building : Selectable
         {
 
             float per = opt.BuildTurn != 0 ? curBuildTurn / (float)opt.BuildTurn : 1f;
-            if (maxHp != VariableManager.INFINITE) 
+            if (MaxHp != VariableManager.INFINITE) 
             { 
                 
-                curHp = Mathf.FloorToInt(maxHp * per);
+                curHp = Mathf.FloorToInt(MaxHp * per);
                 if (curHp == 0) curHp = 1;
-                else if (curHp == maxHp) curHp -= 1;
+                else if (curHp == MaxHp) curHp -= 1;
             }
             
-            height = ((10 * curHp) / maxHp) * 0.1f * opt.IncreaseY;
+            height = ((10 * curHp) / MaxHp) * 0.1f * opt.IncreaseY;
         }
 
         Vector3 pos = buildingObj.localPosition;
@@ -251,10 +254,10 @@ public class Building : Selectable
 
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
-        ActionManager.instance.ClearHitBar(myHitBar);
+        // ActionManager.instance.ClearHitBar(myHitBar);
+        UIManager.instance.RemoveHitBar(this);
         
         myHitBar = null;
-        myStat.ApplyResources(false);
 
         // 파괴 이벤트
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
@@ -266,7 +269,7 @@ public class Building : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = maxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {maxHp}";
+        string hp = myStat.MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
 
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"Hp : {hp}\nBuild : {100 * curBuildTurn / opt.BuildTurn}%";
         else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"Hp : {hp}";
@@ -299,7 +302,7 @@ public class Building : Selectable
 
                 // 기본 40% 환불!
                 int refundCost = Mathf.FloorToInt(myStat.Cost * 0.4f);
-                myStat.ApplyResources(false, true, false, false, refundCost);
+                myTeam.AddGold(refundCost);
                 Dead();
             }
             else

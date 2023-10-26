@@ -17,19 +17,19 @@ public class Grenade : Missile
     [SerializeField] protected float jumpHeight;
     [SerializeField] protected float moveSpeed;
 
-    protected ushort maxTurn;
-    protected ushort curTurn;
+    protected int maxTurn;
+    protected int curTurn;
 
     protected float gravity;
     protected float deltaY;
 
-    protected short prefabIdx;
+    protected int prefabIdx;
     protected int atk;
 
     // 이건 추후에 scripatble로 대체하기!
     protected static RaycastHit[] hits = new RaycastHit[25];
 
-    public override void Init(Selectable _atker, int _atk, short _prefabIdx)
+    public override void Init(Selectable _atker, int _atk, int _prefabIdx)
     {
 
         myTrail.enabled = true;
@@ -38,7 +38,7 @@ public class Grenade : Missile
         else destination = _atker.TargetPos;
 
         atk = _atk;
-        targetMask = _atker.MyAlliance.GetLayer(false);
+        targetMask = _atker.MyTeam.EnemyLayer;
         prefabIdx = _prefabIdx;
 
         curTurn = 0;

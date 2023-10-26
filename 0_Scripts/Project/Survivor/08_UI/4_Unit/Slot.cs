@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// 유닛 슬롯
 /// </summary>
 public class Slot : MonoBehaviour,
-    IPointerEnterHandler, IPointerExitHandler
+    IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
 
     // info로 대체해서 현재 연동안한다!
@@ -32,13 +32,27 @@ public class Slot : MonoBehaviour,
     {
 
         // 상태 표현
-        InfoManager.instance.EnterUIInfo(target, eventData.position);
+        // Vector3 uiPos = UIManager.instance.MouseToUIPos(eventData.position);
+        UIManager.instance.EnterInfo(target);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
         // 종료
-        InfoManager.instance.ExitUIInfo();
+        UIManager.instance.ExitInfo();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+
+            if (Input.GetKey(KeyCode.LeftControl)) InputManager.instance.UIGroupSelect(target);
+            else InputManager.instance.UISelect(target);
+
+            UIManager.instance.ExitInfo();
+        }
     }
 }

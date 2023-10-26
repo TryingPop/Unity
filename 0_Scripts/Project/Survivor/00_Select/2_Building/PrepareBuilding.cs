@@ -5,15 +5,15 @@ using UnityEngine;
 /// <summary>
 /// 건물 건설 전 지을 수 있는지 확인용 스크립트
 /// </summary>
-public class PrepareBuilding : FollowMouse
+public class PrepareBuilding : MonoBehaviour, Follower
 {
 
     [SerializeField] protected MeshRenderer myMesh;         // 색상 변경용
 
     [SerializeField] protected bool isBuild = true;         // 건설가능 상태?
 
-    [SerializeField] public ushort selectIdx;               // 생성할 건물 idx
-    [SerializeField] protected short prefabIdx = -1;
+    [SerializeField] public int selectIdx;               // 생성할 건물 idx
+    [SerializeField] protected int prefabIdx = -1;
 
     [SerializeField] protected Transform[] chkGround;       // 현재 사용 X
     [SerializeField] protected LayerMask groundLayer;       // 현재 사용 X
@@ -141,10 +141,10 @@ public class PrepareBuilding : FollowMouse
     /// <summary>
     /// 마우스 쫓아가기
     /// </summary>
-    public override void SetPos()
+    public void SetPos()
     {
 
-        InputManager.instance.MouseToWorldPosition(out Vector3 pos);
+        InputManager.instance.MouseToWorldPos(out Vector3 pos);
 
         if (pos.y < 100f)
         {

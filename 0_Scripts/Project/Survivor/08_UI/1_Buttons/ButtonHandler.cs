@@ -9,10 +9,11 @@ using UnityEngine.UI;
 public class ButtonHandler : StateHandler<ButtonInfo>
 {
 
-    protected sbyte[] idxs = null;
+    // sbyte였으나 백준 문제 풀다보니 다른 자료형이 성능 저하를 불러와서 10 -> 40으로 되었지만 int로 수정
+    protected int[] idxs = null;
 
     // 쓰는 키가 많아지거나 cmd로 행동을 구분하고 싶을 때는 딕셔너리로 해야한다!
-    public sbyte[] Idxs
+    public int[] Idxs
     {
 
         get
@@ -21,7 +22,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
             if (actions == null)
             {
 
-                idxs = new sbyte[1] { -1 };
+                idxs = new int[1] { -1 };
                 return idxs;
             }
 
@@ -37,7 +38,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
                     Array.Resize(ref actions, VariableManager.MAX_USE_BUTTONS);
                 }
 
-                idxs = new sbyte[VariableManager.MAX_USE_BUTTONS];
+                idxs = new int[VariableManager.MAX_USE_BUTTONS];
                 for (int i = 0; i < idxs.Length; i++)
                 {
 
@@ -59,31 +60,31 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         }
     }
 
-    public void Action(InputManager _inputManager)
+    public void Action(InputManager _selectManager)
     {
 
-        int idx = GetIdx(_inputManager.MyState);
-        if (idx != -1) actions[idx].Action(_inputManager);
+        int idx = GetIdx(_selectManager.MyState);
+        if (idx != -1) actions[idx].Action(_selectManager);
     }
 
     /// <summary>
     /// 즉발형 확인
     /// </summary>
-    public void Changed(InputManager _inputManager)
+    public void Changed(InputManager _selectManager)
     {
 
-        int idx = GetIdx(_inputManager.MyState);
-        if (idx != -1) actions[idx].OnEnter(_inputManager);
+        int idx = GetIdx(_selectManager.MyState);
+        if (idx != -1) actions[idx].OnEnter(_selectManager);
     }
 
     /// <summary>
     /// 강제 종료
     /// </summary>
-    public void ForcedQuit(InputManager _inputManager)
+    public void ForcedQuit(InputManager _selectManager)
     {
 
-        int idx = GetIdx(_inputManager.MyState);
-        if (idx != -1) actions[idx].OnExit(_inputManager);
+        int idx = GetIdx(_selectManager.MyState);
+        if (idx != -1) actions[idx].OnExit(_selectManager);
     }
 
     public override int GetIdx(int _idx)
