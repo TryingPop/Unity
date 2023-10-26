@@ -35,13 +35,13 @@ public class BtnGoNext : ButtonInfo
         }
     }
 
-    public override void OnEnter(InputManager _inputManager)
+    public override void OnEnter(SelectManager _inputManager)
     {
 
         Action(_inputManager);
     }
 
-    public override void Action(InputManager _inputManager)
+    public override void Action(SelectManager _inputManager)
     {
 
         ButtonHandler btns = NextBtns;

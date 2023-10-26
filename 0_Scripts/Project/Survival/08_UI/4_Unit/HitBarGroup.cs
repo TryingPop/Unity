@@ -7,7 +7,6 @@ public class HitBarGroup : MonoBehaviour
 
 
     [SerializeField] private HitBar prefabHitBar;
-    [SerializeField] private Canvas hitBarCanvas;
 
     private List<HitBar> hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM
             + VariableManager.INIT_BUILDING_LIST_NUM

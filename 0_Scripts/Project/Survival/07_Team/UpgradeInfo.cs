@@ -6,7 +6,7 @@ using UnityEngine;
 /// 업그레이드 정보
 /// </summary>
 [System.Serializable]
-public struct UpgradeInfo
+public class UpgradeInfo
 {
 
     public int addAtk;              // 추가 공격력

@@ -6,7 +6,7 @@ using UnityEngine;
 /// ÆÀ Á¤º¸
 /// </summary>
 [System.Serializable]
-public struct AllianceInfo
+public class AllianceInfo
 {
 
     public LayerMask allyLayer;         // µ¿¸Í ·¹ÀÌ¾î

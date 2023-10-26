@@ -60,31 +60,31 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         }
     }
 
-    public void Action(InputManager _inputManager)
+    public void Action(SelectManager _selectManager)
     {
 
-        int idx = GetIdx(_inputManager.MyState);
-        if (idx != -1) actions[idx].Action(_inputManager);
+        int idx = GetIdx(_selectManager.MyState);
+        if (idx != -1) actions[idx].Action(_selectManager);
     }
 
     /// <summary>
     /// 즉발형 확인
     /// </summary>
-    public void Changed(InputManager _inputManager)
+    public void Changed(SelectManager _selectManager)
     {
 
-        int idx = GetIdx(_inputManager.MyState);
-        if (idx != -1) actions[idx].OnEnter(_inputManager);
+        int idx = GetIdx(_selectManager.MyState);
+        if (idx != -1) actions[idx].OnEnter(_selectManager);
     }
 
     /// <summary>
     /// 강제 종료
     /// </summary>
-    public void ForcedQuit(InputManager _inputManager)
+    public void ForcedQuit(SelectManager _selectManager)
     {
 
-        int idx = GetIdx(_inputManager.MyState);
-        if (idx != -1) actions[idx].OnExit(_inputManager);
+        int idx = GetIdx(_selectManager.MyState);
+        if (idx != -1) actions[idx].OnExit(_selectManager);
     }
 
     public override int GetIdx(int _idx)

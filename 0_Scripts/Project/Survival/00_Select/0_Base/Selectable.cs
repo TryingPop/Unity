@@ -186,11 +186,11 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         else myTeam.AddCurSupply(-supply);
 
         // 현재 선택 중이면 해제한다!
-        if (InputManager.instance.curGroup.IsContains(this)) 
+        if (SelectManager.instance.curGroup.IsContains(this)) 
         { 
             
-            InputManager.instance.curGroup.DeSelect(this);
-            InputManager.instance.ChkUIs();
+            SelectManager.instance.curGroup.DeSelect(this);
+            SelectManager.instance.ChkUIs();
         }
 
         StartCoroutine(Disabled());

@@ -144,7 +144,7 @@ public class PrepareBuilding : MonoBehaviour, Follower
     public void SetPos()
     {
 
-        InputManager.instance.MouseToWorldPosition(out Vector3 pos);
+        SelectManager.instance.MouseToWorldPos(out Vector3 pos);
 
         if (pos.y < 100f)
         {

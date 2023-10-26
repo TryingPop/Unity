@@ -10,7 +10,7 @@ public class MiniMap : MonoBehaviour,
     // [SerializeField] private RectTransform canvasRectTrans;
     [SerializeField] protected RectTransform myRectTrans;
     [SerializeField] protected Transform camFollow;
-    [SerializeField] protected InputManager inputManager;
+    [SerializeField] protected SelectManager inputManager;
     [SerializeField] private Camera cam;
 
     // protected Vector2 screenRatio;

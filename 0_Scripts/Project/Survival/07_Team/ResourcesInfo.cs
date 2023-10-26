@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct ResourcesInfo
+public class ResourcesInfo
 {
 
     public int gold;            // 현재 골드 보유량

@@ -166,7 +166,7 @@ public class Building : Selectable
             else myTeam.AddCurSupply(supply);
 
             StartCoroutine(FinishedBuildCoroutine());
-            if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
+            if (SelectManager.instance.curGroup.IsContains(this)) SelectManager.instance.ChkUIs();
         }
         else
         {

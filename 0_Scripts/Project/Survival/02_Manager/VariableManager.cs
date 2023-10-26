@@ -100,11 +100,13 @@ public enum TYPE_MANAGEMENT
     MAX_SUPPLY = 103,   // 게임 상에서 사용
 }
 
-public enum TYPE_KEY
+public enum TYPE_INPUT
 {
 
-    NONE = 0, M, S, P, H, A, Q, W, E,
+    CANCEL = -1,
+    NONE = 0, KEY_M, KEY_S, KEY_P, KEY_H, KEY_A, KEY_Q, KEY_W, KEY_E,
     MOUSE_R = VariableManager.MOUSE_R,
+
 }
 
 public enum STATE_GAME

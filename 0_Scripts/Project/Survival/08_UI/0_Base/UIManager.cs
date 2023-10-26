@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
@@ -12,13 +13,15 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
     [SerializeField] private UIInfo info;
+    [SerializeField] private UIResources resources;
     [SerializeField] private HitBarGroup hitbars;
 
     [SerializeField] private Canvas infoCanvas;
     [SerializeField] private Canvas hitBarCanvas;
-    
-    private bool activeInfo = true;
+
+    private bool activeInfo = false;
     private bool activeHitBar = true;
+    private bool updateResources = true;
 
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
@@ -47,6 +50,23 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public bool UpdateResources
+    {
+        get
+        {
+
+            if (updateResources)
+            {
+
+                updateResources = false;
+                return true;
+            }
+
+            return false;
+        }
+        set { updateResources = value; } 
+    }
+
 
     private void Awake()
     {
@@ -69,6 +89,8 @@ public class UIManager : MonoBehaviour
 
         // Start에서 해줘야 안막힌다!
         SetRatio();
+
+        resources.Teams = TeamManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER);
     }
 
     public void LateUpdate()
@@ -85,6 +107,12 @@ public class UIManager : MonoBehaviour
 
             hitbars.SetPos();
         }
+
+        if (UpdateResources)
+        {
+
+            resources.UpdateText();
+        }
     }
 
     /// <summary>
@@ -100,7 +128,6 @@ public class UIManager : MonoBehaviour
         screenRatio.x = canvasRect.x / Screen.width;
         screenRatio.y = canvasRect.y / Screen.height;
     }
-
 
     public Vector3 MouseToUIPos(Vector2 _mousePosition)
     {
@@ -148,4 +175,6 @@ public class UIManager : MonoBehaviour
         hitbars.UsedHitBar(_target.MyHitBar);
         _target.MyHitBar = null;
     }
+
+
 }
