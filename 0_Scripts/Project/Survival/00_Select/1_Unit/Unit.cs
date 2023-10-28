@@ -146,6 +146,7 @@ public class Unit : Selectable
     {
 
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
+        ChkSupply(false);
         curHp = MaxHp;
 
         if (gameObject.layer == VariableManager.LAYER_PLAYER)
@@ -161,7 +162,6 @@ public class Unit : Selectable
         }
 
         ActionManager.instance.AddUnit(this);
-        // MyHitBar = ActionManager.instance.GetHitBar();
         UIManager.instance.AddHitBar(this);
 
         Color teamColor;

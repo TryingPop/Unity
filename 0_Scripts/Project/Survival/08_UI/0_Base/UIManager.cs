@@ -12,11 +12,13 @@ public class UIManager : MonoBehaviour
 
     public static UIManager instance;
 
-    [SerializeField] private UIInfo info;
-    [SerializeField] private UIResources resources;
-    [SerializeField] private UIButton btns;
-    [SerializeField] private HitBarGroup hitbars;
-    [SerializeField] private UnitSlots slots;
+    [SerializeField] private UIInfo info;                   // 설명
+    [SerializeField] private UIResources resources;         // 자원
+    [SerializeField] private UIButton btns;                 // 버튼들
+    [SerializeField] private HitBarGroup hitbars;           // 체력 바
+    [SerializeField] private UnitSlots slots;               // 유닛 슬롯
+    [SerializeField] private SelectedUI selects;            // 선택된 파티클들
+
 
     [SerializeField] private Canvas infoCanvas;
     [SerializeField] private Canvas hitBarCanvas;
@@ -93,6 +95,7 @@ public class UIManager : MonoBehaviour
         SetRatio();
 
         resources.Teams = TeamManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER);
+        updateResources = true;
     }
 
     public void LateUpdate()
@@ -127,6 +130,8 @@ public class UIManager : MonoBehaviour
 
             resources.UpdateText();
         }
+
+        selects.SetPos();
     }
 
     /// <summary>

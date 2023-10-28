@@ -71,8 +71,10 @@ public class TeamInfo
     /// </summary>
     public void AddGold(int _amount)
     {
+
         resourcesInfo.gold += _amount + upgradeInfo.addGetGold;
         if (resourcesInfo.gold > VariableManager.MAX_GOLD) resourcesInfo.gold = VariableManager.MAX_GOLD;
+        if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
     /// <summary>
     /// 현재 인구 변동용
@@ -81,6 +83,7 @@ public class TeamInfo
     {
 
         resourcesInfo.curSupply += _amount;
+        if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
     /// <summary>
     /// 최대 인구 변동용
@@ -89,6 +92,7 @@ public class TeamInfo
     {
 
         resourcesInfo.maxSupply += _amount;
+        if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
     /// <summary>
     /// 인구 확인

@@ -70,7 +70,8 @@ public class RecruitSoldier : BuildingAction
 
         if (_building.MyTurn < turn) _building.MyTurn++;
 
-        if (_building.MyTurn >= turn)
+        if (_building.MyTurn >= turn
+            && _building.MyTeam.ChkSupply(targetStat.Supply))
         {
 
             var go = PoolManager.instance.GetPrefabs(PrefabIdx, _building.gameObject.layer, _building.transform.position);
@@ -128,7 +129,8 @@ public class RecruitSoldier : BuildingAction
         }
 
         // ∞ÒµÂ∞° »Æ¿Œ
-        if (!_building.MyTeam.ChkGold(cost))
+        if (!_building.MyTeam.ChkGold(cost) 
+            || !_building.MyTeam.ChkSupply(targetStat.Supply))
         {
 
             // æ¯¿∏∏È ≈ª√‚

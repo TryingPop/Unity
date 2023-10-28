@@ -27,12 +27,12 @@ public class Animal : Unit
         base.OnDamaged(_dmg, _trans);
 
         if (myState == STATE_SELECTABLE.DEAD
-            && target)
+            && _trans)
         {
 
             var go = PoolManager.instance.GetPrefabs(opt.PrefabIdx, VariableManager.LAYER_DEAD);
             go.transform.position = transform.position;
-            var TeamInfo = TeamManager.instance.GetTeamInfo(target.gameObject.layer);
+            var TeamInfo = TeamManager.instance.GetTeamInfo(_trans.gameObject.layer);
             TeamInfo?.AddGold(opt.KillGold);
         }
     }

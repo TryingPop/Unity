@@ -50,7 +50,18 @@ public class UnitSlots : MonoBehaviour
     public bool IsChanged 
     { 
     
-        get { return isChange; } 
+        get 
+        { 
+            
+            if (isChange)
+            {
+
+                isChange = false;
+                return true;
+            }
+
+            return false; 
+        } 
         set { isChange = value; }
     }
 

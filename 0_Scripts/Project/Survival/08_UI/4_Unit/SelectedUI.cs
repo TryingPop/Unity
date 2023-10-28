@@ -54,7 +54,7 @@ public class SelectedUI : MonoBehaviour
         }
     }
 
-    public void LateUpdate()
+    public void SetPos()
     {
         
         for (int i = 0; i < selectedNums; i++)

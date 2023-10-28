@@ -161,9 +161,8 @@ public class Building : Selectable
             myState = STATE_SELECTABLE.NONE;
 
             // 인구 추가
-            int supply = myStat.Supply;
-            if (supply < 0) myTeam.AddMaxSupply(-supply);
-            else myTeam.AddCurSupply(supply);
+            ChkSupply(false);
+
 
             StartCoroutine(FinishedBuildCoroutine());
             if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
@@ -254,7 +253,6 @@ public class Building : Selectable
 
         myObstacle.carving = false;
         ActionManager.instance.RemoveBuilding(this);
-        // ActionManager.instance.ClearHitBar(myHitBar);
         UIManager.instance.RemoveHitBar(this);
         
         myHitBar = null;

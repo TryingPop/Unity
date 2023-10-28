@@ -7,18 +7,18 @@ using UnityEngine;
 public class AnimalOpt : ScriptableObject
 {
 
-    [SerializeField] protected int idleWeight;               // 대기 가중치
-    [SerializeField] protected int moveWeight;               // 이동 가중치
+    [SerializeField] protected int idleWeight;                  // 대기 가중치
+    [SerializeField] protected int moveWeight;                  // 이동 가중치
 
-    protected int sumWeight;                                 // 총합 가중치 - 연산용
-    [SerializeField]protected int moveRange;                 // 이동 범위
+    protected int sumWeight;                                    // 총합 가중치 - 연산용
+    [SerializeField]protected int moveRange;                    // 이동 범위
 
-    [SerializeField] protected int[] killGolds;              // 여기서 랜덤으로 준다
+    [SerializeField] protected int[] killGolds;                 // 여기서 랜덤으로 준다
     [SerializeField] protected float[] actionTimer;             // 여기서 랜덤 행동 시간 설정
 
     protected WaitForSeconds[] waitTimes;                       // 캐싱용
 
-    [SerializeField] protected int deadEffectIdx;            // 사망 이펙트의 번호
+    [SerializeField] protected int deadEffectIdx;               // 사망 이펙트의 번호
     protected int prefabIdx = -1;
 
     public int KillGold

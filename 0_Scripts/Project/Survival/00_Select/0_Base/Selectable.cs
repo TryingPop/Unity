@@ -12,7 +12,8 @@ using UnityEngine.UI;
 // [RequireComponent(typeof(Stats)),
 //     RequireComponent(typeof(SightMesh))]
 public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
-                                    IDamagable          // 모든 유닛은 피격 가능하다!
+                                    IDamagable,         // 모든 유닛은 피격 가능하다!
+                                    IInfoTxt
 {
 
     [Header("생존 관련 변수")]
@@ -128,6 +129,45 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     public TeamInfo MyTeam => myTeam;
 
+    protected void ChkSupply(bool _isDead = false)
+    {
+
+        if (myTeam == null) return;
+
+        int supply = myStat.Supply;
+        
+        if (supply < 0)
+        {
+
+            if (_isDead)
+            {
+
+                // 사망 시 이므로 최대 인구 깎기
+                myTeam.AddMaxSupply(supply);
+            }
+            else
+            {
+
+                // 소환 시 최대 인구 증가
+                myTeam.AddMaxSupply(-supply);
+            }
+        }
+        else
+        {
+
+            if (_isDead)
+            {
+
+                myTeam.AddCurSupply(-supply);
+            }
+            else
+            {
+
+                myTeam.AddCurSupply(supply);
+            }
+        }
+    }
+
     /// <summary>
     /// 초기화 메서드
     /// </summary>
@@ -181,9 +221,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         gameObject.layer = VariableManager.LAYER_DEAD;
 
         // 인구 깎는다
-        int supply = myStat.Supply;
-        if (supply < 0) myTeam.AddMaxSupply(supply);
-        else myTeam.AddCurSupply(-supply);
+        ChkSupply(true);
 
         // 현재 선택 중이면 해제한다!
         if (InputManager.instance.curGroup.IsContains(this)) 
@@ -207,10 +245,19 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
-    /// <summary>
-    /// 유닛 슬롯 UI에 현재 정보 넘길 때 사용하는 메서드
-    /// </summary>
-    public abstract void SetInfo(Text _txt);
+    public void SetSize(RectTransform _rectTrans)
+    {
+
+        _rectTrans.sizeDelta = new Vector2(160f, 75f);
+    }
+
+    public abstract void SetInfo(Text _descTxt);
+
+    public void SetTitle(Text _titleTxt)
+    {
+
+        _titleTxt.text = $"{myStat.MyType}";
+    }
 
     #region command
     /// <summary>

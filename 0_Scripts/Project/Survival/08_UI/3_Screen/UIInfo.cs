@@ -11,7 +11,7 @@ public class UIInfo : MonoBehaviour, Follower
     public Text titleTxt;                   // 대상
 
     public RectTransform txtRectTrans;      // 위치
-    public Selectable target;               // 설명할 대상
+    public IInfoTxt target;                 // 설명할 대상
 
     public void SetPos()
     {
@@ -25,12 +25,14 @@ public class UIInfo : MonoBehaviour, Follower
     /// <summary>
     /// 유닛 슬롯에 들어가면 활성화!
     /// </summary>
-    public void EnterUIInfo(Selectable _target, Vector2 _uiPos)
+    public void EnterUIInfo(IInfoTxt _target, Vector2 _uiPos)
     {
 
         txtRectTrans.anchoredPosition = _uiPos;
         target = _target;
-        titleTxt.text = $"[{target.MyStat.MyType}]";
+
+        _target.SetSize(txtRectTrans);
+        _target.SetTitle(titleTxt);
         target.SetInfo(descTxt);
     }
 
