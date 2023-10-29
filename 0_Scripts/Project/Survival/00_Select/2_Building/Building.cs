@@ -261,6 +261,14 @@ public class Building : Selectable
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
+
+    public override void SetRectTrans(RectTransform _rectTrans)
+    {
+
+        _rectTrans.sizeDelta = new Vector2(100f, 80f);
+        _rectTrans.pivot = new Vector2(0f, 0.5f);
+    }
+
     /// <summary>
     /// 유닛 슬롯에서 출력
     /// </summary>
@@ -269,9 +277,9 @@ public class Building : Selectable
 
         string hp = myStat.MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
 
-        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"Hp : {hp}\nBuild : {100 * curBuildTurn / opt.BuildTurn}%";
-        else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"Hp : {hp}";
-        else _txt.text = $"Hp : {hp}\nAction : {100 * myTurn / maxTurn}%";
+        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
+        else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
+        else _txt.text = $"{stateName} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
     }
 
     /// <summary>

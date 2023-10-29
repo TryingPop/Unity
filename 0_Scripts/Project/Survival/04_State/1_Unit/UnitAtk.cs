@@ -118,6 +118,7 @@ public class UnitAtk : IUnitAction
         _unit.MyTurn = 0;
         _unit.MyAgent.SetDestination(_unit.TargetPos);
         _unit.MyAnimator.SetFloat("Move", 1f);
+        _unit.StateName = stateName;
     }
 
     protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)

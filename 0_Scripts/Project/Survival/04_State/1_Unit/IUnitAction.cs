@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public abstract class IUnitAction : IAction<Unit>
 {
 
+    [SerializeField] protected string stateName;
+
     /// <summary>
     /// 해당 상태가 끝났음을 명시적으로 알리기 위해 정의한 메서드
     /// </summary>

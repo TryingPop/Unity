@@ -27,27 +27,30 @@ public class TeamInfo
 
             case TYPE_MANAGEMENT.UP_HP:
                 upgradeInfo.addHp += _grade;
-                return;
+                break;
 
             case TYPE_MANAGEMENT.UP_ATK:
                 upgradeInfo.addAtk += _grade;
-                return;
+                break;
 
             case TYPE_MANAGEMENT.UP_DEF:
                 upgradeInfo.addDef += _grade;
-                return;
+                break;
 
             case TYPE_MANAGEMENT.UP_GOLD:
                 upgradeInfo.addGetGold += _grade;
-                return;
+                break;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
                 upgradeInfo.addSupply += _grade;
-                return;
+                if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+                break;
 
             default:
-                return;
+                break;
         }
+
+        
     }
 
 

@@ -9,9 +9,10 @@ using UnityEngine.UI;
 public class ButtonSlots : MonoBehaviour
 {
 
-    [SerializeField] private Image[] btnImgs;
-    [SerializeField] private GameObject[] btns;
-    [SerializeField] private RectTransform[] btnRectTrans;
+    // [SerializeField] private Image[] btnImgs;
+    // [SerializeField] private GameObject[] btns;
+    // [SerializeField] private RectTransform[] btnRectTrans;
+    [SerializeField] private UIBtn[] btns;
 
     /// <summary>
     /// 핸들러의 버튼 만큼 활성화
@@ -23,31 +24,32 @@ public class ButtonSlots : MonoBehaviour
         if (_handler == null)
         {
 
-            for (int i = 0; i < btnImgs.Length; i++)
+            for (int i = 0; i < btns.Length; i++)
             {
 
-                btns[i].SetActive(false);
+                btns[i].gameObject.SetActive(false);
             }
 
             return;
         }
 
 
-        for (int i = 0; i < btnImgs.Length; i++)
+        for (int i = 0; i < btns.Length; i++)
         {
 
             int idx = _handler.Idxs[i];
             if (idx != -1)
             {
 
-                btns[i].SetActive(true);
-                btnImgs[i].sprite = _handler.actions[idx].BtnSprite;
-                SetPos(i, idx);
+                btns[i].gameObject.SetActive(true);
+                ButtonInfo info = _handler.actions[idx];
+
+                btns[i].Init(info.BtnSprite, SetPos(idx), info.Title, info.Desc);
             }
             else
             {
 
-                btns[i].SetActive(false);
+                btns[i].gameObject.SetActive(false);
             }
         }
     }
@@ -56,7 +58,7 @@ public class ButtonSlots : MonoBehaviour
     /// <summary>
     /// 버튼 간격 설정 메서드 화면 크기 바꿔도 버튼칸은 크기 고정이므로 직접 값 대입
     /// </summary>
-    private void SetPos(int _i, int _idx)
+    private Vector2 SetPos(int _idx)
     {
 
         Vector2 pos;
@@ -73,6 +75,6 @@ public class ButtonSlots : MonoBehaviour
             pos.y = -80;
         }
 
-        btnRectTrans[_i].anchoredPosition = pos;
+        return pos;
     }
 }

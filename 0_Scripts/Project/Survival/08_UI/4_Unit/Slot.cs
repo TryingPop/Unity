@@ -33,7 +33,10 @@ public class Slot : MonoBehaviour,
 
         // 상태 표현
         // Vector3 uiPos = UIManager.instance.MouseToUIPos(eventData.position);
-        UIManager.instance.EnterInfo(target);
+        Vector2 uiPos = myRectTrans.position;
+        uiPos.x += myRectTrans.rect.width * 0.5f;
+
+        UIManager.instance.EnterInfo(target, uiPos);
     }
 
     public void OnPointerExit(PointerEventData eventData)

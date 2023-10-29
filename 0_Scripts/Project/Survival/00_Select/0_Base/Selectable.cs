@@ -13,7 +13,7 @@ using UnityEngine.UI;
 //     RequireComponent(typeof(SightMesh))]
 public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
                                     IDamagable,         // 모든 유닛은 피격 가능하다!
-                                    IInfoTxt
+                                    IInfoTxt            // 인포 메시지 
 {
 
     [Header("생존 관련 변수")]
@@ -34,6 +34,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
 
+    protected string stateName = "";
+
+    public string StateName { set { stateName = value; } }
     /// <summary>
     /// 스텟 설정
     /// </summary>
@@ -245,19 +248,18 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
-    public void SetSize(RectTransform _rectTrans)
-    {
-
-        _rectTrans.sizeDelta = new Vector2(160f, 75f);
-    }
-
-    public abstract void SetInfo(Text _descTxt);
-
+    #region Info
     public void SetTitle(Text _titleTxt)
     {
 
-        _titleTxt.text = $"{myStat.MyType}";
+        _titleTxt.text = myStat.MyName;
     }
+
+    public abstract void SetRectTrans(RectTransform _rectTrans);
+
+    public abstract void SetInfo(Text _descTxt);
+
+    #endregion info
 
     #region command
     /// <summary>

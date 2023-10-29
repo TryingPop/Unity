@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public interface IInfoTxt 
 {
 
+
     // 사이즈 조절
-    public void SetSize(RectTransform _rectTrans);
+    public void SetRectTrans(RectTransform _rectTrans);
 
     // 타이틀 설정
     public void SetTitle(Text _titleTxt);

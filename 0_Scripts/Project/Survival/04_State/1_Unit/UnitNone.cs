@@ -15,5 +15,7 @@ public class UnitNone : IUnitAction
         if (!_unit.MyAgent.enabled) _unit.MyAgent.enabled = true;
         _unit.MyAgent.ResetPath();
         _unit.MyAnimator.SetFloat("Move", 0f);
+
+        _unit.StateName = stateName;
     }
 }

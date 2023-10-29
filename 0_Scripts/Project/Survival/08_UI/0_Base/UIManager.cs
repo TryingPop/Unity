@@ -166,11 +166,11 @@ public class UIManager : MonoBehaviour
         // warningTxt.text = _str;
     }
 
-    public void EnterInfo(Selectable _target)
+    public void EnterInfo(IInfoTxt _target, Vector2 _uiPos)
     {
 
         ActiveInfo = true;
-        Vector2 uiPos = MouseToUIPos(Input.mousePosition);
+        Vector2 uiPos = MouseToUIPos(_uiPos);
         info.EnterUIInfo(_target, uiPos);
     }
 

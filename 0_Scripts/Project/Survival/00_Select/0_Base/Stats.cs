@@ -20,6 +20,8 @@ public class Stats : ScriptableObject
     [SerializeField] protected int cost;                    // 생성 비용(정가)
     [SerializeField] protected int supply;                  // 만약 supply < 0 이면 최대 인구 증가, supply >= 0 이면 현재 인구 증가
 
+    [SerializeField] protected string myName;
+
     public int MaxHp => maxHp;
     public int Def => def;
 
@@ -67,4 +69,6 @@ public class Stats : ScriptableObject
     }
     public int Cost => cost;
     public int Supply => supply;
+
+    public string MyName => myName;
 }

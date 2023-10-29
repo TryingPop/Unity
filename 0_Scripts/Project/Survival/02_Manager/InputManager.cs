@@ -1,7 +1,5 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -139,6 +137,7 @@ public class InputManager : MonoBehaviour
 
             myState = (TYPE_INPUT)value;
             MyHandler.Changed(this);
+            UIManager.instance.ExitInfo();
         }
         get { return (int)myState; }
     }
@@ -231,15 +230,26 @@ public class InputManager : MonoBehaviour
         {
 
             // 서브 행동 중이면 해당 서브 행동만 강제 탈출
-            if (myState != TYPE_INPUT.NONE) subHandler.ForcedQuit(this);
+            if (myState != TYPE_INPUT.NONE)
+            {
+
+                subHandler.ForcedQuit(this);
+                // sub 버튼에서 행동은 sub 버튼으로 가므로 취소 버튼 활성화!
+                ActiveBtns(false, true, true);
+            }
             // 서브 행동 중이 아니면 서브 버튼 완전히 탈출
-            else btns.ActiveBtns(true, false, false);
+            else ActiveBtns(true, false, false);
         }
         // 이외는 메인 핸들러 탈출이다!
-        else mainHandler?.ForcedQuit(this);
+        else 
+        { 
+            
+            mainHandler?.ForcedQuit(this);
+            if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, Input.GetKey(KeyCode.LeftShift));
+            ActiveBtns(true, false, false);
+        }
 
         // 취소 버튼이 활성화 되어져 있는 경우 취소 명령을 보낸다
-        if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, Input.GetKey(KeyCode.LeftShift));
     }
 
     /// <summary>

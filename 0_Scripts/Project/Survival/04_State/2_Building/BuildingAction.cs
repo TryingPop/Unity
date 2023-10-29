@@ -7,6 +7,8 @@ public class BuildingAction : IAction<Building>
 {
 
     [SerializeField] protected ushort turn;           // »ý»ê ÅÏ
+    [SerializeField] protected string stateName;
+    public string StateName => stateName;
 
     public override void Action(Building _building) { }
 
@@ -15,6 +17,8 @@ public class BuildingAction : IAction<Building>
 
         _building.MaxTurn = turn;
         _building.MyTurn = 0;
+
+        _building.StateName = stateName;
     }
 
     protected virtual void OnExit(Building _building, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)

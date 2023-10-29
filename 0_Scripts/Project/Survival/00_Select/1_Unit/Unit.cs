@@ -276,6 +276,15 @@ public class Unit : Selectable
         myHitBar = null;
     }
 
+
+
+    public override void SetRectTrans(RectTransform _rectTrans)
+    {
+
+        _rectTrans.sizeDelta = new Vector2(160f, 80f);
+        _rectTrans.pivot = new Vector2(0f, 0.5f);
+    }
+
     /// <summary>
     /// 유닛 Type과 hp, 공격력 방어력 출력
     /// </summary>
@@ -284,7 +293,7 @@ public class Unit : Selectable
     {
 
         string hp = MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
-        _txt.text = $"Hp : {hp}\nAtk : {Atk}\nDef : {Def}";
+        _txt.text = $"체력 : {hp}\n공격력 : {Atk}   방어력 : {Def}\n{stateName} 중";
     }
 
     #region Command
