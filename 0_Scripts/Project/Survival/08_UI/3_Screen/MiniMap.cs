@@ -90,10 +90,10 @@ public class MiniMap : MonoBehaviour,
     public void OnDrag(PointerEventData eventData)
     {
 
+        if (GameManager.instance.IsStop) return;
+
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-
-            if (GameManager.instance.IsStop) return;
 
             // 화면 이동용도
             Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);

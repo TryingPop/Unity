@@ -16,9 +16,6 @@ public class UIInfo : MonoBehaviour, Follower
     public void SetPos()
     {
 
-        // Vector2 pos = Input.mousePosition;
-        // pos *= UIManager.instance.screenRatio;
-        // txtRectTrans.anchoredPosition = pos;
         target.SetInfo(descTxt);
     }
 
@@ -27,6 +24,7 @@ public class UIInfo : MonoBehaviour, Follower
     /// </summary>
     public void EnterUIInfo(IInfoTxt _target, Vector2 _uiPos)
     {
+
 
         txtRectTrans.anchoredPosition = _uiPos;
         target = _target;

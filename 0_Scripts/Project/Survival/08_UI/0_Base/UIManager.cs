@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.NCalc;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -148,6 +149,29 @@ public class UIManager : MonoBehaviour
         screenRatio.y = canvasRect.y / Screen.height;
     }
 
+    public void ChkBoundary(RectTransform _rectTrans)
+    {
+
+        var anchoredPos = _rectTrans.anchoredPosition;
+        var pivot = _rectTrans.pivot;
+        var rect = _rectTrans.rect;
+
+        // 캔버스 크기.. 받아오고, rect로 ? width, height 받아와야한다~.~:
+        float xMax = (screenRatio.x * Screen.width) - (pivot.x * rect.width);
+        float yMax = (screenRatio.y * Screen.height) - (pivot.y * rect.height);
+
+        float xMin = (pivot.x * rect.width);
+        float yMin = (pivot.y * rect.height);
+
+        if (anchoredPos.x < xMin) anchoredPos.x = xMin;
+        else if (anchoredPos.x > xMax) anchoredPos.x = xMax;
+
+        if (anchoredPos.y < yMin) anchoredPos.y = yMin;
+        else if (anchoredPos.y > yMax) anchoredPos.y = yMax;
+
+        _rectTrans.anchoredPosition = anchoredPos;
+    }
+
     public Vector3 MouseToUIPos(Vector2 _mousePosition)
     {
 
@@ -172,6 +196,7 @@ public class UIManager : MonoBehaviour
         ActiveInfo = true;
         Vector2 uiPos = MouseToUIPos(_uiPos);
         info.EnterUIInfo(_target, uiPos);
+        ChkBoundary(info.txtRectTrans);
     }
 
     public void ExitInfo()
