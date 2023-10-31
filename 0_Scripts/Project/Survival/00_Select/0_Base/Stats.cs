@@ -43,7 +43,7 @@ public class Stats : ScriptableObject
         get
         {
 
-            if (myPoolIdx == VariableManager.POOLMANAGER_NOTEXIST)
+            if (myPoolIdx == VarianceManager.POOLMANAGER_NOTEXIST)
             {
 
 

@@ -18,7 +18,7 @@ public class BossAtk : IUnitAction
         }
 
         // 대상이 살아있는 경우
-        if (_unit.Target.gameObject.activeSelf && _unit.Target.gameObject.layer != VariableManager.LAYER_DEAD)
+        if (_unit.Target.gameObject.activeSelf && _unit.Target.gameObject.layer != VarianceManager.LAYER_DEAD)
         {
 
             float dis = Vector3.Distance(_unit.transform.position, _unit.Target.transform.position);

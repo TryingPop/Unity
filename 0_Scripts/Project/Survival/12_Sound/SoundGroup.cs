@@ -17,7 +17,7 @@ public class SoundGroup : ScriptableObject
             if (idxs == null)
             {
 
-                idxs = new sbyte[VariableManager.MAX_ACTIONS];
+                idxs = new sbyte[VarianceManager.MAX_ACTIONS];
 
                 for (int i = 0; i < idxs.Length; i++)
                 {

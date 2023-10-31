@@ -47,15 +47,15 @@ public class ActionManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        playerUnits = new List<Unit>(VariableManager.INIT_UNIT_LIST_NUM);
-        playerBuildings = new List<Building>(VariableManager.INIT_BUILDING_LIST_NUM);
+        playerUnits = new List<Unit>(VarianceManager.INIT_UNIT_LIST_NUM);
+        playerBuildings = new List<Building>(VarianceManager.INIT_BUILDING_LIST_NUM);
         
-        enemyUnits = new List<Unit>(VariableManager.INIT_UNIT_LIST_NUM);
-        enemyBuildings = new List<Building>(VariableManager.INIT_BUILDING_LIST_NUM);
+        enemyUnits = new List<Unit>(VarianceManager.INIT_UNIT_LIST_NUM);
+        enemyBuildings = new List<Building>(VarianceManager.INIT_BUILDING_LIST_NUM);
 
-        neutralUnits = new List<Unit>(VariableManager.INIT_NEUTRAL_LIST_NUM);
+        neutralUnits = new List<Unit>(VarianceManager.INIT_NEUTRAL_LIST_NUM);
 
-        missiles = new List<Missile>(VariableManager.INIT_MISSILE_LIST_NUM);
+        missiles = new List<Missile>(VarianceManager.INIT_MISSILE_LIST_NUM);
 
         followMouse = new List<Follower>();
     }
@@ -121,7 +121,7 @@ public class ActionManager : MonoBehaviour
         if (!_unit) return;
 
         if (_unit.MyTeam == TeamManager.instance.PlayerTeamInfo
-            && playerUnits.Count < VariableManager.MAX_CONTROL_UNITS) playerUnits.Add(_unit);
+            && playerUnits.Count < VarianceManager.MAX_CONTROL_UNITS) playerUnits.Add(_unit);
 
         else if (_unit.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyUnits.Add(_unit);
 
@@ -161,7 +161,7 @@ public class ActionManager : MonoBehaviour
     {
 
         if (_building.MyTeam == TeamManager.instance.PlayerTeamInfo
-            && playerBuildings.Count < VariableManager.MAX_BUILDINGS) playerBuildings.Add(_building);
+            && playerBuildings.Count < VarianceManager.MAX_BUILDINGS) playerBuildings.Add(_building);
         else if (_building.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Add(_building);
     }
 

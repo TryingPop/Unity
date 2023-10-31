@@ -56,7 +56,7 @@ public enum TYPE_BUTTON_OPTION
     NEED_TARGET = 2,
     NEED_TARGET_OR_POS = 4,
 
-    BUILD = VariableManager.BUILD,
+    BUILD = VarianceManager.BUILD,
 }
 
 /// <summary>
@@ -79,7 +79,7 @@ public enum STATE_SELECTABLE
     UNIT_SKILL2 = 7, 
     UNIT_SKILL3 = 8,
 
-    MOUSE_R = VariableManager.MOUSE_R,          // 건물이랑, 유닛 읽는게 다르다!
+    MOUSE_R = VarianceManager.MOUSE_R,          // 건물이랑, 유닛 읽는게 다르다!
     BUILDING_CANCEL = 100,                      // 취소
 }
 
@@ -105,7 +105,7 @@ public enum TYPE_INPUT
 
     CANCEL = -1,
     NONE = 0, KEY_M, KEY_S, KEY_P, KEY_H, KEY_A, KEY_Q, KEY_W, KEY_E,
-    MOUSE_R = VariableManager.MOUSE_R,
+    MOUSE_R = VarianceManager.MOUSE_R,
 
 }
 
@@ -118,10 +118,18 @@ public enum STATE_GAME
     WIN = 2,
 }
 
+public enum TYPE_INFO
+{
+
+    NONE = 0,
+    SLOT = 1,
+    BTN = 2,
+}
+
 /// <summary>
 /// static 변수 보관소
 /// </summary>
-public class VariableManager
+public class VarianceManager
 {
 
     // 레이어

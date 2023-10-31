@@ -76,7 +76,7 @@ public class EnemyOrderManager : MonoBehaviour
     {
 
         if (target == null
-            || target.gameObject.layer == VariableManager.LAYER_DEAD) return true;
+            || target.gameObject.layer == VarianceManager.LAYER_DEAD) return true;
 
         return false;
     }
@@ -207,7 +207,7 @@ public class EnemyOrderManager : MonoBehaviour
         while (!GameManager.instance.IsGameOver)
         {
 
-            if (forcedAtkNum >= VariableManager.MAX_ENEMY_UNITS) forcedAtkNum = (ushort)VariableManager.MAX_ENEMY_UNITS;
+            if (forcedAtkNum >= VarianceManager.MAX_ENEMY_UNITS) forcedAtkNum = (ushort)VarianceManager.MAX_ENEMY_UNITS;
 
             // 강제 공격인원을 넘으면 강제 공격
             if (enemyUnits.Count > forcedAtkNum)
@@ -233,7 +233,7 @@ public class EnemyOrderManager : MonoBehaviour
     private void RespawnEnemy()
     {
 
-        if (enemyUnits.Count >= VariableManager.MAX_ENEMY_UNITS) return;
+        if (enemyUnits.Count >= VarianceManager.MAX_ENEMY_UNITS) return;
 
         if (target == null) SetTarget();
 
@@ -245,7 +245,7 @@ public class EnemyOrderManager : MonoBehaviour
 
                 Vector3 randPos = SetRandPos(initPos[i], 8f);
 
-                var go = PoolManager.instance.GetPrefabs(respawnEnemyPoolIdxs[Random.Range(0, respawnEnemyPoolIdxs.Length)], VariableManager.LAYER_ENEMY, randPos);
+                var go = PoolManager.instance.GetPrefabs(respawnEnemyPoolIdxs[Random.Range(0, respawnEnemyPoolIdxs.Length)], VarianceManager.LAYER_ENEMY, randPos);
                 
                 Unit unit = go.GetComponent<Unit>();
                 

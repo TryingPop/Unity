@@ -10,9 +10,9 @@ public class TeamManager : MonoBehaviour
 
     public static TeamManager instance;
 
-    public TeamInfo PlayerTeamInfo => teams[VariableManager.TEAM_PLAYER];
-    public TeamInfo EnemyTeamInfo => teams[VariableManager.TEAM_ENEMY];
-    public TeamInfo NeutralTeamInfo => teams[VariableManager.TEAM_NEUTRAL];
+    public TeamInfo PlayerTeamInfo => teams[VarianceManager.TEAM_PLAYER];
+    public TeamInfo EnemyTeamInfo => teams[VarianceManager.TEAM_ENEMY];
+    public TeamInfo NeutralTeamInfo => teams[VarianceManager.TEAM_NEUTRAL];
 
     [SerializeField] private TeamInfo[] teams;                  // ÆÀ Á¤º¸µé
 
@@ -37,9 +37,9 @@ public class TeamManager : MonoBehaviour
     public int ChkTeamNumber(int _layer)
     {
 
-        if (_layer == VariableManager.LAYER_PLAYER) return VariableManager.TEAM_PLAYER;
-        else if (_layer == VariableManager.LAYER_ENEMY) return VariableManager.TEAM_ENEMY;
-        else if (_layer == VariableManager.LAYER_NEUTRAL) return VariableManager.TEAM_NEUTRAL;
+        if (_layer == VarianceManager.LAYER_PLAYER) return VarianceManager.TEAM_PLAYER;
+        else if (_layer == VarianceManager.LAYER_ENEMY) return VarianceManager.TEAM_ENEMY;
+        else if (_layer == VarianceManager.LAYER_NEUTRAL) return VarianceManager.TEAM_NEUTRAL;
         else return -1;
     }
 

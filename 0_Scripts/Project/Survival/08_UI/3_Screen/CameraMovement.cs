@@ -67,15 +67,4 @@ public class CameraMovement : MonoBehaviour
         y = Mathf.Clamp(y, minBound.y, maxBound.y);
         z = Mathf.Clamp(z, minBound.z, maxBound.z);
     }
-
-    /// <summary>
-    /// 방향 설정 메소드
-    /// 추후에 InputManager에서 쓸 예정
-    /// </summary>
-    /// <param name="_dir">이동할 방향</param>
-    public void SetDirection(Vector3 _dir)
-    {
-
-        dir = _dir;
-    }
 }

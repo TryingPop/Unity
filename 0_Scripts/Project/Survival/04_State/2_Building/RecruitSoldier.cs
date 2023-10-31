@@ -92,20 +92,17 @@ public class RecruitSoldier : BuildingAction
             }
 
             _building.MyTurn = 0;
-        }
-
-        if (_building.MyTurn == 0)
-        {
-
             OnExit(_building);
         }
+
+
     }
 
     public override void ForcedQuit(Building _building)
     {
 
         // 강제 종료 시 환불
-        int refundCost = Mathf.FloorToInt(VariableManager.REFUND_RATE * Cost);
+        int refundCost = Mathf.FloorToInt(VarianceManager.REFUND_RATE * Cost);
         _building.MyTeam.AddGold(refundCost);
 
         OnExit(_building);

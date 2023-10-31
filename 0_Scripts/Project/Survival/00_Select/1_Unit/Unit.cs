@@ -22,7 +22,6 @@ public class Unit : Selectable
     [SerializeField] protected NavMeshAgent myAgent;                // 이동
     [SerializeField] protected Rigidbody myRigid;                   
 
-    [SerializeField] protected STATE_SELECTABLE myState;            // 현재 상태 == 이게 명령 타입
     [SerializeField] protected UnitStateAction myStateAction;       // 상태 패턴으로 구현된 행동
     [SerializeField] protected Attack myAttack;                     // 공격 방법 및 공격 정보
     [SerializeField] protected SightMesh mySight;                   // 시야
@@ -57,13 +56,6 @@ public class Unit : Selectable
         set { patrolPos = value; }
     }
 
-    public override int MyState
-    {
-
-        get { return (int)myState; }
-        set { myState = (STATE_SELECTABLE)value; }
-    }
-
     /// <summary>
     /// 스킬용인데 당장은 안쓴다
     /// </summary>
@@ -74,7 +66,7 @@ public class Unit : Selectable
         set
         {
 
-            if (maxMp == VariableManager.INFINITE) return;
+            if (maxMp == VarianceManager.INFINITE) return;
             if (value > maxMp) value = maxMp;
             curMp = (byte)value;
         }
@@ -110,7 +102,7 @@ public class Unit : Selectable
     protected virtual void Awake()
     {
 
-        cmds = new Queue<Command>(VariableManager.MAX_RESERVE_COMMANDS);
+        cmds = new Queue<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
     }
 
     /// <summary>
@@ -149,7 +141,7 @@ public class Unit : Selectable
         ChkSupply(false);
         curHp = MaxHp;
 
-        if (gameObject.layer == VariableManager.LAYER_PLAYER)
+        if (gameObject.layer == VarianceManager.LAYER_PLAYER)
         {
 
             mySight.IsActive = true;
@@ -292,7 +284,7 @@ public class Unit : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
+        string hp = MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
         _txt.text = $"체력 : {hp}\n공격력 : {Atk}   방어력 : {Def}\n{stateName} 중";
     }
 
@@ -343,7 +335,7 @@ public class Unit : Selectable
 
         // 읽을 수 있는 상태 판별
         if (myState == STATE_SELECTABLE.DEAD
-            && cmds.Count > VariableManager.MAX_RESERVE_COMMANDS) return false;
+            && cmds.Count > VarianceManager.MAX_RESERVE_COMMANDS) return false;
 
         // 읽을 수 잇는 명령 판별
         if (_cmd.type == STATE_SELECTABLE.NONE
@@ -375,6 +367,8 @@ public class Unit : Selectable
     protected override void ReadCommand(Command _cmd)
     {
 
+        if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+
         STATE_SELECTABLE type = _cmd.type;
 
         if (type == STATE_SELECTABLE.MOUSE_R)
@@ -405,7 +399,6 @@ public class Unit : Selectable
         myState = type;
         target = _cmd.target != transform ? _cmd.target : null;
         targetPos = _cmd.pos;
-        _cmd.Received(myStat.MySize);
     }
     #endregion Command
 }

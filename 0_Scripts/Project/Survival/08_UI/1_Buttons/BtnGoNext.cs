@@ -21,7 +21,7 @@ public class BtnGoNext : ButtonInfo
         get
         {
 
-            if (nextBtns.GetSize() <= VariableManager.MAX_SUB_BUTTONS)
+            if (nextBtns.GetSize() <= VarianceManager.MAX_SUB_BUTTONS)
             {
 
                 return nextBtns;
@@ -29,7 +29,7 @@ public class BtnGoNext : ButtonInfo
             else
             {
 
-                Debug.LogError($"The index of {nextBtns.name} is greater than {VariableManager.MAX_SUB_BUTTONS}");
+                Debug.LogError($"The index of {nextBtns.name} is greater than {VarianceManager.MAX_SUB_BUTTONS}");
                 return null;
             }
         }

@@ -70,14 +70,15 @@ public class MiniMap : MonoBehaviour,
         Vector3 camPos = cam.transform.position;
         float posX = _scaleValue.x * mapHalfWidth * 2 + (camPos.x - mapHalfWidth);
         float posZ = _scaleValue.y * mapHalfHeight * 2 + (camPos.z - mapHalfHeight);
-        float posY = camPos.y;
-        Vector3 result = new Vector3(posX, posY, posZ);
+        
+        float posY = camFollow.position.y;
 
+        Vector3 result = new Vector3(posX, posY, posZ);
         if (_onGround)
         {
 
             // 위에서 바라보기에 down으로 검색한다
-            if (Physics.Raycast(result, Vector3.down, out RaycastHit hit, 70f, 1 << VariableManager.LAYER_GROUND))
+            if (Physics.Raycast(result, Vector3.down, out RaycastHit hit, 70f, 1 << VarianceManager.LAYER_GROUND))
             {
 
                 result = hit.point;

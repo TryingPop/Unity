@@ -21,7 +21,7 @@ public class RangeDouble : RangeTarget
         if (_unit.MyTurn <= atkTime) dir = Quaternion.LookRotation(unitTrans.forward) * offset;
         else dir = Quaternion.LookRotation(unitTrans.forward) * nextOffset;
 
-        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
+        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
 
         if (go)
         {

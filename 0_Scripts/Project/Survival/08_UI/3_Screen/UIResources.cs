@@ -16,7 +16,8 @@ public class UIResources : MonoBehaviour
     public void UpdateText()
     {
 
-        goldTxt.text = $"{teams.Gold}";
-        supplyTxt.text = $"{teams.CurSupply} / {teams.MaxSupply}";
+        
+        goldTxt.text = $"{teams.Gold:N0}";                             // 문자열 보간 세 자리마다 , 표현
+        supplyTxt.text = $"{teams.CurSupply} / {teams.MaxSupply}";     // 띄어쓰기 보간은 안된다
     }
 }

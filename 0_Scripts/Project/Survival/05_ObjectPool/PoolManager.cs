@@ -168,7 +168,7 @@ public class PoolManager : MonoBehaviour
             }
         }
 
-        return VariableManager.POOLMANAGER_NOTEXIST;
+        return VarianceManager.POOLMANAGER_NOTEXIST;
     }
 
     

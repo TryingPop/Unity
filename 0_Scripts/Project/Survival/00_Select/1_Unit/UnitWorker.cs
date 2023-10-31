@@ -26,6 +26,8 @@ public class UnitWorker : Unit
     protected override void ReadCommand(Command _cmd)
     {
 
+        if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+
         STATE_SELECTABLE type = _cmd.type;
 
         // 마우스 R인 경우 명령을 바꾼다!
@@ -62,6 +64,5 @@ public class UnitWorker : Unit
         myState = type;
         target = _cmd.target != transform ? _cmd.target : null;
         targetPos = _cmd.pos;
-        _cmd.Received(myStat.MySize);
     }
 }

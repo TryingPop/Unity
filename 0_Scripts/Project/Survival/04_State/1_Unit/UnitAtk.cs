@@ -26,7 +26,7 @@ public class UnitAtk : IUnitAction
         {
 
             // 타겟이 있는 경우
-            if (_unit.Target.gameObject.activeSelf && _unit.Target.gameObject.layer != VariableManager.LAYER_DEAD)
+            if (_unit.Target.gameObject.activeSelf && _unit.Target.gameObject.layer != VarianceManager.LAYER_DEAD)
             {
 
                 // 타겟이 살아있는 경우

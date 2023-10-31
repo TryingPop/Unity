@@ -21,11 +21,5 @@ public class AcquiredGold : BuildingAction
             // ÇÃ·¹ÀÌ¾îÀÎ °æ¿ì °ñµå È¹µæ!
             _building.MyTeam.AddGold(amount);
         }
-
-        if (_building.MyTurn == 0)
-        {
-
-            OnExit(_building);
-        }
     }
 }

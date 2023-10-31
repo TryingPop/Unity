@@ -67,10 +67,10 @@ public class GameManager : MonoBehaviour
         }
 
         // 승리 조건은 최대 2개!
-        if (playerMissions.Count > VariableManager.MAX_MISSIONS)
+        if (playerMissions.Count > VarianceManager.MAX_MISSIONS)
         {
 
-            for (int i = playerMissions.Count - 1; i >= VariableManager.MAX_MISSIONS; i--)
+            for (int i = playerMissions.Count - 1; i >= VarianceManager.MAX_MISSIONS; i--)
             {
 
                 playerMissions.RemoveAt(i);
@@ -79,10 +79,10 @@ public class GameManager : MonoBehaviour
 
 
         // 패배 조건은 최대 2개!
-        if (enemyMissions.Count > VariableManager.MAX_MISSIONS)
+        if (enemyMissions.Count > VarianceManager.MAX_MISSIONS)
         {
 
-            for (int i = enemyMissions.Count -1; i >= VariableManager.MAX_MISSIONS; i--)
+            for (int i = enemyMissions.Count -1; i >= VarianceManager.MAX_MISSIONS; i--)
             {
 
                 enemyMissions.RemoveAt(i);

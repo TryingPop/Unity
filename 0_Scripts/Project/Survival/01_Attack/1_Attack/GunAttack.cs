@@ -37,7 +37,7 @@ public class GunAttack : RangeTarget
         Transform unitTrans = _unit.transform;
 
         Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
-        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
+        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
 
         if (go)
         {
@@ -46,7 +46,7 @@ public class GunAttack : RangeTarget
             go.GetComponent<Missile>().Init(_unit, _unit.Atk, prefabIdx);
             dir = Quaternion.LookRotation(unitTrans.forward) * effectOffset;
 
-            GameObject bulletCase = PoolManager.instance.GetPrefabs(EffectPrefabIdx, VariableManager.LAYER_DEAD, unitTrans.position + dir, unitTrans.forward);
+            GameObject bulletCase = PoolManager.instance.GetPrefabs(EffectPrefabIdx, VarianceManager.LAYER_DEAD, unitTrans.position + dir, unitTrans.forward);
             bulletCase.GetComponent<BulletCase>().Init();
         }
     }

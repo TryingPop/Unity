@@ -13,6 +13,7 @@ public abstract class ButtonInfo : IAction<InputManager>
     [SerializeField] protected STATE_SELECTABLE cmdType;
 
     [SerializeField] protected string title;
+    [SerializeField] protected Vector2 infoSize;
     [TextArea(0, 3), SerializeField] protected string desc;
 
     public TYPE_INPUT BtnKey => btnKey;
@@ -23,6 +24,7 @@ public abstract class ButtonInfo : IAction<InputManager>
     public string Title => title;
     public string Desc => desc;
 
+    public Vector2 InfoSize => infoSize;
     /// <summary>
     /// 외부에서는 강제 탈출할 때 사용하는 메서드
     /// </summary>
@@ -31,4 +33,5 @@ public abstract class ButtonInfo : IAction<InputManager>
 
         _inputManager.ActionDone(_nextKey);
     }
+
 }

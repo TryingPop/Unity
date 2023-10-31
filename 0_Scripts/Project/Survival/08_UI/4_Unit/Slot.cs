@@ -36,14 +36,14 @@ public class Slot : MonoBehaviour,
         Vector2 uiPos = myRectTrans.position;
         uiPos.x += myRectTrans.rect.width * 0.5f;
 
-        UIManager.instance.EnterInfo(target, uiPos);
+        UIManager.instance.EnterInfo(target, uiPos, TYPE_INFO.SLOT);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
         // Á¾·á
-        UIManager.instance.ExitInfo();
+        UIManager.instance.ExitInfo(TYPE_INFO.SLOT);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -55,7 +55,7 @@ public class Slot : MonoBehaviour,
             if (Input.GetKey(KeyCode.LeftControl)) InputManager.instance.UIGroupSelect(target);
             else InputManager.instance.UISelect(target);
 
-            UIManager.instance.ExitInfo();
+            UIManager.instance.ExitInfo(TYPE_INFO.SLOT);
         }
     }
 }

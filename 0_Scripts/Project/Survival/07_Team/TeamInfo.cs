@@ -43,7 +43,7 @@ public class TeamInfo
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
                 upgradeInfo.addSupply += _grade;
-                if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+                if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
                 break;
 
             default:
@@ -62,7 +62,7 @@ public class TeamInfo
         {
 
             int result = resourcesInfo.maxSupply + upgradeInfo.addSupply;
-            if (result > VariableManager.MAX_SUPPLY) result = VariableManager.MAX_SUPPLY;
+            if (result > VarianceManager.MAX_SUPPLY) result = VarianceManager.MAX_SUPPLY;
             return result;
         }
     }
@@ -76,8 +76,8 @@ public class TeamInfo
     {
 
         resourcesInfo.gold += _amount + upgradeInfo.addGetGold;
-        if (resourcesInfo.gold > VariableManager.MAX_GOLD) resourcesInfo.gold = VariableManager.MAX_GOLD;
-        if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+        if (resourcesInfo.gold > VarianceManager.MAX_GOLD) resourcesInfo.gold = VarianceManager.MAX_GOLD;
+        if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
     /// <summary>
     /// 현재 인구 변동용
@@ -86,7 +86,7 @@ public class TeamInfo
     {
 
         resourcesInfo.curSupply += _amount;
-        if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+        if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
     /// <summary>
     /// 최대 인구 변동용
@@ -95,7 +95,7 @@ public class TeamInfo
     {
 
         resourcesInfo.maxSupply += _amount;
-        if (allianceInfo.teamLayerNumber == VariableManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+        if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
     /// <summary>
     /// 인구 확인
@@ -103,6 +103,7 @@ public class TeamInfo
     public bool ChkSupply(int _supply)
     {
 
+        if (_supply <= 0) return true;
         return MaxSupply - resourcesInfo.curSupply >= _supply;
     }
     /// <summary>

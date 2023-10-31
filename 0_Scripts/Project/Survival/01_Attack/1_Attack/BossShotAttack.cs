@@ -13,7 +13,7 @@ public class BossShotAttack : RangeTarget
         Transform unitTrans = _unit.transform;
         Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
 
-        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
+        GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
         
         // 현재 안쓴다;
         if (go)

@@ -48,7 +48,7 @@ public class BossShot : ISkillAction
             Transform unitTrans = _unit.transform;
             Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
 
-            GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VariableManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
+            GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);
             if (go)
             {
 

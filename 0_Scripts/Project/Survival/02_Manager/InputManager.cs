@@ -127,6 +127,7 @@ public class InputManager : MonoBehaviour
         {
 
             if (GameManager.instance.IsStop) return;
+            UIManager.instance.ExitInfo(TYPE_INFO.BTN);              // 켜져 있으면 끈다
             if (value == -1) 
             { 
                 
@@ -137,7 +138,6 @@ public class InputManager : MonoBehaviour
 
             myState = (TYPE_INPUT)value;
             MyHandler.Changed(this);
-            UIManager.instance.ExitInfo();
         }
         get { return (int)myState; }
     }
@@ -229,6 +229,8 @@ public class InputManager : MonoBehaviour
         if (isSubBtn)
         {
 
+            Debug.Log(1);
+
             // 서브 행동 중이면 해당 서브 행동만 강제 탈출
             if (myState != TYPE_INPUT.NONE)
             {
@@ -312,18 +314,18 @@ public class InputManager : MonoBehaviour
             if (_useTarget)
             {
 
-                curGroup.GiveCommand(cmdType, cmdPos, cmdTarget, add);
+                curGroup.GiveCommand(cmdType, cmdPos, cmdTarget, add, _num);
             }
             else
             {
 
-                curGroup.GiveCommand(cmdType, cmdPos, null, add);
+                curGroup.GiveCommand(cmdType, cmdPos, null, add, _num);
             }
         }
         else
         {
 
-            curGroup.GiveCommand(cmdType, add);
+            curGroup.GiveCommand(cmdType, add, _num);
         }
 
         ResetCmd();

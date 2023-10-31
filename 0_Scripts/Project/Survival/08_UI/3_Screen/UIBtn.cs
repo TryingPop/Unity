@@ -9,27 +9,24 @@ public class UIBtn : MonoBehaviour,
 {
 
     [SerializeField] private int stateNum;
-    [SerializeField] private string title;
-    [SerializeField] private string description;
-    [SerializeField] private Vector2 infoSize;
+    [SerializeField] private ButtonInfo btnInfo;
 
     [SerializeField] private Image myImg;
     [SerializeField] private RectTransform myRectTrans;
 
-    public void Init(Sprite _sprite, Vector2 _pos, string _title, string _desc)
+    public void Init(ButtonInfo _info, Vector2 _pos)
     {
 
-        myImg.sprite = _sprite;
+        btnInfo = _info;
+        myImg.sprite = _info.BtnSprite;
         myRectTrans.anchoredPosition = _pos;
-        title = _title;
-        description = _desc;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
 
         InputManager.instance.MyState = stateNum;
-        UIManager.instance.ExitInfo();
+        UIManager.instance.ExitInfo(TYPE_INFO.BTN);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -37,31 +34,35 @@ public class UIBtn : MonoBehaviour,
 
         Vector2 uiPos = myRectTrans.position;
         uiPos.y += myRectTrans.rect.height * 0.5f;
-        UIManager.instance.EnterInfo(this, uiPos);
+        UIManager.instance.EnterInfo(this, uiPos, TYPE_INFO.BTN);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
-        UIManager.instance.ExitInfo();
+        UIManager.instance.ExitInfo(TYPE_INFO.BTN);
     }
 
     public void SetInfo(Text _descTxt)
     {
 
-        _descTxt.text = description;
+        if (btnInfo == null) return;
+
+        _descTxt.text = btnInfo.Desc;
     }
 
     public void SetRectTrans(RectTransform _rectTrans)
     {
 
-        _rectTrans.sizeDelta = infoSize;
+        _rectTrans.sizeDelta = btnInfo.InfoSize;
         _rectTrans.pivot = new Vector2(0.5f, 0f);
     }
 
     public void SetTitle(Text _titleTxt)
     {
 
-        _titleTxt.text = title;
+        if (btnInfo == null) return;
+
+        _titleTxt.text = btnInfo.Title;
     }
 }

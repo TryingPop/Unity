@@ -44,7 +44,7 @@ public class ButtonSlots : MonoBehaviour
                 btns[i].gameObject.SetActive(true);
                 ButtonInfo info = _handler.actions[idx];
 
-                btns[i].Init(info.BtnSprite, SetPos(idx), info.Title, info.Desc);
+                btns[i].Init(info, SetPos(idx));
             }
             else
             {

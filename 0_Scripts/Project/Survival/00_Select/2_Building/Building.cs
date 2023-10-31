@@ -9,8 +9,6 @@ public class Building : Selectable
 
     [SerializeField] protected Transform buildingObj;               // 건물 생성과 관련된 옵션
 
-    [SerializeField] protected STATE_SELECTABLE myState;
-
     [SerializeField] protected NavMeshObstacle myObstacle;          // 완성 시 비켜 지나가게 설정
 
     [SerializeField] protected BuildingStateAction myStateAction;   // 빌딩의 행동
@@ -60,7 +58,7 @@ public class Building : Selectable
     protected void Awake()
     {
 
-        if (cmds == null) cmds = new List<Command>(VariableManager.MAX_RESERVE_COMMANDS);
+        if (cmds == null) cmds = new List<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
         if (completeTimer == null) completeTimer = new WaitForSeconds(0.1f);
 
         if (opt.BuildTurn != 0)
@@ -103,12 +101,12 @@ public class Building : Selectable
         {
 
             myState = STATE_SELECTABLE.NONE;
-            if (myStat.MaxHp != VariableManager.INFINITE) curHp = MaxHp;
+            if (myStat.MaxHp != VarianceManager.INFINITE) curHp = MaxHp;
         }
         else
         {
 
-            if (myStat.MaxHp != VariableManager.INFINITE) curHp = 1;
+            if (myStat.MaxHp != VarianceManager.INFINITE) curHp = 1;
             GetComponentInChildren<MeshRenderer>().material.color = Color.black;
             curBuildTurn = 0;
         }
@@ -171,7 +169,7 @@ public class Building : Selectable
         {
 
             float per = opt.BuildTurn != 0 ? curBuildTurn / (float)opt.BuildTurn : 1f;
-            if (MaxHp != VariableManager.INFINITE) 
+            if (MaxHp != VarianceManager.INFINITE) 
             { 
                 
                 curHp = Mathf.FloorToInt(MaxHp * per);
@@ -214,7 +212,7 @@ public class Building : Selectable
     {
 
         myObstacle.carving = false;
-        gameObject.layer = VariableManager.LAYER_DEAD;
+        gameObject.layer = VarianceManager.LAYER_DEAD;
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
 
@@ -258,7 +256,7 @@ public class Building : Selectable
         myHitBar = null;
 
         // 파괴 이벤트
-        PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VariableManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
+        PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VarianceManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
 
@@ -275,7 +273,7 @@ public class Building : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = myStat.MaxHp == VariableManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
+        string hp = myStat.MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
 
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
         else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
@@ -294,14 +292,19 @@ public class Building : Selectable
         if (type == STATE_SELECTABLE.MOUSE_R)
         {
 
+            // 바로 읽으므로 읽을 수 있는지 체크
+            if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+
             target = _cmd.target;
             targetPos = _cmd.pos;
-
-            _cmd.Received(0);
+            
             return;
         }
         else if (type == STATE_SELECTABLE.BUILDING_CANCEL)
         {
+
+            // 바로 읽어서 사용하므로 읽을 수 있는지 체크
+            if (_cmd.ChkUsedCommand(myStat.MySize)) return;
 
             if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
             {
@@ -317,7 +320,7 @@ public class Building : Selectable
                 myStateAction.ForcedQuit(this);
             }
 
-            _cmd.Received(0);
+            
             return;
         }
         else if (!ChkCommand(_cmd))
@@ -335,7 +338,8 @@ public class Building : Selectable
     {
 
         if (myState == STATE_SELECTABLE.DEAD
-            || cmds.Count >= VariableManager.MAX_RESERVE_COMMANDS) return false;
+            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED
+            || cmds.Count >= VarianceManager.MAX_RESERVE_COMMANDS) return false;
 
         return true;
     }
@@ -345,14 +349,15 @@ public class Building : Selectable
 
         // 가장 앞에것을 준다
         ReadCommand(cmds[0]);
+        cmds.RemoveAt(0);
         myStateAction.Changed(this);
     }
 
     protected override void ReadCommand(Command _cmd)
     {
 
+        if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+        
         myState = _cmd.type;
-        _cmd.Received(0);
-        cmds.RemoveAt(0);
     }
 }

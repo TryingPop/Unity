@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private SelectedUI selects;            // 선택된 파티클들
 
 
-    [SerializeField] private Canvas infoCanvas;
+    [SerializeField] private RectTransform frameRectTrans;
     [SerializeField] private Canvas hitBarCanvas;
 
     private bool activeInfo = false;
@@ -31,17 +31,15 @@ public class UIManager : MonoBehaviour
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
 
+    /*
     public bool ActiveInfo
     {
 
         get { return activeInfo; }
-        set 
-        {
-
-            activeInfo = value;
-            infoCanvas.enabled = activeInfo;
-        }
+        set { activeInfo = value; }
     }
+    */
+
 
     public bool ActiveHitBar
     {
@@ -95,7 +93,7 @@ public class UIManager : MonoBehaviour
         // Start에서 해줘야 안막힌다!
         SetRatio();
 
-        resources.Teams = TeamManager.instance.GetTeamInfo(VariableManager.LAYER_PLAYER);
+        resources.Teams = TeamManager.instance.GetTeamInfo(VarianceManager.LAYER_PLAYER);
         updateResources = true;
     }
 
@@ -141,8 +139,8 @@ public class UIManager : MonoBehaviour
     public void SetRatio()
     {
 
-        var rectTrans = infoCanvas.GetComponent<RectTransform>();
-        var canvasRect = rectTrans.sizeDelta;
+        // 여기에 확인할 캔버스?
+        var canvasRect = frameRectTrans.sizeDelta;
         
         // 반대로 하니 나눗셈 연산량이 많아 져서 곱센 연산량이 되게 변환
         screenRatio.x = canvasRect.x / Screen.width;
@@ -190,20 +188,25 @@ public class UIManager : MonoBehaviour
         // warningTxt.text = _str;
     }
 
-    public void EnterInfo(IInfoTxt _target, Vector2 _uiPos)
+    public void EnterInfo(IInfoTxt _target, Vector2 _uiPos, TYPE_INFO _type)
     {
 
-        ActiveInfo = true;
+        activeInfo = info.IsUpdateType(_type);
         Vector2 uiPos = MouseToUIPos(_uiPos);
-        info.EnterUIInfo(_target, uiPos);
+        info.EnterUIInfo(_target, uiPos, _type);
         ChkBoundary(info.txtRectTrans);
     }
 
-    public void ExitInfo()
+    public void ExitInfo(TYPE_INFO _type)
     {
 
-        ActiveInfo = false;
-        info.ExitUIInfo();
+        // 타입이 같아야 종료!
+        if (info.MyType == _type)
+        {
+
+            activeInfo = false;
+            info.ExitUIInfo();
+        }
     }
 
 

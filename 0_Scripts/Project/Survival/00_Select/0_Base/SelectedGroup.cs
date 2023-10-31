@@ -81,7 +81,7 @@ public class SelectedGroup
     public SelectedGroup()
     {
 
-        selected = new List<Selectable>(VariableManager.MAX_SELECT);
+        selected = new List<Selectable>(VarianceManager.MAX_SELECT);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public class SelectedGroup
     {
 
         if (_select == null                                     // 선택 대상이 없거나
-            || selected.Count >= VariableManager.MAX_SELECT     // 선택가능한 갯수를 넘거나
+            || selected.Count >= VarianceManager.MAX_SELECT     // 선택가능한 갯수를 넘거나
             || selected.Contains(_select)                       // 이미 포함되어져 있는 경우거나
             ) return;
 
@@ -168,7 +168,7 @@ public class SelectedGroup
 
         // 100 미만의 숫자들은 각 타입의 Base 타입을 나타내는데, 해당 타입을 찾아준다
         int type = (int)_type;
-        if (type >= VariableManager.TYPE_SELECTABLE_INTERVAL) return type /= VariableManager.TYPE_SELECTABLE_INTERVAL;
+        if (type >= VarianceManager.TYPE_SELECTABLE_INTERVAL) return type /= VarianceManager.TYPE_SELECTABLE_INTERVAL;
         else return type;
     }
 
@@ -259,6 +259,7 @@ public class SelectedGroup
         if (_num >= 0) _num = (_num > selected.Count ? selected.Count : _num);
         else _num = selected.Count;
 
+        Debug.Log($"InitNum : {_num}");
         // 명령 풀링
         Command cmd = Command.GetCommand(_num, _type);
 

@@ -8,13 +8,13 @@ public class HitBarGroup : MonoBehaviour
 
     [SerializeField] private HitBar prefabHitBar;
 
-    private List<HitBar> hitBars = new List<HitBar>(VariableManager.INIT_UNIT_LIST_NUM
-            + VariableManager.INIT_BUILDING_LIST_NUM
-            + VariableManager.INIT_NEUTRAL_LIST_NUM);
+    private List<HitBar> hitBars = new List<HitBar>(VarianceManager.INIT_UNIT_LIST_NUM
+            + VarianceManager.INIT_BUILDING_LIST_NUM
+            + VarianceManager.INIT_NEUTRAL_LIST_NUM);
 
-    private Stack<HitBar> usedHitBars = new Stack<HitBar>(VariableManager.INIT_UNIT_LIST_NUM
-            + VariableManager.INIT_BUILDING_LIST_NUM
-            + VariableManager.INIT_NEUTRAL_LIST_NUM);
+    private Stack<HitBar> usedHitBars = new Stack<HitBar>(VarianceManager.INIT_UNIT_LIST_NUM
+            + VarianceManager.INIT_BUILDING_LIST_NUM
+            + VarianceManager.INIT_NEUTRAL_LIST_NUM);
 
 
     /// <summary>

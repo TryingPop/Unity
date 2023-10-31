@@ -17,7 +17,7 @@ public class UnitMove : IUnitAction
 
             // 대상이 살아있는지 확인
             if (_unit.Target.gameObject.activeSelf
-                && _unit.Target.gameObject.layer != VariableManager.LAYER_DEAD)
+                && _unit.Target.gameObject.layer != VarianceManager.LAYER_DEAD)
             {
 
                 // 대상으로 이동

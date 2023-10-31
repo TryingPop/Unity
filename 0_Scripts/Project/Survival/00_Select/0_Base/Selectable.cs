@@ -33,6 +33,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     [SerializeField] protected ushort myTurn;           // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
 
     [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
+    
+    [SerializeField] protected STATE_SELECTABLE myState;
 
     protected string stateName = "";
 
@@ -113,8 +115,12 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         }
     }
 
+    public virtual int MyState
+    {
 
-    public abstract int MyState { set; get; }
+        get { return (int)myState; }
+        set { myState = (STATE_SELECTABLE)value; }
+    }
 
     /// <summary>
     /// 5만번대 이상은 혼자 선택가능!
@@ -135,7 +141,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected void ChkSupply(bool _isDead = false)
     {
 
-        if (myTeam == null) return;
+        if (myTeam == null
+            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
 
         int supply = myStat.Supply;
         
@@ -189,7 +196,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         if (ChkInvincible()) return;
 
-        curHp -= _dmg - Def < VariableManager.MIN_DAMAGE ? VariableManager.MIN_DAMAGE : _dmg - Def;
+        curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
 
         if (curHp <= 0) Dead();
         else myHitBar.SetHp(curHp);
@@ -202,7 +209,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected bool ChkInvincible()
     {
 
-        if (MaxHp == VariableManager.INFINITE)
+        if (MaxHp == VarianceManager.INFINITE)
         {
 
             return true;
@@ -221,7 +228,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         myHitBar.SetHp(curHp);
 
         // 시체 레이어로 변경
-        gameObject.layer = VariableManager.LAYER_DEAD;
+        gameObject.layer = VarianceManager.LAYER_DEAD;
 
         // 인구 깎는다
         ChkSupply(true);

@@ -30,7 +30,7 @@ public class Animal : Unit
             && _trans)
         {
 
-            var go = PoolManager.instance.GetPrefabs(opt.PrefabIdx, VariableManager.LAYER_DEAD);
+            var go = PoolManager.instance.GetPrefabs(opt.PrefabIdx, VarianceManager.LAYER_DEAD);
             go.transform.position = transform.position;
             var TeamInfo = TeamManager.instance.GetTeamInfo(_trans.gameObject.layer);
             TeamInfo?.AddGold(opt.KillGold);

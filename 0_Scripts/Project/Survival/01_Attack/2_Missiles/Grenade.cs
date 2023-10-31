@@ -78,7 +78,7 @@ public class Grenade : Missile
         ActionManager.instance.RemoveMissile(this);
         PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
 
-        PoolManager.instance.GetPrefabs(18, VariableManager.LAYER_DEAD, meshTrans.position);
+        PoolManager.instance.GetPrefabs(18, VarianceManager.LAYER_DEAD, meshTrans.position);
     }
 
     public override void Action()

@@ -32,13 +32,13 @@ public class ButtonHandler : StateHandler<ButtonInfo>
 
                 // 여기서 MAX_USE_BUTTONS과 유닛이 취할 수 있는 최대 상태와 같기에 버튼으로 그대로 둔다
                 // 다른 경우 override되게 해야한다!
-                if (actions.Length > VariableManager.MAX_USE_BUTTONS)
+                if (actions.Length > VarianceManager.MAX_USE_BUTTONS)
                 {
 
-                    Array.Resize(ref actions, VariableManager.MAX_USE_BUTTONS);
+                    Array.Resize(ref actions, VarianceManager.MAX_USE_BUTTONS);
                 }
 
-                idxs = new int[VariableManager.MAX_USE_BUTTONS];
+                idxs = new int[VarianceManager.MAX_USE_BUTTONS];
                 for (int i = 0; i < idxs.Length; i++)
                 {
 

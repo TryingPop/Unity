@@ -16,8 +16,8 @@ public class Command
     public static float zBatchSize = 2f;
 
     
-    public ushort unitNums;             // 전달할 유닛 수
-    protected ushort receiveNum;        // 받은 변수, 풀링확인용
+    public int unitNums;             // 전달할 유닛 수
+    protected int receiveNum;        // 받은 변수, 풀링확인용
     public Vector3 pos;                 // 명령의 목적지
     public Selectable target;           // 명령의 표적
 
@@ -38,44 +38,39 @@ public class Command
     }
 
 
-    /// <summary>
-    /// 명령 무사히 수령 이후 회오리 배치 할지 묻는다
-    /// </summary>
-    /// <param name="_size"></param>
-    public void Received(int _size) 
+    public bool ChkUsedCommand(int _size)
     {
 
+        // 수령인원 추가
         receiveNum++;
-        SetNextPos(_size);
 
-        ChkAllReceived();
-    }
-
-    /// <summary>
-    /// 명령을 다 수행했을 때 실행
-    /// </summary>
-    public void ChkAllReceived()
-    {
-
-        if (unitNums == receiveNum) 
+        if (unitNums < receiveNum)
         {
 
-            // curCommand--;
-            // target != null 이라도 알아서 해제 된다
-            if (pool.Count < VariableManager.MAX_SAVE_COMMANDS) pool.Push(this);
+            // 못읽는다
+            return true;
         }
+        else if (unitNums == receiveNum)
+        {
+
+            // 모두다 읽은 경우
+            if (pool.Count < VarianceManager.MAX_SAVE_COMMANDS) pool.Push(this);
+        }
+
+        return false;
     }
 
-    /// <summary>
-    /// 유닛이 죽거나 명령이 취소될 경우 실행
-    /// </summary>
     public void Canceled()
     {
 
         unitNums--;
+        if (unitNums == receiveNum)
+        {
 
-        ChkAllReceived();
+            if (pool.Count < VarianceManager.MAX_SAVE_COMMANDS) pool.Push(this);
+        }
     }
+
 
     /// <summary>
     /// 초기화
@@ -97,7 +92,7 @@ public class Command
     public void Init(int _unitNums, STATE_SELECTABLE _type)
     {
 
-        unitNums = (ushort)_unitNums;
+        unitNums = _unitNums;
         receiveNum = 0;
         type = _type;
 
@@ -111,7 +106,8 @@ public class Command
     protected void SetNextPos(int _size)
     {
 
-        if (receiveNum == 0) return;
+        // 처음은 생략
+        if (receiveNum == 1) return;
         int i = 0;
 
         int n = receiveNum;
@@ -158,7 +154,7 @@ public class Command
     public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
 
-        if (pool == null) pool = new Stack<Command>(VariableManager.MAX_SAVE_COMMANDS);
+        if (pool == null) pool = new Stack<Command>(VarianceManager.MAX_SAVE_COMMANDS);
 
         // 재활용 or 새로 생성
         // curCommand++;
@@ -180,7 +176,7 @@ public class Command
     public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type)
     {
 
-        if (pool == null) pool = new Stack<Command>(VariableManager.MAX_SAVE_COMMANDS);
+        if (pool == null) pool = new Stack<Command>(VarianceManager.MAX_SAVE_COMMANDS);
 
         // curCommand++;
 

@@ -11,7 +11,7 @@ public class TargetMissile : GuidedMissile
     {
         base.Used();
 
-        var go = PoolManager.instance.GetPrefabs(4, VariableManager.LAYER_BULLET, transform.position + Vector3.up);
+        var go = PoolManager.instance.GetPrefabs(4, VarianceManager.LAYER_BULLET, transform.position + Vector3.up);
     }
 
     public override void Action()

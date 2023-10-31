@@ -23,11 +23,6 @@ public class UpgradeStat : BuildingAction
 
             _building.MyTeam.Upgrade(upgradeType, add);
             _building.MyTurn = 0;
-        }
-
-        if (_building.MyTurn == 0)
-        {
-
             OnExit(_building);
         }
     }
@@ -36,7 +31,7 @@ public class UpgradeStat : BuildingAction
     {
 
         // È¯ºÒ
-        int refundCost = Mathf.FloorToInt(VariableManager.REFUND_RATE * cost);
+        int refundCost = Mathf.FloorToInt(VarianceManager.REFUND_RATE * cost);
         _building.MyTeam.AddGold(refundCost);
         OnExit(_building);
     }
@@ -52,7 +47,7 @@ public class UpgradeStat : BuildingAction
             return;
         }
 
-
+        _building.MyTeam.AddGold(-cost);
         base.OnEnter(_building);
     }
 }

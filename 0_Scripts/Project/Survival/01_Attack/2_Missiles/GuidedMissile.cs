@@ -69,7 +69,7 @@ public class GuidedMissile : Missile
     {
 
         // À¯µµ !
-        if (target == null || target.gameObject.layer == VariableManager.LAYER_DEAD)
+        if (target == null || target.gameObject.layer == VarianceManager.LAYER_DEAD)
         {
 
             Used();
@@ -93,7 +93,7 @@ public class GuidedMissile : Missile
         if (n > 0)
         {
 
-            if (num == 0 && Random.Range(0, VariableManager.ONE_MISS_PER_N_TIMES) < n) atk = 0;
+            if (num == 0 && Random.Range(0, VarianceManager.ONE_MISS_PER_N_TIMES) < n) atk = 0;
             else if (num > 0 && Random.Range(0, num) < n) atk = 0;
         }
     }

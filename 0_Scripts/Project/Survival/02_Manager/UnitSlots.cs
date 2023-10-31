@@ -124,7 +124,7 @@ public class UnitSlots : MonoBehaviour
     {
 
         int num = matrixSize[0] * matrixSize[1];
-        if (num > VariableManager.MAX_SELECT) num = VariableManager.MAX_SELECT;
+        if (num > VarianceManager.MAX_SELECT) num = VarianceManager.MAX_SELECT;
 
         // 생성과 파괴부분 수정할 필요가 있다!
         if (num < slots.Count)

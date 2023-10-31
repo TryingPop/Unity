@@ -22,9 +22,9 @@ public class SelectedUI : MonoBehaviour
 
         selectedNums = 0;
 
-        selectedUIs = new TargetUI[VariableManager.MAX_SELECT];
+        selectedUIs = new TargetUI[VarianceManager.MAX_SELECT];
 
-        for (int i = 0; i < VariableManager.MAX_SELECT; i++)
+        for (int i = 0; i < VarianceManager.MAX_SELECT; i++)
         {
 
             // 유닛이 선택됨을 알리는 UI 생성

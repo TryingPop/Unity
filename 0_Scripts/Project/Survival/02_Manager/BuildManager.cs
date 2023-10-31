@@ -20,11 +20,7 @@ public class BuildManager : MonoBehaviour
         for (short i = 0; i < buildings.Length; i++)
         {
 
-            if (_selectIdx == buildings[i].selectIdx)
-            {
-
-                return i;
-            }
+            if (_selectIdx == buildings[i].selectIdx) return i;
         }
 
         return -1;
