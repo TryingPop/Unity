@@ -77,9 +77,19 @@ public class TargetUnit : Mission
     }
 
     // 상태 설명
-    public override string GetMissionObjectText()
+    public override string GetMissionObjectText(bool _isWin)
     {
 
-        return $"{target.MyStat.MyType} : {curNum} / {targetNum}";
+        if (_isWin)
+        {
+
+            if (targetNum == 1) return $"{target.MyStat.MyName} 처치";
+            
+            return $"{target.MyStat.MyName} : {curNum} / {targetNum} 처치";
+        }
+
+        if (targetNum == 1) return $"{target.MyStat.MyName} 사망";
+
+        return $"{target.MyStat.MyName} : {curNum} / {targetNum} 사망";
     }
 }

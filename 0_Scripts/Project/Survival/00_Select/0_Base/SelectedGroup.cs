@@ -259,7 +259,6 @@ public class SelectedGroup
         if (_num >= 0) _num = (_num > selected.Count ? selected.Count : _num);
         else _num = selected.Count;
 
-        Debug.Log($"InitNum : {_num}");
         // 명령 풀링
         Command cmd = Command.GetCommand(_num, _type);
 

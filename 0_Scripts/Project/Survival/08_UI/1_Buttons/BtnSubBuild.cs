@@ -10,7 +10,7 @@ public class BtnSubBuild : ButtonInfo
 {
 
     [SerializeField] protected ushort selectIdx;
-    protected short prepareIdx = -1;
+    [SerializeField] protected short prepareIdx = -1;
 
     public override void OnEnter(InputManager _inputManager)
     {

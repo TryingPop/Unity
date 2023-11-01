@@ -21,4 +21,13 @@ public class TargetBuilding : TargetUnit
             curNum++;
         }
     }
+
+    // »óÅÂ ¼³¸í
+    public override string GetMissionObjectText(bool _isWin)
+    {
+
+        if (targetNum == 1) return $"{target.MyStat.MyName} ÆÄ±«";
+
+        return $"{target.MyStat.MyName} : {curNum} / {targetNum} ÆÄ±«";
+    }
 }

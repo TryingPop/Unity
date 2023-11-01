@@ -8,7 +8,7 @@ using UnityEngine;
 public class PrepareBuilding : MonoBehaviour, Follower
 {
 
-    [SerializeField] protected MeshRenderer myMesh;         // 색상 변경용
+    [SerializeField] protected MeshRenderer[] myMeshs;         // 색상 변경용
 
     [SerializeField] protected bool isBuild = true;         // 건설가능 상태?
 
@@ -91,7 +91,11 @@ public class PrepareBuilding : MonoBehaviour, Follower
             color = Color.red;
         }
 
-        myMesh.material.color = color;
+        for (int i = 0; i < myMeshs.Length; i++)
+        {
+
+            myMeshs[i].material.color = color;
+        }
     }
 
 

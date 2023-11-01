@@ -9,8 +9,7 @@ using UnityEngine.SceneManagement;
 public class Menu : MonoBehaviour
 {
 
-    public GameObject panelMenu;
-    public GameObject panelOpt;
+    public GameObject[] panels;
 
     public void NextScene(string _sceneName)
     {
@@ -25,18 +24,16 @@ public class Menu : MonoBehaviour
         Application.Quit();
     }
 
-    public void ActiveOption(bool _active)
+    public void ActivePanel(int _idx)
     {
 
-        panelOpt.SetActive(_active);
-        panelMenu.SetActive(!_active);
+        panels[_idx].SetActive(true);
     }
 
-    public void OpenMenu(bool _active)
+    public void InActivePanel(int _idx)
     {
 
-        panelMenu.SetActive(_active);
-        panelOpt.SetActive(false);
+        panels[_idx].SetActive(false);
     }
 }
 

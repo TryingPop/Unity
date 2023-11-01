@@ -57,6 +57,7 @@ public class Command
             if (pool.Count < VarianceManager.MAX_SAVE_COMMANDS) pool.Push(this);
         }
 
+        SetNextPos(_size);
         return false;
     }
 

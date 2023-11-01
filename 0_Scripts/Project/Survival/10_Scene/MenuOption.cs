@@ -11,35 +11,37 @@ using UnityEngine.UI;
 public class MenuOption : MonoBehaviour
 {
 
-    private Resolution[] resolutions; // SerializeField로 인스펙터 창에 나오지 않는다
-    [SerializeField] private Dropdown resolutionDropdown;         // 연동시킬 드랍다운
-    [SerializeField] private Toggle fullScreenBtn;               // 풀스크린 확인용 토글 키
+    private static Resolution[] resolutions;                        // SerializeField로 인스펙터 창에 나오지 않는다
+    [SerializeField] private Dropdown resolutionDropdown;           // 연동시킬 드랍다운
+    // [SerializeField] private Toggle fullScreenBtn;               // 풀스크린 확인용 토글 키
 
     private int selectNum;                      // 선택된 드랍다운 값
-    private FullScreenMode screenMode = FullScreenMode.Windowed;          // 
+    private FullScreenMode screenMode = FullScreenMode.Windowed;          
 
     // [SerializeField] private Text test;
 
 
-    private void Awake()
-    {
 
-        resolutions = new Resolution[7];
 
-    }
 
     private void Start()
     {
 
-        // 풀 스크린
-        SetResolution(0, Screen.width, Screen.height, 60);
-        // 입력 스크린
-        SetResolution(1, 720, 480, 60);
-        SetResolution(2, 720, 576, 60);
-        SetResolution(3, 1024, 768, 60);
-        SetResolution(4, 1280, 720, 60);
-        SetResolution(5, 1280, 768, 60);
-        SetResolution(6, 1280, 800, 60);
+        if (resolutions == null)
+        {
+
+            resolutions = new Resolution[7];
+            // 풀 스크린
+            SetResolution(0, Screen.width, Screen.height, 60);
+            // 입력 스크린
+            SetResolution(1, 720, 480, 60);
+            SetResolution(2, 720, 576, 60);
+            SetResolution(3, 1024, 768, 60);
+            SetResolution(4, 1280, 720, 60);
+            SetResolution(5, 1280, 768, 60);
+            SetResolution(6, 1280, 800, 60);
+        }
+
         InitUI();
     }
 
@@ -105,7 +107,7 @@ public class MenuOption : MonoBehaviour
     public void OkBtnClick()
     {
 
-        screenMode = selectNum == 0 ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        screenMode = selectNum == 0 ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
 
         Screen.SetResolution(resolutions[selectNum].width,
             resolutions[selectNum].height,

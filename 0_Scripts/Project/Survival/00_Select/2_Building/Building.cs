@@ -293,7 +293,7 @@ public class Building : Selectable
         {
 
             // 바로 읽으므로 읽을 수 있는지 체크
-            if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+            if (_cmd.ChkUsedCommand(0)) return;
 
             target = _cmd.target;
             targetPos = _cmd.pos;
@@ -304,7 +304,7 @@ public class Building : Selectable
         {
 
             // 바로 읽어서 사용하므로 읽을 수 있는지 체크
-            if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+            if (_cmd.ChkUsedCommand(0)) return;
 
             if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
             {
@@ -356,7 +356,7 @@ public class Building : Selectable
     protected override void ReadCommand(Command _cmd)
     {
 
-        if (_cmd.ChkUsedCommand(myStat.MySize)) return;
+        if (_cmd.ChkUsedCommand(0)) return;
         
         myState = _cmd.type;
     }

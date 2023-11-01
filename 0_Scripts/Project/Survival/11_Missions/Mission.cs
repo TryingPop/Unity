@@ -27,5 +27,5 @@ public abstract class Mission : ScriptableObject
     /// <summary>
     /// 미션 목표 적는다
     /// </summary>
-    public abstract string GetMissionObjectText();
+    public abstract string GetMissionObjectText(bool _isWin);
 }
