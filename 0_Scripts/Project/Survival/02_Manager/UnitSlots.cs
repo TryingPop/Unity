@@ -26,6 +26,7 @@ public class UnitSlots : MonoBehaviour
     [SerializeField] protected GameObject nextBtn;
     [SerializeField] protected GameObject prevBtn;
 
+    protected int activeSlotNum;      // 활성화된 슬롯 개수
     protected int curPage;
     protected int maxPage;
 
@@ -130,6 +131,7 @@ public class UnitSlots : MonoBehaviour
         if (num < slots.Count)
         {
 
+            // 노는 슬롯들 파괴
             for (int i = slots.Count - 1; i >= num ; i--)
             {
 
@@ -141,6 +143,7 @@ public class UnitSlots : MonoBehaviour
         else
         {
 
+            // 부족한 슬롯 생성
             for (int i = slots.Count; i < num; i++)
             {
 
@@ -195,7 +198,7 @@ public class UnitSlots : MonoBehaviour
         ChkBtn(page);
 
         int len = matrixSize[0] * matrixSize[1];
-        
+        activeSlotNum = 0;
         // 버튼에 유닛 할당
         for (int i = 0; i < len; i++)
         {
@@ -205,6 +208,7 @@ public class UnitSlots : MonoBehaviour
             if (curGroup.Count > unitIdx)
             {
 
+                activeSlotNum++;
                 ActiveSlot(i, curGroup[unitIdx], true);
             }
             else
@@ -274,6 +278,17 @@ public class UnitSlots : MonoBehaviour
         }
 
         curPage = _num;
+    }
+
+
+    public void SetHp()
+    {
+
+        for (int i = 0; i < activeSlotNum; i++)
+        {
+
+            slots[i].SetHp();
+        }
     }
 }
 

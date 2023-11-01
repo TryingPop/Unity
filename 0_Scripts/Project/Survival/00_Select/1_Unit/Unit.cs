@@ -205,6 +205,7 @@ public class Unit : Selectable
 
         base.OnDamaged(_dmg, _trans);
 
+
         Selectable select = null;
         if (_trans != null) select = _trans.GetComponent<Selectable>();
         OnDamageAction(select);
@@ -262,7 +263,6 @@ public class Unit : Selectable
         myAnimator.SetBool("Die", true);
 
         ActionManager.instance.RemoveUnit(this);
-        // ActionManager.instance.ClearHitBar(myHitBar);
         UIManager.instance.RemoveHitBar(this);
         // ºñ¿ì±â
         myHitBar = null;

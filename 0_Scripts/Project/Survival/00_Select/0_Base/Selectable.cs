@@ -54,6 +54,13 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         curHp += _atk;
         if (curHp > MaxHp) curHp = MaxHp;
         myHitBar.SetHp(curHp);
+
+        // 현재 선택 중이면 해제한다!
+        if (InputManager.instance.curGroup.IsContains(this))
+        {
+
+            UIManager.instance.UpdateHp = true;
+        }
     }
 
     /// <summary>
@@ -62,6 +69,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     public bool FullHp { get { return curHp == MaxHp; } }
 
     public int MaxHp { get { return myStat.MaxHp + myTeam.AddedHp; } }
+    public int CurHp => curHp;
     public int Def { get { return myStat.Def + myTeam.AddedDef; } }
 
     /// <summary>
@@ -200,6 +208,23 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         if (curHp <= 0) Dead();
         else myHitBar.SetHp(curHp);
+
+        // 현재 선택 중이면 해제한다!
+        if (InputManager.instance.curGroup.IsContains(this))
+        {
+
+            if (myState == STATE_SELECTABLE.DEAD)
+            {
+
+                InputManager.instance.curGroup.DeSelect(this);
+                InputManager.instance.ChkUIs();
+            }
+            else
+            {
+
+                UIManager.instance.UpdateHp = true;
+            }
+        }
     }
 
     /// <summary>
@@ -232,14 +257,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         // 인구 깎는다
         ChkSupply(true);
-
-        // 현재 선택 중이면 해제한다!
-        if (InputManager.instance.curGroup.IsContains(this)) 
-        { 
-            
-            InputManager.instance.curGroup.DeSelect(this);
-            InputManager.instance.ChkUIs();
-        }
 
         StartCoroutine(Disabled());
     }

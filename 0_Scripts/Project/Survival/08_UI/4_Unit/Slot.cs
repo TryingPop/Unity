@@ -15,6 +15,7 @@ public class Slot : MonoBehaviour,
     // [SerializeField] protected Slider hpSlider;
 
     [SerializeField] protected Image img;
+    [SerializeField] protected Slider myHitBar;
     
     public RectTransform myRectTrans;
 
@@ -24,15 +25,21 @@ public class Slot : MonoBehaviour,
     {
 
         target = _selectable;
-        var sprite = _selectable.MyStat.MySprite;
-        img.sprite = sprite;
+        img.sprite = _selectable.MyStat.MySprite;
+        myHitBar.maxValue = target.MaxHp;
+        myHitBar.value = target.CurHp;
+    }
+
+    public void SetHp()
+    {
+
+        myHitBar.value = target.CurHp;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
 
         // 상태 표현
-        // Vector3 uiPos = UIManager.instance.MouseToUIPos(eventData.position);
         Vector2 uiPos = myRectTrans.position;
         uiPos.x += myRectTrans.rect.width * 0.5f;
 

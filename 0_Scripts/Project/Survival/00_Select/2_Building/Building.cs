@@ -184,6 +184,12 @@ public class Building : Selectable
         pos.y = opt.InitPosY + height;
         buildingObj.localPosition = pos;
         myHitBar.SetHp(curHp);
+
+        if (InputManager.instance.curGroup.IsContains(this))
+        {
+
+            UIManager.instance.UpdateHp = true;
+        }
     }
 
     /// <summary>

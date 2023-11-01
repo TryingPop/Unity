@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     private bool activeInfo = false;
     private bool activeHitBar = true;
     private bool updateResources = true;
+    private bool updateHp = false;
 
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
@@ -70,6 +71,23 @@ public class UIManager : MonoBehaviour
         set { updateResources = value; } 
     }
 
+    public bool UpdateHp
+    {
+
+        get
+        {
+
+            if (updateHp)
+            {
+
+                updateHp = false;
+                return true;
+            }
+
+            return false;
+        }
+        set { updateHp = value; }
+    }
 
     private void Awake()
     {
@@ -128,6 +146,12 @@ public class UIManager : MonoBehaviour
         {
 
             resources.UpdateText();
+        }
+
+        if (updateHp)
+        {
+
+            slots.SetHp();
         }
 
         selects.SetPos();
