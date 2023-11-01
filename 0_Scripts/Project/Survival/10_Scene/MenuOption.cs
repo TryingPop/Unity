@@ -11,38 +11,36 @@ using UnityEngine.UI;
 public class MenuOption : MonoBehaviour
 {
 
-    private static Resolution[] resolutions;                        // SerializeField로 인스펙터 창에 나오지 않는다
+    private Resolution[] resolutions;                               // SerializeField로 인스펙터 창에 나오지 않는다
     [SerializeField] private Dropdown resolutionDropdown;           // 연동시킬 드랍다운
     // [SerializeField] private Toggle fullScreenBtn;               // 풀스크린 확인용 토글 키
 
     private int selectNum;                      // 선택된 드랍다운 값
-    private FullScreenMode screenMode = FullScreenMode.Windowed;          
+    private FullScreenMode screenMode = FullScreenMode.Windowed;
 
     // [SerializeField] private Text test;
 
-
-
-
-
-    private void Start()
+    private void Awake()
     {
 
-        if (resolutions == null)
-        {
-
-            resolutions = new Resolution[7];
-            // 풀 스크린
-            SetResolution(0, Screen.width, Screen.height, 60);
-            // 입력 스크린
-            SetResolution(1, 720, 480, 60);
-            SetResolution(2, 720, 576, 60);
-            SetResolution(3, 1024, 768, 60);
-            SetResolution(4, 1280, 720, 60);
-            SetResolution(5, 1280, 768, 60);
-            SetResolution(6, 1280, 800, 60);
-        }
+        resolutions = new Resolution[7];
+        // 풀 스크린
+        SetResolution(0, Screen.width, Screen.height, 60);
+        // 입력 스크린
+        SetResolution(1, 720, 480, 60);
+        SetResolution(2, 720, 576, 60);
+        SetResolution(3, 1024, 768, 60);
+        SetResolution(4, 1280, 720, 60);
+        SetResolution(5, 1280, 768, 60);
+        SetResolution(6, 1280, 800, 60);
 
         InitUI();
+    }
+
+    private void OnEnable()
+    {
+
+        ResetDropdown();
     }
 
     private void SetResolution(int _idx, int _width, int _height, int _refreshRate)
@@ -87,8 +85,22 @@ public class MenuOption : MonoBehaviour
 
         // 새로 고침
         resolutionDropdown.RefreshShownValue();
-        // fullScreenBtn.isOn = Screen.fullScreenMode.Equals(FullScreenMode.FullScreenWindow) ? true : false;
+    }
 
+    public void ResetDropdown()
+    {
+
+        for (int i = 0; i < resolutions.Length; i++)
+        {
+
+            if (resolutions[i].width == Screen.width && resolutions[i].height == Screen.height)
+            {
+
+                resolutionDropdown.value = i;
+            }
+        }
+
+        resolutionDropdown.RefreshShownValue();
     }
 
     /// <summary>

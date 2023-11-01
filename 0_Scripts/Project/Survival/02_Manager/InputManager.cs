@@ -229,8 +229,6 @@ public class InputManager : MonoBehaviour
         if (isSubBtn)
         {
 
-            Debug.Log(1);
-
             // 서브 행동 중이면 해당 서브 행동만 강제 탈출
             if (myState != TYPE_INPUT.NONE)
             {

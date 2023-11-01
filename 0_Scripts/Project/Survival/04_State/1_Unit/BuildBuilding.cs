@@ -30,8 +30,8 @@ public class BuildBuilding : IUnitAction
             int supply = _unit.Target.MyStat.Supply;
             int gold = _unit.Target.MyStat.Cost;
 
-            if (_unit.MyTeam.ChkSupply(supply)
-                && _unit.MyTeam.ChkGold(gold))
+            if (_unit.MyTeam.ChkGold(gold)
+                && _unit.MyTeam.ChkSupply(supply))
             {
 
                 // °ñµå ¼Ò¸ð

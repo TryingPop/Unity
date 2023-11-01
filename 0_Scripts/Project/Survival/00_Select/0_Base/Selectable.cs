@@ -149,8 +149,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected void ChkSupply(bool _isDead = false)
     {
 
-        if (myTeam == null
-            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
+        if (myTeam == null) return;
 
         int supply = myStat.Supply;
         

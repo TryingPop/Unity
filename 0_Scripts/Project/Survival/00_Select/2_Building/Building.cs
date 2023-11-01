@@ -102,6 +102,9 @@ public class Building : Selectable
 
             myState = STATE_SELECTABLE.NONE;
             if (myStat.MaxHp != VarianceManager.INFINITE) curHp = MaxHp;
+
+            // 완성된 상태로 만들어지므로 바로 인구 체크된다
+            ChkSupply(false);
         }
         else
         {
@@ -109,6 +112,10 @@ public class Building : Selectable
             if (myStat.MaxHp != VarianceManager.INFINITE) curHp = 1;
             GetComponentInChildren<MeshRenderer>().material.color = Color.black;
             curBuildTurn = 0;
+
+            // 인구 먹는 건물은 지어지는 도중부터 인구를 차지한다
+            if (myStat.Supply > 0) ChkSupply(false);
+
         }
 
         ActionManager.instance.AddBuilding(this);
@@ -158,8 +165,8 @@ public class Building : Selectable
             height = opt.IncreaseY;
             myState = STATE_SELECTABLE.NONE;
 
-            // 인구 추가
-            ChkSupply(false);
+            // 인구 추가는 완성시에 추가된다
+            if (myStat.Supply < 0) ChkSupply(false);
 
 
             StartCoroutine(FinishedBuildCoroutine());
@@ -246,6 +253,7 @@ public class Building : Selectable
     public override void Dead()
     {
 
+        myStateAction.ForcedQuit(this);
         base.Dead();
 
         for (int i = 0; i < cmds.Count; i++)

@@ -70,8 +70,7 @@ public class RecruitSoldier : BuildingAction
 
         if (_building.MyTurn < turn) _building.MyTurn++;
 
-        if (_building.MyTurn >= turn
-            && _building.MyTeam.ChkSupply(targetStat.Supply))
+        if (_building.MyTurn >= turn)
         {
 
             var go = PoolManager.instance.GetPrefabs(PrefabIdx, _building.gameObject.layer, _building.transform.position);
@@ -104,7 +103,7 @@ public class RecruitSoldier : BuildingAction
         // 강제 종료 시 환불
         int refundCost = Mathf.FloorToInt(VarianceManager.REFUND_RATE * Cost);
         _building.MyTeam.AddGold(refundCost);
-
+        _building.MyTeam.AddCurSupply(-targetStat.Supply);
         OnExit(_building);
     }
 
@@ -125,17 +124,17 @@ public class RecruitSoldier : BuildingAction
             }
         }
 
-        // 골드가 확인
-        if (!_building.MyTeam.ChkGold(cost) 
+        // 자원 확인!
+        if (!_building.MyTeam.ChkGold(cost)
             || !_building.MyTeam.ChkSupply(targetStat.Supply))
         {
 
-            // 없으면 탈출
             OnExit(_building);
             return;
         }
 
         // 골드 즉시 사용
         _building.MyTeam.AddGold(-cost);
+        _building.MyTeam.AddCurSupply(targetStat.Supply);
     }
 }

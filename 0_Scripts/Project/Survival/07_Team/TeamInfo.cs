@@ -104,7 +104,11 @@ public class TeamInfo
     {
 
         if (_supply <= 0) return true;
-        return MaxSupply - resourcesInfo.curSupply >= _supply;
+        if (MaxSupply - resourcesInfo.curSupply >= _supply) return true;
+
+        
+        UIManager.instance.WarningText("보급이 부족합니다.", Color.yellow, 2.0f);
+        return false;
     }
     /// <summary>
     /// 해당 골드 이상 보유 중인지 체크
@@ -112,7 +116,10 @@ public class TeamInfo
     public bool ChkGold(int _gold)
     {
 
-        return resourcesInfo.gold >= _gold;
+        if (resourcesInfo.gold >= _gold) return true;
+
+        UIManager.instance.WarningText("골드가 부족합니다.", Color.yellow, 2.0f);
+        return false;
     }
 
     // 동맹

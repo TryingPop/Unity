@@ -111,7 +111,7 @@ public class Command
         if (receiveNum == 1) return;
         int i = 0;
 
-        int n = receiveNum;
+        int n = receiveNum - 1;
         while (n > 0)
         {
 

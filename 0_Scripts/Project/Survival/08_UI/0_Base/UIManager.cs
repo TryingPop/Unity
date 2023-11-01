@@ -19,27 +19,21 @@ public class UIManager : MonoBehaviour
     [SerializeField] private HitBarGroup hitbars;           // 체력 바
     [SerializeField] private UnitSlots slots;               // 유닛 슬롯
     [SerializeField] private SelectedUI selects;            // 선택된 파티클들
-
+    [SerializeField] private UIWarning warning;             // 경고문
 
     [SerializeField] private RectTransform frameRectTrans;
     [SerializeField] private Canvas hitBarCanvas;
+    [SerializeField] private Canvas warningCanvas;
+
 
     private bool activeInfo = false;
+    private bool activeWarning = false;
     private bool activeHitBar = true;
     private bool updateResources = true;
     private bool updateHp = false;
 
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
-
-    /*
-    public bool ActiveInfo
-    {
-
-        get { return activeInfo; }
-        set { activeInfo = value; }
-    }
-    */
 
 
     public bool ActiveHitBar
@@ -88,6 +82,8 @@ public class UIManager : MonoBehaviour
         }
         set { updateHp = value; }
     }
+
+
 
     private void Awake()
     {
@@ -140,6 +136,17 @@ public class UIManager : MonoBehaviour
         {
 
             hitbars.SetPos();
+        }
+
+        if (activeWarning)
+        {
+
+            if (warning.SetTime())
+            {
+
+                activeWarning = false;
+                warningCanvas.enabled = false;
+            }
         }
 
         if (UpdateResources)
@@ -245,5 +252,14 @@ public class UIManager : MonoBehaviour
 
         hitbars.UsedHitBar(_target.MyHitBar);
         _target.MyHitBar = null;
+    }
+
+    public void WarningText(string _text, Color _color, float _chkTime)
+    {
+
+        warningCanvas.enabled = true;
+
+        warning.Init(_text, ref _color, _chkTime);
+        activeWarning = true;
     }
 }

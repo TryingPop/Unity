@@ -127,6 +127,7 @@ public class Unit : Selectable
         {
 
             AfterSettingLayer();
+            ChkSupply(false);
             isStarting = false;
         }
     }
@@ -138,7 +139,7 @@ public class Unit : Selectable
     {
 
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
-        ChkSupply(false);
+
         curHp = MaxHp;
 
         if (gameObject.layer == VarianceManager.LAYER_PLAYER)
@@ -335,7 +336,7 @@ public class Unit : Selectable
 
         // 읽을 수 있는 상태 판별
         if (myState == STATE_SELECTABLE.DEAD
-            && cmds.Count > VarianceManager.MAX_RESERVE_COMMANDS) return false;
+            || cmds.Count >= VarianceManager.MAX_RESERVE_COMMANDS) return false;
 
         // 읽을 수 잇는 명령 판별
         if (_cmd.type == STATE_SELECTABLE.NONE
