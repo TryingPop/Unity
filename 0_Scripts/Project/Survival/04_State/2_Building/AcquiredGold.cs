@@ -19,7 +19,7 @@ public class AcquiredGold : BuildingAction
             _building.MyTurn = 0;
 
             // ÇÃ·¹ÀÌ¾îÀÎ °æ¿ì °ñµå È¹µæ!
-            _building.MyTeam.AddGold(amount);
+            _building.MyTeam.AddGold(amount, true);
         }
     }
 }

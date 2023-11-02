@@ -57,6 +57,7 @@ public class TargetUnit : Mission
 
             genTarget.transform.position = initPos[i];
             genTarget.AfterSettingLayer();
+            genTarget.ChkSupply(false);
         }
     }
 

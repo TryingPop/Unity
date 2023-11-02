@@ -76,8 +76,9 @@ public class UnitRepair : IUnitAction
 
                 // 수리 다됐으면 상태 탈출
                 if (_unit.Target.FullHp) OnExit(_unit);
-                return;
             }
+
+            return;
         }
 
         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;

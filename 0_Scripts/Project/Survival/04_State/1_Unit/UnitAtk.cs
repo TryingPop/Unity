@@ -33,7 +33,7 @@ public class UnitAtk : IUnitAction
                 Attack unitAttack = _unit.MyAttack;
 
                 float dis = Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position);
-                float atkRange = unitAttack.atkRange + (_unit.Target.MyStat.MySize * 0.5f);
+                float atkRange = unitAttack.atkRange + ((_unit.MyStat.MySize + _unit.Target.MyStat.MySize) * 0.5f);
                 atkRange = atkRange * atkRange;
 
                 if (_unit.MyTurn == 0)

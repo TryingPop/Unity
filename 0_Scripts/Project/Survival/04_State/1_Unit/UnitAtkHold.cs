@@ -12,7 +12,8 @@ public class UnitAtkHold : UnitHold
         Attack unitAttack = _unit.MyAttack;
 
 
-        float atkDis = unitAttack.atkRange * unitAttack.atkRange;
+        float atkDis = unitAttack.atkRange + (_unit.MyStat.MySize * 0.5f);
+        atkDis *= atkDis;
 
         if (_unit.Target != null
             && _unit.Target.MyState != -1

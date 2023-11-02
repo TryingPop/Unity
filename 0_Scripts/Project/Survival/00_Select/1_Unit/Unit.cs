@@ -285,8 +285,10 @@ public class Unit : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        string hp = MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
-        _txt.text = $"체력 : {hp}\n공격력 : {Atk}   방어력 : {Def}\n{stateName} 중";
+        string strHp = MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
+        string strAtk = myTeam.AddedAtk == 0 ? myAttack.atk.ToString() : $"{myAttack.atk}(+{myTeam.AddedAtk})";
+        string strDef = myTeam.AddedDef == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{myTeam.AddedDef})";
+        _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{stateName} 중";
     }
 
     #region Command

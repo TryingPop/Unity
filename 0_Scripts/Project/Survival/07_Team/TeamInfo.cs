@@ -72,10 +72,12 @@ public class TeamInfo
     /// <summary>
     /// °ñµå º¯µ¿¿ë
     /// </summary>
-    public void AddGold(int _amount)
+    public void AddGold(int _amount, bool _addBonus = false)
     {
 
-        resourcesInfo.gold += _amount + upgradeInfo.addGetGold;
+        resourcesInfo.gold += _amount;
+        if (_addBonus) resourcesInfo.gold += +upgradeInfo.addGetGold;
+
         if (resourcesInfo.gold > VarianceManager.MAX_GOLD) resourcesInfo.gold = VarianceManager.MAX_GOLD;
         if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }

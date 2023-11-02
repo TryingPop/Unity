@@ -146,7 +146,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     public TeamInfo MyTeam => myTeam;
 
-    protected void ChkSupply(bool _isDead = false)
+    public void ChkSupply(bool _isDead = false)
     {
 
         if (myTeam == null) return;
