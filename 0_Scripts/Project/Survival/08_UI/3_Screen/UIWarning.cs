@@ -16,6 +16,7 @@ public class UIWarning : MonoBehaviour
         onTime = Time.time;
         chkTime = _chkTime;
         warningTxt.text = _text;
+        _color.a = 0.7f;
         warningTxt.color = _color;
     }
 

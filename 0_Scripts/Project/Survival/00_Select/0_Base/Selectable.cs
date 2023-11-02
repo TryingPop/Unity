@@ -116,7 +116,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             if (value != null)
             {
 
-                value.Init(transform, MaxHp, myStat.MySize);
+                value.Init(transform, MaxHp, myStat.HitBarPos);
                 value.SetHp(curHp);
             }
             myHitBar = value; 

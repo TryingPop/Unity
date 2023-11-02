@@ -121,6 +121,7 @@ public enum STATE_GAME
 public enum TYPE_INFO
 {
 
+    ALL = -1,
     NONE = 0,
     SLOT = 1,
     BTN = 2,

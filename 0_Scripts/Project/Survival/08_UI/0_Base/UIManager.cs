@@ -232,7 +232,8 @@ public class UIManager : MonoBehaviour
     {
 
         // 타입이 같아야 종료!
-        if (info.MyType == _type)
+        if (_type == TYPE_INFO.ALL
+            || info.MyType == _type)
         {
 
             activeInfo = false;

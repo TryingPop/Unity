@@ -327,6 +327,14 @@ public class Building : Selectable
                 int refundCost = Mathf.FloorToInt(myStat.Cost * 0.4f);
                 myTeam.AddGold(refundCost);
                 Dead();
+                if (InputManager.instance.curGroup.IsContains(this)) 
+                {
+
+                    InputManager.instance.curGroup.DeSelect(this);
+                    InputManager.instance.ChkUIs();
+                    // slot과 버튼 종료!
+                    UIManager.instance.ExitInfo(TYPE_INFO.ALL);
+                }
             }
             else
             {

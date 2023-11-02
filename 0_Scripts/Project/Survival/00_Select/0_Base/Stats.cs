@@ -21,6 +21,7 @@ public class Stats : ScriptableObject
     [SerializeField] protected int supply;                  // 만약 supply < 0 이면 최대 인구 증가, supply >= 0 이면 현재 인구 증가
 
     [SerializeField] protected string myName;
+    [SerializeField] protected int hitBarPos;
 
     public int MaxHp => maxHp;
     public int Def => def;
@@ -71,4 +72,6 @@ public class Stats : ScriptableObject
     public int Supply => supply;
 
     public string MyName => myName;
+
+    public int HitBarPos => hitBarPos;
 }
