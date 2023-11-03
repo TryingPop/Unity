@@ -8,25 +8,25 @@ public class UIWarning : MonoBehaviour
 
     [SerializeField] private Text warningTxt;
 
-    private float onTime;
-    private float chkTime;
+    private float startTime;
+    private float endTime;
     public void Init(string _text, ref Color _color, float _chkTime)
     {
 
-        onTime = Time.time;
-        chkTime = _chkTime;
+        startTime = Time.time;
+        endTime = _chkTime;
         warningTxt.text = _text;
         _color.a = 0.7f;
         warningTxt.color = _color;
     }
 
-    public bool SetTime()
+    public bool ChkTime()
     {
 
-        if (Time.time - onTime > chkTime)
+        if (Time.time - startTime > endTime)
         {
 
-            onTime = 1f;
+            startTime = -endTime;
             return true;
         }
 
