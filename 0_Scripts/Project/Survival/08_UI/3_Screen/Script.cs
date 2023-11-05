@@ -1,65 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Script : MonoBehaviour
+[System.Serializable]
+public class Script
 {
 
-    [SerializeField] private Text scriptTxt;
-    [SerializeField] private RectTransform myRectTrans;
-    [SerializeField] private Image talker;
-    // [SerializeField] private Vector3 destPos;
-    private Vector3 destination;
-    private float startTime;
-    private float endTime;
+    [SerializeField] private int spriteNum;          // 이미지 번호
+    [SerializeField] private float time = 5f;        // 대사 유지 시간 글자 많으면 시간 늘려야한다
+    [SerializeField] private float nextTime = 2f;    // 다음 대사 시간
 
-    public void Init(Sprite _img, string _text, ref Vector2 scriptSize, float _time = 5.0f)
-    {
-
-        talker.sprite = _img;
-        scriptTxt.text = _text;
-        destination = new Vector2(0f, -35f);
-        startTime = Time.time;
-        endTime = _time;
-        myRectTrans.sizeDelta = scriptSize;
-    }
-
-    // 초기 위치 이동 및 초기 사이즈
-    public void EndPos(ref Vector3 initPos)
-    {
-
-        myRectTrans.anchoredPosition = initPos;
-        myRectTrans.sizeDelta = new Vector2(100f, 60f);
-    }
-
-    // 다음 위치
-    public void SetNext(float _posY)
-    {
-
-        destination.y -= _posY;
-    }
-
-    // 위치 조절
-    private void SetPos()
-    {
-
-        myRectTrans.anchoredPosition = Vector3.Lerp(myRectTrans.anchoredPosition, destination, 0.1f);
-    }
-
-    // 해야하는지 판별
-    public bool ChkTime()
-    {
-
-        if (Time.time - startTime > endTime)
-        {
-
-            startTime = -endTime;
-            return true;
-        }
-
-        // 위치 조절
-        SetPos();
-        return false;
-    }
+    public Vector2 size;            // 대사 슬롯의 크기
+    [SerializeField, TextArea(0, 3)] private string str;             // 대사
+    
+    public int SpriteNum => spriteNum;
+    public float Time => time;
+    public float NextTime => nextTime;
+    public string Str => str;
 }

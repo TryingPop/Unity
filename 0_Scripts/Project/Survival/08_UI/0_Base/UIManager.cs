@@ -269,4 +269,11 @@ public class UIManager : MonoBehaviour
         if (!script.IsActive) scriptCanvas.enabled = true;
         script.SetScript(_spriteNum, _str, ref _size, _time);
     }
+
+    public void SetScript(Script _script)
+    {
+
+        if (!script.IsActive) scriptCanvas.enabled = true;
+        script.SetScript(_script);
+    }
 }

@@ -266,7 +266,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     protected IEnumerator Disabled()
     {
 
-        yield return new WaitForSeconds(myStat.DisableTime);
+        if (myStat.DisableTime == 2) yield return VarianceManager.BASE_WAITFORSECONDS;
+        else yield return new WaitForSeconds(myStat.DisableTime);
 
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }

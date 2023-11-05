@@ -1,3 +1,4 @@
+using UnityEngine;
 /// <summary>
 /// Selectable Á¾·ù
 /// </summary>
@@ -188,4 +189,5 @@ public class VarianceManager
 
     public static readonly float REFUND_RATE = 0.6f;
 
+    public static WaitForSeconds BASE_WAITFORSECONDS = new WaitForSeconds(2f);
 }
