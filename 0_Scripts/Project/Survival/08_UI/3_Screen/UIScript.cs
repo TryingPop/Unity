@@ -1,65 +1,87 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIScript : MonoBehaviour
 {
 
-    [SerializeField] private Text scriptTxt;
-    [SerializeField] private RectTransform myRectTrans;
-    [SerializeField] private Image talker;
-    [SerializeField] private Vector3 destPos;
-    private Vector3 destination;
-    private float startTime;
-    private float endTime;
+    [SerializeField] private Script[] scripts;
+    [SerializeField] private Sprite[] faces;
+    [SerializeField] private Vector3 initPos;
 
-    public void Init(Sprite _img, string _text, Vector2 scriptSize, ref Vector3 _destination, float _time = 5.0f)
+    private int nums;                   // 활성화 된거 개수
+    private int startIdx = 0;           // 마지막에 활성화된 idx
+
+    public bool IsActive
     {
 
-        talker.sprite = _img;
-        scriptTxt.text = _text;
-        destination = _destination;
-        startTime = Time.time;
-        endTime = _time;
-        myRectTrans.sizeDelta = scriptSize;
-    }
-
-    // 초기 위치 이동 및 초기 사이즈
-    public void EndPos(ref Vector3 initPos)
-    {
-
-        myRectTrans.anchoredPosition = initPos;
-        myRectTrans.sizeDelta = new Vector2(100f, 60f);
-    }
-
-    // 다음 위치
-    public void SetNext(float _posY)
-    {
-
-        destination.y -= _posY;
-    }
-
-    // 위치 조절
-    private void SetPos()
-    {
-
-        myRectTrans.anchoredPosition = Vector3.Lerp(myRectTrans.anchoredPosition, destination, 0.1f);
-    }
-
-    // 해야하는지 판별
-    public bool ChkTime()
-    {
-
-        if (Time.time - startTime > endTime)
+        get
         {
 
-            startTime = -endTime;
-            return true;
+            return nums > 0;
+        }
+    }
+
+
+    public void SetScript(int _spriteNum, string _str, ref Vector2 _size, float _time = 5f)
+    {
+
+        // 활성화 개수 추가
+        nums++;
+        if (nums > scripts.Length)
+        {
+
+            // 모든 스크립트들이 다 나왔으므로 맨 밑에 있는 것을 다시 위로 불러오는 작업
+            nums = scripts.Length;
+            scripts[startIdx].EndPos(ref initPos);
         }
 
-        // 위치 조절
-        SetPos();
-        return false;
+        // 해당 위치로 이동
+        scripts[startIdx].Init(faces[_spriteNum], _str, ref _size, _time);
+
+        SetNext(40f);
+
+        startIdx++;
+        if (startIdx >= scripts.Length) startIdx = 0;
     }
+
+    /// <summary>
+    /// 한 칸씩 미뤄준다
+    /// </summary>
+    private void SetNext(float _posY)
+    {
+
+        int idx = startIdx;
+        for (int i = 0; i < nums - 1; i++)
+        {
+
+            idx--;
+            if (idx < 0) idx += scripts.Length;
+
+            scripts[idx].SetNext(_posY);
+        }
+    }
+
+    /// <summary>
+    /// 출력
+    /// </summary>
+    public void SetPos()
+    {
+
+        int idx = startIdx;
+        for (int i = 0; i < nums; i++)
+        {
+
+            idx--;
+            if (idx < 0) idx += scripts.Length;
+
+            if (scripts[idx].ChkTime())
+            {
+
+                scripts[idx].EndPos(ref initPos);
+                nums--;
+            }
+        }
+    }
+
 }

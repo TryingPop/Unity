@@ -109,7 +109,7 @@ public class TeamInfo
         if (MaxSupply - resourcesInfo.curSupply >= _supply) return true;
 
         
-        UIManager.instance.WarningText("보급이 부족합니다.", Color.yellow, 2.0f);
+        UIManager.instance.SetWarningText("보급이 부족합니다.", Color.yellow, 2.0f);
         return false;
     }
     /// <summary>
@@ -120,7 +120,7 @@ public class TeamInfo
 
         if (resourcesInfo.gold >= _gold) return true;
 
-        UIManager.instance.WarningText("골드가 부족합니다.", Color.yellow, 2.0f);
+        UIManager.instance.SetWarningText("골드가 부족합니다.", Color.yellow, 2.0f);
         return false;
     }
 

@@ -199,8 +199,11 @@ public class EnemyOrderManager : MonoBehaviour
             initPos[i] = SetRandPos(pos, 15f);
         }
 
+        UIManager.instance.SetScript(2, "전투를 준비하라", new Vector2(160f, 40f));
         // 처음 대기 시간
         yield return new WaitForSeconds(waveStartTime);
+
+        UIManager.instance.SetScript(2, "출격하라", new Vector2(160f, 40f));
 
         waveStart = true;
 

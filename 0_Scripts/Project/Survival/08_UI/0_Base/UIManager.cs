@@ -20,11 +20,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UnitSlots slots;               // 유닛 슬롯
     [SerializeField] private SelectedUI selects;            // 선택된 파티클들
     [SerializeField] private UIWarning warning;             // 경고문
+    [SerializeField] private UIScript script;
 
     [SerializeField] private RectTransform frameRectTrans;
     [SerializeField] private Canvas hitBarCanvas;
     [SerializeField] private Canvas warningCanvas;
-
+    [SerializeField] private Canvas scriptCanvas;
 
     private bool activeInfo = false;
     private bool activeWarning = false;
@@ -161,6 +162,14 @@ public class UIManager : MonoBehaviour
             slots.SetHp();
         }
 
+        if (script.IsActive)
+        {
+
+            script.SetPos();
+            // 모두 다 종료 되었는지 확인
+            if (!script.IsActive) scriptCanvas.enabled = false;
+        }
+
         selects.SetPos();
     }
 
@@ -208,17 +217,6 @@ public class UIManager : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 경고문 자원 부족 등을 알리기 위해  쓸 예정
-    /// </summary>
-    /// <param name="_str"></param>
-    public void SetWarningTxt(string _str)
-    {
-
-        // warningTxt.enabled = true;
-        // warningTxt.text = _str;
-    }
-
     public void EnterInfo(IInfoTxt _target, Vector2 _uiPos, TYPE_INFO _type)
     {
 
@@ -255,12 +253,20 @@ public class UIManager : MonoBehaviour
         _target.MyHitBar = null;
     }
 
-    public void WarningText(string _text, Color _color, float _chkTime)
+    public void SetWarningText(string _text, Color _color, float _chkTime)
     {
 
         warningCanvas.enabled = true;
 
         warning.Init(_text, ref _color, _chkTime);
         activeWarning = true;
+    }
+
+    public void SetScript(int _spriteNum, string _str, Vector2 _size, float _time = 5f)
+    {
+
+        // 아직 실행된게 없는 경우 켠다
+        if (!script.IsActive) scriptCanvas.enabled = true;
+        script.SetScript(_spriteNum, _str, ref _size, _time);
     }
 }
