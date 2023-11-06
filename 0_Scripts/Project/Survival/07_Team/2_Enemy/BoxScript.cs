@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoxScript : BasicScript
+public class BoxScript : MonoBehaviour
 {
 
     [SerializeField] protected LayerMask targetLayer;
     [SerializeField] protected int targetIdx = -1;
 
     [SerializeField] protected GameObject[] nextObjs;
+
+    [SerializeField] protected ScriptGroup scripts;
+    [SerializeField] protected GameEvent gameEvent;
 
     protected bool IsLayer
     {
@@ -32,28 +35,38 @@ public class BoxScript : BasicScript
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private bool ChkEvent(Collider _other)
     {
-        
-        // 레이어 확인
+
         if (IsLayer)
         {
 
-            if (((1 << other.gameObject.layer) & targetLayer) == 0) return;
+            if (((1 << _other.gameObject.layer) & targetLayer) == 0) return false;
         }
-        
+
         // idx 확인
         if (IsIdx)
         {
 
-            var select = other.GetComponent<Selectable>();
+            var select = _other.GetComponent<Selectable>();
             // selectIdx가 존재하고, idx가 일치 할경우만
             if (!select
-                || select.MyStat.SelectIdx != targetIdx) return;
+                || select.MyStat.SelectIdx != targetIdx) return false;
         }
 
-        // ui메니저에 해당 정보를 전달해서 읽게 하는게 좋을듯?
-        Talk();
+        return true;
+    }
+
+    private void StartEvent()
+    {
+
+        // 대사, 이벤트 시작
+        if (scripts != null) UIManager.instance.SetScripts(scripts.Scripts);
+        if (gameEvent != null) gameEvent.StartEvent();
+    }
+
+    private void EndEvent()
+    {
 
         // 사용 완료 다음 대사 오브젝트 활성화
         for (int i = 0; i < nextObjs.Length; i++)
@@ -64,4 +77,16 @@ public class BoxScript : BasicScript
 
         gameObject.SetActive(false);
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+
+        if (ChkEvent(other)) 
+        { 
+            
+            StartEvent();
+            EndEvent();
+        }
+    }
+
 }

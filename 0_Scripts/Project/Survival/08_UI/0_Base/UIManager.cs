@@ -33,6 +33,9 @@ public class UIManager : MonoBehaviour
     private bool updateResources = true;
     private bool updateHp = false;
 
+    private Coroutine readScript;
+
+
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
 
@@ -275,5 +278,27 @@ public class UIManager : MonoBehaviour
 
         if (!script.IsActive) scriptCanvas.enabled = true;
         script.SetScript(_script);
+    }
+
+    public void SetScripts(Script[] _scripts)
+    {
+
+        if (readScript != null) StopCoroutine(readScript);
+        readScript = StartCoroutine(ReadScript(_scripts));
+    }
+
+    private IEnumerator ReadScript(Script[] _scripts)
+    {
+
+        yield return null;
+
+        for (int i = 0; i < _scripts.Length; i++)
+        {
+
+            SetScript(_scripts[i]);
+
+            if (_scripts[i].NextTime == 2f) yield return VarianceManager.BASE_WAITFORSECONDS;
+            else yield return new WaitForSeconds(_scripts[i].NextTime);
+        }
     }
 }

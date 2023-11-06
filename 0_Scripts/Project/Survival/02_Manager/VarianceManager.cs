@@ -189,5 +189,8 @@ public class VarianceManager
 
     public static readonly float REFUND_RATE = 0.6f;
 
-    public static WaitForSeconds BASE_WAITFORSECONDS = new WaitForSeconds(2f);
+    public static readonly WaitForSeconds BASE_WAITFORSECONDS = new WaitForSeconds(2f);
+
+    public static Vector2 INIT_POS_SCRIPT = new Vector2(110f, -35f);
+    public static Vector2 INIT_SIZE_SCRIPT = new Vector2(100f, 40f);
 }

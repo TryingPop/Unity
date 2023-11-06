@@ -7,7 +7,6 @@ public class UIScript : MonoBehaviour
 
     [SerializeField] private ScriptSlot[] scripts;
     [SerializeField] private Sprite[] faces;
-    [SerializeField] private Vector3 initPos;
 
     private int nums;                   // 활성화 된거 개수
     private int startIdx = 0;           // 마지막에 활성화된 idx
@@ -33,7 +32,7 @@ public class UIScript : MonoBehaviour
 
             // 모든 스크립트들이 다 나왔으므로 맨 밑에 있는 것을 다시 위로 불러오는 작업
             nums = scripts.Length;
-            scripts[startIdx].EndPos(ref initPos);
+            scripts[startIdx].EndPos();
         }
 
         // 해당 위치로 이동
@@ -55,7 +54,7 @@ public class UIScript : MonoBehaviour
 
             // 모든 스크립트들이 다 나왔으므로 맨 밑에 있는 것을 다시 위로 불러오는 작업
             nums = scripts.Length;
-            scripts[startIdx].EndPos(ref initPos);
+            scripts[startIdx].EndPos();
         }
 
         // 해당 위치로 이동
@@ -101,7 +100,7 @@ public class UIScript : MonoBehaviour
             if (scripts[idx].ChkTime())
             {
 
-                scripts[idx].EndPos(ref initPos);
+                scripts[idx].EndPos();
                 nums--;
             }
         }

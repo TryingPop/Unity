@@ -264,15 +264,23 @@ public class Building : Selectable
         cmds.Clear();
 
         myObstacle.carving = false;
-        ActionManager.instance.RemoveBuilding(this);
-        UIManager.instance.RemoveHitBar(this);
-        
-        myHitBar = null;
+
+        ResetTeam();
 
         // ÆÄ±« ÀÌº¥Æ®
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VarianceManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
     }
 
+    public override void ResetTeam()
+    {
+
+        ChkSupply(true);
+        ActionManager.instance.RemoveBuilding(this);
+        UIManager.instance.RemoveHitBar(this);
+
+        myHitBar = null;
+
+    }
 
     public override void SetRectTrans(RectTransform _rectTrans)
     {

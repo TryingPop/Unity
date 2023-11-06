@@ -254,11 +254,10 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         // 시체 레이어로 변경
         gameObject.layer = VarianceManager.LAYER_DEAD;
 
-        // 인구 깎는다
-        ChkSupply(true);
-
         StartCoroutine(Disabled());
     }
+
+    public abstract void ResetTeam();
 
     /// <summary>
     /// 사망 시 사망 모션 얼마나 볼건지 설정

@@ -37,7 +37,7 @@ public class EnemyOrderManager : MonoBehaviour
 
     private int forcedAtkNum = 30;                                       // 강제 공격할 숫자
 
-    [SerializeField] private BasicScript script;
+    [SerializeField] private ScriptGroup attackScript;
 
     private void Awake()
     {
@@ -201,12 +201,14 @@ public class EnemyOrderManager : MonoBehaviour
             initPos[i] = SetRandPos(pos, 15f);
         }
 
-        script.Talk();
+
         // 처음 대기 시간
         yield return new WaitForSeconds(waveStartTime);
 
         // Script 시작 알리기!
         waveStart = true;
+        UIManager.instance.SetScripts(attackScript.Scripts);
+
         while (!GameManager.instance.IsGameOver)
         {
 

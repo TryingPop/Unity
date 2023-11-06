@@ -263,13 +263,18 @@ public class Unit : Selectable
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
 
+        ResetTeam();
+    }
+
+    public override void ResetTeam()
+    {
+
+        ChkSupply(true);
         ActionManager.instance.RemoveUnit(this);
         UIManager.instance.RemoveHitBar(this);
         // 비우기
         myHitBar = null;
     }
-
-
 
     public override void SetRectTrans(RectTransform _rectTrans)
     {
@@ -286,9 +291,19 @@ public class Unit : Selectable
     {
 
         string strHp = MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
-        string strAtk = myTeam.AddedAtk == 0 ? myAttack.atk.ToString() : $"{myAttack.atk}(+{myTeam.AddedAtk})";
-        string strDef = myTeam.AddedDef == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{myTeam.AddedDef})";
-        _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{stateName} 중";
+
+        if (myAttack != null)
+        {
+
+            string strAtk = myTeam.AddedAtk == 0 ? myAttack.atk.ToString() : $"{myAttack.atk}(+{myTeam.AddedAtk})";
+            string strDef = myTeam.AddedDef == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{myTeam.AddedDef})";
+            _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{stateName} 중";
+        }
+        else
+        {
+
+            _txt.text = $"체력 : {strHp}\n{stateName} 중";
+        }
     }
 
     #region Command

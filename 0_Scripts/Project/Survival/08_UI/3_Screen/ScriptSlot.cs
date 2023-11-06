@@ -26,11 +26,11 @@ public class ScriptSlot : MonoBehaviour
     }
 
     // 초기 위치 이동 및 초기 사이즈
-    public void EndPos(ref Vector3 initPos)
+    public void EndPos()
     {
 
-        myRectTrans.anchoredPosition = initPos;
-        myRectTrans.sizeDelta = new Vector2(100f, 60f);
+        myRectTrans.anchoredPosition = VarianceManager.INIT_POS_SCRIPT;
+        myRectTrans.sizeDelta = VarianceManager.INIT_SIZE_SCRIPT;
     }
 
     // 다음 위치
