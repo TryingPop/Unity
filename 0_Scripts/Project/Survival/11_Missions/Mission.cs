@@ -5,12 +5,11 @@ using UnityEngine;
 /// <summary>
 /// ¹Ì¼Ç
 /// </summary>
-public abstract class Mission : ScriptableObject
+public abstract class Mission : MonoBehaviour
 {
 
-    // [SerializeField] protected bool isPlayer;
-
-    // public bool IsPlayer => isPlayer;
+    [SerializeField] protected bool isMain;    
+    public bool IsMain => isMain;
     
     public abstract bool IsSucess { get; }
 

@@ -198,6 +198,22 @@ public class InputManager : MonoBehaviour
 
             UIManager.instance.ActiveHitBar = !UIManager.instance.ActiveHitBar;
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+
+            SaveSelect(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+
+            SaveSelect(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+
+            SaveSelect(2);
+        }
     }
 
     private bool ChkReturn(int _key)
@@ -353,6 +369,25 @@ public class InputManager : MonoBehaviour
         curGroup.GiveCommand(cmdType, _pos, _target, Input.GetKey(KeyCode.LeftShift));
         MyHandler?.ForcedQuit(this);
         ResetCmd();
+    }
+
+    /// <summary>
+    /// 부대 지정
+    /// </summary>
+    public void SaveSelect(int _idx)
+    {
+
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+
+            curGroup.SetSaveGroup(_idx);
+        }
+        else
+        {
+
+            curGroup.GetSaveGroup(_idx);
+            ChkUIs();
+        }
     }
 
     /// <summary>

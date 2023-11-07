@@ -7,12 +7,15 @@ using UnityEngine;
 public class SelectedGroup
 {
 
-    private List<Selectable> selected;                          // 현재 선택된 그룹
+    private List<Selectable> curSelected;                          // 현재 선택된 그룹
+
+    // ctrl + 1 ~ 3 
+    private List<List<Selectable>> saved;
 
     public bool isOnlySelected = false;                         // 혼자 선택할 수 있는 유닛?
     private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
 
-    public bool IsEmpty { get { return selected.Count == 0 ? true : false; } }  // 비었는지 확인
+    public bool IsEmpty { get { return curSelected.Count == 0 ? true : false; } }  // 비었는지 확인
 
     public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
 
@@ -38,10 +41,10 @@ public class SelectedGroup
         get
         {
 
-            for (int i = 0; i < selected.Count; i++)
+            for (int i = 0; i < curSelected.Count; i++)
             {
 
-                if (selected[i].MyState != (int)STATE_SELECTABLE.BUILDING_UNFINISHED)
+                if (curSelected[i].MyState != (int)STATE_SELECTABLE.BUILDING_UNFINISHED)
                 {
 
                     return false;
@@ -61,10 +64,10 @@ public class SelectedGroup
         get
         {
 
-            for (int i = 0; i < selected.Count; i++)
+            for (int i = 0; i < curSelected.Count; i++)
             {
 
-                if (selected[i].IsCancelBtn)
+                if (curSelected[i].IsCancelBtn)
                 {
 
                     return true;
@@ -81,7 +84,11 @@ public class SelectedGroup
     public SelectedGroup()
     {
 
-        selected = new List<Selectable>(VarianceManager.MAX_SELECT);
+        curSelected = new List<Selectable>(VarianceManager.MAX_SELECT);
+
+        saved = new List<List<Selectable>>(3) { new List<Selectable>(VarianceManager.MAX_SELECT),
+                                                new List<Selectable>(VarianceManager.MAX_SELECT),
+                                                new List<Selectable>(VarianceManager.MAX_SELECT)};
     }
 
     /// <summary>
@@ -91,7 +98,7 @@ public class SelectedGroup
     {
 
         isOnlySelected = false;
-        selected.Clear();
+        curSelected.Clear();
     }
 
     /// <summary>
@@ -101,15 +108,15 @@ public class SelectedGroup
     {
 
         if (_select == null                                     // 선택 대상이 없거나
-            || selected.Count >= VarianceManager.MAX_SELECT     // 선택가능한 갯수를 넘거나
-            || selected.Contains(_select)                       // 이미 포함되어져 있는 경우거나
+            || curSelected.Count >= VarianceManager.MAX_SELECT     // 선택가능한 갯수를 넘거나
+            || curSelected.Contains(_select)                       // 이미 포함되어져 있는 경우거나
             ) return;
 
 
-        selected.Add(_select);
+        curSelected.Add(_select);
         
         // 그룹 타입 설정
-        if (selected.Count == 1)
+        if (curSelected.Count == 1)
         {
 
             isOnlySelected = _select.IsOnlySelected;
@@ -122,20 +129,20 @@ public class SelectedGroup
     public void ChkGroupType()
     {
 
-        if (selected.Count == 0)
+        if (curSelected.Count == 0)
         {
 
             groupType = TYPE_SELECTABLE.NONE;
             return;
         }
         
-        groupType = selected[0].MyStat.MyType;
+        groupType = curSelected[0].MyStat.MyType;
 
-        for (int i = 1; i < selected.Count; i++)
+        for (int i = 1; i < curSelected.Count; i++)
         {
 
 
-            TYPE_SELECTABLE type = selected[i].MyStat.MyType;
+            TYPE_SELECTABLE type = curSelected[i].MyStat.MyType;
             
             int groupNum = GetBaseTypeNum(groupType);
             int typeNum = GetBaseTypeNum(type);
@@ -176,9 +183,9 @@ public class SelectedGroup
     public void DeSelect(Selectable _select)
     {
 
-        selected.Remove(_select);
+        curSelected.Remove(_select);
 
-        if (selected.Count == 0) 
+        if (curSelected.Count == 0) 
         { 
             
             isOnlySelected = false;
@@ -192,7 +199,7 @@ public class SelectedGroup
     public bool IsContains(Selectable _select)
     {
 
-        return selected.Contains(_select);
+        return curSelected.Contains(_select);
     }
 
 
@@ -202,7 +209,43 @@ public class SelectedGroup
     public List<Selectable> Get()
     {
 
-        return selected;
+        return curSelected;
+    }
+
+    /// <summary>
+    /// 부대 지정 용도
+    /// </summary>
+    public void SetSaveGroup(int _idx)
+    {
+
+        if (_idx < 0 
+            || _idx >= saved.Count
+            || curSelected.Count == 0) return;
+
+        // 새로 채워 넣는다
+        saved[_idx].Clear();
+
+        for (int i = 0; i < curSelected.Count; i++)
+        {
+
+            saved[_idx].Add(curSelected[i]);
+        }
+    }
+
+    public void GetSaveGroup(int _idx)
+    {
+
+        if (_idx < 0
+            || _idx >= saved.Count
+            || saved[_idx].Count == 0) return;
+
+        curSelected.Clear();
+
+        for (int i = 0; i < saved[_idx].Count; i++)
+        {
+
+            curSelected.Add(saved[_idx][i]);
+        }
     }
 
     /// <summary>
@@ -211,7 +254,7 @@ public class SelectedGroup
     public int GetSize()
     {
 
-        return selected.Count;
+        return curSelected.Count;
     }
 
     /// <summary>
@@ -221,10 +264,10 @@ public class SelectedGroup
     {
 
         // 선택된 유닛이 없는 경우 명령 생성 안한다!
-        if (selected.Count == 0) return;
+        if (curSelected.Count == 0) return;
 
-        if (_num >= 0) _num = (_num > selected.Count ? selected.Count : _num);
-        else _num = selected.Count;
+        if (_num >= 0) _num = (_num > curSelected.Count ? curSelected.Count : _num);
+        else _num = curSelected.Count;
 
         // 명령 풀링
         Command cmd = Command.GetCommand(_num, _type, _pos, _trans);
@@ -234,10 +277,10 @@ public class SelectedGroup
         {
 
             // 배치 유무 따지고 명령 하달
-            for (int i = 0; i < selected.Count; i++)
+            for (int i = 0; i < curSelected.Count; i++)
             {
 
-                selected[i].GetCommand(cmd, _add);
+                curSelected[i].GetCommand(cmd, _add);
             }
         }
         else
@@ -254,10 +297,10 @@ public class SelectedGroup
     {
 
         // 선택된 유닛이 없는 경우 명령 생성을 안한다!
-        if (selected.Count == 0) return;
+        if (curSelected.Count == 0) return;
 
-        if (_num >= 0) _num = (_num > selected.Count ? selected.Count : _num);
-        else _num = selected.Count;
+        if (_num >= 0) _num = (_num > curSelected.Count ? curSelected.Count : _num);
+        else _num = curSelected.Count;
 
         // 명령 풀링
         Command cmd = Command.GetCommand(_num, _type);
@@ -267,10 +310,10 @@ public class SelectedGroup
         {
 
             // 배치 유무 따지고 명령 하달
-            for (int i = 0; i < selected.Count; i++)
+            for (int i = 0; i < curSelected.Count; i++)
             {
 
-                selected[i].GetCommand(cmd, _add);
+                curSelected[i].GetCommand(cmd, _add);
             }
         }
         else

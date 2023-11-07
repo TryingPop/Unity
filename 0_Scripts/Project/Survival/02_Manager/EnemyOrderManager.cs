@@ -30,6 +30,8 @@ public class EnemyOrderManager : MonoBehaviour
     private Transform target;                                               // 공격 대상
 
     [SerializeField] private int respawnEnemyNum = 2;                       // 리젠 포스에서 생성할 숫자
+    [SerializeField] private int addTurn;
+    private int curTurn;
 
     // 생성 번호
     [SerializeField] private int[] respawnEnemySelectIdxs;               // 생성할 적 idx
@@ -242,6 +244,8 @@ public class EnemyOrderManager : MonoBehaviour
 
         if (target == null) SetTarget();
 
+
+
         for (int i = 0; i < initPos.Length; i++)
         {
 
@@ -257,6 +261,18 @@ public class EnemyOrderManager : MonoBehaviour
                 if (unit) unit.AfterSettingLayer();
 
                 if (target != null) GiveCommand(unit, STATE_SELECTABLE.UNIT_ATTACK, target.position);
+            }
+        }
+
+        if (respawnEnemyNum < VarianceManager.MAX_ENEMY_UNITS)
+        {
+
+            curTurn++;
+            if (curTurn > addTurn)
+            {
+
+                curTurn = 0;
+                respawnEnemyNum++;
             }
         }
     }

@@ -11,7 +11,7 @@ public class BoxScript : MonoBehaviour
     [SerializeField] protected GameObject[] nextObjs;
 
     [SerializeField] protected ScriptGroup scripts;
-    [SerializeField] protected GameEvent gameEvent;
+    [SerializeField] protected BaseGameEvent[] gameEvents;
 
     protected bool IsLayer
     {
@@ -62,7 +62,15 @@ public class BoxScript : MonoBehaviour
 
         // 대사, 이벤트 시작
         if (scripts != null) UIManager.instance.SetScripts(scripts.Scripts);
-        if (gameEvent != null) gameEvent.StartEvent();
+        if (gameEvents != null) 
+        { 
+            
+            for (int i = 0; i < gameEvents.Length; i++)
+            {
+
+                gameEvents[i].InitalizeEvent(); 
+            }
+        }
     }
 
     private void EndEvent()
@@ -78,7 +86,7 @@ public class BoxScript : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
 
         if (ChkEvent(other)) 

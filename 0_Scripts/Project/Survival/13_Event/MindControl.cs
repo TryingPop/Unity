@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MindControl : GameEvent
+public class MindControl : BaseGameEvent
 {
 
     [SerializeField] private Selectable[] targets;
     [SerializeField] private int targetLayer;
 
-    public override void StartEvent()
+    public override void InitalizeEvent()
     {
 
         for (int i = 0; i < targets.Length; i++)

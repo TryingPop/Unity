@@ -197,16 +197,16 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
 
-            winTxt.text = $"{playerMissions[i].GetMissionObjectText(true)}\n";
+            if (playerMissions[i].IsSucess) winTxt.text = $"{playerMissions[i].GetMissionObjectText(true)}(완료)\n";
+            else winTxt.text = $"{playerMissions[i].GetMissionObjectText(true)}\n";
         }
 
         len = Mathf.Min(3, enemyMissions.Count);
         for (int i = 0; i < len; i++)
         {
 
-            loseTxt.text = $"{enemyMissions[i].GetMissionObjectText(false)}\n";
+            if (enemyMissions[i].IsSucess) loseTxt.text = $"{enemyMissions[i].GetMissionObjectText(false)}(완료)\n";
+            else loseTxt.text = $"{enemyMissions[i].GetMissionObjectText(false)}\n";
         }
     }
-
-
 }

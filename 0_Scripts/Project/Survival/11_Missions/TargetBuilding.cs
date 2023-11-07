@@ -5,7 +5,6 @@ using UnityEngine;
 /// <summary>
 /// 해당 타입의 빌딩 부수기!
 /// </summary>
-[CreateAssetMenu(fileName = "TargetBuilding", menuName = "Mission/TargetBuilding")]
 public class TargetBuilding : TargetUnit 
 { 
 

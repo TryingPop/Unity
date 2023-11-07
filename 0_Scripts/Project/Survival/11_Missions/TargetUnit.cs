@@ -5,7 +5,6 @@ using UnityEngine;
 /// <summary>
 /// 해당 타입의 유닛 파괴
 /// </summary>
-[CreateAssetMenu(fileName = "TargetUnit", menuName = "Mission/TargetUnit")]
 public class TargetUnit : Mission
 {
 
