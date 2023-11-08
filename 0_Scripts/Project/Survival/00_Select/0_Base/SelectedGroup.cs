@@ -192,6 +192,28 @@ public class SelectedGroup
         }
     }
 
+    public void DeselectSavedGroup(Selectable _select)
+    {
+
+        for (int i = 0; i < saved.Count; i++)
+        {
+
+            if (saved[i].Contains(_select)) saved[i].Remove(_select);
+        }
+    }
+
+    public bool IsContainsSavedGroup(Selectable _select)
+    {
+
+        for (int i = 0; i < saved.Count; i++)
+        {
+
+            if (saved[i].Contains(_select)) return true;
+        }
+
+        return false;
+    }
+
 
     /// <summary>
     /// 해당 유닛 포함 여부

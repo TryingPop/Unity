@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
 /// <summary>
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
@@ -209,20 +207,26 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         else myHitBar.SetHp(curHp);
 
         // 현재 선택 중이면 해제한다!
-        if (InputManager.instance.curGroup.IsContains(this))
+        if (myState == STATE_SELECTABLE.DEAD)
         {
 
-            if (myState == STATE_SELECTABLE.DEAD)
+            if (InputManager.instance.curGroup.IsContains(this))
             {
 
                 InputManager.instance.curGroup.DeSelect(this);
                 InputManager.instance.ChkUIs();
             }
-            else
+            
+            if (InputManager.instance.curGroup.IsContainsSavedGroup(this))
             {
 
-                UIManager.instance.UpdateHp = true;
+                InputManager.instance.curGroup.DeselectSavedGroup(this);
             }
+        }
+        else if (InputManager.instance.curGroup.IsContains(this))
+        {
+
+            UIManager.instance.UpdateHp = true;
         }
     }
 

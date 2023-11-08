@@ -377,7 +377,7 @@ public class InputManager : MonoBehaviour
     public void SaveSelect(int _idx)
     {
 
-        if (Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKey(KeyCode.Z))
         {
 
             curGroup.SetSaveGroup(_idx);
