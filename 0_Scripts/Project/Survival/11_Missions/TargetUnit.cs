@@ -8,14 +8,15 @@ using UnityEngine;
 public class TargetUnit : Mission
 {
 
-    [SerializeField] protected Selectable target;   // Å¸°Ù À¯´Ö
+    [SerializeField] protected Selectable target;       // Å¸°Ù À¯´Ö
     [SerializeField] protected int targetLayer;     // Å¸°ÙÀÇ ÆÀ Á¤º¸
     [SerializeField] protected Vector3[] initPos;   // ½ÃÀÛ ½Ã »ý¼ºÇÒ À§Ä¡
     [SerializeField] protected int targetNum;       // Å¸°Ù ¼ö
-    protected int curNum;
 
+    protected List<Selectable> targets;
 
-    public override bool IsSucess => curNum >= targetNum;
+    public override bool IsSucess => targets.Count == 0;
+
 
     /// <summary>
     /// Å¸°Ù ¼³Á¤
@@ -24,10 +25,9 @@ public class TargetUnit : Mission
     {
         
         // À¯´Ö »ý¼º ÇØ¾ßÇÑ´Ù!
-        int selectIdx = target.MyStat.SelectIdx;
-        int prefabIdx = PoolManager.instance.ChkIdx(selectIdx);
+        int prefabIdx = PoolManager.instance.ChkIdx(target.MyStat.SelectIdx);
 
-        curNum = 0;
+        if (targets == null) targets = new List<Selectable>(targetNum);
 
         // Å¸°Ù ¼ö ¸¸Å­ À¯´Ö »ý¼º
         for (int i = 0; i < targetNum; i++)
@@ -39,24 +39,28 @@ public class TargetUnit : Mission
             if (prefabIdx != -1)
             {
 
+
                 var go = PoolManager.instance.GetPrefabs(prefabIdx, targetLayer);
                 if (go)
                 {
 
                     genTarget = go.GetComponent<Selectable>();
+
+                    // ¹üÀ§¸¦ ÃÊ°úÇÑ °æ¿ì ·£´ý °ª
                 }
             }
 
             if (genTarget == null)
             {
 
-                genTarget = GameObject.Instantiate(target);
-                genTarget.gameObject.layer = targetLayer;
+                genTarget = Instantiate(target);
             }
 
-            genTarget.transform.position = initPos[i];
+            int rand = i >= initPos.Length ? Random.Range(0, initPos.Length) : i;
+            genTarget.transform.position = initPos[rand];
             genTarget.AfterSettingLayer();
             genTarget.ChkSupply(false);
+            targets.Add(genTarget);
         }
     }
 
@@ -68,11 +72,10 @@ public class TargetUnit : Mission
 
         if (_unit == null) return;
 
-        if (_unit.MyStat.SelectIdx == target.MyStat.SelectIdx
-            && TeamManager.instance.CompareTeam(_unit.MyTeam, targetLayer))
+        if (targets.Contains(_unit))
         {
 
-            curNum++;
+            targets.Remove(_unit);
         }
     }
 
@@ -84,12 +87,11 @@ public class TargetUnit : Mission
         {
 
             if (targetNum == 1) return $"{target.MyStat.MyName} Ã³Ä¡";
-            
-            return $"{target.MyStat.MyName} : {curNum} / {targetNum} Ã³Ä¡";
+            return $"{target.MyStat.MyName} : {targetNum - targets.Count} / {targetNum} Ã³Ä¡";
         }
 
         if (targetNum == 1) return $"{target.MyStat.MyName} »ç¸Á";
 
-        return $"{target.MyStat.MyName} : {curNum} / {targetNum} »ç¸Á";
+        return $"{target.MyStat.MyName} : {targetNum - targets.Count} / {targetNum} »ç¸Á";
     }
 }

@@ -185,7 +185,7 @@ public class UnitSlots : MonoBehaviour
     private void ChkMaxPage()
     {
 
-        maxPage = ((curGroup.Count - 1) / (matrixSize[0] + matrixSize[1]));
+        maxPage = ((curGroup.Count - 1) / (matrixSize[0] * matrixSize[1]));
     }
 
     /// <summary>

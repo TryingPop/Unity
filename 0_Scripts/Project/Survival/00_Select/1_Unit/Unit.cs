@@ -199,12 +199,12 @@ public class Unit : Selectable
     }
 
 
-    public override void OnDamaged(int _dmg, Transform _trans = null)
+    public override void OnDamaged(int _dmg, Transform _trans = null, bool _ignoreDef = false)
     {
 
         if (myState == STATE_SELECTABLE.DEAD) return;
 
-        base.OnDamaged(_dmg, _trans);
+        base.OnDamaged(_dmg, _trans, _ignoreDef);
 
 
         Selectable select = null;

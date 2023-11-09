@@ -132,7 +132,9 @@ public class GameManager : MonoBehaviour
     private void ChkMission(Unit _unit, Building _building, List<Mission> _missions)
     {
 
-        for (int i = 0; i <= 0; i++)
+        if (_missions == null) return;
+
+        for (int i = 0; i < _missions.Count; i++)
         {
 
             _missions[i].Chk(_unit, _building);

@@ -196,12 +196,13 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 피격 메서드, 모든 유닛과 건물은 피격 가능하다!
     /// </summary>
-    public virtual void OnDamaged(int _dmg, Transform _trans = null)
+    public virtual void OnDamaged(int _dmg, Transform _trans = null, bool _ignoreDef = false)
     {
 
         if (ChkInvincible()) return;
 
-        curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
+        if (_ignoreDef) curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
+        else curHp -= _dmg < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg;
 
         if (curHp <= 0) Dead();
         else myHitBar.SetHp(curHp);

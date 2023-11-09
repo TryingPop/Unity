@@ -13,11 +13,10 @@ public class TargetBuilding : TargetUnit
 
         if (_building == null) return;
 
-        if (_building.MyStat.SelectIdx == target.MyStat.SelectIdx 
-            && TeamManager.instance.CompareTeam(_building.MyTeam, targetLayer))
+        if (targets.Contains(_building))
         {
 
-            curNum++;
+            targets.Remove(_building);
         }
     }
 
@@ -27,6 +26,6 @@ public class TargetBuilding : TargetUnit
 
         if (targetNum == 1) return $"{target.MyStat.MyName} ÆÄ±«";
 
-        return $"{target.MyStat.MyName} : {curNum} / {targetNum} ÆÄ±«";
+        return $"{target.MyStat.MyName} : {targets.Count} / {targetNum} ÆÄ±«";
     }
 }
