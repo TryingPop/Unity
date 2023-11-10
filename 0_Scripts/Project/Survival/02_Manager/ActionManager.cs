@@ -23,7 +23,9 @@ public class ActionManager : MonoBehaviour
 
     public List<Follower> followMouse;
 
-
+    // public delegate void DeadBuilding(Unit _unit, Building _building);
+    public Mission.ChkMission DeadUnit;
+    public Mission.ChkMission DeadBuilding;
 
     public List<Unit> PlayerUnits => playerUnits;
     public List<Unit> EnemyUnits => enemyUnits;
@@ -47,6 +49,11 @@ public class ActionManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // delegate 초기화
+        DeadUnit = null;
+        DeadBuilding = null;
+
+        // 리스트들 초기화
         playerUnits = new List<Unit>(VarianceManager.INIT_UNIT_LIST_NUM);
         playerBuildings = new List<Building>(VarianceManager.INIT_BUILDING_LIST_NUM);
         
@@ -139,7 +146,8 @@ public class ActionManager : MonoBehaviour
         else if (_unit.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyUnits.Remove(_unit);
         else if (_unit.MyTeam == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
 
-        GameManager.instance.Chk(_unit, null);
+        // GameManager.instance.Chk(_unit, null);
+        DeadUnit(_unit);
     }
 
     public bool ContainsUnit(Unit _unit)
@@ -170,7 +178,8 @@ public class ActionManager : MonoBehaviour
 
         if (_building.MyTeam == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
         else if (_building.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
-        GameManager.instance.Chk(null, _building);
+        // GameManager.instance.Chk(null, _building);
+        DeadBuilding(_building);
     }
 
     private void SetPos()

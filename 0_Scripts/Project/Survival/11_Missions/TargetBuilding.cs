@@ -6,19 +6,18 @@ using UnityEngine;
 /// 해당 타입의 빌딩 부수기!
 /// </summary>
 public class TargetBuilding : TargetUnit 
-{ 
+{
 
-    public override void Chk(Unit _unit, Building _building)
+    /// <summary>
+    /// 미션 세팅 -> 목표 숫자 0
+    /// </summary>
+    public override void Init()
     {
 
-        if (_building == null) return;
+        curNum = 0;
+        if (isSetTargets) SetTargets();
 
-        if (_building.MyStat.SelectIdx == target.MyStat.SelectIdx
-            && _building.MyTeam.TeamLayerNumber == targetLayer)
-        {
-
-            curNum++;
-        }
+        ActionManager.instance.DeadBuilding += Chk;
     }
 
     // 상태 설명
@@ -28,5 +27,11 @@ public class TargetBuilding : TargetUnit
         if (targetNum == 1) return $"{target.MyStat.MyName} 파괴";
 
         return $"{target.MyStat.MyName} : {curNum} / {targetNum} 파괴";
+    }
+
+    protected override void EndMission()
+    {
+
+        ActionManager.instance.DeadBuilding -= Chk;
     }
 }

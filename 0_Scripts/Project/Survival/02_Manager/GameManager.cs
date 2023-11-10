@@ -12,9 +12,11 @@ public class GameManager : MonoBehaviour
 
     public STATE_GAME MyState => myState;
 
-    
-    [SerializeField] protected List<Mission> playerMissions;        // 플레이어 승리 미션
-    [SerializeField] protected List<Mission> enemyMissions;         // 플레이어 패배 미션
+    [SerializeField] protected MissionManager missions;
+    public MissionManager Missions { set { missions = value; } }
+
+    // [SerializeField] protected List<Mission> playerMissions;        // 플레이어 승리 미션
+    // [SerializeField] protected List<Mission> enemyMissions;         // 플레이어 패배 미션
 
     [SerializeField] protected Text winTxt;                         // 승리 조건용 텍스트
     [SerializeField] protected Text loseTxt;                        // 패배 조건용 텍스트
@@ -66,29 +68,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // 승리 조건은 최대 2개!
-        if (playerMissions.Count > VarianceManager.MAX_MISSIONS)
-        {
-
-            for (int i = playerMissions.Count - 1; i >= VarianceManager.MAX_MISSIONS; i--)
-            {
-
-                playerMissions.RemoveAt(i);
-            }
-        }
-
-
-        // 패배 조건은 최대 2개!
-        if (enemyMissions.Count > VarianceManager.MAX_MISSIONS)
-        {
-
-            for (int i = enemyMissions.Count -1; i >= VarianceManager.MAX_MISSIONS; i--)
-            {
-
-                enemyMissions.RemoveAt(i);
-            }
-        }
-
         //마우스 화면 밖 못 나가게 설정
         Cursor.lockState = CursorLockMode.Confined;
     }
@@ -109,70 +88,7 @@ public class GameManager : MonoBehaviour
         isStop = false;
         myState = STATE_GAME.NONE;
 
-        for (int i = 0; i < playerMissions.Count; i++)
-        {
-
-            playerMissions[i].Init(this);
-        }
-
-        for (int i = 0; i < enemyMissions.Count; i++)
-        {
-
-            enemyMissions[i].Init(this);
-        }
-    }
-
-    /// <summary>
-    /// 미션 확인
-    /// </summary>
-    /// <param name="_unit">확인할 유닛</param>
-    /// <param name="_building">확인할 건물</param>
-    /// <param name="_idx">몇번째 미션 확인할지</param>
-    /// <param name="_missions">확인할 미션번호</param>
-    private void ChkMission(Unit _unit, Building _building, List<Mission> _missions)
-    {
-
-        if (_missions == null) return;
-
-        for (int i = 0; i < _missions.Count; i++)
-        {
-
-            _missions[i].Chk(_unit, _building);
-        }
-    }
-
-    /// <summary>
-    /// 승리 확인
-    /// </summary>
-    private bool ChkWin(List<Mission> _missions)
-    {
-
-        for (int i = 0; i < _missions.Count; i++)
-        {
-
-            if (!_missions[i].IsSucess) return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// 조건 달성했는지 확인
-    /// </summary>
-    public void Chk(Unit _unit, Building _building)
-    {
-
-        if (IsGameOver) return;
-
-        ChkMission(_unit, _building, playerMissions);
-        if (ChkWin(playerMissions)) 
-        { 
-
-            GameOver(true);
-            return;
-        }
-        ChkMission(_unit, _building, enemyMissions);
-        if (ChkWin(enemyMissions)) GameOver(false);
+        missions.Init();
     }
 
     /// <summary>
@@ -189,26 +105,28 @@ public class GameManager : MonoBehaviour
         gameOverText.text = $"{myState}";
     }
 
+    public void ChkMissions()
+    {
+
+        if (missions.IsSuccess(false))
+        {
+
+            GameOver(false);
+        }
+        else if (missions.IsSuccess(true))
+        {
+
+            GameOver(true);
+        }
+    }
+
     /// <summary>
     /// 일시 정지에서 미션 오브젝트 키면 나오는 문구 설정
     /// </summary>
     public void SetMissionObjectText()
     {
 
-        int len = Mathf.Min(2, playerMissions.Count);
-        for (int i = 0; i < len; i++)
-        {
-
-            if (playerMissions[i].IsSucess) winTxt.text = $"{playerMissions[i].GetMissionObjectText(true)}(완료)\n";
-            else winTxt.text = $"{playerMissions[i].GetMissionObjectText(true)}\n";
-        }
-
-        len = Mathf.Min(3, enemyMissions.Count);
-        for (int i = 0; i < len; i++)
-        {
-
-            if (enemyMissions[i].IsSucess) loseTxt.text = $"{enemyMissions[i].GetMissionObjectText(false)}(완료)\n";
-            else loseTxt.text = $"{enemyMissions[i].GetMissionObjectText(false)}\n";
-        }
+        missions.SetMissionObjectText(winTxt, true);
+        missions.SetMissionObjectText(loseTxt, false);
     }
 }
