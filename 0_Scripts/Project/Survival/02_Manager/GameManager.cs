@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 게임 끝?
     /// </summary>
-    private void GameOver(bool _isWin)
+    public void GameOver(bool _isWin)
     {
 
 
@@ -105,20 +105,6 @@ public class GameManager : MonoBehaviour
         gameOverText.text = $"{myState}";
     }
 
-    public void ChkMissions()
-    {
-
-        if (missions.IsSuccess(false))
-        {
-
-            GameOver(false);
-        }
-        else if (missions.IsSuccess(true))
-        {
-
-            GameOver(true);
-        }
-    }
 
     /// <summary>
     /// 일시 정지에서 미션 오브젝트 키면 나오는 문구 설정

@@ -14,7 +14,7 @@ public class TargetPos : Mission
     public override void Chk(Selectable _target)
     {
 
-        // 확인
+        // 확인 layer는 triggerenter에서 확인!
         if (target.MyStat.SelectIdx == _target.MyStat.SelectIdx) 
         {
 
@@ -40,6 +40,7 @@ public class TargetPos : Mission
     {
 
         GetComponent<Collider>().enabled = false;
+        MissionCompleted();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -50,11 +51,9 @@ public class TargetPos : Mission
 
             Chk(other.GetComponent<Selectable>());
 
-            // 중복체크 방지
             if (isSuccess) 
             { 
                 
-                GameManager.instance.ChkMissions();
                 EndMission();
             }
         }

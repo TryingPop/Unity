@@ -11,8 +11,18 @@ public abstract class Mission : MonoBehaviour
     // 미션 확인용 딜리게이트
     public delegate void ChkMission(Selectable _select);
 
-    [SerializeField] protected bool isMain;    
+
+    [SerializeField] protected BaseGameEvent reward;
+    [SerializeField] protected Mission nextMission;
+
+    [SerializeField] protected bool isMain;                 // 메인 미션 패배일 경우 바로 끝
+    [SerializeField] protected bool isHidden;               // 숨겨진 미션 >> 숨겨진 경우 표현 X
+    [SerializeField] protected bool isWin;                  // 승패 미션 여부
+      
+
     public bool IsMain => isMain;
+    public bool IsHidden => isHidden;
+    public bool IsWin => isWin;
 
     public abstract bool IsSuccess { get; }
 
@@ -32,4 +42,31 @@ public abstract class Mission : MonoBehaviour
     public abstract string GetMissionObjectText(bool _isWin);
 
     protected abstract void EndMission();
+
+    protected void MissionCompleted()
+    {
+
+        if (isMain)
+        {
+
+            if (isWin)
+            {
+
+                // 다음 미션이 없는 경우 승리
+                if (nextMission == null) GameManager.instance.GameOver(true);
+            }
+            else
+            {
+
+                // 패배
+                GameManager.instance.GameOver(false);
+            }
+        }
+
+        // 달성 이벤트 시작
+        reward?.InitalizeEvent();
+
+        // 다음 이벤트가 있으면 다음 이벤트 시작
+        nextMission?.Init();
+    }
 }

@@ -33,5 +33,6 @@ public class TargetBuilding : TargetUnit
     {
 
         ActionManager.instance.DeadBuilding -= Chk;
+        MissionCompleted();
     }
 }

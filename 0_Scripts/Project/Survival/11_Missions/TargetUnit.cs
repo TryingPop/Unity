@@ -20,10 +20,6 @@ public class TargetUnit : Mission
 
     public override bool IsSuccess => curNum == targetNum;
 
-
-
-
-
     /// <summary>
     /// 미션 세팅 -> 목표 숫자 0
     /// </summary>
@@ -93,16 +89,9 @@ public class TargetUnit : Mission
             if (curNum == targetNum) 
             { 
                 
-                GameManager.instance.ChkMissions();
                 EndMission();
             }
         }
-    }
-
-    protected override void EndMission()
-    {
-
-        ActionManager.instance.DeadUnit -= Chk;
     }
 
     // 상태 설명
@@ -119,5 +108,12 @@ public class TargetUnit : Mission
         if (targetNum == 1) return $"{target.MyStat.MyName} 사망";
 
         return $"{target.MyStat.MyName} : {curNum} / {targetNum} 사망";
+    }
+
+    protected override void EndMission()
+    {
+
+        ActionManager.instance.DeadUnit -= Chk;
+        MissionCompleted();
     }
 }

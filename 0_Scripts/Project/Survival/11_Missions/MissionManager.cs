@@ -10,22 +10,6 @@ public class MissionManager : MonoBehaviour
     [SerializeField] private List<Mission> winMissions;
     [SerializeField] private List<Mission> loseMissions;
 
-    public bool IsSuccess(bool _isWin)
-    {
-
-        List<Mission> chkList = _isWin ? winMissions : loseMissions;
-
-        for (int i = 0; i < chkList.Count; i++)
-        {
-
-            if (chkList[i].IsSuccess) continue;
-
-            return false;
-        }
-
-        return true;
-    }
-
     public void Init()
     {
 
@@ -54,6 +38,9 @@ public class MissionManager : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
 
+            // 숨겨진 퀘스트면 정보를 안준다!
+            if (chkList[i].IsHidden) continue;
+
             if (i == 0)
             {
 
@@ -67,5 +54,24 @@ public class MissionManager : MonoBehaviour
                 else _text.text += $"{chkList[i].GetMissionObjectText(_isWin)}\n";
             }
         }
+    }
+
+    public void AddWinMission(Mission _mission)
+    {
+
+        if (!winMissions.Contains(_mission)) winMissions.Add(_mission);
+    }
+
+    public void AddLoseMission(Mission _mission)
+    {
+
+        if (!loseMissions.Contains(_mission)) loseMissions.Add(_mission);
+    }
+
+    public void RemoveMission(Mission _mission)
+    {
+
+        if (winMissions.Contains(_mission)) winMissions.Remove(_mission);
+        else if (loseMissions.Contains(_mission)) loseMissions.Remove(_mission);
     }
 }

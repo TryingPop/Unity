@@ -147,7 +147,19 @@ public class ActionManager : MonoBehaviour
         else if (_unit.MyTeam == TeamManager.instance.NeutralTeamInfo) neutralUnits.Remove(_unit);
 
         // GameManager.instance.Chk(_unit, null);
-        DeadUnit(_unit);
+        if (DeadUnit != null) DeadUnit(_unit);
+        else Debug.Log("null!!!");
+    }
+
+    private void Update()
+    {
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+            if (DeadUnit == null) Debug.Log("null..");
+            else Debug.Log($"{DeadUnit.GetInvocationList().Length}");
+        }
     }
 
     public bool ContainsUnit(Unit _unit)
@@ -179,7 +191,7 @@ public class ActionManager : MonoBehaviour
         if (_building.MyTeam == TeamManager.instance.PlayerTeamInfo) playerBuildings.Remove(_building);
         else if (_building.MyTeam == TeamManager.instance.EnemyTeamInfo) enemyBuildings.Remove(_building);
         // GameManager.instance.Chk(null, _building);
-        DeadBuilding(_building);
+        if (DeadBuilding != null) DeadBuilding(_building);
     }
 
     private void SetPos()
