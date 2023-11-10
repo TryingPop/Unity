@@ -17,22 +17,27 @@ public class TargetBuilding : TargetUnit
         curNum = 0;
         if (isSetTargets) SetTargets();
 
-        ActionManager.instance.DeadBuilding += Chk;
+        ActionManager.instance.DeadBuilding += ChkMission;
     }
 
     // 상태 설명
-    public override string GetMissionObjectText(bool _isWin)
+    public override string GetMissionObjectText()
     {
 
-        if (targetNum == 1) return $"{target.MyStat.MyName} 파괴";
-
-        return $"{target.MyStat.MyName} : {curNum} / {targetNum} 파괴";
+        return string.Format("{0} {1}{2}{3}{4}",
+            targetLayer == VarianceManager.LAYER_PLAYER ? "플레이어" :
+                    targetLayer == VarianceManager.LAYER_ENEMY ? "적" :
+                    targetLayer == VarianceManager.LAYER_NEUTRAL ? "중립" : "아군",
+            targetNum == 1 ? $"{target.MyStat.MyName}" : $"{target.MyStat.MyName} {targetNum}개",
+            isWin ? "파괴" : "파괴 방지",
+            curNum == 0 || curNum == targetNum ? "" : $"({curNum}/{targetNum} 파괴)",
+            IsSuccess ? isWin ? "[완료]" : "[실패]" : "");
     }
 
     protected override void EndMission()
     {
 
-        ActionManager.instance.DeadBuilding -= Chk;
-        MissionCompleted();
+        ActionManager.instance.DeadBuilding -= ChkMission;
+        IsMissionComplete();
     }
 }

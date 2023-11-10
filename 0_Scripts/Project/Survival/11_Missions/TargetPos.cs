@@ -11,7 +11,7 @@ public class TargetPos : Mission
 
     [SerializeField] protected string spotName;
 
-    public override void Chk(Selectable _target)
+    public override void ChkMission(Selectable _target)
     {
 
         // 확인 layer는 triggerenter에서 확인!
@@ -22,11 +22,17 @@ public class TargetPos : Mission
         }
     }
 
-    public override string GetMissionObjectText(bool _isWin)
+    public override string GetMissionObjectText()
     {
 
-        if (_isWin) return $"{target.MyStat.MyName}가 {spotName}에 도착";
-        return $"{targetLayer}가 {spotName}에 도착 못하게 방해";
+        return string.Format("{0} {1}이 {2}{3}{4}",
+            targetLayer == VarianceManager.LAYER_PLAYER ? "플레이어" :
+                    targetLayer == VarianceManager.LAYER_ENEMY ? "적" :
+                    targetLayer == VarianceManager.LAYER_NEUTRAL ? "중립" : "아군",
+            target.MyStat.MyName,
+            spotName,
+            isWin ? "에 도착" : "에 도착 방해",
+            isSuccess ? isWin ? "[완료]" : "[실패]" : "");
     }
 
     public override void Init()
@@ -40,7 +46,7 @@ public class TargetPos : Mission
     {
 
         GetComponent<Collider>().enabled = false;
-        MissionCompleted();
+        IsMissionComplete();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -49,7 +55,7 @@ public class TargetPos : Mission
         if (other.gameObject.layer == targetLayer)
         {
 
-            Chk(other.GetComponent<Selectable>());
+            ChkMission(other.GetComponent<Selectable>());
 
             if (isSuccess) 
             { 

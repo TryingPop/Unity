@@ -7,71 +7,57 @@ public class MissionManager : MonoBehaviour
 {
 
     // 미션들 여기에 넣어야한다!?
-    [SerializeField] private List<Mission> winMissions;
-    [SerializeField] private List<Mission> loseMissions;
+    [SerializeField] private List<Mission> myMissions;
 
     public void Init()
     {
 
-        if (winMissions == null) winMissions = new List<Mission>();
-        if (loseMissions == null) loseMissions = new List<Mission>();
+        if (myMissions == null) myMissions = new List<Mission>();
 
-        for (int i = 0; i < winMissions.Count; i++)
+        for (int i = 0; i < myMissions.Count; i++)
         {
 
-            winMissions[i].Init();
-        }
-
-        for (int i = 0; i < loseMissions.Count; i++)
-        {
-
-            loseMissions[i].Init();
+            myMissions[i].Init();
         }
     }
 
-    public void SetMissionObjectText(Text _text, bool _isWin)
+    public void SetMissionObjectText(Text _mainText, Text _subText)
     {
 
-        List<Mission> chkList = _isWin ? winMissions : loseMissions;
-        int len = Mathf.Min(3, chkList.Count);
-
-        for (int i = 0; i < len; i++)
+        int winNum = 0;
+        int loseNum = 0;
+        for (int i = 0; i < myMissions.Count; i++)
         {
 
             // 숨겨진 퀘스트면 정보를 안준다!
-            if (chkList[i].IsHidden) continue;
-
-            if (i == 0)
-            {
-
-                if (chkList[i].IsSuccess) _text.text = $"{chkList[i].GetMissionObjectText(_isWin)}(완료)\n";
-                else _text.text = $"{chkList[i].GetMissionObjectText(_isWin)}\n";
-            }
-            else
-            {
-
-                if (chkList[i].IsSuccess) _text.text += $"{chkList[i].GetMissionObjectText(_isWin)}(완료)\n";
-                else _text.text += $"{chkList[i].GetMissionObjectText(_isWin)}\n";
-            }
+            bool chk = myMissions[i].IsMain;
+            if (chk) SetMissionObject(myMissions[i], _mainText, ref winNum);
+            else SetMissionObject(myMissions[i], _subText, ref loseNum);
         }
     }
 
-    public void AddWinMission(Mission _mission)
+    protected void SetMissionObject(Mission _mission, Text _text, ref int _num)
     {
 
-        if (!winMissions.Contains(_mission)) winMissions.Add(_mission);
+        if (_num > 3
+            || _mission.IsHidden) return;
+
+        if (_num == 0) _text.text = $"{_mission.GetMissionObjectText()}\n";
+        else if (_num == 3) _text.text += $"{_mission.GetMissionObjectText()}";
+        else _text.text += $"{_mission.GetMissionObjectText()}\n";
+
+        _num++;
     }
 
-    public void AddLoseMission(Mission _mission)
+    public void AddMission(Mission _mission)
     {
 
-        if (!loseMissions.Contains(_mission)) loseMissions.Add(_mission);
+        if (!myMissions.Contains(_mission)) myMissions.Add(_mission);
     }
 
     public void RemoveMission(Mission _mission)
     {
 
-        if (winMissions.Contains(_mission)) winMissions.Remove(_mission);
-        else if (loseMissions.Contains(_mission)) loseMissions.Remove(_mission);
+        if (myMissions.Contains(_mission)) myMissions.Remove(_mission);
     }
 }

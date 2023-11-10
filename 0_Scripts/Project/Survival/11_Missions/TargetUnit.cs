@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 /// <summary>
@@ -29,7 +30,7 @@ public class TargetUnit : Mission
         curNum = 0;
         if (isSetTargets) SetTargets();
 
-        ActionManager.instance.DeadUnit += Chk;
+        ActionManager.instance.DeadUnit += ChkMission;
     }
 
     /// <summary>
@@ -78,7 +79,7 @@ public class TargetUnit : Mission
     /// <summary>
     /// 특정 유닛이 죽었는지 판별
     /// </summary>
-    public override void Chk(Selectable _target)
+    public override void ChkMission(Selectable _target)
     {
 
         if (_target.MyStat.SelectIdx == target.MyStat.SelectIdx
@@ -95,25 +96,23 @@ public class TargetUnit : Mission
     }
 
     // 상태 설명
-    public override string GetMissionObjectText(bool _isWin)
+    public override string GetMissionObjectText()
     {
 
-        if (_isWin)
-        {
-
-            if (targetNum == 1) return $"{target.MyStat.MyName} 처치";
-            return $"{target.MyStat.MyName} : {curNum} / {targetNum} 처치";
-        }
-
-        if (targetNum == 1) return $"{target.MyStat.MyName} 사망";
-
-        return $"{target.MyStat.MyName} : {curNum} / {targetNum} 사망";
+        return string.Format("{0} {1} {2}{3}{4}",
+            targetLayer == VarianceManager.LAYER_PLAYER ? "플레이어" :
+                    targetLayer == VarianceManager.LAYER_ENEMY ? "적" :
+                    targetLayer == VarianceManager.LAYER_NEUTRAL ? "중립" : "아군",
+            targetNum == 1 ? $"{target.MyStat.MyName}" : $"{target.MyStat.MyName}을 {targetNum}마리",
+            isWin ? "처치" : "사망 시 실패",
+            curNum == 0 || curNum == targetNum ? "" : $"({curNum}/{targetNum} 사망)",
+            IsSuccess ? isWin ? "[완료]" : "[실패]" : "");
     }
 
     protected override void EndMission()
     {
 
-        ActionManager.instance.DeadUnit -= Chk;
-        MissionCompleted();
+        ActionManager.instance.DeadUnit -= ChkMission;
+        IsMissionComplete();
     }
 }

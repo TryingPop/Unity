@@ -97,7 +97,6 @@ public class GameManager : MonoBehaviour
     public void GameOver(bool _isWin)
     {
 
-
         if (_isWin) myState = STATE_GAME.WIN;
         else myState = STATE_GAME.LOSE;
 
@@ -105,6 +104,19 @@ public class GameManager : MonoBehaviour
         gameOverText.text = $"{myState}";
     }
 
+    public void AddMission(Mission _mission)
+    {
+
+        missions.AddMission(_mission);
+        // 여기에 UI로 표현!
+    }
+
+    public void RemoveMission(Mission _mission)
+    {
+
+        missions.RemoveMission(_mission);
+        // 여기에 UI로 표현! 
+    }
 
     /// <summary>
     /// 일시 정지에서 미션 오브젝트 키면 나오는 문구 설정
@@ -112,7 +124,6 @@ public class GameManager : MonoBehaviour
     public void SetMissionObjectText()
     {
 
-        missions.SetMissionObjectText(winTxt, true);
-        missions.SetMissionObjectText(loseTxt, false);
+        missions.SetMissionObjectText(winTxt, loseTxt);
     }
 }

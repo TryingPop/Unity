@@ -24,8 +24,8 @@ public class ActionManager : MonoBehaviour
     public List<Follower> followMouse;
 
     // public delegate void DeadBuilding(Unit _unit, Building _building);
-    public Mission.ChkMission DeadUnit;
-    public Mission.ChkMission DeadBuilding;
+    public Mission.ChkMissionDelegate DeadUnit;
+    public Mission.ChkMissionDelegate DeadBuilding;
 
     public List<Unit> PlayerUnits => playerUnits;
     public List<Unit> EnemyUnits => enemyUnits;
