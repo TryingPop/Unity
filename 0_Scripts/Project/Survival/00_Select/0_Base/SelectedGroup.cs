@@ -12,12 +12,15 @@ public class SelectedGroup
     // ctrl + 1 ~ 3 
     private List<List<Selectable>> saved;
 
+    [SerializeField] private int selectLayer = -1;
+
     public bool isOnlySelected = false;                         // 혼자 선택할 수 있는 유닛?
     private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
 
     public bool IsEmpty { get { return curSelected.Count == 0 ? true : false; } }  // 비었는지 확인
 
     public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
+    public int SelectLayer => selectLayer; 
 
     private bool IsBuildingType
     {

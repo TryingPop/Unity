@@ -67,6 +67,8 @@ public abstract class Mission : MonoBehaviour
 
         if (isRemove) GameManager.instance.RemoveMission(this);
 
+        // 게임 오브젝트는 뒤에서 실행된다
+        gameObject.SetActive(false);
         // 달성 이벤트 시작
         reward?.InitalizeEvent();
 
@@ -76,6 +78,7 @@ public abstract class Mission : MonoBehaviour
 
             GameManager.instance.AddMission(nextMission);
 
+            nextMission.gameObject.SetActive(true);
             nextMission.Init();
         }
     }

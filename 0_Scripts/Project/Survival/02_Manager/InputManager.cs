@@ -17,7 +17,7 @@ public class InputManager : MonoBehaviour
 
 
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
-    [SerializeField] private LayerMask teamLayer;       // 선택 가능한 레이어
+    [SerializeField] private LayerMask commandLayer;       // 선택 가능한 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
 
     [SerializeField] private TYPE_INPUT myState;
@@ -78,7 +78,7 @@ public class InputManager : MonoBehaviour
         {
 
             return cmdTarget != null
-                && ((1 << cmdTarget.gameObject.layer) & teamLayer) != 0;
+                && ((1 << cmdTarget.gameObject.layer) & commandLayer) != 0;
         }
     }
 
@@ -455,8 +455,6 @@ public class InputManager : MonoBehaviour
             for (int i = 0; i < hits.Length; i++)
             {
 
-                if (((1 << hits[i].transform.gameObject.layer) & teamLayer) == 0) continue;
-
                 Selectable select = hits[i].transform.GetComponent<Selectable>();
 
                 // 유일 선택 가능한 경우면 넣지 않고 넘긴다!
@@ -514,9 +512,6 @@ public class InputManager : MonoBehaviour
 
         for (int i = 0; i < hits.Length; i++)
         {
-
-            // 선택 가능한 경우 확인
-            if (((1 << hits[i].transform.gameObject.layer) & teamLayer) == 0) continue;
 
             Selectable select = hits[i].transform.GetComponent<Selectable>();
 
@@ -587,17 +582,17 @@ public class InputManager : MonoBehaviour
     /// 두 화면 좌표 사이에 선택가능한 레이어의 유닛을 모두 찾는다
     /// </summary>
     /// <param name="hits">선택가능한 레이어의 유닛들</param>
-    private void ChkBox(Vector3 screenPos1, Vector3 screenPos2, out RaycastHit[] hits) 
+    private void ChkBox(Vector3 _screenPos1, Vector3 _screenPos2, out RaycastHit[] hits, bool _commandGroup = true) 
     {
 
-        Vector3 pos1 = MouseToWorldPos(screenPos1);
+        Vector3 pos1 = MouseToWorldPos(_screenPos1);
         if (pos1.y >= 90f) 
         { 
 
             hits = null;
             return;
         }
-        Vector3 pos2 = MouseToWorldPos(screenPos2);
+        Vector3 pos2 = MouseToWorldPos(_screenPos2);
         if (pos2.y >= 90f)
         {
 
@@ -608,7 +603,7 @@ public class InputManager : MonoBehaviour
         Vector3 center = (pos1 + pos2) * 0.5f;
         Vector3 half = new Vector3(Mathf.Abs(pos1.x - pos2.x), 60f, Mathf.Abs(pos1.z - pos2.z)) * 0.5f;
 
-        hits = Physics.BoxCastAll(center, half, Vector3.up, Quaternion.identity, 0f, selectLayer);
+        hits = Physics.BoxCastAll(center, half, Vector3.up, Quaternion.identity, 0f, _commandGroup ? commandLayer : selectLayer);
     }
 
     /// <summary>

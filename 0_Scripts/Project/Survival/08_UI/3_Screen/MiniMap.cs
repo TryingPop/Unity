@@ -11,7 +11,7 @@ public class MiniMap : MonoBehaviour,
     [SerializeField] protected RectTransform myRectTrans;
     [SerializeField] protected Transform camFollow;
     [SerializeField] protected InputManager inputManager;
-    [SerializeField] private Camera cam;
+    [SerializeField] private Camera miniMapCam;
 
     // protected Vector2 screenRatio;
     protected Vector2 miniMapOffset;
@@ -64,10 +64,10 @@ public class MiniMap : MonoBehaviour,
     public Vector3 ScaleValueToWorldMap(Vector2 _scaleValue, bool _onGround)
     {
 
-        float mapHalfHeight = cam.orthographicSize;
-        float mapHalfWidth = mapHalfHeight * cam.aspect;
+        float mapHalfHeight = miniMapCam.orthographicSize;
+        float mapHalfWidth = mapHalfHeight * miniMapCam.aspect;
 
-        Vector3 camPos = cam.transform.position;
+        Vector3 camPos = miniMapCam.transform.position;
         float posX = _scaleValue.x * mapHalfWidth * 2 + (camPos.x - mapHalfWidth);
         float posZ = _scaleValue.y * mapHalfHeight * 2 + (camPos.z - mapHalfHeight);
         

@@ -121,7 +121,7 @@ public class GameScreen : MonoBehaviour,
 
                 InputManager inputManager = InputManager.instance;
 
-                // 드래그 범위가 일정 크기 되는지 확인
+                // 드래그 셀렉트 먼저 판별
                 if (Vector2.SqrMagnitude(clickPos - nowPos) < 100f)
                 {
 
