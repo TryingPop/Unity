@@ -18,7 +18,6 @@ public class GameScreen : MonoBehaviour,
     private bool chkDoubleClick = false;
 
     // ui 크기
-    // private Vector2 screenRatio;
     private Vector2 myLeftBottom;
     private Vector2 myRightTop;
 
@@ -36,17 +35,14 @@ public class GameScreen : MonoBehaviour,
     public void GetMyUIPos()
     {
 
-        // var canvasRect = canvasRectTrans.sizeDelta;
-        // screenRatio.x = Screen.width / canvasRect.x;
-        // screenRatio.y = Screen.height / canvasRect.y;
-
+        // 계산 잘못되었다!
         Vector2 screenRatio = UIManager.instance.screenRatio;
 
-        myLeftBottom = myRectTrans.anchoredPosition / screenRatio;
-        myRightTop = myLeftBottom;
-        myRightTop.x += myRectTrans.rect.width;
-        myRightTop.y += myRectTrans.rect.height;
+        myLeftBottom = myRectTrans.anchoredPosition;
+        myRightTop.x += myLeftBottom.x + myRectTrans.rect.width;
+        myRightTop.y += myLeftBottom.y + myRectTrans.rect.height;
         myRightTop /= screenRatio;
+        myLeftBottom /= screenRatio;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -127,29 +123,31 @@ public class GameScreen : MonoBehaviour,
 
                     // 그냥 선택 or 더블클릭 선택 확인
                     inputManager.SavePos = eventData.position;
+
                     inputManager.SavePointToRay(false, true);
 
-                    if (inputManager.CmdTargetIsSelectable)
+                    if (inputManager.CmdTargetIsCommandable
+                        && chkDoubleClick)
                     {
 
-                        if (chkDoubleClick)
-                        {
+                        // 0.3초안에 두번 눌렀으면 더블클릭 인정
+                        // 화면 범위 안에 같은 유닛을 선택한다
+                        inputManager.DoubleClickSelect(ref myRightTop, ref myLeftBottom);
+                        chkDoubleClick = false;
+                    }
+                    else
+                    {
 
-                            // 0.3초안에 두번 눌렀으면 더블클릭 인정
-                            // 화면 범위 안에 같은 유닛을 선택한다
-                            inputManager.DoubleClickSelect(myRightTop, myLeftBottom);
-                            chkDoubleClick = false;
-                        }
-                        else
-                        {
-
-                            inputManager.ClickSelect();
-                            clickTime = Time.time;
-                        }
+                        inputManager.ClickSelect();
+                        clickTime = Time.time;
                     }
                 }
                 // 드래그 선택
-                else inputManager.DragSelect(clickPos, nowPos);
+                else 
+                {
+
+                    inputManager.DragSelect(ref clickPos, ref nowPos); 
+                }
 
                 chkSelect = false;
             }

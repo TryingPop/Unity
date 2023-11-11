@@ -44,8 +44,10 @@ public class UIButton : MonoBehaviour
     /// <summary>
     /// 타입에 맞는 버튼 핸들러 반환
     /// </summary>
-    public ButtonHandler GetHandler(TYPE_SELECTABLE _type)
+    public ButtonHandler GetHandler(TYPE_SELECTABLE _type, bool _isCommandable)
     {
+
+        if (!_isCommandable) return null;
 
         if (btnDict.ContainsKey(_type))
         {

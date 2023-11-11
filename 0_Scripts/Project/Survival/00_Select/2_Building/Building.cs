@@ -170,7 +170,7 @@ public class Building : Selectable
 
 
             StartCoroutine(FinishedBuildCoroutine());
-            if (InputManager.instance.curGroup.IsContains(this)) InputManager.instance.ChkUIs();
+            if (InputManager.instance.curGroup.Contains(this)) InputManager.instance.ChkUIs();
         }
         else
         {
@@ -192,7 +192,7 @@ public class Building : Selectable
         buildingObj.localPosition = pos;
         myHitBar.SetHp(curHp);
 
-        if (InputManager.instance.curGroup.IsContains(this))
+        if (InputManager.instance.curGroup.Contains(this))
         {
 
             UIManager.instance.UpdateHp = true;
@@ -335,7 +335,7 @@ public class Building : Selectable
                 int refundCost = Mathf.FloorToInt(myStat.Cost * 0.4f);
                 myTeam.AddGold(refundCost);
                 Dead();
-                if (InputManager.instance.curGroup.IsContains(this)) 
+                if (InputManager.instance.curGroup.Contains(this)) 
                 {
 
                     InputManager.instance.curGroup.DeSelect(this);

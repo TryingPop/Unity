@@ -54,7 +54,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         myHitBar.SetHp(curHp);
 
         // 현재 선택 중이면 해제한다!
-        if (InputManager.instance.curGroup.IsContains(this))
+        if (InputManager.instance.curGroup.Contains(this))
         {
 
             UIManager.instance.UpdateHp = true;
@@ -128,20 +128,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         set { myState = (STATE_SELECTABLE)value; }
     }
 
-    /// <summary>
-    /// 5만번대 이상은 혼자 선택가능!
-    /// 스타 1에서 건물 여러 개 선택 안되는 걸 따왔다
-    /// </summary>
-    public bool IsOnlySelected
-    {
-
-        get
-        {
-
-            return myStat.SelectIdx > 50000;
-        }
-    }
-
     public TeamInfo MyTeam => myTeam;
 
     public void ChkSupply(bool _isDead = false)
@@ -211,20 +197,20 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         if (myState == STATE_SELECTABLE.DEAD)
         {
 
-            if (InputManager.instance.curGroup.IsContains(this))
+            if (InputManager.instance.curGroup.Contains(this))
             {
 
                 InputManager.instance.curGroup.DeSelect(this);
                 InputManager.instance.ChkUIs();
             }
             
-            if (InputManager.instance.curGroup.IsContainsSavedGroup(this))
+            if (InputManager.instance.curGroup.ContainsSavedGroup(this))
             {
 
                 InputManager.instance.curGroup.DeselectSavedGroup(this);
             }
         }
-        else if (InputManager.instance.curGroup.IsContains(this))
+        else if (InputManager.instance.curGroup.Contains(this))
         {
 
             UIManager.instance.UpdateHp = true;

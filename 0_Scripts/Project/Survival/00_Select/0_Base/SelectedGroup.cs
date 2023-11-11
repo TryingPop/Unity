@@ -12,15 +12,15 @@ public class SelectedGroup
     // ctrl + 1 ~ 3 
     private List<List<Selectable>> saved;
 
-    [SerializeField] private int selectLayer = -1;
-
-    public bool isOnlySelected = false;                         // 혼자 선택할 수 있는 유닛?
     private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
 
+    private bool isCommandable;                                 // 명령 가능 판별
+    public bool IsCommandable => isCommandable;
+    
+    
     public bool IsEmpty { get { return curSelected.Count == 0 ? true : false; } }  // 비었는지 확인
 
     public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
-    public int SelectLayer => selectLayer; 
 
     private bool IsBuildingType
     {
@@ -100,30 +100,36 @@ public class SelectedGroup
     public void Clear()
     {
 
-        isOnlySelected = false;
         curSelected.Clear();
+        isCommandable = true;
     }
 
-    /// <summary>
-    /// 유닛 추가하는 메서드
-    /// </summary>
-    public void Select(Selectable _select)
+    public void SelectOne(Selectable _select, int _commandLayer)
     {
 
-        if (_select == null                                     // 선택 대상이 없거나
-            || curSelected.Count >= VarianceManager.MAX_SELECT     // 선택가능한 갯수를 넘거나
-            || curSelected.Contains(_select)                       // 이미 포함되어져 있는 경우거나
+        // 선택된게 없으면 탈출한다
+        if (_select == null) return;
+
+        // 초기화
+        Clear();
+
+        // 0 번 항목 선택
+        curSelected.Add(_select);
+
+        // 커맨더 가능인지 판별
+        if (((1 << _select.MyTeam.TeamLayerNumber) & (_commandLayer)) == 0) isCommandable = false;
+        else isCommandable = true;
+    }
+
+    public void AppendSelect(Selectable _select)
+    {
+
+        if (_select == null                                         // 선택 대상이 없거나
+            || curSelected.Count >= VarianceManager.MAX_SELECT      // 선택가능한 갯수를 넘거나
+            || !isCommandable                                       // 명령 불가능한 유닛은 두 마리 이상 선택 불가능!
             ) return;
 
-
         curSelected.Add(_select);
-        
-        // 그룹 타입 설정
-        if (curSelected.Count == 1)
-        {
-
-            isOnlySelected = _select.IsOnlySelected;
-        }
     }
 
     /// <summary>
@@ -188,11 +194,7 @@ public class SelectedGroup
 
         curSelected.Remove(_select);
 
-        if (curSelected.Count == 0) 
-        { 
-            
-            isOnlySelected = false;
-        }
+        if (curSelected.Count == 0) isCommandable = true;
     }
 
     public void DeselectSavedGroup(Selectable _select)
@@ -205,7 +207,7 @@ public class SelectedGroup
         }
     }
 
-    public bool IsContainsSavedGroup(Selectable _select)
+    public bool ContainsSavedGroup(Selectable _select)
     {
 
         for (int i = 0; i < saved.Count; i++)
@@ -221,7 +223,7 @@ public class SelectedGroup
     /// <summary>
     /// 해당 유닛 포함 여부
     /// </summary>
-    public bool IsContains(Selectable _select)
+    public bool Contains(Selectable _select)
     {
 
         return curSelected.Contains(_select);

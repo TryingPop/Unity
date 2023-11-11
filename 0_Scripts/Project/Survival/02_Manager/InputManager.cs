@@ -17,7 +17,7 @@ public class InputManager : MonoBehaviour
 
 
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
-    [SerializeField] private LayerMask commandLayer;       // 선택 가능한 레이어
+    [SerializeField] private LayerMask commandLayer;    // 선택 가능한 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
 
     [SerializeField] private TYPE_INPUT myState;
@@ -71,7 +71,7 @@ public class InputManager : MonoBehaviour
     /// <summary>
     /// cmdTarget이 있고 선택가능한 유닛이면 true
     /// </summary>
-    public bool CmdTargetIsSelectable
+    public bool CmdTargetIsCommandable
     {
 
         get
@@ -150,6 +150,10 @@ public class InputManager : MonoBehaviour
 
     public bool IsSubBtn => isSubBtn;
 
+    private RaycastHit[] hits;
+    private RaycastHit[] onlyHit;
+
+
     private void Awake()
     {
 
@@ -169,6 +173,9 @@ public class InputManager : MonoBehaviour
         var group = curGroup.Get();
         unitSlots.CurGroup = group;
         selectedUI.CurGroup = group;
+
+        hits = new RaycastHit[VarianceManager.MAX_SELECT];
+        onlyHit = new RaycastHit[1];
     }
 
     private void Update()
@@ -280,7 +287,7 @@ public class InputManager : MonoBehaviour
         // 지면 체크
         if (_chkPos
             && Physics.Raycast(ray, out RaycastHit groundHit, 500f, groundLayer)) cmdPos = groundHit.point;
-        else cmdPos = new Vector3(0, 100f, 0f);
+        else cmdPos = new Vector3(0, -100f, 0f);
 
         // 유닛 체크
         if (_chkUnit
@@ -291,19 +298,13 @@ public class InputManager : MonoBehaviour
     /// <summary>
     /// 마우스가 가리키는 월드 좌표
     /// </summary>
-    public void MouseToWorldPos(out Vector3 _pos)
-    {
-
-        _pos = MouseToWorldPos(Input.mousePosition);
-    }
-
-    private Vector3 MouseToWorldPos(Vector3 _uiPos)
+    public void MouseToWorldPos(Vector2 _uiPos, out Vector3 _pos)
     {
 
         Ray ray = cam.ScreenPointToRay(_uiPos);
 
-        if (Physics.Raycast(ray, out RaycastHit groundHit, 500f, groundLayer)) return groundHit.point;
-        else return new Vector3(0, 100f, 0f);
+        if (Physics.Raycast(ray, out RaycastHit groundHit, 500f, groundLayer)) _pos = groundHit.point;
+        else _pos = new Vector3(0, -100f, 0f);
     }
 
     public void ActionDone(TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
@@ -398,34 +399,21 @@ public class InputManager : MonoBehaviour
 
         bool add = Input.GetKey(KeyCode.LeftShift);
 
-        if (!add)
-        {
+        // 추가가 아닌 경우
+        if (!add) curGroup.SelectOne(cmdTarget, commandLayer.value);
 
-            // 추가가 아닌 경우
-            curGroup.Clear();
-            curGroup.Select(cmdTarget);
-        }
+        // 추가인 경우
         else
         {
 
-            if (curGroup.GetSize() == 0)
-            {
+            // 처음 넣는 거면 Commandable인지 판별
+            if (curGroup.GetSize() == 0) curGroup.SelectOne(cmdTarget, commandLayer.value);
 
-                curGroup.Select(cmdTarget);
-            }
-            else if (curGroup.IsContains(cmdTarget))
-            {
+            // 이미 포함된 유닛이면 해제
+            else if (curGroup.Contains(cmdTarget)) curGroup.DeSelect(cmdTarget);
 
-                // 이미 포함된 유닛이면 해제
-                curGroup.DeSelect(cmdTarget);
-            }
-            else if (!curGroup.isOnlySelected
-                && !cmdTarget.IsOnlySelected) curGroup.Select(cmdTarget);
-
-            // 유일하게 선택가능한 유닛을 선택 중에 다른 유닛을 추가하는 경우나
-            // 현재 그룹에서 유일하게 선택 가능한 유닛을 추가하려는 경우에 온다
-            // 유닛 선택을 안되게 한다!
-            else return;
+            // 추가 시도
+            else if (CmdTargetIsCommandable) curGroup.AppendSelect(cmdTarget);
         }
 
         ChkUIs();
@@ -436,35 +424,34 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="_startPos">시작 지점</param>
     /// <param name="_endPos">종료 지점</param>
-    public void DragSelect(Vector2 _startPos, Vector2 _endPos)
+    public void DragSelect(ref Vector2 _startPos, ref Vector2 _endPos)
     {
 
+        MouseToWorldPos(_startPos, out Vector3 startPos);
+        MouseToWorldPos(_endPos, out Vector3 endPos);
 
-        ChkBox(_startPos, _endPos, out RaycastHit[] hits);
+        int len = ChkBox(ref startPos, ref endPos, true);
 
         // 선택된게 없으면 탈출
-        if (hits == null || hits.Length == 0) return;
+        if (len == 0) return;
 
         bool add = Input.GetKey(KeyCode.LeftShift);
         if (!add) curGroup.Clear();
 
+        if (!curGroup.IsCommandable) return;
+
         // 유일 선택인 경우 드래그 선택은 안먹힌다!
-        if (!curGroup.isOnlySelected)
+        for (int i = 0; i < len; i++)
         {
 
-            for (int i = 0; i < hits.Length; i++)
-            {
+            Selectable select = hits[i].transform.GetComponent<Selectable>();
 
-                Selectable select = hits[i].transform.GetComponent<Selectable>();
-
-                // 유일 선택 가능한 경우면 넣지 않고 넘긴다!
-                if (select.IsOnlySelected) continue;
-
-                curGroup.Select(select);
-            }
-
-            ChkUIs();
+            
+            // 유일 선택 가능한 경우면 넣지 않고 넘긴다!
+            if(!curGroup.Contains(select)) curGroup.AppendSelect(select);
         }
+
+        ChkUIs();
     }
 
     /// <summary>
@@ -472,45 +459,26 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="_rightTop">우측 끝</param>
     /// <param name="_leftBottom">좌측 아래</param>
-    public void DoubleClickSelect(Vector2 _rightTop, Vector2 _leftBottom)
+    public void DoubleClickSelect(ref Vector2 _rightTop, ref Vector2 _leftBottom)
     {
 
         bool add = Input.GetKey(KeyCode.LeftShift);
 
-        if (cmdTarget.IsOnlySelected)
-        {
-
-            if (!add)
-            {
-
-                // 추가 유닛인 경우 
-                curGroup.Clear();
-                curGroup.Select(cmdTarget);
-            }
-            else
-            {
-
-                // Select처럼 작동
-                if (curGroup.IsContains(cmdTarget))
-                {
-
-                    curGroup.DeSelect(cmdTarget);
-                }
-            }
-            return;
-        }
-
-        ChkBox(_rightTop, _leftBottom, out RaycastHit[] hits);
+        MouseToWorldPos(_rightTop, out Vector3 rightTop);
+        MouseToWorldPos(_leftBottom, out Vector3 leftBottom);
+        
+        int len = ChkBox(ref rightTop, ref leftBottom);
 
         // 화면 범위 문제로 찾은 유닛이 없을 때 일어난다! 
-        if (hits == null || hits.Length == 0) return;
-
+        if (len == 0) return;
+        
         // 추가 유무 판단
         if (!add) curGroup.Clear();
 
+        // 앞에서 커맨더 가능한지 판별하고 왔기에 여기서 체크 안해도 된다!
         int chkIdx = cmdTarget.MyStat.SelectIdx;
-
-        for (int i = 0; i < hits.Length; i++)
+        
+        for (int i = 0; i < len; i++)
         {
 
             Selectable select = hits[i].transform.GetComponent<Selectable>();
@@ -518,7 +486,7 @@ public class InputManager : MonoBehaviour
             // 같은 그룹인지 확인!
             if (select == null || select.MyStat.SelectIdx != chkIdx) continue;
 
-            curGroup.Select(select);
+            if (!curGroup.Contains(select)) curGroup.AppendSelect(select);
         }
 
 
@@ -534,14 +502,13 @@ public class InputManager : MonoBehaviour
         if (deselect)
         {
 
-            if (curGroup.IsContains(_select)) curGroup.DeSelect(_select);
+            if (curGroup.Contains(_select)) curGroup.DeSelect(_select);
 
         }
         else
         {
 
-            curGroup.Clear();
-            curGroup.Select(_select);
+            curGroup.SelectOne(_select, commandLayer);
         }
 
         ChkUIs();
@@ -555,7 +522,7 @@ public class InputManager : MonoBehaviour
         if (deselect)
         {
 
-            if (curGroup.IsContains(_select)) curGroup.DeSelect(_select);
+            if (curGroup.Contains(_select)) curGroup.DeSelect(_select);
         }
         else
         {
@@ -582,28 +549,19 @@ public class InputManager : MonoBehaviour
     /// 두 화면 좌표 사이에 선택가능한 레이어의 유닛을 모두 찾는다
     /// </summary>
     /// <param name="hits">선택가능한 레이어의 유닛들</param>
-    private void ChkBox(Vector3 _screenPos1, Vector3 _screenPos2, out RaycastHit[] hits, bool _commandGroup = true) 
+    private int ChkBox(ref Vector3 pos1, ref Vector3 pos2, bool _commandGroup = true) 
     {
 
-        Vector3 pos1 = MouseToWorldPos(_screenPos1);
-        if (pos1.y >= 90f) 
-        { 
-
-            hits = null;
-            return;
-        }
-        Vector3 pos2 = MouseToWorldPos(_screenPos2);
-        if (pos2.y >= 90f)
-        {
-
-            hits = null;
-            return;
-        }
+        if (pos1.y <= -90f 
+            || pos2.y <= -90f) return 0;
 
         Vector3 center = (pos1 + pos2) * 0.5f;
         Vector3 half = new Vector3(Mathf.Abs(pos1.x - pos2.x), 60f, Mathf.Abs(pos1.z - pos2.z)) * 0.5f;
 
-        hits = Physics.BoxCastAll(center, half, Vector3.up, Quaternion.identity, 0f, _commandGroup ? commandLayer : selectLayer);
+        // 커맨더 그룹이면 
+        if (_commandGroup) return Physics.BoxCastNonAlloc(center, half, Vector3.up, hits, Quaternion.identity, 0f, commandLayer);
+        else return Physics.BoxCastNonAlloc(center, half, Vector3.up, onlyHit, Quaternion.identity, 0f, selectLayer);
+
     }
 
     /// <summary>
@@ -612,12 +570,10 @@ public class InputManager : MonoBehaviour
     public void ChkUIs()
     {
 
-
-
         curGroup.ChkGroupType();
         
         // 핸들러 가져오기 + 여기서 핸들러 등록 및 ui
-        MainHandler = btns.GetHandler(curGroup.GroupType);
+        MainHandler = btns.GetHandler(curGroup.GroupType, curGroup.IsCommandable);
 
         // 유닛 슬롯 초기화
         // unitSlots.Init();
