@@ -193,4 +193,7 @@ public class VarianceManager
 
     public static Vector2 INIT_POS_SCRIPT = new Vector2(110f, -35f);
     public static Vector2 INIT_SIZE_SCRIPT = new Vector2(100f, 40f);
+
+    public static RaycastHit[] hits = new RaycastHit[MAX_SELECT];
+    public static RaycastHit[] hit = new RaycastHit[1];
 }

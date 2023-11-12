@@ -92,10 +92,7 @@ public class GameScreen : MonoBehaviour,
             {
 
                 //명령 수행
-                inputManager.SavePos = eventData.position;
-                inputManager.CmdType = STATE_SELECTABLE.MOUSE_R;
-                inputManager.SavePointToRay(true, true);
-                inputManager.GiveCmd(true, true);
+                inputManager.MouseRCmd(eventData.position);
             }
             else inputManager.MyState = (int)TYPE_INPUT.CANCEL;
         }

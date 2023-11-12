@@ -17,8 +17,6 @@ public abstract class Attack : ScriptableObject
 
     [SerializeField] protected ushort chkTime;
 
-    protected static RaycastHit[] hits = new RaycastHit[25];            // 타겟 찾기에서 공통으로 쓴다
-
     /// <summary>
     /// 혹시 몰라 세팅용
     /// </summary>
@@ -90,7 +88,7 @@ public abstract class Attack : ScriptableObject
         _unit.MyTurn = 0;
 
         int len = Physics.SphereCastNonAlloc(_unit.transform.position, _isChase ? 
-            chaseRange : atkRange, _unit.transform.forward, hits, 0f, _isAlly ? _unit.MyTeam.AllyLayer : _unit.MyTeam.EnemyLayer);
+            chaseRange : atkRange, _unit.transform.forward, VarianceManager.hits, 0f, _isAlly ? _unit.MyTeam.AllyLayer : _unit.MyTeam.EnemyLayer);
         float minDis = _isChase ? chaseRange * chaseRange + 1f : atkRange * atkRange + 1f;
         _unit.Target = null;
 
@@ -99,19 +97,19 @@ public abstract class Attack : ScriptableObject
         for (int i = 0; i < len; i++)
         {
 
-            if (hits[i].transform == _unit.transform)
+            if (VarianceManager.hits[i].transform == _unit.transform)
             {
 
                 continue;
             }
 
             // 가장 가까운 적 공격!
-            float targetDis = Vector3.SqrMagnitude(_unit.transform.position - hits[i].transform.position);
+            float targetDis = Vector3.SqrMagnitude(_unit.transform.position - VarianceManager.hits[i].transform.position);
             if (minDis > targetDis)
             {
 
                 minDis = targetDis;
-                target = hits[i].transform;
+                target = VarianceManager.hits[i].transform;
             }
         }
 
