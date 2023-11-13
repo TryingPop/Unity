@@ -14,17 +14,19 @@ public class TargetBuilding : TargetUnit
     public override void Init()
     {
 
+
         curNum = 0;
-        if (isSetTargets) SetTargets();
+        if (generateTarget) SetTargets();
 
         ActionManager.instance.DeadBuilding += ChkMission;
+        if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
     }
 
     // 상태 설명
     public override string GetMissionObjectText()
     {
 
-        return string.Format("{0} {1}{2}{3}{4}",
+        return string.Format("{0} {1} {2}{3}{4}",
             targetLayer == VarianceManager.LAYER_PLAYER ? "플레이어" :
                     targetLayer == VarianceManager.LAYER_ENEMY ? "적" :
                     targetLayer == VarianceManager.LAYER_NEUTRAL ? "중립" : "아군",

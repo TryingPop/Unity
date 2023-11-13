@@ -40,6 +40,8 @@ public class TargetPos : Mission
 
         isSuccess = false;
         GetComponent<Collider>().enabled = true;
+
+        if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
     }
 
     protected override void EndMission()

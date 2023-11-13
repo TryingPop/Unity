@@ -197,9 +197,12 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         if (myState == STATE_SELECTABLE.DEAD)
         {
 
+            Debug.Log("사망");
+
             if (InputManager.instance.curGroup.Contains(this))
             {
 
+                Debug.Log("현재 바라보는 유닛이 죽었어용");
                 InputManager.instance.curGroup.DeSelect(this);
                 InputManager.instance.ChkUIs();
             }
@@ -241,7 +244,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         curHp = 0;
         myHitBar.SetHp(curHp);
-
+        myState = STATE_SELECTABLE.DEAD;
         // 시체 레이어로 변경
         gameObject.layer = VarianceManager.LAYER_DEAD;
 
@@ -257,7 +260,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     {
 
         if (myStat.DisableTime == 2) yield return VarianceManager.BASE_WAITFORSECONDS;
-        else yield return new WaitForSeconds(myStat.DisableTime);
+        else if (myStat.DisableTime > 0) yield return new WaitForSeconds(myStat.DisableTime);
+        else yield return null;
 
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }

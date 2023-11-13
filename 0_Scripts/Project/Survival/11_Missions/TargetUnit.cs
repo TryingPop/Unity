@@ -16,7 +16,7 @@ public class TargetUnit : Mission
     
     protected int curNum;
 
-    [SerializeField] protected bool isSetTargets;   // 생성할건지 확인
+    [SerializeField] protected bool generateTarget;   // 생성할건지 확인
     
 
     public override bool IsSuccess => curNum == targetNum;
@@ -28,9 +28,11 @@ public class TargetUnit : Mission
     {
 
         curNum = 0;
-        if (isSetTargets) SetTargets();
+        if (generateTarget) SetTargets();
 
         ActionManager.instance.DeadUnit += ChkMission;
+
+        if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
     }
 
     /// <summary>

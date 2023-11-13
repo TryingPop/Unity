@@ -70,11 +70,6 @@ public class GameManager : MonoBehaviour
 
         //마우스 화면 밖 못 나가게 설정
         Cursor.lockState = CursorLockMode.Confined;
-    }
-
-    private void Start()
-    {
-
         Init();
     }
 

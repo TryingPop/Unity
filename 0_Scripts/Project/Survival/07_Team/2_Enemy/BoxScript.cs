@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("현재 mission 클래스에서 해당 기능을 수행하고 있습니다.")]
 public class BoxScript : MonoBehaviour
 {
 

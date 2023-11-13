@@ -11,9 +11,10 @@ public abstract class Mission : MonoBehaviour
     // 미션 확인용 딜리게이트
     public delegate void ChkMissionDelegate(Selectable _select);
 
-
     [SerializeField] protected BaseGameEvent reward;
     [SerializeField] protected Mission nextMission;
+    [SerializeField] protected ScriptGroup startScripts;
+    [SerializeField] protected ScriptGroup endScripts;
 
     [SerializeField] protected bool isMain;                 // 메인 미션 패배일 경우 바로 끝
     [SerializeField] protected bool isHidden;               // 숨겨진 미션 >> 숨겨진 경우 표현 X
@@ -46,6 +47,8 @@ public abstract class Mission : MonoBehaviour
 
     protected void IsMissionComplete()
     {
+
+        if (endScripts != null) UIManager.instance.SetScripts(endScripts.Scripts);
 
         if (isMain)
         {

@@ -136,7 +136,11 @@ public class GameScreen : MonoBehaviour,
                     {
 
                         inputManager.ClickSelect();
-                        clickTime = Time.time;
+                        if (inputManager.CmdTargetIsCommandable) 
+                        {
+
+                            clickTime = Time.time;
+                        }
                     }
                 }
                 // 드래그 선택

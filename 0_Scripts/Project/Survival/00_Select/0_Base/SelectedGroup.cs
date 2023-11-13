@@ -132,6 +132,80 @@ public class SelectedGroup
         curSelected.Add(_select);
     }
 
+    public void DragSelect(ref Vector3 _center, ref Vector3 _half, int _commandLayer, int _selectLayer)
+    {
+
+        int len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hits, Quaternion.identity, 0f, _commandLayer);
+
+        if (len > 0)
+        {
+
+            Clear();
+            for (int i = 0; i < len; i++)
+            {
+
+                Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
+                curSelected.Add(select);
+            }
+
+            return;
+        }
+
+        len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hit, Quaternion.identity, 0f, _selectLayer);
+        if (len > 0)
+        {
+
+            Selectable select = VarianceManager.hit[0].transform.GetComponent<Selectable>();
+            SelectOne(select, _commandLayer);
+
+            return;
+        }
+    }
+
+    /// <summary>
+    /// LeftShift 키를 누른 경우 사용하는 드래그 선택
+    /// </summary>
+    public void AddDragSelect(ref Vector3 _center, ref Vector3 _half, int _commandLayer)
+    {
+
+        if (!isCommandable) return;
+
+        int len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hits, Quaternion.identity, 0f, _commandLayer);
+
+        for (int i = 0; i < len; i++)
+        {
+
+            Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
+
+            if (curSelected.Count < VarianceManager.MAX_SELECT
+                && !curSelected.Contains(select)) curSelected.Add(select);
+            else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
+        }
+    }
+
+    /// <summary>
+    /// 더블 클릭 선택
+    /// </summary>
+    public void DoubleClickSelect(ref Vector3 _center, ref Vector3 _half, int _commandLayer, int _selectIdx)
+    {
+
+        if (!isCommandable
+            || curSelected.Count >= VarianceManager.MAX_SELECT) return;
+
+        RaycastHit[] hits = Physics.BoxCastAll(_center, _half, Vector3.up, Quaternion.identity, 0f, _commandLayer);
+
+        // 더블 클릭 선택은 앞에서 검증할 예정!
+        for (int i = 0; i < hits.Length; i++)
+        {
+
+            Selectable select = hits[i].transform.GetComponent<Selectable>();
+            if (select.MyStat.SelectIdx == _selectIdx
+                && !curSelected.Contains(select)
+                && curSelected.Count < VarianceManager.MAX_SELECT) curSelected.Add(select);
+            else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
+        }
+    }
+    
     /// <summary>
     /// 외부에서 타입 체크!
     /// </summary>
@@ -245,9 +319,10 @@ public class SelectedGroup
     public void SetSaveGroup(int _idx)
     {
 
-        if (_idx < 0 
+        if (_idx < 0                            // 인덱스 체크
             || _idx >= saved.Count
-            || curSelected.Count == 0) return;
+            || !isCommandable                   // 명령 가능한 애들만 저장 가능
+            || curSelected.Count == 0) return;  // 현재 유닛이 1마리 이상일 때만 실행
 
         // 새로 채워 넣는다
         saved[_idx].Clear();
@@ -266,8 +341,8 @@ public class SelectedGroup
             || _idx >= saved.Count
             || saved[_idx].Count == 0) return;
 
-        curSelected.Clear();
-
+        Clear();
+        
         for (int i = 0; i < saved[_idx].Count; i++)
         {
 
