@@ -13,10 +13,10 @@ public class SelectedGroup
     private List<List<Selectable>> saved;
 
     private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
+    [SerializeField] private LayerMask commandLayer = 1 << VarianceManager.LAYER_PLAYER;
 
     private bool isCommandable;                                 // 명령 가능 판별
     public bool IsCommandable => isCommandable;
-    
     
     public bool IsEmpty { get { return curSelected.Count == 0 ? true : false; } }  // 비었는지 확인
 
@@ -104,7 +104,7 @@ public class SelectedGroup
         isCommandable = true;
     }
 
-    public void SelectOne(Selectable _select, int _commandLayer)
+    public void SelectOne(Selectable _select)
     {
 
         // 선택된게 없으면 탈출한다
@@ -117,25 +117,33 @@ public class SelectedGroup
         curSelected.Add(_select);
 
         // 커맨더 가능인지 판별
-        if (((1 << _select.MyTeam.TeamLayerNumber) & (_commandLayer)) == 0) isCommandable = false;
-        else isCommandable = true;
+        // if (((1 << _select.MyTeam.TeamLayerNumber) & (commandLayer)) == 0) isCommandable = false;
+        // else isCommandable = true;
+        isCommandable = ChkCommandable(_select);
+    }
+
+    public void AddSelect(Selectable _select)
+    {
+
+        if (curSelected.Count == 0) SelectOne(_select);
+        else if (curSelected.Contains(_select)) DeSelect(_select);
+        else if (ChkCommandable(_select)) AppendSelect(_select);
     }
 
     public void AppendSelect(Selectable _select)
     {
 
-        if (_select == null                                         // 선택 대상이 없거나
-            || curSelected.Count >= VarianceManager.MAX_SELECT      // 선택가능한 갯수를 넘거나
+        if (curSelected.Count >= VarianceManager.MAX_SELECT      // 선택가능한 갯수를 넘거나
             || !isCommandable                                       // 명령 불가능한 유닛은 두 마리 이상 선택 불가능!
             ) return;
 
         curSelected.Add(_select);
     }
 
-    public void DragSelect(ref Vector3 _center, ref Vector3 _half, int _commandLayer, int _selectLayer)
+    public void DragSelect(ref Vector3 _center, ref Vector3 _half, int _selectLayer)
     {
 
-        int len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hits, Quaternion.identity, 0f, _commandLayer);
+        int len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hits, Quaternion.identity, 0f, commandLayer);
 
         if (len > 0)
         {
@@ -156,7 +164,7 @@ public class SelectedGroup
         {
 
             Selectable select = VarianceManager.hit[0].transform.GetComponent<Selectable>();
-            SelectOne(select, _commandLayer);
+            SelectOne(select);
 
             return;
         }
@@ -165,12 +173,12 @@ public class SelectedGroup
     /// <summary>
     /// LeftShift 키를 누른 경우 사용하는 드래그 선택
     /// </summary>
-    public void AddDragSelect(ref Vector3 _center, ref Vector3 _half, int _commandLayer)
+    public void AddDragSelect(ref Vector3 _center, ref Vector3 _half)
     {
 
         if (!isCommandable) return;
 
-        int len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hits, Quaternion.identity, 0f, _commandLayer);
+        int len = Physics.BoxCastNonAlloc(_center, _half, Vector3.up, VarianceManager.hits, Quaternion.identity, 0f, commandLayer);
 
         for (int i = 0; i < len; i++)
         {
@@ -186,13 +194,13 @@ public class SelectedGroup
     /// <summary>
     /// 더블 클릭 선택
     /// </summary>
-    public void DoubleClickSelect(ref Vector3 _center, ref Vector3 _half, int _commandLayer, int _selectIdx)
+    public void DoubleClickSelect(ref Vector3 _center, ref Vector3 _half, int _selectIdx)
     {
 
         if (!isCommandable
             || curSelected.Count >= VarianceManager.MAX_SELECT) return;
 
-        RaycastHit[] hits = Physics.BoxCastAll(_center, _half, Vector3.up, Quaternion.identity, 0f, _commandLayer);
+        RaycastHit[] hits = Physics.BoxCastAll(_center, _half, Vector3.up, Quaternion.identity, 0f, commandLayer);
 
         // 더블 클릭 선택은 앞에서 검증할 예정!
         for (int i = 0; i < hits.Length; i++)
@@ -303,6 +311,18 @@ public class SelectedGroup
         return curSelected.Contains(_select);
     }
 
+    public bool ChkCommandable(Selectable _select) 
+    {
+
+        if (_select == null
+            || _select.MyTeam == null) return false;
+
+        int chk = 1 << _select.MyTeam.TeamLayerNumber;
+
+        if ((chk & commandLayer) != 0) return true;
+
+        return false;
+    }
 
     /// <summary>
     /// 선택 유닛 정보 넘긴다 유닛 슬롯쪽에서 활용

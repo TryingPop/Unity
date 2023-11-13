@@ -197,12 +197,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         if (myState == STATE_SELECTABLE.DEAD)
         {
 
-            Debug.Log("사망");
-
             if (InputManager.instance.curGroup.Contains(this))
             {
 
-                Debug.Log("현재 바라보는 유닛이 죽었어용");
                 InputManager.instance.curGroup.DeSelect(this);
                 InputManager.instance.ChkUIs();
             }

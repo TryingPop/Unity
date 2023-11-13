@@ -296,10 +296,11 @@ public class Building : Selectable
     {
 
         string hp = myStat.MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
-
+        
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
         else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
-        else _txt.text = $"{stateName} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
+        else if (maxTurn != 0) _txt.text = $"{stateName} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
+        else _txt.text = $"{stateName}\n체력 : {hp}";
     }
 
     /// <summary>

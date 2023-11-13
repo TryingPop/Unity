@@ -16,7 +16,6 @@ public class InputManager : MonoBehaviour
 
 
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
-    [SerializeField] private LayerMask commandLayer;    // 선택 가능한 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
 
     [SerializeField] private TYPE_INPUT myState;
@@ -76,8 +75,7 @@ public class InputManager : MonoBehaviour
         get
         {
 
-            return cmdTarget != null
-                && ((1 << cmdTarget.MyTeam.TeamLayerNumber) & commandLayer) != 0
+            return curGroup.ChkCommandable(cmdTarget)
                 && curGroup.IsCommandable;
         }
     }
@@ -414,20 +412,13 @@ public class InputManager : MonoBehaviour
         bool add = Input.GetKey(KeyCode.LeftShift);
 
         // 추가가 아닌 경우
-        if (!add) curGroup.SelectOne(cmdTarget, commandLayer.value);
-
+        if (!add) curGroup.SelectOne(cmdTarget);
         // 추가인 경우
         else
         {
 
-            // 처음 넣는 거면 Commandable인지 판별
-            if (curGroup.GetSize() == 0) curGroup.SelectOne(cmdTarget, commandLayer.value);
-
-            // 이미 포함된 유닛이면 해제
-            else if (curGroup.Contains(cmdTarget)) curGroup.DeSelect(cmdTarget);
-
-            // 추가 시도
-            else if (CmdTargetIsCommandable) curGroup.AppendSelect(cmdTarget);
+            // 여기서 넣을지 뺄지 판별한다!
+            curGroup.AddSelect(cmdTarget);
         }
 
         ChkUIs();
@@ -454,12 +445,12 @@ public class InputManager : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))
         {
 
-            curGroup.AddDragSelect(ref center, ref half, commandLayer.value);
+            curGroup.AddDragSelect(ref center, ref half);
         }
         else
         {
 
-            curGroup.DragSelect(ref center, ref half, commandLayer.value, selectLayer.value);
+            curGroup.DragSelect(ref center, ref half, selectLayer.value);
         }
 
         ChkUIs();
@@ -481,7 +472,7 @@ public class InputManager : MonoBehaviour
 
         ChkBox(ref rightTop, ref leftBottom, out Vector3 center, out Vector3 half);
         if (!Input.GetKey(KeyCode.LeftShift)) curGroup.Clear();
-        curGroup.DoubleClickSelect(ref center, ref half, commandLayer, cmdTarget.MyStat.SelectIdx);
+        curGroup.DoubleClickSelect(ref center, ref half, cmdTarget.MyStat.SelectIdx);
         ChkUIs();
     }
 
@@ -499,7 +490,7 @@ public class InputManager : MonoBehaviour
         else
         {
 
-            curGroup.SelectOne(_select, commandLayer);
+            curGroup.SelectOne(_select);
         }
 
         ChkUIs();

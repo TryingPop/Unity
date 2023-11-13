@@ -124,7 +124,8 @@ public class GameScreen : MonoBehaviour,
                     inputManager.SavePointToRay(false, true);
 
                     if (inputManager.CmdTargetIsCommandable
-                        && chkDoubleClick)
+                        && (chkDoubleClick 
+                        || Input.GetKey(KeyCode.LeftControl)))
                     {
 
                         // 0.3초안에 두번 눌렀으면 더블클릭 인정
@@ -136,11 +137,7 @@ public class GameScreen : MonoBehaviour,
                     {
 
                         inputManager.ClickSelect();
-                        if (inputManager.CmdTargetIsCommandable) 
-                        {
-
-                            clickTime = Time.time;
-                        }
+                        if (inputManager.CmdTargetIsCommandable) clickTime = Time.time;
                     }
                 }
                 // 드래그 선택
