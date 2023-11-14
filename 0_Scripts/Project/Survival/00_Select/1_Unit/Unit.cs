@@ -416,7 +416,8 @@ public class Unit : Selectable
         }
 
         myState = type;
-        target = _cmd.target != transform ? _cmd.target : null;
+        // 자기 자신은 대상이 될 수 없다!
+        target = _cmd.target != this ? _cmd.target : null;
         targetPos = _cmd.pos;
     }
     #endregion Command

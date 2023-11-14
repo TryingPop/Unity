@@ -84,7 +84,7 @@ public class SelectedGroup
     /// <summary>
     /// »ý¼ºÀÚ
     /// </summary>
-    public SelectedGroup()
+    public SelectedGroup(int _layer)
     {
 
         curSelected = new List<Selectable>(VarianceManager.MAX_SELECT);
@@ -92,6 +92,8 @@ public class SelectedGroup
         saved = new List<List<Selectable>>(3) { new List<Selectable>(VarianceManager.MAX_SELECT),
                                                 new List<Selectable>(VarianceManager.MAX_SELECT),
                                                 new List<Selectable>(VarianceManager.MAX_SELECT)};
+
+        commandLayer.value = 1 << _layer;
     }
 
     /// <summary>

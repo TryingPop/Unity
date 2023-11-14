@@ -151,17 +151,6 @@ public class ActionManager : MonoBehaviour
         else Debug.Log("null!!!");
     }
 
-    private void Update()
-    {
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-            if (DeadUnit == null) Debug.Log("null..");
-            else Debug.Log($"{DeadUnit.GetInvocationList().Length}");
-        }
-    }
-
     public bool ContainsUnit(Unit _unit)
     {
 

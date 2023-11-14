@@ -172,7 +172,7 @@ public class InputManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        curGroup = new SelectedGroup();
+        curGroup = new SelectedGroup(VarianceManager.LAYER_PLAYER);
         
         var group = curGroup.Get();
         unitSlots.CurGroup = group;

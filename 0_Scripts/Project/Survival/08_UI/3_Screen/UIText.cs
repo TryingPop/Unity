@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIWarning : MonoBehaviour
+public class UIText : MonoBehaviour
 {
 
-    [SerializeField] private Text warningTxt;
+    [SerializeField] private Text text;
 
     private float startTime;
     private float endTime;
@@ -15,9 +15,17 @@ public class UIWarning : MonoBehaviour
 
         startTime = Time.time;
         endTime = _chkTime;
-        warningTxt.text = _text;
+        text.text = _text;
         _color.a = 0.7f;
-        warningTxt.color = _color;
+        text.color = _color;
+    }
+
+    public void Init(string _text, float _chkTime)
+    {
+
+        startTime = Time.time;
+        endTime = _chkTime;
+        text.text = _text;
     }
 
     public bool ChkTime()
@@ -31,5 +39,11 @@ public class UIWarning : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void ActiveText(bool _active)
+    {
+
+        text.enabled = _active;
     }
 }

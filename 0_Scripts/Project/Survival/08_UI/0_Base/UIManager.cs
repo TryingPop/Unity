@@ -13,25 +13,31 @@ public class UIManager : MonoBehaviour
 
     public static UIManager instance;
 
+    [Header("코드")]
     [SerializeField] private UIInfo info;                   // 설명
     [SerializeField] private UIResources resources;         // 자원
     [SerializeField] private UIButton btns;                 // 버튼들
     [SerializeField] private HitBarGroup hitbars;           // 체력 바
     [SerializeField] private UnitSlots slots;               // 유닛 슬롯
     [SerializeField] private SelectedUI selects;            // 선택된 파티클들
-    [SerializeField] private UIWarning warning;             // 경고문
-    [SerializeField] private UIScript script;
+    [SerializeField] private UIText warning;                // 경고문
+    [SerializeField] private UIScript script;               // 대사
+    [SerializeField] private UIChat acquired;           // 획득 ? 혹은 채팅?
 
     [SerializeField] private RectTransform frameRectTrans;
+
+    [Header("캔버스")]
     [SerializeField] private Canvas hitBarCanvas;
     [SerializeField] private Canvas warningCanvas;
     [SerializeField] private Canvas scriptCanvas;
+    [SerializeField] private Canvas acquiredCanvas;
 
     private bool activeInfo = false;
     private bool activeWarning = false;
     private bool activeHitBar = true;
     private bool updateResources = true;
     private bool updateHp = false;
+    private bool activeAcquired = false;
 
     private Coroutine readScript;
 
@@ -173,7 +179,29 @@ public class UIManager : MonoBehaviour
             if (!script.IsActive) scriptCanvas.enabled = false;
         }
 
+        if (activeAcquired)
+        {
+
+            acquired.ChkChatText();
+            if (!acquired.IsActive)
+            {
+
+                acquiredCanvas.enabled = false;
+                activeAcquired = false;
+            }
+        }
+
         selects.SetPos();
+    }
+
+    private void Update()
+    {
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+            SetChat("골드");
+        }
     }
 
     /// <summary>
@@ -285,6 +313,18 @@ public class UIManager : MonoBehaviour
 
         if (readScript != null) StopCoroutine(readScript);
         readScript = StartCoroutine(ReadScript(_scripts));
+    }
+
+    public void SetChat(string _text)
+    {
+
+        if (!activeAcquired)
+        {
+
+            activeAcquired = true;
+            acquiredCanvas.enabled = true;
+        }
+        acquired.SetChatText(_text);
     }
 
     private IEnumerator ReadScript(Script[] _scripts)
