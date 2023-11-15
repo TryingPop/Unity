@@ -128,6 +128,45 @@ public enum TYPE_INFO
     BTN = 2,
 }
 
+public enum TYPE_MISSION 
+{ 
+
+    NONE = 0,
+
+    // 종류
+    MAIN = 0b_0000_0001,            // 1 << 0
+    SUB = 0b_0000_0010,             // 1 << 1
+    HIDDEN = 0b_0000_0100,          // 1 << 2
+    EVENT = 0b_0000_1000,           // 1 << 3
+
+    // 승리 여부
+    WIN = 0b_0001_0000,             // 1 << 4
+    WIN_REMOVE = 0b_0010_0000,      // 1 << 5
+    LOSE = 0b_0010_0000,            // 1 << 6
+    LOSE_REMOVE = 0b_0100_0000,     // 1 << 7
+
+    MAIN_WIN = 0b_0001_0001,        // 1 << 0 + 1 << 4 이하 합으로 이루어진 값
+    MAIN_WIN_REMOVE = 0b_0010_0001,
+    MAIN_LOSE = 0b_0100_0001,
+    MAIN_LOSE_REMOVE = 0b_1000_0001,
+
+    SUB_WIN = 0b_0001_0010,
+    SUB_WIN_REMOVE = 0b_0010_0010,
+    SUB_LOSE = 0b_0100_0010,
+    SUB_LOSE_REMOVE = 0b_1000_0010,
+
+    HIDDEN_WIN = 0b_0001_0100,
+    HIDDEN_WIN_REMOVE = 0b_0010_0100,
+    HIDDEN_LOSE = 0b_0100_0100,
+    HIDDEN_LOSE_REMOVE = 0b_1000_0100,
+
+    EVENT_WIN = 0b_0001_1000,
+    EVENT_WIN_REMOVE = 0b_0010_1000,
+    EVENT_LOSE = 0b_0100_1000,
+    EVENT_LOSE_REMOVE = 0b_1000_1000,
+}
+
+
 /// <summary>
 /// static 변수 보관소
 /// </summary>
@@ -140,12 +179,14 @@ public class VarianceManager
     public static readonly int LAYER_PLAYER = 17;
     public static readonly int LAYER_ENEMY = 18;
     public static readonly int LAYER_NEUTRAL = 19;
+    public static readonly int LAYER_ALLY = 20;
     public static readonly int LAYER_GROUND = 10;
 
     // 팀 idx
     public static readonly int TEAM_PLAYER = 0;
     public static readonly int TEAM_ENEMY = 1;
     public static readonly int TEAM_NEUTRAL = 2;
+    public static readonly int TEAM_ALLY = 3;
 
     // 마우스
     public const int MAX_ACTIONS = 10;
@@ -184,6 +225,8 @@ public class VarianceManager
     public static readonly int INIT_MISSILE_LIST_NUM = 50;
     public static readonly int INIT_LATE_POS = 50;
     public static readonly int INIT_NEUTRAL_LIST_NUM = 20;
+    public static readonly int INIT_ALLY_LIST_NUM = 10;
+
 
     public static readonly int TYPE_SELECTABLE_INTERVAL = 100;
 

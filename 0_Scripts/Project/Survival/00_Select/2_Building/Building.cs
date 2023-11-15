@@ -97,12 +97,14 @@ public class Building : Selectable
 
         myTeam = TeamManager.instance.GetTeamInfo(myLayer);
 
-        if (opt.BuildTurn == 0)
+        if (opt.BuildTurn == 0 || isStarting)
         {
 
             myState = STATE_SELECTABLE.NONE;
             if (myStat.MaxHp != VarianceManager.INFINITE) curHp = MaxHp;
-
+            Vector3 pos = buildingObj.localPosition;
+            pos.y = opt.InitPosY + opt.IncreaseY;
+            buildingObj.localPosition = pos;
             // 완성된 상태로 만들어지므로 바로 인구 체크된다
             ChkSupply(false);
         }

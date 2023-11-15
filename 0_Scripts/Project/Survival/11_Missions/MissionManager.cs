@@ -40,7 +40,8 @@ public class MissionManager : MonoBehaviour
     {
 
         if (_num > 3
-            || _mission.IsHidden) return;
+            || _mission.IsHidden
+            || _mission.IsEvent) return;
 
         if (_num == 0) _text.text = $"{_mission.GetMissionObjectText()}\n";
         else if (_num == 3) _text.text += $"{_mission.GetMissionObjectText()}";

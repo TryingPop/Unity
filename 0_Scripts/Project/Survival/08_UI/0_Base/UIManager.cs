@@ -194,16 +194,6 @@ public class UIManager : MonoBehaviour
         selects.SetPos();
     }
 
-    private void Update()
-    {
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-            SetChat("골드");
-        }
-    }
-
     /// <summary>
     /// 화면 비율 설정
     /// </summary>
