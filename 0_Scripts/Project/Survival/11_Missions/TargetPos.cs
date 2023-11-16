@@ -25,18 +25,21 @@ public class TargetPos : Mission
     public override string GetMissionObjectText()
     {
 
-        return string.Format("{0} {1}이 {2}{3}{4}",
+        return string.Format("[{0}] {1} {2}이 {3}{4}{5}",
+            missionName,
             targetLayer == VarianceManager.LAYER_PLAYER ? "플레이어" :
                     targetLayer == VarianceManager.LAYER_ENEMY ? "적" :
                     targetLayer == VarianceManager.LAYER_NEUTRAL ? "중립" : "아군",
             target.MyStat.MyName,
             spotName,
-            isWin ? "에 도착" : "에 도착 방해",
-            isSuccess ? isWin ? "[완료]" : "[실패]" : "");
+            IsWin ? "에 도착" : "에 도착 방해",
+            isSuccess ? IsWin ? "[완료]" : "[실패]" : "");
     }
 
     public override void Init()
     {
+        
+        typeNum = (int)myType;
 
         isSuccess = false;
         GetComponent<Collider>().enabled = true;

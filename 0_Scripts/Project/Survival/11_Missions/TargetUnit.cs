@@ -27,6 +27,8 @@ public class TargetUnit : Mission
     public override void Init()
     {
 
+        typeNum = (int)myType;
+
         curNum = 0;
         if (generateTarget) SetTargets();
 
@@ -101,14 +103,15 @@ public class TargetUnit : Mission
     public override string GetMissionObjectText()
     {
 
-        return string.Format("{0} {1} {2}{3}{4}",
+        return string.Format("[{0}] {1} {2} {3}{4}{5}",
+            missionName,
             targetLayer == VarianceManager.LAYER_PLAYER ? "플레이어" :
                     targetLayer == VarianceManager.LAYER_ENEMY ? "적" :
                     targetLayer == VarianceManager.LAYER_NEUTRAL ? "중립" : "아군",
             targetNum == 1 ? $"{target.MyStat.MyName}" : $"{target.MyStat.MyName}을 {targetNum}마리",
-            isWin ? "처치" : "사망 시 실패",
+            IsWin ? "처치" : "사망 시 실패",
             curNum == 0 || curNum == targetNum ? "" : $"({curNum}/{targetNum} 사망)",
-            IsSuccess ? isWin ? "[완료]" : "[실패]" : "");
+            IsSuccess ? IsWin ? "[완료]" : "[실패]" : "");
     }
 
     protected override void EndMission()

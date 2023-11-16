@@ -9,15 +9,13 @@ public class UIChat : MonoBehaviour
     [SerializeField] private RectTransform[] rectTrans;
     private int useNum = 0;
     private int lastNum = 0;
-    private Vector3 startPos = new Vector3(20f, 10f);
-    private float intervalY = 20f;
-    private System.Text.StringBuilder sb = new System.Text.StringBuilder();
+    [SerializeField] private Vector3 startPos = new Vector3(20f, 10f);
+    [SerializeField] private float intervalY = 16f;
 
     public bool IsActive { get { return useNum != 0; } }
 
     public void SetChatText(string _text)
     {
-        sb.Clear();
 
         lastNum++;
         if (lastNum >= texts.Length) lastNum = 0;
@@ -39,7 +37,6 @@ public class UIChat : MonoBehaviour
 
             rectTrans[idx].anchoredPosition = pos;
             pos.y += intervalY;
-            Debug.Log(pos);
 
             idx = NextIdx(idx);
         }
@@ -49,13 +46,13 @@ public class UIChat : MonoBehaviour
     {
 
         int idx = lastNum;
-        for (int i = 0; i < useNum; i++)
+        // useNum이 줄어들기에 시작에 useNum을 넣어준다
+        for (int i = useNum; i > 0; i--)
         {
 
             if(texts[idx].ChkTime())
             {
 
-                // 종료
                 texts[idx].ActiveText(false);
                 useNum--;
             }

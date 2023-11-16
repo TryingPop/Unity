@@ -141,8 +141,9 @@ public class Unit : Selectable
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
 
         curHp = MaxHp;
-
-        if (gameObject.layer == VarianceManager.LAYER_PLAYER)
+        int layer = myTeam != null ? myTeam.TeamLayerNumber : gameObject.layer;
+        if (layer == VarianceManager.LAYER_PLAYER
+            || layer == VarianceManager.LAYER_ALLY)
         {
 
             mySight.IsActive = true;

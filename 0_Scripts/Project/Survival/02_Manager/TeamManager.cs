@@ -13,6 +13,7 @@ public class TeamManager : MonoBehaviour
     public TeamInfo PlayerTeamInfo => teams[VarianceManager.TEAM_PLAYER];
     public TeamInfo EnemyTeamInfo => teams[VarianceManager.TEAM_ENEMY];
     public TeamInfo NeutralTeamInfo => teams[VarianceManager.TEAM_NEUTRAL];
+    public TeamInfo AllyTeamInfo => teams[VarianceManager.TEAM_ALLY];
 
     [SerializeField] private TeamInfo[] teams;                  // ÆÀ Á¤º¸µé
 
@@ -40,6 +41,7 @@ public class TeamManager : MonoBehaviour
         if (_layer == VarianceManager.LAYER_PLAYER) return VarianceManager.TEAM_PLAYER;
         else if (_layer == VarianceManager.LAYER_ENEMY) return VarianceManager.TEAM_ENEMY;
         else if (_layer == VarianceManager.LAYER_NEUTRAL) return VarianceManager.TEAM_NEUTRAL;
+        else if (_layer == VarianceManager.LAYER_ALLY) return VarianceManager.TEAM_ALLY;
         else return -1;
     }
 
