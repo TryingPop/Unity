@@ -203,10 +203,7 @@ public class Unit : Selectable
     public override void OnDamaged(int _dmg, Transform _trans = null, bool _ignoreDef = false)
     {
 
-        if (myState == STATE_SELECTABLE.DEAD) return;
-
         base.OnDamaged(_dmg, _trans, _ignoreDef);
-
 
         Selectable select = null;
         if (_trans != null) select = _trans.GetComponent<Selectable>();
@@ -252,6 +249,7 @@ public class Unit : Selectable
     public override void Dead()
     {
 
+        ResetTeam();
         base.Dead();
 
         for (int i = cmds.Count; i > 0; i--)
@@ -263,8 +261,6 @@ public class Unit : Selectable
         ActionDone(STATE_SELECTABLE.DEAD);
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
-
-        ResetTeam();
     }
 
     public override void ResetTeam()

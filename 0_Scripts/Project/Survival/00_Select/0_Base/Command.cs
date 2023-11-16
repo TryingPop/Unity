@@ -57,7 +57,7 @@ public class Command
             if (pool.Count < VarianceManager.MAX_SAVE_COMMANDS) pool.Push(this);
         }
 
-        SetNextPos(_size);
+        SetNextPos(_size, receiveNum, ref pos);
         return false;
     }
 
@@ -104,14 +104,14 @@ public class Command
     /// <summary>
     /// 회오리? 모양의 배치
     /// </summary>
-    protected void SetNextPos(int _size)
+    public static void SetNextPos(int _size, int num, ref Vector3 pos)
     {
 
         // 처음은 생략
-        if (receiveNum == 1) return;
+        if (num == 1) return;
         int i = 0;
 
-        int n = receiveNum - 1;
+        int n = num - 1;
         while (n > 0)
         {
 

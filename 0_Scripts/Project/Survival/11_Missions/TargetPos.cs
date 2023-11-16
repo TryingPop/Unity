@@ -45,13 +45,21 @@ public class TargetPos : Mission
         GetComponent<Collider>().enabled = true;
 
         if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
+        if (startEvent != null)
+        {
+
+            for (int i = 0; i < startEvent.Length; i++)
+            {
+
+                startEvent[i].InitalizeEvent();
+            }
+        }
     }
 
     protected override void EndMission()
     {
 
         GetComponent<Collider>().enabled = false;
-        IsMissionComplete();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -66,6 +74,7 @@ public class TargetPos : Mission
             { 
                 
                 EndMission();
+                IsMissionComplete();
             }
         }
     }

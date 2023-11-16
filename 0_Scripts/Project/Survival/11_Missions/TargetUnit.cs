@@ -11,7 +11,7 @@ public class TargetUnit : Mission
 
     [SerializeField] protected Selectable target;   // 타겟 유닛
     [SerializeField] protected int targetLayer;     // 타겟의 팀 정보
-    [SerializeField] protected Vector3[] initPos;   // 시작 시 생성할 위치
+    [SerializeField] protected Vector3 initPos;   // 시작 시 생성할 위치
     [SerializeField] protected int targetNum;       // 타겟 수
     
     protected int curNum;
@@ -35,6 +35,15 @@ public class TargetUnit : Mission
         ActionManager.instance.DeadUnit += ChkMission;
 
         if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
+        if (startEvent != null)
+        {
+
+            for (int i = 0; i < startEvent.Length; i++)
+            {
+
+                startEvent[i].InitalizeEvent();
+            }
+        }
     }
 
     /// <summary>
@@ -46,8 +55,9 @@ public class TargetUnit : Mission
         // 유닛 생성 해야한다!
         int prefabIdx = PoolManager.instance.ChkIdx(target.MyStat.SelectIdx);
 
+        Vector3 pos = initPos;
         // 타겟 수 만큼 유닛 생성
-        for (int i = 0; i < targetNum; i++)
+        for (int i = 1; i <= targetNum; i++)
         {
 
 
@@ -58,13 +68,7 @@ public class TargetUnit : Mission
 
 
                 var go = PoolManager.instance.GetPrefabs(prefabIdx, targetLayer);
-                if (go)
-                {
-
-                    genTarget = go.GetComponent<Selectable>();
-
-                    // 범위를 초과한 경우 랜덤 값
-                }
+                if (go) genTarget = go.GetComponent<Selectable>();
             }
 
             if (genTarget == null)
@@ -72,9 +76,9 @@ public class TargetUnit : Mission
 
                 genTarget = Instantiate(target);
             }
-
-            int rand = i >= initPos.Length ? Random.Range(0, initPos.Length) : i;
-            genTarget.transform.position = initPos[rand];
+            
+            Command.SetNextPos(genTarget.MyStat.MySize, i, ref pos);
+            genTarget.transform.position = pos;
             genTarget.AfterSettingLayer();
             genTarget.ChkSupply(false);
         }
@@ -95,6 +99,7 @@ public class TargetUnit : Mission
             { 
                 
                 EndMission();
+                IsMissionComplete();
             }
         }
     }
@@ -118,6 +123,5 @@ public class TargetUnit : Mission
     {
 
         ActionManager.instance.DeadUnit -= ChkMission;
-        IsMissionComplete();
     }
 }

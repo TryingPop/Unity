@@ -46,5 +46,7 @@ public class PoisonArea : MonoBehaviour
             // 방어력 무시 데미지를 준다!
             selectable.OnDamaged(poisonDmg, null, true);
         }
+
+        if (selectable.MyTeam.TeamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.SetScript(4, "독성이 강해", new Vector2(100f, 70f));
     }
 }

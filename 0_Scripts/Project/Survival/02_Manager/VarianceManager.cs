@@ -133,37 +133,51 @@ public enum TYPE_MISSION
 
     NONE = 0,
 
-    // 종류
-    MAIN                = 0b_0000_0001,             // 1 << 0
-    SUB                 = 0b_0000_0010,             // 1 << 1
-    HIDDEN              = 0b_0000_0100,             // 1 << 2
-    EVENT               = 0b_0000_1000,             // 1 << 3
+    // 종류 - 해당 종류는 양립 불가
+    MAIN                    = 0b_0000_0001,                     // 메인 미션 - 시나리오와 매우 연관된 퀘스트
+    SUB                     = 0b_0000_0010,                     // 서브 미션 - 깨도 그만 안깨도 그만인 시나리오 퀘스트
+    HIDDEN                  = 0b_0000_0100,                     // 히든 미션 - 성공 실패 시 미션 존재만 가르쳐주고 내용은 공개 X - 반복 아니면 자동 Remove
+    EVENT                   = 0b_0000_1000,                     // 이벤트 - 완전히 숨겨진 조건 - 반복 아니면 자동 Reomve
+    
+    // 선택 옵션 
+    END                     = 0b_0001_0000,                     // 게임 종료와 연관되는 퀘스트 승리 미션 종류에 따라 승패가 결정된다!
+    REMOVE                  = 0b_0010_0000,                     // 미션 완료 후 미션 오브젝트에서 제거 유무
+    REPEAT                  = 0b_0100_0000,                     // 해당 미션 반복 여부
+    WIN                     = 0b_1000_0000,                     // 승리 미션
 
-    // 승리 여부
-    WIN                 = 0b_0001_0000,             // 1 << 4
-    WIN_REMOVE          = 0b_0010_0000,             // 1 << 5
-    LOSE                = 0b_0010_0000,             // 1 << 6
-    LOSE_REMOVE         = 0b_0100_0000,             // 1 << 7
 
-    MAIN_WIN            = 0b_0001_0001,             // 1 << 0 + 1 << 4 이하 합으로 이루어진 값
-    MAIN_WIN_REMOVE     = 0b_0010_0001,
-    MAIN_LOSE           = 0b_0100_0001,
-    MAIN_LOSE_REMOVE    = 0b_1000_0001,
+    // 조합
+    MAIN_WIN                = 0b_1000_0001,                     // MAIN + WIN 합으로 이루어진 값
+    MAIN_WIN_END            = 0b_1001_0001,
+    MAIN_WIN_REMOVE         = 0b_1010_0001,
+    MAIN_LOSE               = 0b_0000_0001,
+    MAIN_LOSE_END           = 0b_0001_0001,
+    MAIN_LOSE_REMOVE        = 0b_0010_0001,
 
-    SUB_WIN             = 0b_0001_0010,
-    SUB_WIN_REMOVE      = 0b_0010_0010,
-    SUB_LOSE            = 0b_0100_0010,
-    SUB_LOSE_REMOVE     = 0b_1000_0010,
+    SUB_WIN                 = 0b_1000_0010,
+    SUB_WIN_END             = 0b_1001_0010,
+    SUB_WIN_REMOVE          = 0b_1010_0010,
+    SUB_WIN_END_REMOVE      = 0b_1011_0010,
+    SUB_WIN_REPEAT          = 0b_1100_0010,
+    SUB_LOSE                = 0b_0000_0010,
+    SUB_LOSE_END            = 0b_0001_0010,
+    SUB_LOSE_REMOVE         = 0b_0010_0010,
+    SUB_LOSE_END_REMOVE     = 0b_0011_0010,
+    SUB_LOSE_REPEAT         = 0b_0100_0010,
 
-    HIDDEN_WIN          = 0b_0001_0100,
-    HIDDEN_WIN_REMOVE   = 0b_0010_0100,
-    HIDDEN_LOSE         = 0b_0100_0100,
-    HIDDEN_LOSE_REMOVE  = 0b_1000_0100,
+    HIDDEN_WIN              = 0b_1010_0100,                     
+    HIDDEN_WIN_END          = 0b_1011_0100,
+    HIDDEN_WIN_REPEAT       = 0b_1100_0100,
+    HIDDEN_LOSE             = 0b_0010_0100,
+    HIDDEN_LOSE_END         = 0b_0011_0100,
+    HIDDEN_LOSE_REPEAT      = 0b_0100_0100,
 
-    EVENT_WIN           = 0b_0001_1000,
-    EVENT_WIN_REMOVE    = 0b_0010_1000,
-    EVENT_LOSE          = 0b_0100_1000,
-    EVENT_LOSE_REMOVE   = 0b_1000_1000,
+    EVENT_WIN               = 0b_1010_1000,
+    EVENT_WIN_END           = 0b_1011_1000,
+    EVENT_WIN_REPEAT        = 0b_1100_1000,
+    EVENT_LOSE              = 0b_0010_1000,
+    EVENT_LOSE_END          = 0b_0011_1000,
+    EVENT_LOSE_REPEAT       = 0b_0100_1000,
 }
 
 

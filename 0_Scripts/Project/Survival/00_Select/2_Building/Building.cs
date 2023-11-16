@@ -82,11 +82,35 @@ public class Building : Selectable
 
         myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
 
+
         if (isStarting)
         {
          
+            ChkBuilding(true);
             AfterSettingLayer();
             isStarting = false;
+        }
+        else ChkBuilding();
+    }
+
+    public void ChkBuilding(bool _forcedCompleted = false)
+    {
+
+        if (opt.BuildTurn == 0 || _forcedCompleted)
+        {
+
+            myState = STATE_SELECTABLE.NONE;
+            if (myStat.MaxHp != VarianceManager.INFINITE) curHp = myStat.MaxHp;
+            Vector3 pos = buildingObj.localPosition;
+            pos.y = opt.InitPosY + opt.IncreaseY;
+            buildingObj.localPosition = pos;
+        }
+        else
+        {
+
+            if (myStat.MaxHp != VarianceManager.INFINITE) curHp = 1;
+            GetComponentInChildren<MeshRenderer>().material.color = Color.black;
+            curBuildTurn = 0;
         }
     }
 
@@ -97,32 +121,8 @@ public class Building : Selectable
 
         myTeam = TeamManager.instance.GetTeamInfo(myLayer);
 
-        if (opt.BuildTurn == 0 || isStarting)
-        {
-
-            myState = STATE_SELECTABLE.NONE;
-            if (myStat.MaxHp != VarianceManager.INFINITE) curHp = MaxHp;
-            Vector3 pos = buildingObj.localPosition;
-            pos.y = opt.InitPosY + opt.IncreaseY;
-            buildingObj.localPosition = pos;
-            // 완성된 상태로 만들어지므로 바로 인구 체크된다
-            ChkSupply(false);
-        }
-        else
-        {
-
-            if (myStat.MaxHp != VarianceManager.INFINITE) curHp = 1;
-            GetComponentInChildren<MeshRenderer>().material.color = Color.black;
-            curBuildTurn = 0;
-
-            // 인구 먹는 건물은 지어지는 도중부터 인구를 차지한다
-            if (myStat.Supply > 0) ChkSupply(false);
-
-        }
-
         ActionManager.instance.AddBuilding(this);
         UIManager.instance.AddHitBar(this);
-        // MyHitBar = ActionManager.instance.GetHitBar();
 
         Color teamColor;
         if (myTeam != null) teamColor = myTeam.TeamColor;
@@ -256,6 +256,10 @@ public class Building : Selectable
     {
 
         myStateAction.ForcedQuit(this);
+
+        // 상태 변경 전이다
+        
+        ResetTeam();
         base.Dead();
 
         for (int i = 0; i < cmds.Count; i++)
@@ -267,7 +271,6 @@ public class Building : Selectable
 
         myObstacle.carving = false;
 
-        ResetTeam();
 
         // 파괴 이벤트
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VarianceManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
@@ -279,9 +282,6 @@ public class Building : Selectable
         ChkSupply(true);
         ActionManager.instance.RemoveBuilding(this);
         UIManager.instance.RemoveHitBar(this);
-
-        myHitBar = null;
-
     }
 
     public override void SetRectTrans(RectTransform _rectTrans)
@@ -337,15 +337,9 @@ public class Building : Selectable
                 // 기본 40% 환불!
                 int refundCost = Mathf.FloorToInt(myStat.Cost * 0.4f);
                 myTeam.AddGold(refundCost);
-                Dead();
-                if (InputManager.instance.curGroup.Contains(this)) 
-                {
 
-                    InputManager.instance.curGroup.DeSelect(this);
-                    InputManager.instance.ChkUIs();
-                    // slot과 버튼 종료!
-                    UIManager.instance.ExitInfo(TYPE_INFO.ALL);
-                }
+                // 여기서 인구도 확인!
+                Dead();
             }
             else
             {

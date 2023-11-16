@@ -31,7 +31,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     [SerializeField] protected ushort myTurn;           // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
 
     [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
-    
+
     [SerializeField] protected STATE_SELECTABLE myState;
 
     protected string stateName = "";
@@ -140,6 +140,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         if (supply < 0)
         {
 
+            // 미완성인 경우는 탈출!
+            if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
+
             if (_isDead)
             {
 
@@ -190,41 +193,22 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         if (_ignoreDef) curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
         else curHp -= _dmg < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg;
 
-        if (curHp <= 0) Dead();
-        else myHitBar.SetHp(curHp);
+        if (curHp < 0) curHp = 0;
+        myHitBar.SetHp(curHp);
 
-        // 현재 선택 중이면 해제한다!
-        if (myState == STATE_SELECTABLE.DEAD)
-        {
-
-            if (InputManager.instance.curGroup.Contains(this))
-            {
-
-                InputManager.instance.curGroup.DeSelect(this);
-                InputManager.instance.ChkUIs();
-            }
-            
-            if (InputManager.instance.curGroup.ContainsSavedGroup(this))
-            {
-
-                InputManager.instance.curGroup.DeselectSavedGroup(this);
-            }
-        }
-        else if (InputManager.instance.curGroup.Contains(this))
-        {
-
-            UIManager.instance.UpdateHp = true;
-        }
+        if (curHp == 0) Dead();
+        else if (InputManager.instance.curGroup.Contains(this)) UIManager.instance.UpdateHp = true;
     }
 
     /// <summary>
-    /// 무적인지 체크
+    /// 무적인지 체크 무적 체력 or 사망 상태인 경우만 true!
     /// </summary>
     /// <returns>무적 여부</returns>
     protected bool ChkInvincible()
     {
 
-        if (MaxHp == VarianceManager.INFINITE)
+        if (MaxHp == VarianceManager.INFINITE
+            || myState == STATE_SELECTABLE.DEAD)
         {
 
             return true;
@@ -239,11 +223,25 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     public virtual void Dead()
     {
 
-        curHp = 0;
-        myHitBar.SetHp(curHp);
         myState = STATE_SELECTABLE.DEAD;
         // 시체 레이어로 변경
         gameObject.layer = VarianceManager.LAYER_DEAD;
+
+        // 현재 선택 중이면 해제한다
+        if (InputManager.instance.curGroup.Contains(this))
+        {
+
+            InputManager.instance.curGroup.DeSelect(this);
+            InputManager.instance.ChkUIs();
+            // slot과 버튼 종료!
+            UIManager.instance.ExitInfo(TYPE_INFO.ALL);
+        }
+        
+        if (InputManager.instance.curGroup.ContainsSavedGroup(this))
+        {
+
+            InputManager.instance.curGroup.DeselectSavedGroup(this);
+        }
 
         StartCoroutine(Disabled());
     }

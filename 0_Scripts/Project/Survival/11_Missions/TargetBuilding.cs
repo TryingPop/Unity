@@ -20,7 +20,17 @@ public class TargetBuilding : TargetUnit
         if (generateTarget) SetTargets();
 
         ActionManager.instance.DeadBuilding += ChkMission;
+
         if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
+        if (startEvent != null)
+        {
+
+            for (int i = 0; i < startEvent.Length; i++)
+            {
+
+                startEvent[i].InitalizeEvent();
+            }
+        }
     }
 
     // 상태 설명
@@ -42,6 +52,5 @@ public class TargetBuilding : TargetUnit
     {
 
         ActionManager.instance.DeadBuilding -= ChkMission;
-        IsMissionComplete();
     }
 }
