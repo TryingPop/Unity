@@ -17,7 +17,7 @@ public abstract class Mission : MonoBehaviour
     [SerializeField] protected ScriptGroup endScripts;
     [SerializeField] protected BaseGameEvent endEvent;
 
-    [SerializeField] protected Mission nextMission;             // 다음 미션
+    [SerializeField] protected Mission[] nextMissions;             // 다음 미션
     [SerializeField] protected Mission quitMission;             // 종료된 미션
 
     // [SerializeField] protected bool isMain;                 // 메인 미션 패배일 경우 바로 끝
@@ -102,14 +102,18 @@ public abstract class Mission : MonoBehaviour
         if (quitMission != null) quitMission.QuitMission();
 
         // 다음 이벤트가 있으면 다음 이벤트 시작
-        if (nextMission != null)
+        if (nextMissions != null)
         {
 
-            GameManager.instance.AddMission(nextMission);
+            for (int i = 0; i < nextMissions.Length; i++)
+            {
 
-            nextMission.gameObject.SetActive(true);
-            nextMission.Init();
-            if (!nextMission.IsEvent) UIManager.instance.SetChat("새로운 미션 추가!");
+                GameManager.instance.AddMission(nextMissions[i]);
+
+                nextMissions[i].gameObject.SetActive(true);
+                nextMissions[i].Init();
+                if (!nextMissions[i].IsEvent) UIManager.instance.SetChat("새로운 미션 추가!");
+            }
         }
 
         // 반복 아니면 다시 안쓰이기에 해당 미션 파괴!

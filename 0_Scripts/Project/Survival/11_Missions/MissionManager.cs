@@ -8,7 +8,9 @@ public class MissionManager : MonoBehaviour
 
     // 미션들 여기에 넣어야한다!?
     [SerializeField] private List<Mission> myMissions;
+    [SerializeField] private string nextSceneName;
 
+    public string NextSceneName => nextSceneName;
     public void Init()
     {
 

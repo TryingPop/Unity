@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -136,8 +134,10 @@ public class MenuOption : MonoBehaviour
     {
 
         yield return null;
+        
         // test.text = $"{Screen.width}, {Screen.height}";
         // 후연산 해야할 것들 넣어야한다
         // Screen 값이 다음 프레임에서 해야 정확하게 받아온다
+        
     }
 }
