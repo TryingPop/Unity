@@ -117,8 +117,6 @@ public class Unit : Selectable
     protected override void Init()
     {
         
-        myAnimator.SetBool("Die", false);
-        myAgent.enabled = true;
         ActionDone();
         
         // 처음 배치된 유닛 확인
@@ -162,6 +160,9 @@ public class Unit : Selectable
         if (myTeam != null) teamColor = myTeam.TeamColor;
         else teamColor = Color.black;
         myMinimap.SetColor(teamColor);
+
+        myAgent.enabled = true;
+        myAnimator.SetBool("Die", false);
     }
 
     /// <summary>
