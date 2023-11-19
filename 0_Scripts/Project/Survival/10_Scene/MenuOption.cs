@@ -133,11 +133,17 @@ public class MenuOption : MonoBehaviour
     private IEnumerator AfterScreenChaned()
     {
 
-        yield return null;
-        
+
         // test.text = $"{Screen.width}, {Screen.height}";
         // 후연산 해야할 것들 넣어야한다
         // Screen 값이 다음 프레임에서 해야 정확하게 받아온다
-        
+        var uiManager = UIManager.instance;
+        if (uiManager != null)
+        {
+
+            yield return null;
+            uiManager.SetUIs();
+        }
+        else yield break;
     }
 }

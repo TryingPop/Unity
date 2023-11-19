@@ -22,7 +22,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private SelectedUI selects;            // 선택된 파티클들
     [SerializeField] private UIText warning;                // 경고문
     [SerializeField] private UIScript script;               // 대사
-    [SerializeField] private UIChat acquired;           // 획득 ? 혹은 채팅?
+    [SerializeField] private UIChat acquired;               // 획득 ? 혹은 채팅?
+    [SerializeField] private CameraMovement camMove;
 
     [SerializeField] private RectTransform frameRectTrans;
 
@@ -44,7 +45,7 @@ public class UIManager : MonoBehaviour
 
     // 스크립트 순서를 바꿔줘야한다 UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
-
+    public Vector2 screenSize;
 
     public bool ActiveHitBar
     {
@@ -117,13 +118,24 @@ public class UIManager : MonoBehaviour
         // Start에서 해줘야 안막힌다!
         SetRatio();
 
+        screenSize.x = Screen.width;
+        screenSize.y = Screen.height;
+
         resources.Teams = TeamManager.instance.GetTeamInfo(VarianceManager.LAYER_PLAYER);
         updateResources = true;
     }
 
     public void LateUpdate()
     {
-        
+
+        camMove.ChkBoundaryCamMove();
+
+        if (camMove.IsMove) 
+        { 
+            
+            camMove.Move(); 
+        }
+
         if (btns.IsChanged)
         {
 
@@ -192,6 +204,7 @@ public class UIManager : MonoBehaviour
         }
 
         selects.SetPos();
+
     }
 
     /// <summary>
@@ -215,7 +228,7 @@ public class UIManager : MonoBehaviour
         var pivot = _rectTrans.pivot;
         var rect = _rectTrans.rect;
 
-        // 캔버스 크기.. 받아오고, rect로 ? width, height 받아와야한다~.~:
+        // 캔버스 크기.. 받아오고, rect로 ? width, height 받아와야한다
         float xMax = (screenRatio.x * Screen.width) - (pivot.x * rect.width);
         float yMax = (screenRatio.y * Screen.height) - (pivot.y * rect.height);
 
@@ -330,5 +343,16 @@ public class UIManager : MonoBehaviour
             if (_scripts[i].NextTime == 2f) yield return VarianceManager.BASE_WAITFORSECONDS;
             else yield return new WaitForSeconds(_scripts[i].NextTime);
         }
+    }
+
+    /// <summary>
+    /// 화면 크기가 바뀔때 불러올 함수들! 모아둔다!
+    /// </summary>
+    public void SetUIs()
+    {
+
+        screenSize.x = Screen.width;
+        screenSize.y = Screen.height;
+        slots.SetScreenSize();
     }
 }

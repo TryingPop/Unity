@@ -10,16 +10,18 @@ public class LoadingScene : MonoBehaviour
     [SerializeField] private string[] tips;
     [SerializeField] private Text tipText;
     [SerializeField] private Slider slider;
+    [SerializeField] private int eventIdx;
+    [SerializeField] private string eventTip;
 
     public static string nextSceneName;
-
+    private WaitForSeconds waitTime = new WaitForSeconds(0.01f);
     private void Start()
     {
 
-        tipText.text = tips[Random.Range(0, tips.Length)];
-
+        
         // 한 프레임 쉬고 다음 씬 불러온다
         StartCoroutine(NextScene());
+        StartCoroutine(SetTip());
     }
 
     public static void NextScene(string _nextSceneName)
@@ -49,11 +51,13 @@ public class LoadingScene : MonoBehaviour
 
             yield return null;
 
+
+
             float progress = op.progress;
             if (progress < 0.9f)
             {
 
-                // 여기에 게이지 바 ㄱㄱ!
+                // 진행도에 따른 여기에 게이지 바 증가
                 slider.value = progress;
             }
             else
@@ -72,7 +76,8 @@ public class LoadingScene : MonoBehaviour
 
                     // 1초간 강제 휴식?
                     timer += Time.unscaledDeltaTime;
-                    slider.value = Mathf.Lerp(0.9f, 1f, timer);
+                    // 최소 2초! 보장
+                    slider.value = Mathf.Lerp(0.9f, 1f, timer * 0.5f);
                     if (slider.value >= 1f)
                     {
 
@@ -80,6 +85,41 @@ public class LoadingScene : MonoBehaviour
                         yield break;
                     }
                 }
+            }
+        }
+    }
+
+    private IEnumerator SetTip()
+    {
+
+        yield return null;
+
+        int rand = Random.Range(0, tips.Length);
+        bool chkEvent = false;
+        if (rand == eventIdx) chkEvent = true;
+        string str = tips[rand];
+
+        for (int i = 0; i < str.Length; i++)
+        {
+
+            tipText.text += str[i];
+            yield return waitTime;
+        }
+
+        if (chkEvent)
+        {
+
+            // 여기에 소리
+
+            yield return new WaitForSeconds(0.75f);
+            str = eventTip;
+            tipText.text = "";
+
+            for (int i = 0; i < str.Length; i++)
+            {
+
+                tipText.text += str[i];
+                yield return waitTime;
             }
         }
     }

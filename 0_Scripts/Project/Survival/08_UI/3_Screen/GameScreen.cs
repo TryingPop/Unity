@@ -165,7 +165,7 @@ public class GameScreen : MonoBehaviour,
         if (chkSelect)
         {
 
-            Vector2 nowPos = Input.mousePosition;
+            Vector2 nowPos = InputManager.instance.mousePos;
             DrawRect.DrawDragScreenRect(clickPos, nowPos);
         }
     }

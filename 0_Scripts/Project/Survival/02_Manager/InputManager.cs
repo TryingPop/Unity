@@ -13,7 +13,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private Camera mainCam;                // 월드맵 캠
 
     [SerializeField] private UnitSlots unitSlots;
-
+    [SerializeField] private CameraMovement camMove;
 
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
@@ -28,8 +28,9 @@ public class InputManager : MonoBehaviour
 
     private ButtonHandler mainHandler;
     private ButtonHandler subHandler;
-
     private bool isSubBtn;
+    
+    public Vector2 mousePos;
 
     // 명령용 
     private Vector2 savePos;
@@ -182,6 +183,8 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
 
+        mousePos = Input.mousePosition;
+
         // 입력 현황 받아오기
         // MyState = (int)inputManager.MyState;
         if (myState == TYPE_INPUT.NONE)
@@ -222,6 +225,31 @@ public class InputManager : MonoBehaviour
 
             SaveSelect(2);
         }
+
+
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+
+            camMove.Horizontal = 1f;
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+
+            camMove.Horizontal = -1f;
+        }
+
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+
+            camMove.Vertical = 1f;
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+
+            camMove.Vertical = -1f;
+        }
+
+        camMove.ScrollWheel = Input.GetAxis("Mouse ScrollWheel");
     }
 
     private bool ChkReturn(int _key)
@@ -390,7 +418,11 @@ public class InputManager : MonoBehaviour
     public void SaveSelect(int _idx)
     {
 
+#if UNITY_EDITOR
         if (Input.GetKey(KeyCode.Z))
+#else
+        if (Input.GetKey(KeyCode.LeftControl))
+#endif
         {
 
             curGroup.SetSaveGroup(_idx);
@@ -565,6 +597,8 @@ public class InputManager : MonoBehaviour
 
         // 버튼 활성화 수정
         ActiveBtns(true, false, curGroup.IsCancelBtn);
+
+        UIManager.instance.ExitInfo(TYPE_INFO.ALL);
     }
 
     /// <summary>
