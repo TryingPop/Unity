@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 // using UnityEngine.UI;
 
 public class UnitSlots : MonoBehaviour
@@ -23,8 +24,9 @@ public class UnitSlots : MonoBehaviour
     // protected List<Selectable> units;
 
     // À¯´Ö ½½·Ô 
-    [SerializeField] protected GameObject nextBtn;
-    [SerializeField] protected GameObject prevBtn;
+    [SerializeField] protected Image nextBtn;
+    [SerializeField] protected Image prevBtn;
+    [SerializeField] protected Text curPageText;
 
     protected int activeSlotNum;      // È°¼ºÈ­µÈ ½½·Ô °³¼ö
     protected int curPage;
@@ -246,8 +248,10 @@ public class UnitSlots : MonoBehaviour
         {
 
             curPage = 0;
-            nextBtn.SetActive(false);
-            prevBtn.SetActive(false);
+            nextBtn.enabled = false;
+            prevBtn.enabled = false;
+            if (curGroup.Count != 0) curPageText.text = $"{curGroup.Count}";
+            else curPageText.text = "";
             return;
         }
 
@@ -256,12 +260,12 @@ public class UnitSlots : MonoBehaviour
         {
 
             _num = maxPage;
-            nextBtn.SetActive(false);
+            nextBtn.enabled = false;
         }
         else
         {
 
-            nextBtn.SetActive(true);
+            nextBtn.enabled = true;
         }
 
 
@@ -269,15 +273,18 @@ public class UnitSlots : MonoBehaviour
         {
 
             _num = 0;
-            prevBtn.SetActive(false);
+            prevBtn.enabled = false;
         }
         else
         {
 
-            prevBtn.SetActive(true);
+            prevBtn.enabled = true;
         }
 
         curPage = _num;
+
+        curPageText.enabled = true;
+        curPageText.text = $"{curGroup.Count}\n{curPage + 1}/{maxPage + 1}";
     }
 
 
