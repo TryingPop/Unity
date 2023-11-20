@@ -17,8 +17,6 @@ public class BuildingAction : IAction<Building>
 
         _building.MaxTurn = turn;
         _building.MyTurn = 0;
-
-        _building.StateName = stateName;
     }
 
     protected virtual void OnExit(Building _building, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)

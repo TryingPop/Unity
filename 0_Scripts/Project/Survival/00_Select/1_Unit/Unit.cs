@@ -163,6 +163,9 @@ public class Unit : Selectable
 
         myAgent.enabled = true;
         myAnimator.SetBool("Die", false);
+
+        targetPos = transform.position;
+        target = null;
     }
 
     /// <summary>
@@ -295,12 +298,12 @@ public class Unit : Selectable
 
             string strAtk = myTeam.AddedAtk == 0 ? myAttack.atk.ToString() : $"{myAttack.atk}(+{myTeam.AddedAtk})";
             string strDef = myTeam.AddedDef == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{myTeam.AddedDef})";
-            _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{stateName} 중";
+            _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{myStateAction.StateNames[myState]} 중";
         }
         else
         {
 
-            _txt.text = $"체력 : {strHp}\n{stateName} 중";
+            _txt.text = $"체력 : {strHp}\n{myStateAction.StateNames[myState]} 중";
         }
     }
 

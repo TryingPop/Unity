@@ -15,7 +15,5 @@ public class UnitHold : IUnitAction
         _unit.TargetPos = _unit.transform.position;
         _unit.MyAgent.ResetPath();
         _unit.MyAnimator.SetFloat("Move", 0f);
-
-        _unit.StateName = stateName;
     }
 }

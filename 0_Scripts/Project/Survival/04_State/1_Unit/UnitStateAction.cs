@@ -6,6 +6,28 @@ using UnityEngine;
 public class UnitStateAction : StateHandler<IUnitAction>
 {
 
+    protected Dictionary<STATE_SELECTABLE, string> stateNames;
+    public Dictionary<STATE_SELECTABLE, string> StateNames
+    {
+
+        get
+        {
+
+            if (stateNames == null)
+            {
+
+                stateNames = new Dictionary<STATE_SELECTABLE, string>();
+                for (int i = 0; i < actions.Length; i++)
+                {
+
+                    stateNames.Add((STATE_SELECTABLE)i, actions[i].StateName);
+                }
+            }
+
+            return stateNames;
+        }
+    }
+
     public override int GetIdx(int _idx)
     {
 

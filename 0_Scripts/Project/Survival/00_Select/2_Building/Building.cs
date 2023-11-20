@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -81,7 +82,7 @@ public class Building : Selectable
     {
 
         myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
-
+        
 
         if (isStarting)
         {
@@ -129,6 +130,9 @@ public class Building : Selectable
         else teamColor = Color.yellow;
 
         myMinimap.SetColor(teamColor);
+
+        targetPos = transform.position;
+        target = null;
     }
 
     /// <summary>
@@ -287,7 +291,7 @@ public class Building : Selectable
     public override void SetRectTrans(RectTransform _rectTrans)
     {
 
-        _rectTrans.sizeDelta = new Vector2(100f, 80f);
+        _rectTrans.sizeDelta = new Vector2(120f, 80f);
         _rectTrans.pivot = new Vector2(0f, 0.5f);
     }
 
@@ -301,8 +305,19 @@ public class Building : Selectable
         
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
         else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
-        else if (maxTurn != 0) _txt.text = $"{stateName} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
-        else _txt.text = $"{stateName}\n체력 : {hp}";
+        else if (maxTurn != 0) _txt.text = $"{myStateAction.StateNames[myState]} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
+        else _txt.text = $"{myStateAction.StateNames[myState]}\n체력 : {hp}";
+
+        if (cmds.Count == 1)
+        {
+
+            _txt.text += $"\n다음 행동 : {myStateAction.StateNames[cmds[0].type]}";
+        }
+        else if (cmds.Count > 1)
+        {
+
+            _txt.text += $"\n다음 행동({cmds.Count}) : {myStateAction.StateNames[cmds[0].type]}";
+        }
     }
 
     /// <summary>

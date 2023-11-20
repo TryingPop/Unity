@@ -93,7 +93,5 @@ public class BuildBuilding : IUnitAction
         // 타겟의 장소로 이동!
         _unit.MyAgent.destination = _unit.TargetPos;
         _unit.MyAnimator.SetFloat("Move", 1f);
-
-        _unit.StateName = stateName;
     }
 }

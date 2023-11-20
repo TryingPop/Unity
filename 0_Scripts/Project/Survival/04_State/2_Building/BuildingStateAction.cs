@@ -8,7 +8,30 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BuildingAction", menuName = "StateAction/BuildingAction")]
 public class BuildingStateAction : StateHandler<BuildingAction>
 {
-    
+
+    protected Dictionary<STATE_SELECTABLE, string> stateNames;
+    public Dictionary<STATE_SELECTABLE, string> StateNames
+    {
+
+        get
+        {
+
+            if (stateNames == null)
+            {
+
+                stateNames = new Dictionary<STATE_SELECTABLE, string>();
+
+                for (int i = 0; i < actions.Length; i++)
+                {
+
+                    stateNames.Add((STATE_SELECTABLE)(i + 1), actions[i].StateName);
+                }
+            }
+
+            return stateNames;
+        }
+    }
+
     public void Action(Building _building)
     {
 

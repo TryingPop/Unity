@@ -19,8 +19,6 @@ public class UnitStop : IUnitAction
         
         _unit.TargetPos = _unit.transform.position;
         _unit.MyAnimator.SetFloat("Move", 0f);
-
-        _unit.StateName = stateName;
     }
 
     protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)

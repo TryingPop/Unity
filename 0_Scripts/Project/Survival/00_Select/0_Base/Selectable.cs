@@ -34,14 +34,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [SerializeField] protected STATE_SELECTABLE myState;
 
-    protected string stateName = "";
-
-    public string StateName { set { stateName = value; } }
-    /// <summary>
-    /// 스텟 설정
-    /// </summary>
-    // public abstract void SetStat();
-
     /// <summary>
     /// 체력 회복
     /// </summary>
