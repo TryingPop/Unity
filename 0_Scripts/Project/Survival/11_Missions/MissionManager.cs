@@ -8,9 +8,8 @@ public class MissionManager : MonoBehaviour
 
     // 미션들 여기에 넣어야한다!?
     [SerializeField] private List<Mission> myMissions;
-    [SerializeField] private string nextSceneName;
+    [SerializeField] private int saveStageNum;
 
-    public string NextSceneName => nextSceneName;
     public void Init()
     {
 
@@ -62,5 +61,35 @@ public class MissionManager : MonoBehaviour
     {
 
         if (myMissions.Contains(_mission)) myMissions.Remove(_mission);
+    }
+
+    /// <summary>
+    /// 씬 저장
+    /// </summary>
+    public void Clear()
+    {
+
+        int stage = -1;
+
+        if (PlayerPrefs.HasKey("Stage"))
+        {
+
+            stage = PlayerPrefs.GetInt("Stage");
+
+            if (stage < saveStageNum)
+            {
+
+                PlayerPrefs.SetInt("Stage", saveStageNum);
+            }
+        }
+        else
+        {
+
+            if (stage < saveStageNum)
+            {
+
+                PlayerPrefs.SetInt("Stage", saveStageNum);
+            }
+        }
     }
 }

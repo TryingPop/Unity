@@ -23,8 +23,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] protected Text loseTxt;                        // 패배 조건용 텍스트
 
     [SerializeField] protected Text gameOverText;                   // 게임 끝났음을 알리는 텍스트
-
+    [SerializeField] protected GameObject restartBtn;               // 재시작 버튼
+    [SerializeField] protected GameObject nextBtn;                  // 다음 판으로 버튼
     private bool isStop;                                            // 메뉴 활성화 중?
+    [SerializeField] private bool isNextBtn;
 
     public bool IsGameOver
     {
@@ -69,8 +71,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //마우스 화면 밖 못 나가게 설정
-        Cursor.lockState = CursorLockMode.Confined;
         Init();
     }
 
@@ -93,27 +93,37 @@ public class GameManager : MonoBehaviour
     public void GameOver(bool _isWin)
     {
 
-        if (_isWin) myState = STATE_GAME.WIN;
+        if (_isWin) 
+        { 
+            
+            myState = STATE_GAME.WIN;
+            missions.Clear();
+
+            // 마지막 판 같은 경우 다음판이 없기에 재시작 버튼을 그냥 살려둔다
+            if (isNextBtn)
+            {
+
+                restartBtn.SetActive(false);
+                nextBtn.SetActive(true);
+            }
+        }
         else myState = STATE_GAME.LOSE;
 
         gameOverText.enabled = true;
         gameOverText.text = $"{myState}";
-
-
     }
 
     public void AddMission(Mission _mission)
     {
 
         missions.AddMission(_mission);
-        // 여기에 UI로 표현!
     }
 
     public void RemoveMission(Mission _mission)
     {
 
         missions.RemoveMission(_mission);
-        // 여기에 UI로 표현! 
+        
     }
 
     /// <summary>

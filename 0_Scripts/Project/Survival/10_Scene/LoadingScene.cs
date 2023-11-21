@@ -31,6 +31,8 @@ public class LoadingScene : MonoBehaviour
         SceneManager.LoadScene("1_Loading");
     }
 
+
+
     private IEnumerator NextScene()
     {
 

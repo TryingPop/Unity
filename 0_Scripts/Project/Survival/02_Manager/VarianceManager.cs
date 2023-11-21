@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
 /// Selectable 종류
@@ -187,6 +188,7 @@ public enum TYPE_MISSION
 public class VarianceManager
 {
 
+    #region 기본 타입
     // 레이어
     public static readonly int LAYER_DEAD = 13;
     public static readonly int LAYER_BULLET = 14;
@@ -245,6 +247,8 @@ public class VarianceManager
     public static readonly int TYPE_SELECTABLE_INTERVAL = 100;
 
     public static readonly float REFUND_RATE = 0.6f;
+
+    #endregion 기본 타입
 
     public static readonly WaitForSeconds BASE_WAITFORSECONDS = new WaitForSeconds(2f);
 
