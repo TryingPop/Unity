@@ -46,22 +46,6 @@ public enum TYPE_SIZE
 
 
 /// <summary>
-/// 버튼 옵션
-/// </summary>
-public enum TYPE_BUTTON_OPTION
-{
-
-    CANCEL = -2,
-    NULL = -1,
-    NONE = 0,
-    NEED_POS = 1,
-    NEED_TARGET = 2,
-    NEED_TARGET_OR_POS = 4,
-
-    BUILD = VarianceManager.BUILD,
-}
-
-/// <summary>
 /// -1 ~ 5 번까지는 일반 유닛이 갖는 번호
 /// 6번부터는 특수!
 /// </summary>

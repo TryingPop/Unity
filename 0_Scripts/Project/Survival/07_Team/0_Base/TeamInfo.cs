@@ -16,6 +16,9 @@ public class TeamInfo
     public int AddedDef => upgradeInfo.addDef;
     public int AddedHp => upgradeInfo.addHp;
 
+    public int AddGetGold => upgradeInfo.addGetGold;
+    public int AddedSupply => upgradeInfo.addSupply;
+
     /// <summary>
     /// 업그레이드는 행동에도 같이 쓰이니 다음과 같이 메서드로 추가 가능
     /// </summary>

@@ -48,7 +48,7 @@ public class UIBtn : MonoBehaviour,
 
         if (btnInfo == null) return;
 
-        _descTxt.text = btnInfo.Desc;
+        btnInfo.GetDesc(_descTxt);
     }
 
     public void SetRectTrans(RectTransform _rectTrans)
@@ -63,6 +63,6 @@ public class UIBtn : MonoBehaviour,
 
         if (btnInfo == null) return;
 
-        _titleTxt.text = btnInfo.Title;
+        btnInfo.GetTitle(_titleTxt);
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 버튼 정보
@@ -21,9 +22,6 @@ public abstract class ButtonInfo : IAction<InputManager>
     public int CmdType => (int)cmdType;
     public Sprite BtnSprite => btnSprite;
 
-    public string Title => title;
-    public string Desc => desc;
-
     public Vector2 InfoSize => infoSize;
     /// <summary>
     /// 외부에서는 강제 탈출할 때 사용하는 메서드
@@ -34,4 +32,15 @@ public abstract class ButtonInfo : IAction<InputManager>
         _inputManager.ActionDone(_nextKey);
     }
 
+    public virtual void GetTitle(Text _titleText)
+    {
+
+        _titleText.text = title; 
+    }
+
+    public virtual void GetDesc(Text _descText)
+    {
+
+        _descText.text = desc;
+    }
 }
