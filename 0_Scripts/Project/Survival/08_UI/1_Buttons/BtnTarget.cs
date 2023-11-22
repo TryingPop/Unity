@@ -21,5 +21,10 @@ public class BtnTarget : BtnPos
             _inputManager.GiveCmd(true, true);
             OnExit(_inputManager);
         }
+        else
+        {
+
+            UIManager.instance?.SetWarningText("대상이 필요합니다.", Color.yellow, 2f);
+        }
     }
 }

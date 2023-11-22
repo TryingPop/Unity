@@ -20,9 +20,19 @@ public class UnitMove : IUnitAction
                 && _unit.Target.gameObject.layer != VarianceManager.LAYER_DEAD)
             {
 
-                // 대상으로 이동
-                _unit.TargetPos = _unit.Target.transform.position;
-                _unit.MyAgent.SetDestination(_unit.TargetPos);
+                if (_unit.MyTurn < 5)
+                {
+
+                    _unit.MyTurn++;
+                }
+                else
+                {
+                    // 대상으로 이동
+                    _unit.TargetPos = _unit.Target.transform.position;
+                    // 이거 수정해야한다
+                    _unit.MyAgent.SetDestination(_unit.TargetPos);
+                    _unit.MyTurn = 0;
+                }
             }
             else _unit.Target = null;
         }
@@ -42,5 +52,6 @@ public class UnitMove : IUnitAction
 
         _unit.MyAgent.SetDestination(_unit.TargetPos);
         _unit.MyAnimator.SetFloat("Move", 1f);
+        _unit.MyTurn = 0;
     }
 }

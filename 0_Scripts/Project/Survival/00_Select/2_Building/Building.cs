@@ -23,15 +23,15 @@ public class Building : Selectable
     public static WaitForSeconds completeTimer;                     // 완성 알려주는 시간
     protected List<Command> cmds;                                   // 명령
 
-    public override int MyState
+    public override STATE_SELECTABLE MyState
     {
 
-        get { return (int)myState; }
+        get { return myState; }
         set 
         {
 
             myTurn = 0;
-            myState = (STATE_SELECTABLE)value; 
+            myState = value; 
         }
     }
 
@@ -196,7 +196,7 @@ public class Building : Selectable
         Vector3 pos = buildingObj.localPosition;
         pos.y = opt.InitPosY + height;
         buildingObj.localPosition = pos;
-        myHitBar.SetHp(curHp);
+        myHitBar.SetHp();
 
         if (InputManager.instance.curGroup.Contains(this))
         {
@@ -305,19 +305,11 @@ public class Building : Selectable
         
         if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
         else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
-        else if (maxTurn != 0) _txt.text = $"{myStateAction.StateNames[myState]} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
-        else _txt.text = $"{myStateAction.StateNames[myState]}\n체력 : {hp}";
+        else if (maxTurn != 0) _txt.text = $"{myStateAction.GetStateName(myState)} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
+        else _txt.text = $"{myStateAction.GetStateName(myState)}\n체력 : {hp}";
 
-        if (cmds.Count == 1)
-        {
-
-            _txt.text += $"\n다음 행동 : {myStateAction.StateNames[cmds[0].type]}";
-        }
-        else if (cmds.Count > 1)
-        {
-
-            _txt.text += $"\n다음 행동({cmds.Count}) : {myStateAction.StateNames[cmds[0].type]}";
-        }
+        if (cmds.Count == 1) _txt.text += $"\n다음 행동 : {myStateAction.GetStateName(cmds[0].type)}";
+        else if (cmds.Count > 1) _txt.text += $"\n다음 행동({cmds.Count}) : {myStateAction.GetStateName(cmds[0].type)}";
     }
 
     /// <summary>

@@ -31,8 +31,8 @@ public class UnitRepair : IUnitAction
 
             // 수리 거리 안인지 확인
 
-            int targetState = _unit.Target.MyState;
-            if (targetState == -2)
+            STATE_SELECTABLE targetState = _unit.Target.MyState;
+            if (targetState == STATE_SELECTABLE.BUILDING_UNFINISHED)
             {
 
                 //건설 해야하는 상태
@@ -66,7 +66,7 @@ public class UnitRepair : IUnitAction
 
                     // unitAttack.CoolTime = 0;
                     _unit.MyTurn = 0;
-                    if (targetState != -2) unitAttack.OnAttack(_unit);
+                    if (targetState != STATE_SELECTABLE.BUILDING_UNFINISHED) unitAttack.OnAttack(_unit);
                 }
                 else
                 {
@@ -82,7 +82,13 @@ public class UnitRepair : IUnitAction
         }
 
         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
-        _unit.MyAgent.SetDestination(_unit.Target.transform.position);
+
+        if (_unit.MyTurn < 5)
+        {
+
+            _unit.MyTurn++;
+        }
+        else _unit.MyAgent.SetDestination(_unit.Target.transform.position);
     }
 
     public override void OnEnter(Unit _unit)

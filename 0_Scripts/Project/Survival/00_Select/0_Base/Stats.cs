@@ -23,8 +23,23 @@ public class Stats : ScriptableObject
     [SerializeField] protected string myName;
     [SerializeField] protected int hitBarPos;
 
+    [SerializeField] protected int addedHp;
+    [SerializeField] protected int addedDef;
+
     public int MaxHp => maxHp;
     public int Def => def;
+
+    public int GetAddHp(int _upgrade)
+    {
+
+        return addedHp * _upgrade;
+    }
+
+    public int GetAddDef(int _upgrade)
+    {
+
+        return addedDef * _upgrade;
+    }
 
     public int MySize => (int)mySize;
 
@@ -74,4 +89,6 @@ public class Stats : ScriptableObject
     public string MyName => myName;
 
     public int HitBarPos => hitBarPos;
+
+
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,54 +10,27 @@ using UnityEngine.UI;
 public class ButtonHandler : StateHandler<ButtonInfo>
 {
 
-    // sbyte였으나 백준 문제 풀다보니 다른 자료형이 성능 저하를 불러와서 10 -> 40으로 되었지만 int로 수정
-    protected int[] idxs = null;
+    protected Dictionary<TYPE_INPUT, int> myActionNum;
 
-    // 쓰는 키가 많아지거나 cmd로 행동을 구분하고 싶을 때는 딕셔너리로 해야한다!
-    public int[] Idxs
+    public Dictionary<TYPE_INPUT, int> MyActionNum
     {
 
         get
         {
 
-            if (actions == null)
+            if (myActionNum == null)
             {
 
-                idxs = new int[1] { -1 };
-                return idxs;
-            }
-
-            if (idxs == null
-                || idxs.Length < actions.Length)
-            {
-
-                // 여기서 MAX_USE_BUTTONS과 유닛이 취할 수 있는 최대 상태와 같기에 버튼으로 그대로 둔다
-                // 다른 경우 override되게 해야한다!
-                if (actions.Length > VarianceManager.MAX_USE_BUTTONS)
-                {
-
-                    Array.Resize(ref actions, VarianceManager.MAX_USE_BUTTONS);
-                }
-
-                idxs = new int[VarianceManager.MAX_USE_BUTTONS];
-                for (int i = 0; i < idxs.Length; i++)
-                {
-
-                    idxs[i] = -1;
-                }
+                myActionNum = new Dictionary<TYPE_INPUT, int>(actions.Length);
 
                 for (int i = 0; i < actions.Length; i++)
                 {
 
-                    int key = (int)actions[i].BtnKey;
-                    if (key > idxs.Length
-                        || key <= 0) continue;
-
-                    idxs[key - 1] = (sbyte)i;
+                    myActionNum[actions[i].BtnKey] = i;
                 }
             }
 
-            return idxs;
+            return myActionNum;
         }
     }
 
@@ -87,12 +61,9 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         if (idx != -1) actions[idx].OnExit(_selectManager);
     }
 
-    public override int GetIdx(int _idx)
+    public int GetIdx(TYPE_INPUT _key)
     {
 
-        if (Idxs.Length < _idx
-            || _idx < 1) return -1;
-
-        return Idxs[_idx - 1];
+        return MyActionNum.ContainsKey(_key) ? myActionNum[_key] : -1;
     }
 }

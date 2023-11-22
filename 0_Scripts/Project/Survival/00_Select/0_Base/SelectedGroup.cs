@@ -47,7 +47,7 @@ public class SelectedGroup
             for (int i = 0; i < curSelected.Count; i++)
             {
 
-                if (curSelected[i].MyState != (int)STATE_SELECTABLE.BUILDING_UNFINISHED)
+                if (curSelected[i].MyState != STATE_SELECTABLE.BUILDING_UNFINISHED)
                 {
 
                     return false;

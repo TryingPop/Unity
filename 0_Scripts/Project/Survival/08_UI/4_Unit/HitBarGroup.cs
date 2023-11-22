@@ -58,4 +58,18 @@ public class HitBarGroup : MonoBehaviour
             hitBars[i].SetPos();
         }
     }
+
+    /// <summary>
+    /// 현재는 모든 유닛들의 체력바의 max 값 수정
+    /// 뒤에 hitbars가 구분되면 추후에는 그룹만 실행되게 수정해야한다!
+    /// </summary>
+    public void SetMaxHp()
+    {
+
+        for (int i = 0; i < hitBars.Count; i++)
+        {
+
+            hitBars[i].SetMaxHp();
+        }
+    }
 }

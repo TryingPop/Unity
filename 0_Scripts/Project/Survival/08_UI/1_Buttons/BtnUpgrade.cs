@@ -26,19 +26,19 @@ public class BtnUpgrade : BtnDefault
         {
 
             case TYPE_MANAGEMENT.UP_ATK:
-                return myTeam.AddedAtk;
+                return myTeam.lvlAtk;
 
             case TYPE_MANAGEMENT.UP_DEF:
-                return myTeam.AddedDef;
+                return myTeam.lvlDef;
 
             case TYPE_MANAGEMENT.UP_HP:
-                return myTeam.AddedHp;
+                return myTeam.lvlHp;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
-                return myTeam.AddedSupply;
+                return myTeam.lvlMaxSupply;
 
             case TYPE_MANAGEMENT.UP_GOLD:
-                return myTeam.AddGetGold;
+                return myTeam.lvlGetGold;
 
             default:
                 return -1;

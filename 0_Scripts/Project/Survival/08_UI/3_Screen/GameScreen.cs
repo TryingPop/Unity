@@ -59,7 +59,7 @@ public class GameScreen : MonoBehaviour,
             InputManager inputManager = InputManager.instance;
 
             // 키입력이 없는 상태로 클릭
-            if (inputManager.MyState == 0)
+            if (inputManager.MyState == TYPE_INPUT.NONE)
             {
 
                 // 누른 위치 저장 및 드래그 준비
@@ -88,13 +88,13 @@ public class GameScreen : MonoBehaviour,
 
             InputManager inputManager = InputManager.instance;
 
-            if (inputManager.MyState == 0)
+            if (inputManager.MyState == TYPE_INPUT.NONE)
             {
 
                 //명령 수행
                 inputManager.MouseRCmd(eventData.position);
             }
-            else inputManager.MyState = (int)TYPE_INPUT.CANCEL;
+            else inputManager.MyState = TYPE_INPUT.CANCEL;
         }
     }
 

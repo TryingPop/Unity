@@ -18,7 +18,7 @@ public class SelfRepair : BuildingAction
 
             _building.Heal(amount);
             _building.MyTurn = 0;
-            OnExit(_building);
+            // OnExit(_building);
         }
     }
 }

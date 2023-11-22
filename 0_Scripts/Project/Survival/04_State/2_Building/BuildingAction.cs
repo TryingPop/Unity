@@ -22,7 +22,7 @@ public class BuildingAction : IAction<Building>
     protected virtual void OnExit(Building _building, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
     {
 
-        _building.MyState = (int)_nextState;
+        _building.MyState = _nextState;
     }
 
     public virtual void ForcedQuit(Building _building) 

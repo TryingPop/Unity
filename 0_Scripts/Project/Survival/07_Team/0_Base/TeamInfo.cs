@@ -10,14 +10,17 @@ public class TeamInfo
     [SerializeField] protected AllianceInfo allianceInfo;
     [SerializeField] protected ResourcesInfo resourcesInfo;
     [SerializeField] protected UpgradeInfo upgradeInfo;
+    protected UpgradeManager upgradeManager;
+
+    public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
 
     // 공방체 부분
-    public int AddedAtk => upgradeInfo.addAtk;
-    public int AddedDef => upgradeInfo.addDef;
-    public int AddedHp => upgradeInfo.addHp;
+    public int lvlAtk => upgradeInfo.lvlAtk;
+    public int lvlDef => upgradeInfo.lvlDef;
+    public int lvlHp => upgradeInfo.lvlHp;
 
-    public int AddGetGold => upgradeInfo.addGetGold;
-    public int AddedSupply => upgradeInfo.addSupply;
+    public int lvlGetGold => upgradeInfo.lvlGetGold;
+    public int lvlMaxSupply => upgradeInfo.lvlMaxSupply;
 
     /// <summary>
     /// 업그레이드는 행동에도 같이 쓰이니 다음과 같이 메서드로 추가 가능
@@ -29,42 +32,41 @@ public class TeamInfo
         {
 
             case TYPE_MANAGEMENT.UP_HP:
-                upgradeInfo.addHp += _grade;
+                upgradeInfo.lvlHp += _grade;
+
+                UIManager.instance.SetMaxHp = true;
                 break;
 
             case TYPE_MANAGEMENT.UP_ATK:
-                upgradeInfo.addAtk += _grade;
+                upgradeInfo.lvlAtk += _grade;
                 break;
 
             case TYPE_MANAGEMENT.UP_DEF:
-                upgradeInfo.addDef += _grade;
+                upgradeInfo.lvlDef += _grade;
                 break;
 
             case TYPE_MANAGEMENT.UP_GOLD:
-                upgradeInfo.addGetGold += _grade;
+                upgradeInfo.lvlGetGold += _grade;
                 break;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
-                upgradeInfo.addSupply += _grade;
+                upgradeInfo.lvlMaxSupply += _grade;
                 if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
                 break;
 
             default:
                 break;
         }
-
-        
     }
 
 
-    // 자원
     public int MaxSupply
     {
 
         get
         {
 
-            int result = resourcesInfo.maxSupply + upgradeInfo.addSupply;
+            int result = resourcesInfo.maxSupply + (upgradeManager.AddSupply * upgradeInfo.lvlMaxSupply);
             if (result > VarianceManager.MAX_SUPPLY) result = VarianceManager.MAX_SUPPLY;
             return result;
         }
@@ -79,7 +81,7 @@ public class TeamInfo
     {
 
         resourcesInfo.gold += _amount;
-        if (_addBonus) resourcesInfo.gold += +upgradeInfo.addGetGold;
+        if (_addBonus) resourcesInfo.gold += +upgradeManager.AddGold * upgradeInfo.lvlGetGold;
 
         if (resourcesInfo.gold > VarianceManager.MAX_GOLD) resourcesInfo.gold = VarianceManager.MAX_GOLD;
         if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;

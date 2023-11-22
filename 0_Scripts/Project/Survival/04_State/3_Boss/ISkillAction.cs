@@ -46,10 +46,27 @@ public abstract class ISkillAction : IUnitAction
         return true;
     }
 
-    protected int GetSkillNum(int _unitState)
+    protected int GetSkillNum(STATE_SELECTABLE _unitState)
     {
 
-        int result = _unitState - (int)STATE_SELECTABLE.UNIT_SKILL0;
-        return result <= 0 ? -1 : result;
+        switch (_unitState)
+        {
+
+            case STATE_SELECTABLE.UNIT_SKILL0:
+                return 0;
+
+            case STATE_SELECTABLE.UNIT_SKILL1:
+                return 1;
+
+            case STATE_SELECTABLE.UNIT_SKILL2: 
+                return 2;
+
+            case STATE_SELECTABLE.UNIT_SKILL3:
+                return 3;
+
+            default:
+                return -1;
+        }
+        
     }
 }

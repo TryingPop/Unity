@@ -6,35 +6,32 @@ using UnityEngine;
 public class UnitStateAction : StateHandler<IUnitAction>
 {
 
-    protected Dictionary<STATE_SELECTABLE, string> stateNames;
-    public Dictionary<STATE_SELECTABLE, string> StateNames
+    protected Dictionary<STATE_SELECTABLE, int> myActionNum;
+    protected Dictionary<STATE_SELECTABLE, int> MyActionNum
     {
 
         get
         {
 
-            if (stateNames == null)
+            if (myActionNum == null)
             {
 
-                stateNames = new Dictionary<STATE_SELECTABLE, string>();
+                myActionNum = new Dictionary<STATE_SELECTABLE, int>(actions.Length);
                 for (int i = 0; i < actions.Length; i++)
                 {
 
-                    stateNames.Add((STATE_SELECTABLE)i, actions[i].StateName);
+                    myActionNum.Add((STATE_SELECTABLE)i, i);
                 }
             }
 
-            return stateNames;
+            return myActionNum;
         }
     }
 
-    public override int GetIdx(int _idx)
+    public int GetIdx(STATE_SELECTABLE _state)
     {
 
-        if (actions.Length <= _idx
-            || _idx < 0) return -1;
-
-        return _idx;
+        return MyActionNum.ContainsKey(_state) ? myActionNum[_state] : -1;
     }
 
     /// <summary>
@@ -60,5 +57,20 @@ public class UnitStateAction : StateHandler<IUnitAction>
         int idx = GetIdx(_unit.MyState);
         if (idx != -1) actions[idx].OnEnter(_unit);
         // else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
+    }
+
+    public string GetStateName(STATE_SELECTABLE _state)
+    {
+
+        if (MyActionNum.ContainsKey(_state))
+        {
+
+            return actions[myActionNum[_state]].StateName;
+        }
+        else
+        {
+
+            return "";
+        }
     }
 }

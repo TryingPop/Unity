@@ -37,7 +37,7 @@ public class ButtonSlots : MonoBehaviour
         for (int i = 0; i < btns.Length; i++)
         {
 
-            int idx = _handler.Idxs[i];
+            int idx = _handler.GetIdx(btns[i].Key);
             if (idx != -1)
             {
 

@@ -9,27 +9,33 @@ using UnityEngine;
 public class BuildingStateAction : StateHandler<BuildingAction>
 {
 
-    protected Dictionary<STATE_SELECTABLE, string> stateNames;
-    public Dictionary<STATE_SELECTABLE, string> StateNames
+    protected Dictionary<STATE_SELECTABLE, int> myActionNum;
+    protected Dictionary<STATE_SELECTABLE, int> MyActionNum
     {
 
         get
         {
 
-            if (stateNames == null)
+            if (myActionNum == null)
             {
 
-                stateNames = new Dictionary<STATE_SELECTABLE, string>();
+                myActionNum = new Dictionary<STATE_SELECTABLE, int>(actions.Length);
 
                 for (int i = 0; i < actions.Length; i++)
                 {
 
-                    stateNames.Add((STATE_SELECTABLE)(i + 1), actions[i].StateName);
+                    myActionNum.Add((STATE_SELECTABLE)(i + 1), i);
                 }
             }
 
-            return stateNames;
+            return myActionNum;
         }
+    }
+
+    public int GetIdx(STATE_SELECTABLE _state)
+    {
+
+        return MyActionNum.ContainsKey(_state) ? MyActionNum[_state] : -1;
     }
 
     public void Action(Building _building)
@@ -39,14 +45,6 @@ public class BuildingStateAction : StateHandler<BuildingAction>
         if (idx != -1) actions[idx].Action(_building);
     }
 
-    public override int GetIdx(int _idx)
-    {
-
-        if (actions.Length < _idx
-            || _idx < 1) return -1;
-
-        return _idx - 1;
-    }
 
     public void Changed(Building _building)
     {
@@ -65,5 +63,20 @@ public class BuildingStateAction : StateHandler<BuildingAction>
 
         int idx = GetIdx(_building.MyState);
         if (idx != -1) actions[idx].ForcedQuit(_building);
+    }
+
+    public string GetStateName(STATE_SELECTABLE _state)
+    {
+
+        if (MyActionNum.ContainsKey(_state))
+        {
+
+            return actions[myActionNum[_state]].StateName;
+        }
+        else
+        {
+
+            return "";
+        }
     }
 }

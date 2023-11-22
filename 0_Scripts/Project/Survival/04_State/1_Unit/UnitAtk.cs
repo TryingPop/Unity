@@ -54,8 +54,8 @@ public class UnitAtk : IUnitAction
                     {
 
                         // 타겟이 공격 범위 밖이므로 타겟을 향해 이동
-                        _unit.MyAgent.SetDestination(_unit.Target.transform.position);
                         _unit.MyTurn = 0;
+                        _unit.MyAgent.SetDestination(_unit.Target.transform.position);
                         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
                     }
                     else

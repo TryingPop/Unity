@@ -16,7 +16,7 @@ public class UnitAtkHold : UnitHold
         atkDis *= atkDis;
 
         if (_unit.Target != null
-            && _unit.Target.MyState != -1
+            && _unit.Target.MyState != STATE_SELECTABLE.DEAD
             && Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position) < atkDis)
         {
 

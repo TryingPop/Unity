@@ -8,11 +8,14 @@ public class UIBtn : MonoBehaviour,
     IInfoTxt, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
 
-    [SerializeField] private int stateNum;
+    // [SerializeField] private int stateNum;
     [SerializeField] private ButtonInfo btnInfo;
+    [SerializeField] private TYPE_INPUT key;
 
     [SerializeField] private Image myImg;
     [SerializeField] private RectTransform myRectTrans;
+
+    public TYPE_INPUT Key => key;
 
     public void Init(ButtonInfo _info, Vector2 _pos)
     {
@@ -25,7 +28,7 @@ public class UIBtn : MonoBehaviour,
     public void OnPointerClick(PointerEventData eventData)
     {
 
-        InputManager.instance.MyState = stateNum;
+        InputManager.instance.MyState = key;
         UIManager.instance.ExitInfo(TYPE_INFO.BTN);
     }
 

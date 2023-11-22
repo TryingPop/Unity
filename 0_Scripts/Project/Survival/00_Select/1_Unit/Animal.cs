@@ -62,15 +62,16 @@ public class Animal : Unit
                 {
 
                     targetPos = hit.position;
+                    MyState = STATE_SELECTABLE.UNIT_MOVE;
                 }
                 else
                 {
 
-                    num = 0;
+                    MyState = STATE_SELECTABLE.NONE;
                 }
             }
+            else MyState = STATE_SELECTABLE.NONE;
 
-            MyState = num;
             myStateAction.Changed(this);
         }
     }

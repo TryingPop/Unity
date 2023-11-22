@@ -43,7 +43,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         _atk = _atk < 0 ? 0 : _atk;
         curHp += _atk;
         if (curHp > MaxHp) curHp = MaxHp;
-        myHitBar.SetHp(curHp);
+        myHitBar.SetHp();
 
         // 현재 선택 중이면 해제한다!
         if (InputManager.instance.curGroup.Contains(this))
@@ -58,9 +58,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// </summary>
     public bool FullHp { get { return curHp == MaxHp; } }
 
-    public int MaxHp { get { return myStat.MaxHp + myTeam.AddedHp; } }
+    public int MaxHp { get { return myStat.MaxHp + myStat.GetAddHp(myTeam.lvlHp); } }
     public int CurHp => curHp;
-    public int Def { get { return myStat.Def + myTeam.AddedDef; } }
+    public int Def { get { return myStat.Def + myStat.GetAddDef(myTeam.lvlDef); } }
 
     /// <summary>
     /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
@@ -106,18 +106,18 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             if (value != null)
             {
 
-                value.Init(transform, MaxHp, myStat.HitBarPos);
-                value.SetHp(curHp);
+                value.Init(this, MaxHp, myStat.HitBarPos);
+                value.SetHp();
             }
             myHitBar = value; 
         }
     }
 
-    public virtual int MyState
+    public virtual STATE_SELECTABLE MyState
     {
 
-        get { return (int)myState; }
-        set { myState = (STATE_SELECTABLE)value; }
+        get { return myState; }
+        set { myState = value; }
     }
 
     public TeamInfo MyTeam => myTeam;
@@ -186,8 +186,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         else curHp -= _dmg < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg;
 
         if (curHp < 0) curHp = 0;
-        myHitBar.SetHp(curHp);
-
+        myHitBar.SetHp();
+        
         if (curHp == 0) Dead();
         else if (InputManager.instance.curGroup.Contains(this)) UIManager.instance.UpdateHp = true;
     }

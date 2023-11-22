@@ -14,7 +14,8 @@ public class HitBar : MonoBehaviour
 {
     
     [SerializeField] private Slider mySlider;               // 유닛 남은 체력 슬라이더
-    [SerializeField] private Transform target;              // 따라갈 타겟
+    [SerializeField] private Selectable target;             // 타겟
+    [SerializeField] private Transform targetTrans;         // 따라갈 타겟
     [SerializeField] private RectTransform myTrans;         // 나의 위치
     [SerializeField] private Image[] myImgs;                // 해제 시 안보일 이미지
     private Vector3 offset;                                 // 초기 캐릭으로부터 얼만큼 떨어져 있을건지
@@ -26,30 +27,30 @@ public class HitBar : MonoBehaviour
     public void SetPos()
     {
 
-        myTrans.position = target.position + offset;
+        myTrans.position = targetTrans.position + offset;
     }
 
     /// <summary>
     /// 초기화, 마찬가지로 풀링
     /// </summary>
-    public void Init(Transform _target, int _maxHp, int _ups)
+    public void Init(Selectable _target, int _maxHp, int _ups)
     {
 
         myImgs[0].enabled = true;
         myImgs[1].enabled = true;
         target = _target;
-        SetMaxHp(_maxHp);
+        targetTrans = _target.transform;
+        SetMaxHp();
         offset = Vector3.up * _ups;
     }
-
 
     /// <summary>
     /// Hp 조절
     /// </summary>
-    public void SetHp(int _curHp)
+    public void SetHp()
     {
 
-        mySlider.value = _curHp;
+        mySlider.value = target.CurHp;
     }
 
     /// <summary>
@@ -59,6 +60,8 @@ public class HitBar : MonoBehaviour
     {
 
         target = null;
+        targetTrans = null;
+        mySlider.value = 0;
         myImgs[0].enabled = false;
         myImgs[1].enabled = false;
     }
@@ -66,9 +69,9 @@ public class HitBar : MonoBehaviour
     /// <summary>
     /// 최대 Hp 설정
     /// </summary>
-    public void SetMaxHp(int _maxHp)
+    public void SetMaxHp()
     {
 
-        mySlider.maxValue = _maxHp;
+        mySlider.maxValue = target.MaxHp;
     }
 }

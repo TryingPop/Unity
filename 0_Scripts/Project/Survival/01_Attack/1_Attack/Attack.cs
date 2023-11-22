@@ -7,6 +7,13 @@ public abstract class Attack : ScriptableObject
 {
 
     public int atk;                             // 공격력
+    [SerializeField] protected int addedAtk;
+
+    public int GetAddAtk(int _upgrade)
+    {
+
+        return addedAtk * _upgrade;
+    }
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
     [SerializeField] protected ushort startAnimTime;                   // 애니메이션 시작 턴

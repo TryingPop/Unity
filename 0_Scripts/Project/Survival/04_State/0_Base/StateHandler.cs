@@ -29,11 +29,6 @@ public abstract class StateHandler<T> : ScriptableObject
             && 0 <= _idx) actions[_idx] = _action;
     }
 
-    /// <summary>
-    /// 해당 _idx가 사용가능한지 판별
-    /// 사용 불가능한 경우 -1 반환
-    /// </summary>
-    public abstract int GetIdx(int _idx);
 
     public int GetSize()
     {

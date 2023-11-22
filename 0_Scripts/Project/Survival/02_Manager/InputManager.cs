@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -119,17 +120,59 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public int MyState
+
+    public TYPE_INPUT IntToInput(int _num)
     {
 
-        set 
+        switch (_num)
+        {
+
+            case 0:
+                return TYPE_INPUT.NONE;
+
+            case 1:
+                return TYPE_INPUT.KEY_M;
+
+            case 2:
+                return TYPE_INPUT.KEY_S;
+
+            case 3:
+                return TYPE_INPUT.KEY_P;
+
+            case 4:
+                return TYPE_INPUT.KEY_H;
+
+            case 5:
+                return TYPE_INPUT.KEY_A;
+
+            case 6:
+                return TYPE_INPUT.KEY_Q;
+
+            case 7:
+                return TYPE_INPUT.KEY_W;
+
+            case 8:
+                return TYPE_INPUT.KEY_E;
+
+            case VarianceManager.MOUSE_R:
+                return TYPE_INPUT.MOUSE_R;
+
+            // -1 포함
+            default:
+                return TYPE_INPUT.CANCEL;
+        }
+    }
+    
+    public TYPE_INPUT MyState
+    {
+
+        get { return myState; }
+        set
         {
 
             if (GameManager.instance.IsStop) return;
-
-
             UIManager.instance.ExitInfo(TYPE_INFO.BTN);              // 켜져 있으면 끈다
-            
+
             if (!curGroup.IsCommandable)
             {
 
@@ -137,18 +180,26 @@ public class InputManager : MonoBehaviour
                 return;
             }
 
-            if (value == -1) 
-            { 
-                
+            if (value == TYPE_INPUT.CANCEL)
+            {
+
                 Cancel();
                 return;
             }
+
             if (ChkReturn(value)) return;
 
-            myState = (TYPE_INPUT)value;
+            myState = value;
             MyHandler.Changed(this);
         }
-        get { return (int)myState; }
+    }
+
+    public void SetKey(int _num)
+    {
+
+        // 변환
+        TYPE_INPUT key = IntToInput(_num);
+        MyState = key;
     }
 
     public STATE_SELECTABLE CmdType
@@ -191,17 +242,17 @@ public class InputManager : MonoBehaviour
         {
 
             // 아무상태도 아닐 때만 키입력이 가능하다!
-            if (Input.GetKeyDown(KeyCode.M)) MyState = (int)TYPE_INPUT.KEY_M;
-            else if (Input.GetKeyDown(KeyCode.S)) MyState = (int)TYPE_INPUT.KEY_S;
-            else if (Input.GetKeyDown(KeyCode.P)) MyState = (int)TYPE_INPUT.KEY_P;
-            else if (Input.GetKeyDown(KeyCode.H)) MyState = (int)TYPE_INPUT.KEY_H;
-            else if (Input.GetKeyDown(KeyCode.A)) MyState = (int)TYPE_INPUT.KEY_A;
-            else if (Input.GetKeyDown(KeyCode.Q)) MyState = (int)TYPE_INPUT.KEY_Q;
-            else if (Input.GetKeyDown(KeyCode.W)) MyState = (int)TYPE_INPUT.KEY_W;
-            else if (Input.GetKeyDown(KeyCode.E)) MyState = (int)TYPE_INPUT.KEY_E;
+            if (Input.GetKeyDown(KeyCode.M)) MyState = TYPE_INPUT.KEY_M;
+            else if (Input.GetKeyDown(KeyCode.S)) MyState = TYPE_INPUT.KEY_S;
+            else if (Input.GetKeyDown(KeyCode.P)) MyState = TYPE_INPUT.KEY_P;
+            else if (Input.GetKeyDown(KeyCode.H)) MyState = TYPE_INPUT.KEY_H;
+            else if (Input.GetKeyDown(KeyCode.A)) MyState = TYPE_INPUT.KEY_A;
+            else if (Input.GetKeyDown(KeyCode.Q)) MyState = TYPE_INPUT.KEY_Q;
+            else if (Input.GetKeyDown(KeyCode.W)) MyState = TYPE_INPUT.KEY_W;
+            else if (Input.GetKeyDown(KeyCode.E)) MyState = TYPE_INPUT.KEY_E;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape)) MyState = (int)TYPE_INPUT.CANCEL;
+        if (Input.GetKeyDown(KeyCode.Escape)) MyState = TYPE_INPUT.CANCEL;
 
         // 히트바는 바로 끄고 켠다!
         if (Input.GetKeyDown(KeyCode.LeftAlt))
@@ -252,13 +303,13 @@ public class InputManager : MonoBehaviour
         camMove.ScrollWheel = Input.GetAxis("Mouse ScrollWheel");
     }
 
-    private bool ChkReturn(int _key)
+    private bool ChkReturn(TYPE_INPUT _key)
     {
 
         if (curGroup.GetSize() == 0
-            || _key == 0
+            || _key == TYPE_INPUT.NONE
             || MyHandler == null
-            || MyHandler.Idxs[_key - 1] == -1)
+            || MyHandler.GetIdx(_key) == -1)
         {
 
             myState = TYPE_INPUT.NONE;

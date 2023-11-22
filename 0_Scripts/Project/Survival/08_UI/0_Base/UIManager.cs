@@ -36,6 +36,7 @@ public class UIManager : MonoBehaviour
     private bool updateResources = true;
     private bool updateHp = false;
     private bool activeAcquired = false;
+    private bool setMaxHp = false;
 
     private Coroutine readScript;
 
@@ -91,6 +92,23 @@ public class UIManager : MonoBehaviour
         set { updateHp = value; }
     }
 
+    public bool SetMaxHp
+    {
+
+        get
+        {
+
+            if (setMaxHp)
+            {
+
+                setMaxHp = false;
+                return true;
+            }
+
+            return false;
+        }
+        set { setMaxHp = value; }
+    }
 
 
     private void Awake()
@@ -155,6 +173,12 @@ public class UIManager : MonoBehaviour
         {
 
             hitbars.SetPos();
+
+            if (SetMaxHp)
+            {
+
+                hitbars.SetMaxHp();
+            }
         }
 
         if (activeWarning)
