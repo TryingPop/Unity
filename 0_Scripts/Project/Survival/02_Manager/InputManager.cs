@@ -121,48 +121,6 @@ public class InputManager : MonoBehaviour
     }
 
 
-    public TYPE_INPUT IntToInput(int _num)
-    {
-
-        switch (_num)
-        {
-
-            case 0:
-                return TYPE_INPUT.NONE;
-
-            case 1:
-                return TYPE_INPUT.KEY_M;
-
-            case 2:
-                return TYPE_INPUT.KEY_S;
-
-            case 3:
-                return TYPE_INPUT.KEY_P;
-
-            case 4:
-                return TYPE_INPUT.KEY_H;
-
-            case 5:
-                return TYPE_INPUT.KEY_A;
-
-            case 6:
-                return TYPE_INPUT.KEY_Q;
-
-            case 7:
-                return TYPE_INPUT.KEY_W;
-
-            case 8:
-                return TYPE_INPUT.KEY_E;
-
-            case VarianceManager.MOUSE_R:
-                return TYPE_INPUT.MOUSE_R;
-
-            // -1 포함
-            default:
-                return TYPE_INPUT.CANCEL;
-        }
-    }
-    
     public TYPE_INPUT MyState
     {
 
@@ -197,16 +155,12 @@ public class InputManager : MonoBehaviour
     public void SetKey(int _num)
     {
 
-        // 변환
-        TYPE_INPUT key = IntToInput(_num);
+        // 변환 gpt를 통해 물어보니 박싱, 가비지 생성 X
+        TYPE_INPUT key = (TYPE_INPUT)_num;
         MyState = key;
     }
 
-    public STATE_SELECTABLE CmdType
-    {
-
-        set { cmdType = value; }
-    }
+    public STATE_SELECTABLE CmdType { set { cmdType = value; } }
 
     public bool IsSubBtn => isSubBtn;
 
