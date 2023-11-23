@@ -10,9 +10,11 @@ public class CameraMovement : MonoBehaviour
     [SerializeField, Range(0f, 50f)]
     private float moveSpeed;
     [SerializeField, Range(0f, 50f)]
-    private float wheelSpeed;
+    private float scrollWheelSpeed;
 
     private Vector3 dir;            // 이동용
+
+    [SerializeField] private InputManager inputManager;
 
     [SerializeField] private Vector3 minBound;
     [SerializeField] private Vector3 maxBound;
@@ -21,66 +23,25 @@ public class CameraMovement : MonoBehaviour
 
     private float horizontal;
     private float vertical;
-
-    private float addHorizontal;
-    private float addVertical;
     private float scrollWheel;
-    public float AddHorizontal
+
+    public bool IsMove()
     {
 
-        set
-        {
+        ReadKey();
+        ChkMouseCamMove();
 
-            addHorizontal = value;
-            horizontal += addHorizontal;
-        }
+        return horizontal != 0f
+            || vertical != 0f
+            || scrollWheel != 0f;
     }
 
-    public float AddVertical
+    private void ReadKey()
     {
 
-        set
-        {
-
-            addVertical = value;
-            vertical += addVertical;
-        }
-    }
-
-    public float Horizontal
-    {
-
-        set
-        {
-
-            horizontal = value;
-        }
-    }
-
-    public float Vertical
-    {
-
-        set
-        {
-
-            vertical = value;
-        }
-    }
-
-    public float ScrollWheel { set { scrollWheel = value; } }
-
-    public bool IsMove
-    {
-
-        get
-        {
-
-            if (horizontal == 0
-                && vertical == 0
-                && scrollWheel == 0) return false;
-
-            return true;
-        }
+        horizontal = inputManager.HorizontalMove;
+        vertical = inputManager.VerticalMove;
+        scrollWheel = inputManager.MouseScrollWheel;
     }
 
     /// <summary>
@@ -90,12 +51,9 @@ public class CameraMovement : MonoBehaviour
     {
 
         Vector3 pos = transform.position;
-        // float x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime + pos.x;
-        // float z = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime + pos.z;
-        // float y = Input.GetAxis("Mouse ScrollWheel") * -wheelSpeed;
-        float x = horizontal * moveSpeed * Time.deltaTime + pos.x;
-        float z = vertical * moveSpeed * Time.deltaTime + pos.z;
-        float y = scrollWheel * -wheelSpeed;
+        float x = inputManager.HorizontalMove * moveSpeed * Time.deltaTime + pos.x;
+        float z = inputManager.VerticalMove * moveSpeed * Time.deltaTime + pos.z;
+        float y = scrollWheel * -scrollWheelSpeed;
 
         y = y + mainCam.m_Lens.FieldOfView;
         
@@ -105,10 +63,6 @@ public class CameraMovement : MonoBehaviour
         transform.position = dir;
 
         mainCam.m_Lens.FieldOfView = y;
-
-        horizontal = 0;
-        vertical = 0;
-        scrollWheel = 0f;
     }
 
     /// <summary>
@@ -125,17 +79,15 @@ public class CameraMovement : MonoBehaviour
     /// <summary>
     /// 마우스 가장자리 이동
     /// </summary>
-    public void ChkBoundaryCamMove()
+    private void ChkMouseCamMove()
     {
 
-        Vector2 pos = InputManager.instance.mousePos;
+        Vector2 pos = inputManager.MousePos;
         Vector2 bound = UIManager.instance.screenSize;
-        if (pos.x <= 10) AddHorizontal = -1f;
-        else if (pos.x >= bound.x - 10) AddHorizontal = 1f;
-        else AddHorizontal = 0f;
+        if (pos.x <= 10) horizontal -= 1f;
+        else if (pos.x >= bound.x - 10) horizontal += 1f;
 
-        if (pos.y <= 10) AddVertical = -1f;
-        else if (pos.y >= bound.y - 10) AddVertical = 1f;
-        else AddVertical = 0f;
+        if (pos.y <= 10) vertical -= 1f;
+        else if (pos.y >= bound.y - 10) vertical += 1f;
     }
 }

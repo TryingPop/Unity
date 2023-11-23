@@ -9,14 +9,14 @@ using UnityEngine;
 public class BtnDefault : ButtonInfo
 {
 
-    public override void OnEnter(InputManager _inputManager)
+    public override void OnEnter(PlayerManager _inputManager)
     {
 
         _inputManager.CmdType = cmdType;
         Action(_inputManager);
     }
 
-    public override void Action(InputManager _inputManager)
+    public override void Action(PlayerManager _inputManager)
     {
 
         _inputManager.GiveCmd();

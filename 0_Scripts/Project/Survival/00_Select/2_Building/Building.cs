@@ -176,7 +176,7 @@ public class Building : Selectable
 
 
             StartCoroutine(FinishedBuildCoroutine());
-            if (InputManager.instance.curGroup.Contains(this)) InputManager.instance.ChkUIs();
+            if (PlayerManager.instance.curGroup.Contains(this)) PlayerManager.instance.ChkUIs();
         }
         else
         {
@@ -198,7 +198,7 @@ public class Building : Selectable
         buildingObj.localPosition = pos;
         myHitBar.SetHp();
 
-        if (InputManager.instance.curGroup.Contains(this))
+        if (PlayerManager.instance.curGroup.Contains(this))
         {
 
             UIManager.instance.UpdateHp = true;

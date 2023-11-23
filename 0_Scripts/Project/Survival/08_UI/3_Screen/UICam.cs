@@ -23,13 +23,11 @@ public class UICam : MonoBehaviour,
         if (isRight)
         {
 
-            camMove.AddHorizontal = 1f;
             Debug.Log("isRight ¡¯¿‘");
         }
         else if (isLeft) 
         { 
             
-            camMove.AddHorizontal = -1f;
             Debug.Log("isLeft ¡¯¿‘");
         }
 
@@ -37,13 +35,11 @@ public class UICam : MonoBehaviour,
         if (isUp) 
         { 
         
-            camMove.AddVertical = 1f;
             Debug.Log("isUp ¡¯¿‘");
         }
         else if (isDown) 
         {
             
-            camMove.AddVertical = -1f;
             Debug.Log("isDown ¡¯¿‘");
         }
     }
@@ -54,26 +50,22 @@ public class UICam : MonoBehaviour,
         if (isRight)
         {
 
-            camMove.AddHorizontal = 0f;
             Debug.Log("isRight ≈ª√‚");
         }
         else if (isLeft) 
         { 
             
-            camMove.AddHorizontal = 0f;
             Debug.Log("isLeft ≈ª√‚");
         }
 
         if (isUp)
         {
 
-            camMove.AddVertical = 0f;
             Debug.Log("isUp ≈ª√‚");
         }
         else if (isDown)
         {
             
-            camMove.AddVertical = 0f;
             Debug.Log("isDown ≈ª√‚");
         }
     }

@@ -9,7 +9,7 @@ using UnityEngine;
 public class BtnTarget : BtnPos
 {
 
-    public override void Action(InputManager _inputManager)
+    public override void Action(PlayerManager _inputManager)
     {
 
         _inputManager.SavePointToRay(true, true);

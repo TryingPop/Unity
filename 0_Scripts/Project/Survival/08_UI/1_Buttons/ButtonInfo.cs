@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 버튼 정보
 /// </summary>
-public abstract class ButtonInfo : IAction<InputManager>
+public abstract class ButtonInfo : IAction<PlayerManager>
 {
 
     [SerializeField] protected TYPE_INPUT btnKey;
@@ -26,7 +26,7 @@ public abstract class ButtonInfo : IAction<InputManager>
     /// <summary>
     /// 외부에서는 강제 탈출할 때 사용하는 메서드
     /// </summary>
-    public virtual void OnExit(InputManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
+    public virtual void OnExit(PlayerManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
     {
 
         _inputManager.ActionDone(_nextKey);

@@ -6,35 +6,28 @@ public class SoundGroup : ScriptableObject
 {
 
     // 상태 값을 해당 인덱스로 변환
-    protected sbyte[] idxs = null;
 
-    public sbyte[] Idxs
+    protected Dictionary<STATE_SELECTABLE, int> myIdx;
+
+    public Dictionary<STATE_SELECTABLE, int> MyIdx
     {
 
         get
         {
 
-            if (idxs == null)
+            if (myIdx == null)
             {
 
-                idxs = new sbyte[VarianceManager.MAX_ACTIONS];
+                myIdx = new Dictionary<STATE_SELECTABLE, int>(sounds.Length);
 
-                for (int i = 0; i < idxs.Length; i++)
+                for (int i = 0; i < sounds.Length; i++)
                 {
 
-                    idxs[i] = -1;
-                }
-
-                for (sbyte i = 0; i < sounds.Length; i++)
-                {
-
-                    int idx = (int)sounds[i].type;
-                    idxs[idx] = i;
+                    myIdx[sounds[i].type] = i;
                 }
             }
 
-            return idxs;
-
+            return myIdx;
         }
     }
 
@@ -49,7 +42,7 @@ public class SoundGroup : ScriptableObject
     public AudioClip GetSound(STATE_SELECTABLE _state)
     {
 
-        int idx = Idxs[(int)_state];
+        int idx = MyIdx[_state];
         if (idx == -1) return null;
         return sounds[idx].sound;
     }

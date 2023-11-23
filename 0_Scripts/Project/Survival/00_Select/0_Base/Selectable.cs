@@ -46,7 +46,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         myHitBar.SetHp();
 
         // 현재 선택 중이면 해제한다!
-        if (InputManager.instance.curGroup.Contains(this))
+        if (PlayerManager.instance.curGroup.Contains(this))
         {
 
             UIManager.instance.UpdateHp = true;
@@ -189,7 +189,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         myHitBar.SetHp();
         
         if (curHp == 0) Dead();
-        else if (InputManager.instance.curGroup.Contains(this)) UIManager.instance.UpdateHp = true;
+        else if (PlayerManager.instance.curGroup.Contains(this)) UIManager.instance.UpdateHp = true;
     }
 
     /// <summary>
@@ -220,19 +220,19 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         gameObject.layer = VarianceManager.LAYER_DEAD;
 
         // 현재 선택 중이면 해제한다
-        if (InputManager.instance.curGroup.Contains(this))
+        if (PlayerManager.instance.curGroup.Contains(this))
         {
 
-            InputManager.instance.curGroup.DeSelect(this);
-            InputManager.instance.ChkUIs();
+            PlayerManager.instance.curGroup.DeSelect(this);
+            PlayerManager.instance.ChkUIs();
             // slot과 버튼 종료!
             UIManager.instance.ExitInfo(TYPE_INFO.ALL);
         }
         
-        if (InputManager.instance.curGroup.ContainsSavedGroup(this))
+        if (PlayerManager.instance.curGroup.ContainsSavedGroup(this))
         {
 
-            InputManager.instance.curGroup.DeselectSavedGroup(this);
+            PlayerManager.instance.curGroup.DeselectSavedGroup(this);
         }
 
         StartCoroutine(Disabled());

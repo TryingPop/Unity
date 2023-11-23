@@ -12,6 +12,7 @@ public class GameScreen : MonoBehaviour,
     [SerializeField] private RectTransform myRectTrans;
     
     [SerializeField] private float doubleClickInterval = 0.3f;    // 더블 클릭 간격
+    [SerializeField] private InputManager inputManager;
 
     private float clickTime = -1f;
     private bool chkSelect = false;
@@ -56,10 +57,10 @@ public class GameScreen : MonoBehaviour,
             // 클릭 지점 저장
             clickPos = eventData.position;
 
-            InputManager inputManager = InputManager.instance;
+            PlayerManager playerManager = PlayerManager.instance;
 
             // 키입력이 없는 상태로 클릭
-            if (inputManager.MyState == TYPE_INPUT.NONE)
+            if (playerManager.MyState == TYPE_INPUT.NONE)
             {
 
                 // 누른 위치 저장 및 드래그 준비
@@ -76,8 +77,8 @@ public class GameScreen : MonoBehaviour,
             {
 
                 // 키에 맞는 명령 수행하고 수행 후에는 선택 확인을 안한다!
-                inputManager.SavePos = clickPos;
-                inputManager.MyHandler.Action(inputManager);
+                playerManager.SavePos = clickPos;
+                playerManager.MyHandler.Action(playerManager);
                 chkSelect = false;
             }
         }
@@ -86,15 +87,15 @@ public class GameScreen : MonoBehaviour,
 
             if (GameManager.instance.IsStop) return;
 
-            InputManager inputManager = InputManager.instance;
+            PlayerManager playerManager = PlayerManager.instance;
 
-            if (inputManager.MyState == TYPE_INPUT.NONE)
+            if (playerManager.MyState == TYPE_INPUT.NONE)
             {
 
                 //명령 수행
-                inputManager.MouseRCmd(eventData.position);
+                playerManager.MouseRCmd(eventData.position);
             }
-            else inputManager.MyState = TYPE_INPUT.CANCEL;
+            else playerManager.MyState = TYPE_INPUT.CANCEL;
         }
     }
 
@@ -112,39 +113,39 @@ public class GameScreen : MonoBehaviour,
                 // 유닛 선택인지 확인
                 Vector2 nowPos = eventData.position;
 
-                InputManager inputManager = InputManager.instance;
+                PlayerManager playerManager = PlayerManager.instance;
 
                 // 드래그 셀렉트 먼저 판별
                 if (Vector2.SqrMagnitude(clickPos - nowPos) < 100f)
                 {
 
                     // 그냥 선택 or 더블클릭 선택 확인
-                    inputManager.SavePos = eventData.position;
+                    playerManager.SavePos = eventData.position;
 
-                    inputManager.SavePointToRay(false, true);
+                    playerManager.SavePointToRay(false, true);
 
-                    if (inputManager.CmdTargetIsCommandable
+                    if (playerManager.CmdTargetIsCommandable
                         && (chkDoubleClick 
                         || Input.GetKey(KeyCode.LeftControl)))
                     {
 
                         // 0.3초안에 두번 눌렀으면 더블클릭 인정
                         // 화면 범위 안에 같은 유닛을 선택한다
-                        inputManager.DoubleClickSelect(ref myRightTop, ref myLeftBottom);
+                        playerManager.DoubleClickSelect(ref myRightTop, ref myLeftBottom);
                         chkDoubleClick = false;
                     }
                     else
                     {
 
-                        inputManager.ClickSelect();
-                        if (inputManager.CmdTargetIsCommandable) clickTime = Time.time;
+                        playerManager.ClickSelect();
+                        if (playerManager.CmdTargetIsCommandable) clickTime = Time.time;
                     }
                 }
                 // 드래그 선택
                 else 
                 {
 
-                    inputManager.DragSelect(ref clickPos, ref nowPos); 
+                    playerManager.DragSelect(ref clickPos, ref nowPos); 
                 }
 
                 chkSelect = false;
@@ -162,12 +163,7 @@ public class GameScreen : MonoBehaviour,
     public void OnGUI()
     {
 
-        if (chkSelect)
-        {
-
-            Vector2 nowPos = InputManager.instance.mousePos;
-            DrawRect.DrawDragScreenRect(clickPos, nowPos);
-        }
+        if (chkSelect) DrawRect.DrawDragScreenRect(clickPos, inputManager.MousePos);
     }
 
 }

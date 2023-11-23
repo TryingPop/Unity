@@ -28,7 +28,7 @@ public class UIBtn : MonoBehaviour,
     public void OnPointerClick(PointerEventData eventData)
     {
 
-        InputManager.instance.MyState = key;
+        PlayerManager.instance.MyState = key;
         UIManager.instance.ExitInfo(TYPE_INFO.BTN);
     }
 

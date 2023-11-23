@@ -34,7 +34,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
         }
     }
 
-    public void Action(InputManager _selectManager)
+    public void Action(PlayerManager _selectManager)
     {
 
         int idx = GetIdx(_selectManager.MyState);
@@ -44,7 +44,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
     /// <summary>
     /// 즉발형 확인
     /// </summary>
-    public void Changed(InputManager _selectManager)
+    public void Changed(PlayerManager _selectManager)
     {
 
         int idx = GetIdx(_selectManager.MyState);
@@ -54,7 +54,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
     /// <summary>
     /// 강제 종료
     /// </summary>
-    public void ForcedQuit(InputManager _selectManager)
+    public void ForcedQuit(PlayerManager _selectManager)
     {
 
         int idx = GetIdx(_selectManager.MyState);

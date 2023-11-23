@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
     [Header("코드")]
+    [SerializeField] private InputManager inputManager;
     [SerializeField] private UIInfo info;                   // 설명
     [SerializeField] private UIResources resources;         // 자원
     [SerializeField] private UIButton btns;                 // 버튼들
@@ -143,9 +144,9 @@ public class UIManager : MonoBehaviour
     public void LateUpdate()
     {
 
-        camMove.ChkBoundaryCamMove();
+        ReadKey();
 
-        if (camMove.IsMove) 
+        if (camMove.IsMove()) 
         { 
             
             camMove.Move(); 
@@ -226,6 +227,19 @@ public class UIManager : MonoBehaviour
 
         selects.SetPos();
 
+    }
+
+    private void ReadKey()
+    {
+
+        ReadHitBarKey();
+    }
+
+
+    private void ReadHitBarKey()
+    {
+
+        if (inputManager.ActiveHitBar) ActiveHitBar = !activeHitBar;
     }
 
     /// <summary>

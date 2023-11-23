@@ -9,14 +9,14 @@ using UnityEngine;
 public class BtnPos : ButtonInfo
 {
 
-    public override void OnEnter(InputManager _inputManager)
+    public override void OnEnter(PlayerManager _inputManager)
     {
 
         _inputManager.CmdType = cmdType;
         _inputManager.ActiveBtns(false, false, true);
     }
 
-    public override void Action(InputManager _inputManager)
+    public override void Action(PlayerManager _inputManager)
     {
 
         // 마우스 버튼을 누를 때 반응한다

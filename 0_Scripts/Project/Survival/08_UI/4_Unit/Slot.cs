@@ -59,8 +59,8 @@ public class Slot : MonoBehaviour,
         if (eventData.button == PointerEventData.InputButton.Left)
         {
 
-            if (Input.GetKey(KeyCode.LeftControl)) InputManager.instance.UIGroupSelect(target);
-            else InputManager.instance.UISelect(target);
+            if (Input.GetKey(KeyCode.LeftControl)) PlayerManager.instance.UIGroupSelect(target);
+            else PlayerManager.instance.UISelect(target);
 
             UIManager.instance.ExitInfo(TYPE_INFO.SLOT);
         }
