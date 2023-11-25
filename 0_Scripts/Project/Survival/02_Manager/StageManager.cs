@@ -25,7 +25,7 @@ public class StageManager : MonoBehaviour
         else
         {
 
-            stage = -1;
+            stage = 0;
         }
 
         int len = Mathf.Min(stage, lockedStages.Length);

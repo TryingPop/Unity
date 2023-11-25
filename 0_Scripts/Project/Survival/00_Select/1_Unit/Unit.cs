@@ -30,6 +30,7 @@ public class Unit : Selectable
     
     [Header("값 변수")]
     [SerializeField] protected bool stateChange;                    // 행동 변화 감지
+    [SerializeField] protected bool onlyReserveCmd = false;         // 탈출 불가능한 행동인지 판별
     [SerializeField] protected short maxMp; 
     protected short curMp;
     // protected int atk;
@@ -96,6 +97,8 @@ public class Unit : Selectable
             myTurn = (ushort)value;
         }
     }
+
+    public bool OnlyReserveCmd { set { onlyReserveCmd = value; } }
 
     #endregion 프로퍼티
 
@@ -344,7 +347,7 @@ public class Unit : Selectable
                 cmds.Dequeue().Canceled();
             }
 
-            ActionDone();
+            if (!onlyReserveCmd) ActionDone();
         } 
         // 대기상태에서 shift로 명령을 넣었을 경우
         else if (myState == STATE_SELECTABLE.NONE)

@@ -126,7 +126,7 @@ public class GameScreen : MonoBehaviour,
 
                     if (playerManager.CmdTargetIsCommandable
                         && (chkDoubleClick 
-                        || Input.GetKey(KeyCode.LeftControl)))
+                        || inputManager.GroupKey))
                     {
 
                         // 0.3초안에 두번 눌렀으면 더블클릭 인정

@@ -68,6 +68,7 @@ public class BossShot : ISkillAction
         if (_unit.MyTurn == 0)
         {
 
+            _unit.OnlyReserveCmd = false;
             OnExit(_unit);
         }
     }
@@ -89,5 +90,6 @@ public class BossShot : ISkillAction
         _unit.transform.LookAt(_unit.TargetPos);
 
         _unit.MyTurn = 0;
+        _unit.OnlyReserveCmd = true;
     }
 }

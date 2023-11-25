@@ -5,7 +5,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
 
-    private TYPE_INPUT commandKey;
+    private TYPE_INPUT cmdKey;
     private Vector2 mousePos;
 
     private float horizontalMove;
@@ -16,8 +16,10 @@ public class InputManager : MonoBehaviour
     private bool activeHitBar = false;
     private bool groupKey = false;
     private bool addKey = false;
+    private bool isCmdKey = false;
+    public TYPE_INPUT CmdKey => cmdKey;
+    public bool IsCmdKey => isCmdKey;
 
-    public TYPE_INPUT CommandKey => commandKey;
     public Vector2 MousePos => mousePos;
 
     public float HorizontalMove => horizontalMove;
@@ -26,7 +28,7 @@ public class InputManager : MonoBehaviour
 
     public bool ActiveHitBar => activeHitBar;
     public bool GroupKey => groupKey;
-    public bool AddKeye => addKey;
+    public bool AddKey => addKey;
 
     public bool IsSaveGroup => saveGroup != -1;
     public int SaveGroup => saveGroup;
@@ -43,16 +45,17 @@ public class InputManager : MonoBehaviour
     private void SetCommandKey()
     {
 
-        if (Input.GetKeyDown(KeyCode.M)) commandKey = TYPE_INPUT.KEY_M;
-        else if (Input.GetKeyDown(KeyCode.S)) commandKey = TYPE_INPUT.KEY_S;
-        else if (Input.GetKeyDown(KeyCode.P)) commandKey = TYPE_INPUT.KEY_P;
-        else if (Input.GetKeyDown(KeyCode.H)) commandKey = TYPE_INPUT.KEY_H;
-        else if (Input.GetKeyDown(KeyCode.A)) commandKey = TYPE_INPUT.KEY_A;
-        else if (Input.GetKeyDown(KeyCode.Q)) commandKey = TYPE_INPUT.KEY_Q;
-        else if (Input.GetKeyDown(KeyCode.W)) commandKey = TYPE_INPUT.KEY_W;
-        else if (Input.GetKeyDown(KeyCode.E)) commandKey = TYPE_INPUT.KEY_E;
-        else if (Input.GetKeyDown(KeyCode.Escape)) commandKey = TYPE_INPUT.CANCEL;
-        else commandKey = TYPE_INPUT.NONE;
+        isCmdKey = true;
+        if (Input.GetKeyDown(KeyCode.M)) cmdKey = TYPE_INPUT.KEY_M;
+        else if (Input.GetKeyDown(KeyCode.S)) cmdKey = TYPE_INPUT.KEY_S;
+        else if (Input.GetKeyDown(KeyCode.P)) cmdKey = TYPE_INPUT.KEY_P;
+        else if (Input.GetKeyDown(KeyCode.H)) cmdKey = TYPE_INPUT.KEY_H;
+        else if (Input.GetKeyDown(KeyCode.A)) cmdKey = TYPE_INPUT.KEY_A;
+        else if (Input.GetKeyDown(KeyCode.Q)) cmdKey = TYPE_INPUT.KEY_Q;
+        else if (Input.GetKeyDown(KeyCode.W)) cmdKey = TYPE_INPUT.KEY_W;
+        else if (Input.GetKeyDown(KeyCode.E)) cmdKey = TYPE_INPUT.KEY_E;
+        else if (Input.GetKeyDown(KeyCode.Escape)) cmdKey = TYPE_INPUT.CANCEL;
+        else isCmdKey = false;
     }
 
     private void SetCamKeys()

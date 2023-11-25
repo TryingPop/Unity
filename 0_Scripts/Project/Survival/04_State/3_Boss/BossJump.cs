@@ -54,8 +54,11 @@ public class BossJump : ISkillAction
         if (_unit.MyTurn == 0)
         {
 
+            // 점프 완료로 탈출
             _unit.MyRigid.velocity = Vector3.zero;
             _unit.MyAgent.enabled = true;
+
+            _unit.OnlyReserveCmd = false;
             OnExit(_unit);
         }
         else if (_unit.MyTurn >= startAnimTime)
@@ -114,8 +117,7 @@ public class BossJump : ISkillAction
 
         _unit.transform.LookAt(_unit.TargetPos);
 
-        // 초기값 세팅!
-        // _unit.MyAttacks[skillNum].IsAtk = true;     // 쿨타임 초기화!
         _unit.MyTurn = 0;
+        _unit.OnlyReserveCmd = true;
     }
 }

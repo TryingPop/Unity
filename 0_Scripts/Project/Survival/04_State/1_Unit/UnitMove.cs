@@ -27,9 +27,8 @@ public class UnitMove : IUnitAction
                 }
                 else
                 {
-                    // 대상으로 이동
+
                     _unit.TargetPos = _unit.Target.transform.position;
-                    // 이거 수정해야한다
                     _unit.MyAgent.SetDestination(_unit.TargetPos);
                     _unit.MyTurn = 0;
                 }

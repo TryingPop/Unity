@@ -91,8 +91,6 @@ public enum TYPE_INPUT
 
     CANCEL = -1,
     NONE = 0, KEY_M, KEY_S, KEY_P, KEY_H, KEY_A, KEY_Q, KEY_W, KEY_E,
-    MOUSE_R = VarianceManager.MOUSE_R,
-
 }
 
 public enum STATE_GAME

@@ -9,13 +9,10 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager instance;
 
     public SelectedGroup curGroup;
-    public SelectedUI selectedUI;
+    [SerializeField] private SelectedUI selectedUI;
     
     [SerializeField] private Camera mainCam;                // 월드맵 캠
-
     [SerializeField] private UnitSlots unitSlots;
-    // [SerializeField] private CameraMovement camMove;
-
     [SerializeField] private InputManager inputManager;
 
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
@@ -33,8 +30,6 @@ public class PlayerManager : MonoBehaviour
     private ButtonHandler subHandler;
     private bool isSubBtn;
     
-    // public Vector2 mousePos;
-
     // 명령용 
     private Vector2 savePos;
     private Vector3 cmdPos;
@@ -132,7 +127,6 @@ public class PlayerManager : MonoBehaviour
 
             if (GameManager.instance.IsStop) return;
 
-            UIManager.instance.ExitInfo(TYPE_INFO.BTN);              // 켜져 있으면 끈다
 
             if (!curGroup.IsCommandable)
             {
@@ -144,6 +138,7 @@ public class PlayerManager : MonoBehaviour
             if (value == TYPE_INPUT.CANCEL)
             {
 
+                UIManager.instance.ExitInfo(TYPE_INFO.BTN);
                 Cancel();
                 return;
             }
@@ -152,6 +147,7 @@ public class PlayerManager : MonoBehaviour
 
             myState = value;
             MyHandler.Changed(this);
+            UIManager.instance.ExitInfo(TYPE_INFO.BTN);              // 켜져 있으면 끈다
         }
     }
 
@@ -195,13 +191,8 @@ public class PlayerManager : MonoBehaviour
 
     private void ReadCommandKey()
     {
-
-        var key = inputManager.CommandKey;
-
-        if (key == TYPE_INPUT.NONE) return;
-
-        if (key == TYPE_INPUT.CANCEL) MyState = key;
-        else if (myState == TYPE_INPUT.NONE) MyState = key;
+        if (!inputManager.IsCmdKey) return;
+        MyState = inputManager.CmdKey;
     }
 
     private void ReadGroupKey()
@@ -214,19 +205,15 @@ public class PlayerManager : MonoBehaviour
     {
 
         if (curGroup.GetSize() == 0
-            || _key == TYPE_INPUT.NONE
             || MyHandler == null
             || MyHandler.GetIdx(_key) == -1)
         {
 
+            // 버튼에 등록안된 키
             myState = TYPE_INPUT.NONE;
             return true;
         }
-        else if (myState != TYPE_INPUT.NONE)
-        {
-
-            return true;
-        }
+        else if (myState != TYPE_INPUT.NONE) return true;
 
         return false;
     }
@@ -255,11 +242,9 @@ public class PlayerManager : MonoBehaviour
         { 
             
             mainHandler?.ForcedQuit(this);
-            if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, Input.GetKey(KeyCode.LeftShift));
+            if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, inputManager.AddKey);
             ActiveBtns(true, false, false);
         }
-
-        // 취소 버튼이 활성화 되어져 있는 경우 취소 명령을 보낸다
     }
 
     /// <summary>
@@ -309,26 +294,16 @@ public class PlayerManager : MonoBehaviour
     public void GiveCmd(bool _usePos = false, bool _useTarget = false, int _num = -1)
     {
 
-        bool add = Input.GetKey(KeyCode.LeftShift);
+        bool add = inputManager.AddKey;
+        // 좌표 사용 여부 확인
         if (_usePos)
         {
 
-            if (_useTarget)
-            {
-
-                curGroup.GiveCommand(cmdType, cmdPos, cmdTarget, add, _num);
-            }
-            else
-            {
-
-                curGroup.GiveCommand(cmdType, cmdPos, null, add, _num);
-            }
+            
+            if (_useTarget) curGroup.GiveCommand(cmdType, cmdPos, cmdTarget, add, _num);
+            else curGroup.GiveCommand(cmdType, cmdPos, null, add, _num);
         }
-        else
-        {
-
-            curGroup.GiveCommand(cmdType, add, _num);
-        }
+        else curGroup.GiveCommand(cmdType, add, _num);
 
         ResetCmd();
     }
@@ -340,10 +315,9 @@ public class PlayerManager : MonoBehaviour
     {
 
         cmdType = STATE_SELECTABLE.NONE;
-        cmdPos.Set(0f, 100f, 0f);
+        cmdPos.Set(0f, -100f, 0f);
         cmdTarget = null;
         myState = TYPE_INPUT.NONE;
-        // ActiveButtonUI(true, false, curGroup.IsCancelBtn);
         ActiveBtns(true, false, false);
     }
 
@@ -365,8 +339,8 @@ public class PlayerManager : MonoBehaviour
     public void GiveCmd(Vector3 _pos, Selectable _target = null, int _num = -1)
     {
 
-        curGroup.GiveCommand(cmdType, _pos, _target, Input.GetKey(KeyCode.LeftShift));
-        MyHandler?.ForcedQuit(this);
+        curGroup.GiveCommand(cmdType, _pos, _target, inputManager.AddKey);
+        if (MyHandler != null) MyHandler.ForcedQuit(this);
         ResetCmd();
     }
 
@@ -376,13 +350,6 @@ public class PlayerManager : MonoBehaviour
     public void SaveGroup(int _idx)
     {
 
-/*
-#if UNITY_EDITOR
-        if (Input.GetKey(KeyCode.Z))
-#else
-        if (Input.GetKey(KeyCode.LeftControl))
-#endif
-*/
         if (inputManager.GroupKey)
         {
 
@@ -402,7 +369,7 @@ public class PlayerManager : MonoBehaviour
     public void ClickSelect()
     {
 
-        bool add = Input.GetKey(KeyCode.LeftShift);
+        bool add = inputManager.AddKey;
 
         // 추가가 아닌 경우
         if (!add) curGroup.SelectOne(cmdTarget);
@@ -435,7 +402,7 @@ public class PlayerManager : MonoBehaviour
         ChkBox(ref startPos, ref endPos, out Vector3 center, out Vector3 half);
 
         // 추가인지 여부 판별
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (inputManager.AddKey)
         {
 
             curGroup.AddDragSelect(ref center, ref half);
@@ -464,7 +431,7 @@ public class PlayerManager : MonoBehaviour
             || IsInValidPos(ref leftBottom)) return;
 
         ChkBox(ref rightTop, ref leftBottom, out Vector3 center, out Vector3 half);
-        if (!Input.GetKey(KeyCode.LeftShift)) curGroup.Clear();
+        if (!inputManager.AddKey) curGroup.Clear();
         curGroup.DoubleClickSelect(ref center, ref half, cmdTarget.MyStat.SelectIdx);
         ChkUIs();
     }
@@ -473,7 +440,7 @@ public class PlayerManager : MonoBehaviour
     public void UISelect(Selectable _select)
     {
 
-        bool deselect = Input.GetKey(KeyCode.LeftShift);
+        bool deselect = inputManager.AddKey;
 
         if (deselect)
         {
@@ -492,7 +459,7 @@ public class PlayerManager : MonoBehaviour
     public void UIGroupSelect(Selectable _select)
     {
 
-        bool deselect = Input.GetKey(KeyCode.LeftShift);
+        bool deselect = inputManager.AddKey;
 
         if (deselect)
         {
@@ -550,7 +517,6 @@ public class PlayerManager : MonoBehaviour
         MainHandler = btns.GetHandler(curGroup.GroupType, curGroup.IsCommandable);
 
         // 유닛 슬롯 초기화
-        // unitSlots.Init();
         unitSlots.IsChanged = true;
 
         // 스크린의 ui 초기화
@@ -558,7 +524,6 @@ public class PlayerManager : MonoBehaviour
 
         // 버튼 활성화 수정
         ActiveBtns(true, false, curGroup.IsCancelBtn);
-
         UIManager.instance.ExitInfo(TYPE_INFO.ALL);
     }
 

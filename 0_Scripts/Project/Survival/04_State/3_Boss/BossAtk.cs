@@ -23,19 +23,15 @@ public class BossAtk : IUnitAction
 
             float dis = Vector3.Distance(_unit.transform.position, _unit.Target.transform.position);
 
-            // Attack unitAttack = _unit.MyAttacks[0];
             Attack unitAttack = _unit.MyAttack;
 
             if (dis < unitAttack.atkRange)
             {
 
-                // if (!unitAttack.IsAtk)
                 if (_unit.MyTurn == 0)
                 {
 
                     _unit.MyTurn++;
-                    // unitAttack.IsAtk = true;
-                    // unitAttack.Target = _unit.Target.GetComponent<Selectable>();
                     _unit.transform.LookAt(_unit.Target.transform.position);
                     if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
                 }
@@ -43,21 +39,17 @@ public class BossAtk : IUnitAction
                 {
 
                     _unit.MyTurn++;
-                    // unitAttack.CoolTime++;
-                    // if (unitAttack.CoolTime == unitAttack.StartAnimTime)
                     if (_unit.MyTurn == unitAttack.StartAnimTime)
                     {
 
                         _unit.MyAnimator.SetTrigger("Skill0");
                     }
 
-                    // if (unitAttack.CoolTime == (unitAttack.AtkTime / 2 < 1 ? 1 : unitAttack.AtkTime / 2))
                     if (_unit.MyTurn == (unitAttack.AtkTime / 2 < 1 ? 1 : unitAttack.AtkTime / 2))
                     {
 
                         unitAttack.OnAttack(_unit);
                     }
-                    // else if (unitAttack.CoolTime > unitAttack.AtkTime)
                     else if (_unit.MyTurn > unitAttack.AtkTime)
                     {
 
@@ -79,7 +71,6 @@ public class BossAtk : IUnitAction
     {
 
         _unit.MyTurn = 0;
-        // _unit.MyAttacks[0].IsAtk = false;
         _unit.MyAgent.ResetPath();
     }
 
@@ -87,7 +78,6 @@ public class BossAtk : IUnitAction
     {
 
         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
-        // _unit.MyAttacks[0].IsAtk = false;
         base.OnExit(_unit, _nextState);
     }
 }
