@@ -29,14 +29,14 @@ public class UnitAtkHold : UnitHold
             if (_unit.MyTurn != 0)
             {
 
-                _unit.MyTurn++;
+                int turn = ++_unit.MyTurn;
 
-                if (_unit.MyTurn == unitAttack.StartAnimTime)
+                if (unitAttack.StartAnimTime(turn))
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
                 }
-                else if (_unit.MyTurn > unitAttack.AtkTime)
+                else if (unitAttack.AtkTime(turn) != 1)
                 {
 
                     _unit.MyTurn = 0;

@@ -70,14 +70,15 @@ public class UnitAtk : IUnitAction
                 {
 
                     // 공격 시작하면 공격을 한다
-                    if (_unit.MyTurn == unitAttack.StartAnimTime)
+
+                    int turn = ++_unit.MyTurn;
+                    if (unitAttack.StartAnimTime(turn))
                     {
 
                         _unit.MyAnimator.SetTrigger($"Skill0");
-                        _unit.MyTurn++;
                         _unit.transform.LookAt(_unit.Target.transform.position);
                     }
-                    else if (_unit.MyTurn > unitAttack.AtkTime)
+                    else if (unitAttack.AtkTime(turn) != 1)
                     {
 
                         _unit.MyTurn = 0;

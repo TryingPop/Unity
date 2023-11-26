@@ -10,7 +10,15 @@ public class RangeDouble : RangeTarget
 {
 
     [SerializeField] protected Vector3 nextOffset;
+    [SerializeField] protected int nextAtk;
 
+    public override int AtkTime(int _chk)
+    {
+
+        if (_chk == atkTime) return -1;
+        else if (_chk >= nextAtk) return 0;
+        else return 1;
+    }
 
     public override void OnAttack(Unit _unit)
     {

@@ -21,11 +21,13 @@ public class BossAtk : IUnitAction
         if (_unit.Target.gameObject.activeSelf && _unit.Target.gameObject.layer != VarianceManager.LAYER_DEAD)
         {
 
-            float dis = Vector3.Distance(_unit.transform.position, _unit.Target.transform.position);
+            float dis = Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position);
 
             Attack unitAttack = _unit.MyAttack;
 
-            if (dis < unitAttack.atkRange)
+            float atkDis = unitAttack.atkRange + (_unit.MyStat.MySize * 0.5f);
+            atkDis *= atkDis;
+            if (dis < atkDis)
             {
 
                 if (_unit.MyTurn == 0)
@@ -38,23 +40,25 @@ public class BossAtk : IUnitAction
                 else
                 {
 
-                    _unit.MyTurn++;
-                    if (_unit.MyTurn == unitAttack.StartAnimTime)
+                    int turn = ++_unit.MyTurn;
+                    if (unitAttack.StartAnimTime(turn))
                     {
 
                         _unit.MyAnimator.SetTrigger("Skill0");
                     }
 
-                    if (_unit.MyTurn == (unitAttack.AtkTime / 2 < 1 ? 1 : unitAttack.AtkTime / 2))
-                    {
+                    int chkAtk = unitAttack.AtkTime(turn);
 
-                        unitAttack.OnAttack(_unit);
-                    }
-                    else if (_unit.MyTurn > unitAttack.AtkTime)
+                    if (chkAtk == 0)
                     {
 
                         unitAttack.OnAttack(_unit);
                         _unit.MyTurn = 0;
+                    }
+                    else if (chkAtk == -1)
+                    {
+
+                        unitAttack.OnAttack(_unit);
                     }
                 }
 

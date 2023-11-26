@@ -20,7 +20,7 @@ public class BossShotMissile : Missile
     protected bool isMove = false;                  // ¿¬»ê¿ë
 
     protected int atk;
-    protected float moveSpeed;
+    [SerializeField] protected float moveSpeed;
 
     [SerializeField] protected LayerMask targetLayer;
     [SerializeField] protected MissileRotation myRotation;
@@ -71,17 +71,19 @@ public class BossShotMissile : Missile
         atk = _atk;
 
         Vector3 destination = _atker.TargetPos;
+        transform.LookAt(destination);
+
+        destination -= transform.position;
         destination.y = 0;
-        dir = destination.normalized;
+        dir = (destination).normalized;
 
         targetLayer = _atker.MyTeam.EnemyLayer;
 
-        transform.LookAt(destination + transform.position);
 
         calcTurn = 0;
         isMove = false;
         myCollider.isTrigger = false;
-        myRigid.isKinematic = false;
+        myRigid.useGravity = true;
         engageParticle.SetActive(true);
 
         ActionManager.instance.AddMissile(this);
@@ -104,7 +106,7 @@ public class BossShotMissile : Missile
                 isMove = true;
                 calcTurn = 0;
                 myCollider.isTrigger = true;
-                myRigid.isKinematic = true;
+                myRigid.useGravity = false;
             }
             else
             {
@@ -118,7 +120,8 @@ public class BossShotMissile : Missile
             if (calcTurn <= moveTurn)
             {
 
-                myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
+                // myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
+                myRigid.velocity = dir * moveSpeed;
             }
             else
             {
@@ -144,7 +147,7 @@ public class BossShotMissile : Missile
     protected override void TargetAttack()
     {
 
-        // target.OnDamaged(atk);
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -167,6 +170,16 @@ public class BossShotMissile : Missile
                     target.OnDamaged(atk);
                 }
             }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        
+        if (other.CompareTag("Ground"))
+        {
+
+            Used();
         }
     }
 }

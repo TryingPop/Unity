@@ -53,18 +53,16 @@ public class UnitRepair : IUnitAction
             else
             {
 
-                // if (unitAttack.CoolTime == unitAttack.StartAnimTime)
-                if (_unit.MyTurn == unitAttack.StartAnimTime)
+                int turn = ++_unit.MyTurn;
+
+                if (unitAttack.StartAnimTime(turn))
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
-                    _unit.MyTurn++;
                 }
-                // else if (unitAttack.CoolTime > unitAttack.AtkTime)
-                else if (_unit.MyTurn > unitAttack.AtkTime)
+                else if (unitAttack.AtkTime(turn) != 1)
                 {
 
-                    // unitAttack.CoolTime = 0;
                     _unit.MyTurn = 0;
                     if (targetState != STATE_SELECTABLE.BUILDING_UNFINISHED) unitAttack.OnAttack(_unit);
                 }

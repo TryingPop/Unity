@@ -16,8 +16,8 @@ public abstract class Attack : ScriptableObject
     }
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
-    [SerializeField] protected ushort startAnimTime;                   // 애니메이션 시작 턴
-    [SerializeField] protected ushort atkTime;                         // 데미지 연산 시작 턴
+    [SerializeField] protected int startAnimTime;                   // 애니메이션 시작 턴
+    [SerializeField] protected int atkTime;                         // 데미지 연산 시작 턴
 
     public float atkRange;                      // 공격 범위
     public float chaseRange;
@@ -30,51 +30,32 @@ public abstract class Attack : ScriptableObject
     protected virtual void Init(int _atkTime, int _animTime, float _atkRange, float _chaseRange)
     {
 
-        AtkTime = (ushort)_atkTime;
-        StartAnimTime = (ushort)_animTime;
+        atkTime = _atkTime < 1 ? 1 : _atkTime;
+        startAnimTime = _animTime < 1 ? 1 : _animTime;
 
         atkRange = _atkRange;
         chaseRange = _chaseRange;
     }
 
     /// <summary>
-    /// 공격 타이밍
+    /// 공격 타이밍 판단 메서드,
+    /// 반환 값이 1 : 아직 공격할 타이밍이 아니다, 0 : 공격할 타이밍, -1 : 공격할 타이밍이긴 한데, 값 초기화는 X
     /// </summary>
-    public int AtkTime
+    public virtual int AtkTime(int _chk)
     {
 
-        get 
-        {
-
-            if (atkTime < 1) atkTime = 1;
-            return atkTime; 
-        }
-        set
-        {
-
-            value = value <= 1 ? 1 : value;
-            atkTime = (ushort)value;
-        }
+        if (atkTime <= _chk) return 1;
+        else return -1;
     }
 
     /// <summary>
     /// 애니메이션 시작 타이밍
     /// </summary>
-    public int StartAnimTime
+    public bool StartAnimTime(int _chk)
     {
 
-        get 
-        {
-
-            if (startAnimTime < 1) startAnimTime = 1;
-            return startAnimTime; 
-        }
-        set
-        {
-
-            value = value <= 1 ? 1 : value;
-            startAnimTime = value > atkTime ? atkTime : (ushort)value;
-        }
+        if (startAnimTime == _chk) return true;
+        else return false;
     }
 
     /// <summary>
