@@ -53,12 +53,12 @@ public class BossAtk : IUnitAction
                     {
 
                         unitAttack.OnAttack(_unit);
-                        _unit.MyTurn = 0;
                     }
-                    else if (chkAtk == -1)
+                    else if (chkAtk == 1)
                     {
 
                         unitAttack.OnAttack(_unit);
+                        _unit.MyTurn = 0;
                     }
                 }
 

@@ -39,7 +39,7 @@ public abstract class Attack : ScriptableObject
 
     /// <summary>
     /// 공격 타이밍 판단 메서드,
-    /// 반환 값이 1 : 아직 공격할 타이밍이 아니다, 0 : 공격할 타이밍, -1 : 공격할 타이밍이긴 한데, 값 초기화는 X
+    /// 반환 값이 1 : 공격할 타이밍, 0 : 공격할 타이밍인데 값 초기화 X, -1 : 아직 공격할 타이밍 X
     /// </summary>
     public virtual int AtkTime(int _chk)
     {

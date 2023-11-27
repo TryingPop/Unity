@@ -15,9 +15,9 @@ public class RangeDouble : RangeTarget
     public override int AtkTime(int _chk)
     {
 
-        if (_chk == atkTime) return -1;
-        else if (_chk >= nextAtk) return 0;
-        else return 1;
+        if (_chk == atkTime) return 0;
+        else if (_chk >= nextAtk) return 1;
+        else return -1;
     }
 
     public override void OnAttack(Unit _unit)

@@ -78,7 +78,7 @@ public class UnitAtk : IUnitAction
                         _unit.MyAnimator.SetTrigger($"Skill0");
                         _unit.transform.LookAt(_unit.Target.transform.position);
                     }
-                    else if (unitAttack.AtkTime(turn) != 1)
+                    else if (unitAttack.AtkTime(turn) == 1)
                     {
 
                         _unit.MyTurn = 0;
