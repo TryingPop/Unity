@@ -70,21 +70,26 @@ public class UnitAtk : IUnitAction
                 {
 
                     // 공격 시작하면 공격을 한다
-
-                    int turn = ++_unit.MyTurn;
+                    int turn = _unit.MyTurn++;
+                    int atkTurn = unitAttack.AtkTime(turn);
                     if (unitAttack.StartAnimTime(turn))
                     {
 
                         _unit.MyAnimator.SetTrigger($"Skill0");
                         _unit.transform.LookAt(_unit.Target.transform.position);
                     }
-                    else if (unitAttack.AtkTime(turn) == 1)
+                    else if (atkTurn == 1)
                     {
 
                         _unit.MyTurn = 0;
                         unitAttack.OnAttack(_unit);
                         _unit.MyAnimator.SetFloat("Move", 0.5f);
                         _unit.MyAgent.updateRotation = true;
+                    }
+                    else if (atkTurn == 0)
+                    {
+
+                        unitAttack.OnAttack(_unit);
                     }
                     else
                     {

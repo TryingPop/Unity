@@ -30,23 +30,18 @@ public class BossJump : ISkillAction
         else if (_unit.MyTurn > atkTime)
         {
 
-            // unitAttack.CoolTime = 0;
+            Debug.Log("Á¡ÇÁ °ø°Ý!");
             _unit.MyTurn = 0;
-            // unitAttack.OnAttack(_unit);
 
-            RaycastHit[] hits = Physics.SphereCastAll(_unit.transform.position, 
-                atkRange, _unit.transform.forward, 0f, _unit.MyTeam.EnemyLayer);
-
-            if (hits.Length > 1)
+            int num = Physics.SphereCastNonAlloc(_unit.transform.position, 
+                atkRange, Vector3.up, VarianceManager.hits, 1f, _unit.MyTeam.EnemyLayer);
+            Debug.Log(num);
+            for (int i = 0; i < num; i++)
             {
 
-                for (int i = 0; i < hits.Length; i++)
-                {
+                if (VarianceManager.hits[i].transform == _unit.transform) continue;
 
-                    if (hits[i].transform == _unit.transform) continue;
-
-                    hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(atk);
-                }
+                VarianceManager.hits[i].transform.GetComponent<Selectable>()?.OnDamaged(atk);
             }
         }
        
@@ -97,12 +92,10 @@ public class BossJump : ISkillAction
         // ½ºÅ³ ¹øÈ£ È¹µæ
         int skillNum = GetSkillNum(_unit.MyState);
 
-        // if (_unit.MyAttacks[skillNum].chaseRange > 0)
         if (jumpRange > 0)
         {
 
-            // float maxDis = _unit.MyAttacks[skillNum].chaseRange;
-            float maxDis = jumpRange;
+             float maxDis = jumpRange;
 
             Vector3 dir = _unit.TargetPos - _unit.transform.position;
             dir = Vector3.SqrMagnitude(dir) > maxDis * maxDis ?

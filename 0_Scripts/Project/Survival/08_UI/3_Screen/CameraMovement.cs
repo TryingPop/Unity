@@ -51,8 +51,8 @@ public class CameraMovement : MonoBehaviour
     {
 
         Vector3 pos = transform.position;
-        float x = inputManager.HorizontalMove * moveSpeed * Time.deltaTime + pos.x;
-        float z = inputManager.VerticalMove * moveSpeed * Time.deltaTime + pos.z;
+        float x = horizontal * moveSpeed * Time.deltaTime + pos.x;
+        float z = vertical * moveSpeed * Time.deltaTime + pos.z;
         float y = scrollWheel * -scrollWheelSpeed;
 
         y = y + mainCam.m_Lens.FieldOfView;

@@ -53,23 +53,18 @@ public class UnitRepair : IUnitAction
             else
             {
 
-                int turn = ++_unit.MyTurn;
-
+                // 후연산으로 변경 1을 카운팅 못한다!
+                int turn = _unit.MyTurn++;
                 if (unitAttack.StartAnimTime(turn))
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
                 }
-                else if (unitAttack.AtkTime(turn) != 1)
+                else if (unitAttack.AtkTime(turn) == 1)
                 {
 
                     _unit.MyTurn = 0;
                     if (targetState != STATE_SELECTABLE.BUILDING_UNFINISHED) unitAttack.OnAttack(_unit);
-                }
-                else
-                {
-
-                    _unit.MyTurn++;
                 }
 
                 // 수리 다됐으면 상태 탈출

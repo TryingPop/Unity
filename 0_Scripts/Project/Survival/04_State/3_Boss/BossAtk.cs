@@ -40,7 +40,7 @@ public class BossAtk : IUnitAction
                 else
                 {
 
-                    int turn = ++_unit.MyTurn;
+                    int turn = _unit.MyTurn++;
                     if (unitAttack.StartAnimTime(turn))
                     {
 

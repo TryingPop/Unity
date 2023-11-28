@@ -14,28 +14,11 @@ public abstract class ISkillAction : IUnitAction
 
         int skillNum = GetSkillNum(_unit.MyState);
 
-        if (skillNum < 1 || skillNum > 5)
+        if (skillNum <= 0)
         {
 
             return false;
         }
-
-        /*
-        try
-        {
-
-            if (_unit.MyAttacks[skillNum] == null)
-            {
-
-                return false;
-            }
-        }
-        catch
-        {
-
-            return false;
-        }
-        */
 
         if (_unit.CurMp != -1 &&  _unit.CurMp < usingMp)
         {

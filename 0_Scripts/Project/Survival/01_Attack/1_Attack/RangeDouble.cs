@@ -26,7 +26,7 @@ public class RangeDouble : RangeTarget
         Transform unitTrans = _unit.transform;
         Vector3 dir;
         
-        if (_unit.MyTurn <= atkTime) dir = Quaternion.LookRotation(unitTrans.forward) * offset;
+        if (_unit.MyTurn < nextAtk) dir = Quaternion.LookRotation(unitTrans.forward) * offset;
         else dir = Quaternion.LookRotation(unitTrans.forward) * nextOffset;
 
         GameObject go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_BULLET, unitTrans.position + dir, unitTrans.forward);

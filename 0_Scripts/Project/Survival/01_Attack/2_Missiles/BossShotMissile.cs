@@ -84,6 +84,7 @@ public class BossShotMissile : Missile
         isMove = false;
         myCollider.isTrigger = false;
         myRigid.useGravity = true;
+        myRigid.isKinematic = true;
         engageParticle.SetActive(true);
 
         ActionManager.instance.AddMissile(this);
@@ -107,6 +108,7 @@ public class BossShotMissile : Missile
                 calcTurn = 0;
                 myCollider.isTrigger = true;
                 myRigid.useGravity = false;
+                myRigid.isKinematic = false;
             }
             else
             {
@@ -120,7 +122,6 @@ public class BossShotMissile : Missile
             if (calcTurn <= moveTurn)
             {
 
-                // myRigid.MovePosition(transform.position + dir * moveSpeed * Time.fixedDeltaTime);
                 myRigid.velocity = dir * moveSpeed;
             }
             else
