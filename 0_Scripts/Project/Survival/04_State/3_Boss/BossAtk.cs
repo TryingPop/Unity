@@ -27,15 +27,20 @@ public class BossAtk : IUnitAction
 
             float atkDis = unitAttack.atkRange + (_unit.MyStat.MySize * 0.5f);
             atkDis *= atkDis;
+            float chaseDis = unitAttack.chaseRange + (_unit.MyStat.MySize * 0.5f);
+            chaseDis *= chaseDis;
             if (dis < atkDis)
             {
 
+                // 공격 범위 안 - 공격
                 if (_unit.MyTurn == 0)
                 {
 
                     _unit.MyTurn++;
                     _unit.transform.LookAt(_unit.Target.transform.position);
                     if (_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = false;
+                    _unit.MyAnimator.SetFloat("Move", 0f);
+                    _unit.MyAgent.ResetPath();
                 }
                 else
                 {
@@ -61,12 +66,29 @@ public class BossAtk : IUnitAction
                         _unit.MyTurn = 0;
                     }
                 }
-
-                return;
             }
+            else if (dis < chaseDis)
+            {
+
+                int turn = _unit.MyTurn++;
+                if (turn >= 5)
+                {
+
+                    _unit.MyAnimator.SetFloat("Move", 1f);
+                    if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
+                    _unit.MyTurn = 0;
+                    _unit.MyAgent.SetDestination(_unit.Target.transform.position);
+                }
+            }
+            else
+            {
+
+                // 공격 범위 밖 - 타겟을 향해 점프공격!
+                OnExit(_unit);
+            }
+            return;
         }
 
-        // 공격 범위를 벗어나면 상태 탈출
         _unit.Target = null;
         OnExit(_unit);
     }
@@ -75,7 +97,8 @@ public class BossAtk : IUnitAction
     {
 
         _unit.MyTurn = 0;
-        _unit.MyAgent.ResetPath();
+        // _unit.MyAgent.ResetPath();
+        _unit.MyAnimator.SetFloat("Move", 1f);
     }
 
     protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)

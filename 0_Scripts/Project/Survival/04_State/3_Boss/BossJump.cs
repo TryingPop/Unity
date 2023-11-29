@@ -15,6 +15,25 @@ public class BossJump : ISkillAction
     [SerializeField] protected float atkRange;
     [SerializeField] protected int atk;
 
+    [SerializeField] protected int selectIdx;
+    protected int prefabIdx = -1;
+
+    public int PrefabIdx
+    {
+
+        get
+        {
+
+            if (prefabIdx == -1)
+            {
+
+                prefabIdx = PoolManager.instance.ChkIdx(selectIdx);
+            }
+
+            return prefabIdx;
+        }
+    }
+
     public override void Action(Unit _unit)
     {
 
@@ -30,12 +49,10 @@ public class BossJump : ISkillAction
         else if (_unit.MyTurn > atkTime)
         {
 
-            Debug.Log("점프 공격!");
             _unit.MyTurn = 0;
 
             int num = Physics.SphereCastNonAlloc(_unit.transform.position, 
                 atkRange, Vector3.up, VarianceManager.hits, 1f, _unit.MyTeam.EnemyLayer);
-            Debug.Log(num);
             for (int i = 0; i < num; i++)
             {
 
@@ -54,6 +71,8 @@ public class BossJump : ISkillAction
             _unit.MyAgent.enabled = true;
 
             _unit.OnlyReserveCmd = false;
+
+            PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_DEAD, _unit.transform.position);
             OnExit(_unit);
         }
         else if (_unit.MyTurn >= startAnimTime)
