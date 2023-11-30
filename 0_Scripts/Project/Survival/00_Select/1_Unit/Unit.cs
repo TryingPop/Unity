@@ -253,11 +253,11 @@ public class Unit : Selectable
         }
     }
 
-    public override void Dead()
+    public override void Dead(bool _immediately = false)
     {
 
         ResetTeam();
-        base.Dead();
+        base.Dead(_immediately);
 
         for (int i = cmds.Count; i > 0; i--)
         {

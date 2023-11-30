@@ -12,14 +12,29 @@ public class ActiveObjs : BaseGameEvent
     public override void InitalizeEvent()
     {
 
+        if (isActive) Active();
+        else InActive();
+    }
+
+    private void Active()
+    {
+
         for (int i = 0; i < targets.Length; i++)
         {
 
-            // 활성화 == true, 사망 == false
-            // 비활성화 == false, 사망 == true
-            targets[i].gameObject.SetActive(isActive);
+            targets[i].gameObject.SetActive(true);
             targets[i].AfterSettingLayer();
-            targets[i].ChkSupply(!isActive);
+            targets[i].ChkSupply(false);
+        }
+    }
+
+    private void InActive()
+    {
+
+        for (int i = 0; i < targets.Length; i++)
+        {
+
+            targets[i].Dead(true);
         }
     }
 }

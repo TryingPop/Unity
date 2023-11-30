@@ -95,7 +95,6 @@ public class UnitAtk : IUnitAction
                     {
 
                         _unit.transform.LookAt(_unit.Target.transform.position);
-                        _unit.MyTurn++;
                     }
                 }
             }

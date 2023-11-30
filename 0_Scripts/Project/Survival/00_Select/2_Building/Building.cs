@@ -256,7 +256,7 @@ public class Building : Selectable
     /// <summary>
     /// 사망 
     /// </summary>
-    public override void Dead()
+    public override void Dead(bool _immediately = false)
     {
 
         myStateAction.ForcedQuit(this);
@@ -264,7 +264,7 @@ public class Building : Selectable
         // 상태 변경 전이다
         
         ResetTeam();
-        base.Dead();
+        base.Dead(_immediately);
 
         for (int i = 0; i < cmds.Count; i++)
         {

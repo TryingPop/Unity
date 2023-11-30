@@ -212,7 +212,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 사망 처리 메서드, hp바 표시, 현재 선택되면 해제, 그리고 인구조절
     /// </summary>
-    public virtual void Dead()
+    public virtual void Dead(bool _immediately = false)
     {
 
         myState = STATE_SELECTABLE.DEAD;
@@ -235,7 +235,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             PlayerManager.instance.curGroup.DeselectSavedGroup(this);
         }
 
-        StartCoroutine(Disabled());
+        StartCoroutine(Disabled(_immediately));
     }
 
     public abstract void ResetTeam();
@@ -243,12 +243,13 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 사망 시 사망 모션 얼마나 볼건지 설정
     /// </summary>
-    protected IEnumerator Disabled()
+    protected IEnumerator Disabled(bool _immediately = false)
     {
 
-        if (myStat.DisableTime == 2) yield return VarianceManager.BASE_WAITFORSECONDS;
-        else if (myStat.DisableTime > 0) yield return new WaitForSeconds(myStat.DisableTime);
-        else yield return null;
+        
+        if (_immediately || myStat.DisableTime <= 0) yield return null;
+        else if (myStat.DisableTime == 2) yield return VarianceManager.BASE_WAITFORSECONDS;
+        else yield return new WaitForSeconds(myStat.DisableTime);
 
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
