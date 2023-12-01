@@ -233,6 +233,7 @@ public class VarianceManager
     #endregion 기본 타입
 
     public static readonly WaitForSeconds BASE_WAITFORSECONDS = new WaitForSeconds(2f);
+    public static readonly WaitForSeconds EFFECT_WAITFORSECONDS = new WaitForSeconds(0.3f);
 
     public static Vector2 INIT_POS_SCRIPT = new Vector2(110f, -35f);
     public static Vector2 INIT_SIZE_SCRIPT = new Vector2(100f, 40f);

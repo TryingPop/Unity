@@ -229,13 +229,15 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             UIManager.instance.ExitInfo(TYPE_INFO.ALL);
         }
         
+        // 저장된 그룹에서 해제
         if (PlayerManager.instance.curGroup.ContainsSavedGroup(this))
         {
 
             PlayerManager.instance.curGroup.DeselectSavedGroup(this);
         }
-
-        StartCoroutine(Disabled(_immediately));
+        
+        if (_immediately) PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
+        else StartCoroutine(Disabled());
     }
 
     public abstract void ResetTeam();
@@ -243,11 +245,11 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 사망 시 사망 모션 얼마나 볼건지 설정
     /// </summary>
-    protected IEnumerator Disabled(bool _immediately = false)
+    protected IEnumerator Disabled()
     {
 
         
-        if (_immediately || myStat.DisableTime <= 0) yield return null;
+        if (myStat.DisableTime <= 0) yield return null;
         else if (myStat.DisableTime == 2) yield return VarianceManager.BASE_WAITFORSECONDS;
         else yield return new WaitForSeconds(myStat.DisableTime);
 

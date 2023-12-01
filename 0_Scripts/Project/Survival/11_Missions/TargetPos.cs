@@ -8,8 +8,9 @@ public class TargetPos : Mission
     [SerializeField] protected Selectable target;
     [SerializeField] protected int targetLayer;
     protected bool isSuccess = false;
-
     [SerializeField] protected string spotName;
+    
+    [SerializeField] protected MeshRenderer miniMapMesh;      // ¹Ì´Ï¸Ê¿¡ ºñÄ¥ ÀÌ¹ÌÁö
 
     public override void ChkMission(Selectable _target)
     {
@@ -54,12 +55,15 @@ public class TargetPos : Mission
                 startEvent[i].InitalizeEvent();
             }
         }
+
+        if (miniMapMesh != null) StartCoroutine(Effect());
     }
 
     protected override void EndMission()
     {
 
         GetComponent<Collider>().enabled = false;
+        StopAllCoroutines();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -77,5 +81,21 @@ public class TargetPos : Mission
                 IsMissionComplete();
             }
         }
+    }
+
+    private IEnumerator Effect()
+    {
+
+        for (int i = 0; i < 3; i++)
+        {
+
+            yield return VarianceManager.EFFECT_WAITFORSECONDS;
+            miniMapMesh.enabled = false;
+
+            yield return VarianceManager.EFFECT_WAITFORSECONDS;
+            miniMapMesh.enabled = true;
+        }
+
+
     }
 }

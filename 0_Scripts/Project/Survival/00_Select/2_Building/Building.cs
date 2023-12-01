@@ -20,7 +20,7 @@ public class Building : Selectable
     protected ushort curBuildTurn;                                  // 건설 진행 시간
     protected ushort maxTurn;                                       // 행동 최대 턴
 
-    public static WaitForSeconds completeTimer;                     // 완성 알려주는 시간
+    // public static WaitForSeconds completeTimer;                     // 완성 알려주는 시간
     protected List<Command> cmds;                                   // 명령
 
     public override STATE_SELECTABLE MyState
@@ -60,7 +60,7 @@ public class Building : Selectable
     {
 
         if (cmds == null) cmds = new List<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
-        if (completeTimer == null) completeTimer = new WaitForSeconds(0.1f);
+        // if (completeTimer == null) completeTimer = new WaitForSeconds(0.1f);
 
         if (opt.BuildTurn != 0)
         {
@@ -244,11 +244,11 @@ public class Building : Selectable
         MeshRenderer myMesh = GetComponentInChildren<MeshRenderer>();
         myMesh.material.color = Color.white;
 
-        yield return completeTimer;
+        yield return VarianceManager.EFFECT_WAITFORSECONDS;
 
         myMesh.material.color = Color.black;
 
-        yield return completeTimer;
+        yield return VarianceManager.EFFECT_WAITFORSECONDS;
 
         myMesh.material.color = Color.white;
     }
@@ -264,8 +264,6 @@ public class Building : Selectable
         // 상태 변경 전이다
         
         ResetTeam();
-        base.Dead(_immediately);
-
         for (int i = 0; i < cmds.Count; i++)
         {
 
@@ -275,9 +273,10 @@ public class Building : Selectable
 
         myObstacle.carving = false;
 
-
         // 파괴 이벤트
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VarianceManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
+
+        base.Dead(_immediately);
     }
 
     public override void ResetTeam()

@@ -257,7 +257,6 @@ public class Unit : Selectable
     {
 
         ResetTeam();
-        base.Dead(_immediately);
 
         for (int i = cmds.Count; i > 0; i--)
         {
@@ -268,12 +267,21 @@ public class Unit : Selectable
         ActionDone(STATE_SELECTABLE.DEAD);
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
+
+        base.Dead(_immediately);
     }
 
+    /// <summary>
+    /// 인구 확인을 하기에 상태 변경 전에 확인해야한다!
+    /// 또한, ActionManager 그룹에서 확인하기에 layer 변경 전에 해야한다!
+    /// </summary>
     public override void ResetTeam()
     {
 
+        // 인구 확인
         ChkSupply(true);
+
+        // 그룹에서 해제
         ActionManager.instance.RemoveUnit(this);
         UIManager.instance.RemoveHitBar(this);
         // 비우기

@@ -9,6 +9,7 @@ public class GenerateUnits : BaseGameEvent
     [SerializeField] protected int unitNum;
     [SerializeField] protected int layer;
     [SerializeField] protected Vector3 initPos;
+    [Tooltip("배치 간격")]
     [SerializeField] protected int size;
 
     public override void InitalizeEvent()
