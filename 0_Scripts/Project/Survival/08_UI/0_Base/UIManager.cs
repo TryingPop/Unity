@@ -185,7 +185,7 @@ public class UIManager : MonoBehaviour
         if (activeWarning)
         {
 
-            if (warning.ChkTime())
+            if (warning.ChkEndTime())
             {
 
                 activeWarning = false;

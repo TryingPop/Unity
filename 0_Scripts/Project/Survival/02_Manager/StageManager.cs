@@ -22,12 +22,8 @@ public class StageManager : MonoBehaviour
 
             stage = PlayerPrefs.GetInt("Stage");
         }
-        else
-        {
 
-            stage = 0;
-        }
-
+        if (stage < 0) stage = 0;
         int len = Mathf.Min(stage, lockedStages.Length);
         for (int i = 0; i < len; i++)
         {

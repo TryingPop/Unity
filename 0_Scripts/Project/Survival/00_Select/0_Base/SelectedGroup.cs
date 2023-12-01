@@ -22,6 +22,10 @@ public class SelectedGroup
 
     public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
 
+    public delegate void ChkMission(Selectable _select);
+
+    public ChkMission chkMission;
+
     private bool IsBuildingType
     {
 
@@ -106,6 +110,13 @@ public class SelectedGroup
         isCommandable = true;
     }
 
+    public void Select(Selectable _select)
+    {
+
+        curSelected.Add(_select);
+        if (chkMission != null) chkMission(_select);
+    }
+
     public void SelectOne(Selectable _select)
     {
 
@@ -116,7 +127,7 @@ public class SelectedGroup
         Clear();
 
         // 0 번 항목 선택
-        curSelected.Add(_select);
+        Select(_select);
 
         // 커맨더 가능인지 판별
         // if (((1 << _select.MyTeam.TeamLayerNumber) & (commandLayer)) == 0) isCommandable = false;
@@ -139,7 +150,7 @@ public class SelectedGroup
             || !isCommandable                                       // 명령 불가능한 유닛은 두 마리 이상 선택 불가능!
             ) return;
 
-        curSelected.Add(_select);
+        Select(_select);
     }
 
     public void DragSelect(ref Vector3 _center, ref Vector3 _half, int _selectLayer)
@@ -155,7 +166,7 @@ public class SelectedGroup
             {
 
                 Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
-                curSelected.Add(select);
+                Select(select);
             }
 
             return;
@@ -188,7 +199,7 @@ public class SelectedGroup
             Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
 
             if (curSelected.Count < VarianceManager.MAX_SELECT
-                && !curSelected.Contains(select)) curSelected.Add(select);
+                && !curSelected.Contains(select)) Select(select);
             else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
         }
     }
@@ -211,7 +222,7 @@ public class SelectedGroup
             Selectable select = hits[i].transform.GetComponent<Selectable>();
             if (select.MyStat.SelectIdx == _selectIdx
                 && !curSelected.Contains(select)
-                && curSelected.Count < VarianceManager.MAX_SELECT) curSelected.Add(select);
+                && curSelected.Count < VarianceManager.MAX_SELECT) Select(select);
             else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
         }
     }
@@ -375,10 +386,26 @@ public class SelectedGroup
     /// <summary>
     /// 선택 그룹 사이즈 가져온다
     /// </summary>
-    public int GetSize()
+    public int GetSize(int groupNum = 0)
     {
 
-        return curSelected.Count;
+        switch (groupNum)
+        {
+
+
+            case 1:
+                return saved[0].Count;
+
+            case 2:
+                return saved[1].Count;
+
+            case 3:
+                return saved[2].Count;
+
+            case 0:
+            default:
+                return curSelected.Count;
+        }
     }
 
     /// <summary>

@@ -21,6 +21,7 @@ public class ScriptSlot : MonoBehaviour
         scriptTxt.text = _text;
         destination = new Vector2(0f, -35f);
         startTime = Time.time;
+        if (_time == -VarianceManager.INFINITE) _time += 1;
         endTime = _time;
         myRectTrans.sizeDelta = scriptSize;
     }
@@ -51,7 +52,8 @@ public class ScriptSlot : MonoBehaviour
     public bool ChkTime()
     {
 
-        if (Time.time - startTime > endTime)
+        if (endTime != VarianceManager.INFINITE
+            && Time.time - startTime > endTime)
         {
 
             startTime = -endTime;

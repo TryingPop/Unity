@@ -14,7 +14,10 @@ public class UIText : MonoBehaviour
     {
 
         startTime = Time.time;
+        // 100 초인 경우 101초로 바꾼다!
+        if (_chkTime == -VarianceManager.INFINITE) _chkTime += 1;
         endTime = _chkTime;
+
         text.text = _text;
         _color.a = 0.7f;
         text.color = _color;
@@ -24,14 +27,16 @@ public class UIText : MonoBehaviour
     {
 
         startTime = Time.time;
+        if (_chkTime != -VarianceManager.INFINITE) _chkTime += 1;
         endTime = _chkTime;
         text.text = _text;
     }
 
-    public bool ChkTime()
+    public bool ChkEndTime()
     {
 
-        if (Time.time - startTime > endTime)
+        if (endTime != VarianceManager.INFINITE
+            && Time.time - startTime > endTime)
         {
 
             startTime = -endTime;

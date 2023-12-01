@@ -50,7 +50,7 @@ public class UIChat : MonoBehaviour
         for (int i = useNum; i > 0; i--)
         {
 
-            if(texts[idx].ChkTime())
+            if(texts[idx].ChkEndTime())
             {
 
                 texts[idx].ActiveText(false);
