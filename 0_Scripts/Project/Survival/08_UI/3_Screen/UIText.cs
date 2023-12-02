@@ -51,4 +51,11 @@ public class UIText : MonoBehaviour
 
         text.enabled = _active;
     }
+
+    public void Quit()
+    {
+
+        text.text = string.Empty;
+        endTime = -1f;
+    }
 }

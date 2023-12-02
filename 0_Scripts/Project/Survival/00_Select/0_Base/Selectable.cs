@@ -219,7 +219,21 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         // 시체 레이어로 변경
         gameObject.layer = VarianceManager.LAYER_DEAD;
 
+        /*
         // 현재 선택 중이면 해제한다
+        CurGroupDeSelect();
+
+        // 저장된 그룹에서 해제
+        SavedGroupDeSelect();
+        */
+
+        if (_immediately) PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
+        else StartCoroutine(Disabled());
+    }
+
+    protected void CurGroupDeSelect()
+    {
+
         if (PlayerManager.instance.curGroup.Contains(this))
         {
 
@@ -228,19 +242,28 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             // slot과 버튼 종료!
             UIManager.instance.ExitInfo(TYPE_INFO.ALL);
         }
-        
-        // 저장된 그룹에서 해제
+    }
+
+    protected void SavedGroupDeSelect()
+    {
+
         if (PlayerManager.instance.curGroup.ContainsSavedGroup(this))
         {
 
             PlayerManager.instance.curGroup.DeselectSavedGroup(this);
         }
-        
-        if (_immediately) PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
-        else StartCoroutine(Disabled());
     }
 
-    public abstract void ResetTeam();
+    /// <summary>
+    /// 선택되어 있으면 해제
+    /// </summary>
+    public virtual void ResetTeam()
+    {
+
+        CurGroupDeSelect();
+
+        SavedGroupDeSelect();
+    }
 
     /// <summary>
     /// 사망 시 사망 모션 얼마나 볼건지 설정

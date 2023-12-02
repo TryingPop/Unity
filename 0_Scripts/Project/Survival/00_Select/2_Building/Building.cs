@@ -282,6 +282,8 @@ public class Building : Selectable
     public override void ResetTeam()
     {
 
+        base.ResetTeam();
+
         ChkSupply(true);
         ActionManager.instance.RemoveBuilding(this);
         UIManager.instance.RemoveHitBar(this);

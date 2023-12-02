@@ -278,6 +278,8 @@ public class Unit : Selectable
     public override void ResetTeam()
     {
 
+        base.ResetTeam();
+
         // 인구 확인
         ChkSupply(true);
 

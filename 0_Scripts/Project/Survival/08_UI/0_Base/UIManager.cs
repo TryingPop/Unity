@@ -331,6 +331,14 @@ public class UIManager : MonoBehaviour
         activeWarning = true;
     }
 
+    public void QuitWarningText()
+    {
+
+        warningCanvas.enabled = false;
+        warning.Quit();
+        activeWarning = false;
+    }
+
     public void SetScript(int _spriteNum, string _str, Vector2 _size, float _time = 5f)
     {
 

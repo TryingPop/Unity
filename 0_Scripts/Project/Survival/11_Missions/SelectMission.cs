@@ -5,7 +5,6 @@ using UnityEngine;
 public class SelectMission : Mission
 {
 
-    protected SelectedGroup group;
     [SerializeField] protected Selectable target;
     [SerializeField] protected int teamLayer;
 
@@ -50,7 +49,7 @@ public class SelectMission : Mission
         typeNum = (int)myType;
 
         isSuccess = false;
-        group = PlayerManager.instance.curGroup;
+        var group = PlayerManager.instance.curGroup;
         group.chkMission += ChkMission;
 
         if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
@@ -68,6 +67,7 @@ public class SelectMission : Mission
     protected override void EndMission()
     {
 
+        var group = PlayerManager.instance.curGroup;
         group.chkMission -= ChkMission;
         isSuccess = true;
     }
