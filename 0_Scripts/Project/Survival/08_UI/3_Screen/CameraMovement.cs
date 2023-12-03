@@ -25,8 +25,13 @@ public class CameraMovement : MonoBehaviour
     private float vertical;
     private float scrollWheel;
 
+    [SerializeField] private bool isControl = true;
+    public bool IsControl { set { isControl = value; } }
+
     public bool IsMove()
     {
+
+        if (!isControl) return false;
 
         ReadKey();
         ChkMouseCamMove();

@@ -9,8 +9,6 @@ public class WaitTimeMission : Mission
     public override bool IsSuccess => isSuccess;
     [SerializeField] protected int endTime;
 
-    public override void ChkMission(Selectable _target) { }
-
     public override string GetMissionObjectText()
     {
 
@@ -40,7 +38,7 @@ public class WaitTimeMission : Mission
                 startEvent[i].InitalizeEvent();
             }
         }
-        StartCoroutine(MissionStart());
+        StartCoroutine(ChkMission());
     }
 
     protected override void EndMission()
@@ -49,7 +47,7 @@ public class WaitTimeMission : Mission
         isSuccess = true;
     }
 
-    protected IEnumerator MissionStart()
+    protected IEnumerator ChkMission()
     {
 
         yield return new WaitForSeconds(endTime);

@@ -35,6 +35,9 @@ public class PlayerManager : MonoBehaviour
     private Vector3 cmdPos;
     private Selectable cmdTarget;
 
+    public delegate void ChkMission(int _num);
+    public ChkMission chkSelect;
+
     public Vector2 SavePos { set { savePos = value; } }
     public Vector3 CmdPos
     {
@@ -354,6 +357,8 @@ public class PlayerManager : MonoBehaviour
         {
 
             curGroup.SetSaveGroup(_idx);
+            // _idx는 1 작아서 +1 해서 조절!
+            if (chkSelect != null) chkSelect(_idx + 1);
         }
         else
         {
@@ -525,6 +530,8 @@ public class PlayerManager : MonoBehaviour
         // 버튼 활성화 수정
         ActiveBtns(true, false, curGroup.IsCancelBtn);
         UIManager.instance.ExitInfo(TYPE_INFO.ALL);
+
+        if (chkSelect != null) chkSelect(0);
     }
 
     /// <summary>

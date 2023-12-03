@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -21,10 +22,6 @@ public class SelectedGroup
     public bool IsEmpty { get { return curSelected.Count == 0 ? true : false; } }  // 비었는지 확인
 
     public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
-
-    public delegate void ChkMission(Selectable _select);
-
-    public ChkMission chkMission;
 
     private bool IsBuildingType
     {
@@ -110,13 +107,6 @@ public class SelectedGroup
         isCommandable = true;
     }
 
-    public void Select(Selectable _select)
-    {
-
-        curSelected.Add(_select);
-        if (chkMission != null) chkMission(_select);
-    }
-
     public void SelectOne(Selectable _select)
     {
 
@@ -127,7 +117,7 @@ public class SelectedGroup
         Clear();
 
         // 0 번 항목 선택
-        Select(_select);
+        curSelected.Add(_select);
 
         // 커맨더 가능인지 판별
         // if (((1 << _select.MyTeam.TeamLayerNumber) & (commandLayer)) == 0) isCommandable = false;
@@ -141,6 +131,7 @@ public class SelectedGroup
         if (curSelected.Count == 0) SelectOne(_select);
         else if (curSelected.Contains(_select)) DeSelect(_select);
         else if (ChkCommandable(_select)) AppendSelect(_select);
+
     }
 
     public void AppendSelect(Selectable _select)
@@ -150,7 +141,7 @@ public class SelectedGroup
             || !isCommandable                                       // 명령 불가능한 유닛은 두 마리 이상 선택 불가능!
             ) return;
 
-        Select(_select);
+        curSelected.Add(_select);
     }
 
     public void DragSelect(ref Vector3 _center, ref Vector3 _half, int _selectLayer)
@@ -166,7 +157,7 @@ public class SelectedGroup
             {
 
                 Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
-                Select(select);
+                curSelected.Add(select);
             }
 
             return;
@@ -199,7 +190,7 @@ public class SelectedGroup
             Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
 
             if (curSelected.Count < VarianceManager.MAX_SELECT
-                && !curSelected.Contains(select)) Select(select);
+                && !curSelected.Contains(select)) curSelected.Add(select);
             else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
         }
     }
@@ -222,7 +213,7 @@ public class SelectedGroup
             Selectable select = hits[i].transform.GetComponent<Selectable>();
             if (select.MyStat.SelectIdx == _selectIdx
                 && !curSelected.Contains(select)
-                && curSelected.Count < VarianceManager.MAX_SELECT) Select(select);
+                && curSelected.Count < VarianceManager.MAX_SELECT) curSelected.Add(select);
             else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
         }
     }
@@ -340,10 +331,26 @@ public class SelectedGroup
     /// <summary>
     /// 선택 유닛 정보 넘긴다 유닛 슬롯쪽에서 활용
     /// </summary>
-    public List<Selectable> Get()
+    public List<Selectable> Get(int groupNum = 0)
     {
 
-        return curSelected;
+        switch (groupNum)
+        {
+
+
+            case 1:
+                return saved[0];
+
+            case 2:
+                return saved[1];
+
+            case 3:
+                return saved[2];
+
+            case 0:
+            default:
+                return curSelected;
+        }
     }
 
     /// <summary>

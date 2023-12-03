@@ -12,7 +12,7 @@ public class TargetPos : Mission
     
     [SerializeField] protected MeshRenderer miniMapMesh;      // 미니맵에 비칠 이미지
 
-    public override void ChkMission(Selectable _target)
+    public void ChkMission(Selectable _target)
     {
 
         // 확인 layer는 triggerenter에서 확인!

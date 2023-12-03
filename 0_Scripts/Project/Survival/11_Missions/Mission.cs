@@ -48,12 +48,6 @@ public abstract class Mission : MonoBehaviour
     /// </summary>
     public abstract void Init();
 
-
-    /// <summary>
-    /// 미션 달성했는지 확인
-    /// </summary>
-    public abstract void ChkMission(Selectable _target);
-
     /// <summary>
     /// 미션 목표 적는다
     /// </summary>

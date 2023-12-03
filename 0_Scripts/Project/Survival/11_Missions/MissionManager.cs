@@ -9,7 +9,7 @@ public class MissionManager : MonoBehaviour
     // 미션들 여기에 넣어야한다!?
     [SerializeField] private List<Mission> myMissions;
     [SerializeField] private int saveStageNum;
-
+    [SerializeField] private bool isTutorial = false;
     public void Init()
     {
 
@@ -69,17 +69,22 @@ public class MissionManager : MonoBehaviour
     public void Clear()
     {
 
+        // 튜토리얼이면 저장 X
+        if (isTutorial) return;
+
+        string str = "Stage";
+
         int stage = -1;
 
-        if (PlayerPrefs.HasKey("Stage"))
+        if (PlayerPrefs.HasKey(str))
         {
 
-            stage = PlayerPrefs.GetInt("Stage");
+            stage = PlayerPrefs.GetInt(str);
 
             if (stage < saveStageNum)
             {
 
-                PlayerPrefs.SetInt("Stage", saveStageNum);
+                PlayerPrefs.SetInt(str, saveStageNum);
             }
         }
         else
@@ -88,7 +93,7 @@ public class MissionManager : MonoBehaviour
             if (stage < saveStageNum)
             {
 
-                PlayerPrefs.SetInt("Stage", saveStageNum);
+                PlayerPrefs.SetInt(str, saveStageNum);
             }
         }
     }

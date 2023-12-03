@@ -87,7 +87,7 @@ public class TargetUnit : Mission
     /// <summary>
     /// 특정 유닛이 죽었는지 판별
     /// </summary>
-    public override void ChkMission(Selectable _target)
+    public void ChkMission(Selectable _target)
     {
 
         if (_target.MyStat.SelectIdx == target.MyStat.SelectIdx
