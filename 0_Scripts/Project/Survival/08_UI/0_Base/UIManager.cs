@@ -398,4 +398,16 @@ public class UIManager : MonoBehaviour
         screenSize.y = Screen.height;
         slots.SetScreenSize();
     }
+
+    public void CamMovable(bool _isControl)
+    {
+
+        camMove.IsControl = _isControl;
+    }
+
+    public void GoCam(ref Vector3 _pos, bool _forcedMove = false)
+    {
+
+        camMove.SetPos(ref _pos, _forcedMove);
+    }
 }

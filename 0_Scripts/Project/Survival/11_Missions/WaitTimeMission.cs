@@ -7,13 +7,15 @@ public class WaitTimeMission : Mission
 
     public bool isSuccess;
     public override bool IsSuccess => isSuccess;
-    [SerializeField] protected int endTime;
+    [SerializeField] protected float endTime;
+    [SerializeField] protected bool setScriptTime;
 
     public override string GetMissionObjectText()
     {
 
-        int minute = endTime / 60;
-        int second = endTime % 60;
+        int minute = Mathf.FloorToInt(endTime / 60);
+        int second = Mathf.FloorToInt(endTime % 60);
+
         return string.Format("[{0}]:{1}:{2}{3}", 
             missionName,
             minute,
@@ -28,7 +30,25 @@ public class WaitTimeMission : Mission
 
         isSuccess = false;
 
-        if (startScripts != null) UIManager.instance.SetScripts(startScripts.Scripts);
+
+        if (startScripts != null) 
+        { 
+            
+            UIManager.instance.SetScripts(startScripts.Scripts); 
+
+            if (setScriptTime)
+            {
+
+                endTime = 0;
+
+                var len = startScripts.Scripts.Length;
+                for (int i = 0; i < len; i++)
+                {
+
+                    endTime += startScripts.Scripts[i].NextTime;
+                }
+            }
+        }
         if (startEvent != null)
         {
 

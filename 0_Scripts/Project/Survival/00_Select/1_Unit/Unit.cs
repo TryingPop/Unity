@@ -367,15 +367,15 @@ public class Unit : Selectable
         }
 
         // 명령 등록
-        cmds.Enqueue(_cmd);
+        if (cmds.Count < VarianceManager.MAX_RESERVE_COMMANDS) cmds.Enqueue(_cmd);
+        else _cmd.Canceled();
     }
 
     protected override bool ChkCommand(Command _cmd)
     {
 
         // 읽을 수 있는 상태 판별
-        if (myState == STATE_SELECTABLE.DEAD
-            || cmds.Count >= VarianceManager.MAX_RESERVE_COMMANDS) return false;
+        if (myState == STATE_SELECTABLE.DEAD) return false;
 
         // 읽을 수 잇는 명령 판별
         if (_cmd.type == STATE_SELECTABLE.NONE

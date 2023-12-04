@@ -9,7 +9,7 @@ public class MiniMap : MonoBehaviour,
 
     // [SerializeField] private RectTransform canvasRectTrans;
     [SerializeField] protected RectTransform myRectTrans;
-    [SerializeField] protected Transform camFollow;
+    // [SerializeField] protected Transform camFollow;
     [SerializeField] protected PlayerManager inputManager;
     [SerializeField] private Camera miniMapCam;
 
@@ -71,9 +71,9 @@ public class MiniMap : MonoBehaviour,
         float posX = _scaleValue.x * mapHalfWidth * 2 + (camPos.x - mapHalfWidth);
         float posZ = _scaleValue.y * mapHalfHeight * 2 + (camPos.z - mapHalfHeight);
         
-        float posY = camFollow.position.y;
+        // float posY = camFollow.position.y;
 
-        Vector3 result = new Vector3(posX, posY, posZ);
+        Vector3 result = new Vector3(posX, 0f, posZ);
         if (_onGround)
         {
 
@@ -98,7 +98,8 @@ public class MiniMap : MonoBehaviour,
 
             // 화면 이동용도
             Vector2 scaleValue = GetMiniMapScaleValue(eventData.position);
-            camFollow.position = ScaleValueToWorldMap(scaleValue, false);
+            Vector3 pos = ScaleValueToWorldMap(scaleValue, false);
+            UIManager.instance.GoCam(ref pos);
         }
     }
 
@@ -116,7 +117,8 @@ public class MiniMap : MonoBehaviour,
             {
 
                 // 캠이동
-                camFollow.position = ScaleValueToWorldMap(scaleValue, false);
+                Vector3 pos = ScaleValueToWorldMap(scaleValue, false);
+                UIManager.instance.GoCam(ref pos);
             }
             else
             {

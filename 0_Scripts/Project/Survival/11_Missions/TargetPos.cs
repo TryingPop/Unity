@@ -16,7 +16,8 @@ public class TargetPos : Mission
     {
 
         // 확인 layer는 triggerenter에서 확인!
-        if (target.MyStat.SelectIdx == _target.MyStat.SelectIdx) 
+        if (target == null
+            || target.MyStat.SelectIdx == _target.MyStat.SelectIdx) 
         {
 
             isSuccess = true;
@@ -95,7 +96,5 @@ public class TargetPos : Mission
             yield return VarianceManager.EFFECT_WAITFORSECONDS;
             miniMapMesh.enabled = true;
         }
-
-
     }
 }

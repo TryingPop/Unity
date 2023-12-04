@@ -70,15 +70,32 @@ public class CameraMovement : MonoBehaviour
         mainCam.m_Lens.FieldOfView = y;
     }
 
+    public void SetPos(ref Vector3 _pos, bool _forcedMove = false)
+    {
+
+        if (!isControl
+            && !_forcedMove) return;
+
+        _pos.y = transform.position.y;
+        ChkBound(ref _pos.x, ref _pos.z);
+        transform.position = _pos;
+    }
+
     /// <summary>
     /// 카메라 좌표의 경계 확인
     /// </summary>
-    private void ChkBound(ref float x, ref float y, ref float z)
+    private void ChkBound(ref float _x, ref float _y, ref float _z)
     {
 
-        x = Mathf.Clamp(x, minBound.x, maxBound.x);
-        y = Mathf.Clamp(y, minBound.y, maxBound.y);
-        z = Mathf.Clamp(z, minBound.z, maxBound.z);
+        ChkBound(ref _x, ref _z);
+        _y = Mathf.Clamp(_y, minBound.y, maxBound.y);
+    }
+
+    private void ChkBound(ref float _x, ref float _z)
+    {
+
+        _x = Mathf.Clamp(_x, minBound.x, maxBound.x);
+        _z = Mathf.Clamp(_z, minBound.z, maxBound.z);
     }
 
     /// <summary>

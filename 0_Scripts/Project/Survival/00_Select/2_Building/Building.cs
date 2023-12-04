@@ -366,15 +366,15 @@ public class Building : Selectable
         }
 
         // 건물은 예약명령이 없다!
-        cmds.Add(_cmd);
+        if (cmds.Count < VarianceManager.MAX_RESERVE_COMMANDS) cmds.Add(_cmd);
+        else _cmd.Canceled();
     }
 
     protected override bool ChkCommand(Command _cmd)
     {
 
         if (myState == STATE_SELECTABLE.DEAD
-            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED
-            || cmds.Count >= VarianceManager.MAX_RESERVE_COMMANDS) return false;
+            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return false;
 
         return true;
     }
