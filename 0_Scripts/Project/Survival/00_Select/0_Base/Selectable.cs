@@ -34,6 +34,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [SerializeField] protected STATE_SELECTABLE myState;
 
+    [SerializeField] protected SoundGroup mySound;
+    [SerializeField] protected AudioSource myAudio;
+
     /// <summary>
     /// 체력 회복
     /// </summary>
@@ -278,6 +281,20 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
         PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
     }
+
+    #region Sound
+    public void MyStateSong()
+    {
+
+        if (mySound == null) return;
+
+        AudioClip sound = mySound.GetSound(myState);
+        if (sound == null) return;
+        myAudio.clip = sound;
+        myAudio.Play();
+    }
+
+    #endregion
 
     #region Info
     public void SetTitle(Text _titleTxt)

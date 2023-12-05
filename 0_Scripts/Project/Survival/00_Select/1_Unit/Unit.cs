@@ -38,7 +38,6 @@ public class Unit : Selectable
     protected Queue<Command> cmds;                                  // 예약된 명령
     #endregion 변수
 
-
     #region 프로퍼티
     public Animator MyAnimator => myAnimator;
     public Collider MyCollider => myCollider;
