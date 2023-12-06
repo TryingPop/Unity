@@ -59,6 +59,7 @@ public class UnitRepair : IUnitAction
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
+                    _unit.MyStateSong();
                 }
                 else if (unitAttack.AtkTime(turn) == 1)
                 {
