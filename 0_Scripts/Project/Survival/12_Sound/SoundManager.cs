@@ -7,7 +7,39 @@ using UnityEngine.Audio;
 public class SoundManager : MonoBehaviour
 {
 
+    private SoundManager instance;
     [SerializeField] protected AudioMixer myAudioMixer;
+
+    public SoundManager Instance => instance;
+
+    private void Awake()
+    {
+        
+        if (instance == null)
+        {
+
+            instance = this;
+        }
+        else
+        {
+
+            Destroy(gameObject);
+        }
+    }
+
+    public void SetBGM(AudioClip _bgmSound, float _volume = -1f)
+    {
+
+        if (_bgmSound == null) return;
+
+        var audio = GetComponent<AudioSource>();
+
+        if (audio == null) return;
+
+        audio.clip = _bgmSound;
+        if (_volume != -1f) audio.volume = _volume;
+        audio.Play();
+    }
 
     public void SetMasterSound(Single _value)
     {

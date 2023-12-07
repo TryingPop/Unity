@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     private bool isStop;                                            // 皋春 劝己拳 吝?
     [SerializeField] private bool isNextBtn;
 
+    [SerializeField] private AudioClip winSnd;
+    [SerializeField] private AudioClip loseSnd;
+
     public bool IsGameOver
     {
 
@@ -106,11 +109,41 @@ public class GameManager : MonoBehaviour
                 restartBtn.SetActive(false);
                 nextBtn.SetActive(true);
             }
+
         }
         else myState = STATE_GAME.LOSE;
 
+        SetGameOverSnd(_isWin);
+
         gameOverText.enabled = true;
         gameOverText.text = $"{myState}";
+    }
+
+    /// <summary>
+    /// 家府 技泼
+    /// </summary>
+    /// <param name="_isWin">铰府 家府 咯何</param>
+    private void SetGameOverSnd(bool _isWin)
+    {
+
+        AudioSource myAudio = GetComponent<AudioSource>();
+        if (myAudio == null) return;
+
+
+        if (_isWin)
+        {
+
+            if (winSnd != null) myAudio.clip = winSnd;
+            else return;
+        }
+        else
+        {
+
+            if (loseSnd != null) myAudio.clip = loseSnd;
+            else return;
+        }
+
+        myAudio.Play();
     }
 
     public void AddMission(Mission _mission)
