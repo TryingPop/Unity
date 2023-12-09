@@ -40,7 +40,13 @@ Shader "Custom/Test/004"
 
             // MainTex에서 SubTex로 변환 하는 코드
             // lerp 함수를 이용 lerp(x, y, s) 여기서 x, y는 같은 단위!
+            // s는 좌표마다 값을 설정 가능한거 같다
             // o.Emission = lerp(MainTex, SubTex, _LerpValue);
+
+            // MainTex에 이미지가 있는 부분만 색을 넣을 수 있고,
+            // 없는 부분은 흰색으로 표시된다
+            // 세 번째 인자 MainTex.a는 uv 좌표값마다 색을 입혀준다고 생각하면 될거 같다
+            // o.Emission = lerp(MainTex, SubTex, MainTex.a);
 
             // MainTex 중 이미지 있는 부분만 SubTex 이미지를 불러오게 한다
             // 나머지부분은 흰색!
