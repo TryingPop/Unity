@@ -15,7 +15,7 @@ Shader "Custom/Test011"
         _SM("Smoothness", Range(0, 1)) = 0.5
 
         _RNormal("R Normal", 2D) = "bump" {}
-        _RSM("R Smoothness", Range(0, 1)) = 0.5;
+        _RSM("R Smoothness", Range(0, 1)) = 0.5
     }
     SubShader
     {
