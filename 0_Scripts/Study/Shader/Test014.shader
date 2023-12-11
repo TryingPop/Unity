@@ -1,5 +1,5 @@
 // 작성자에 따르면 Legacy의 Diffuse Shader와 일치한다고 한다
-Shader "Custom/Test014"
+Shader "Custom/Test/014"
 {
     Properties
     {
