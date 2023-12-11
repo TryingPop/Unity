@@ -1,4 +1,4 @@
-Shader "Custom/Test009"
+Shader "Custom/Test/009"
 {
     Properties
     {
