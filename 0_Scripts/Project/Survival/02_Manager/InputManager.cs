@@ -71,6 +71,7 @@ public class InputManager : MonoBehaviour
 
         activeHitBar = Input.GetKeyDown(KeyCode.LeftAlt);
 #if UNITY_EDITOR
+        // Editor에서는 leftcontrol 선택 안된다
         groupKey = Input.GetKey(KeyCode.Z);
 #else
         groupKey = Input.GetKey(KeyCode.LeftControl);

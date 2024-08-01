@@ -126,24 +126,16 @@ public class GameManager : MonoBehaviour
     private void SetGameOverSnd(bool _isWin)
     {
 
-        AudioSource myAudio = GetComponent<AudioSource>();
-        if (myAudio == null) return;
-
-
         if (_isWin)
         {
 
-            if (winSnd != null) myAudio.clip = winSnd;
-            else return;
+            SoundManager.Instance.SetSE(winSnd);
         }
         else
         {
 
-            if (loseSnd != null) myAudio.clip = loseSnd;
-            else return;
+            SoundManager.Instance.SetSE(loseSnd);
         }
-
-        myAudio.Play();
     }
 
     public void AddMission(Mission _mission)

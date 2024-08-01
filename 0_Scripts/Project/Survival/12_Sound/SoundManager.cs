@@ -7,10 +7,13 @@ using UnityEngine.Audio;
 public class SoundManager : MonoBehaviour
 {
 
-    private SoundManager instance;
+    private static SoundManager instance;
     [SerializeField] protected AudioMixer myAudioMixer;
 
-    public SoundManager Instance => instance;
+    [SerializeField] private AudioSource bgmAudio;
+    [SerializeField] private AudioSource seAudio;
+
+    public static SoundManager Instance => instance;
 
     private void Awake()
     {
@@ -27,35 +30,44 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    public void SetSE(AudioClip _seSound, bool _play = true, float _volume = -1f)
+    {
+
+
+        if (_seSound == null
+            || seAudio == null) return;
+
+        seAudio.clip = _seSound;
+        if (_volume != -1f) seAudio.volume = _volume;
+        if (_play) seAudio.Play();
+    }
+
     public void SetBGM(AudioClip _bgmSound, float _volume = -1f)
     {
 
-        if (_bgmSound == null) return;
+        if (_bgmSound == null 
+            || bgmAudio == null) return;
 
-        var audio = GetComponent<AudioSource>();
-
-        if (audio == null) return;
-
-        audio.clip = _bgmSound;
-        if (_volume != -1f) audio.volume = _volume;
-        audio.Play();
+        bgmAudio.clip = _bgmSound;
+        if (_volume != -1f) bgmAudio.volume = _volume;
+        bgmAudio.Play();
     }
 
-    public void SetMasterSound(Single _value)
+    public void SetMasterVolume(Single _value)
     {
 
         ScaleVolume(ref _value);
         myAudioMixer.SetFloat("Master", _value);
     }
 
-    public void SetBGMSound(Single _value)
+    public void SetBGMVolume(Single _value)
     {
 
         ScaleVolume(ref _value);
         myAudioMixer.SetFloat("BGM", _value);
     }
 
-    public void SetSESound(Single _value)
+    public void SetSEVolume(Single _value)
     {
 
         ScaleVolume(ref _value);

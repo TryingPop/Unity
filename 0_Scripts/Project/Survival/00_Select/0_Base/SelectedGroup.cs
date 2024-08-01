@@ -347,7 +347,6 @@ public class SelectedGroup
             case 3:
                 return saved[2];
 
-            case 0:
             default:
                 return curSelected;
         }
@@ -409,7 +408,6 @@ public class SelectedGroup
             case 3:
                 return saved[2].Count;
 
-            case 0:
             default:
                 return curSelected.Count;
         }
@@ -441,11 +439,14 @@ public class SelectedGroup
                 curSelected[i].GetCommand(cmd, _add);
             }
         }
+
+#if UNITY_EDITOR
         else
         {
 
             Debug.Log("최대 명령 수를 초과해서 명령할 수 없습니다.");
         }
+#endif
     }
 
     /// <summary>
@@ -474,10 +475,13 @@ public class SelectedGroup
                 curSelected[i].GetCommand(cmd, _add);
             }
         }
+
+#if UNITY_EDITOR
         else
         {
 
             Debug.Log("최대 명령 수를 초과해서 명령할 수 없습니다.");
         }
+#endif
     }
 }
