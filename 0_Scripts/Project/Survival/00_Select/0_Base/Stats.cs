@@ -8,6 +8,7 @@ public class Stats : ScriptableObject
 
     [SerializeField] protected int maxHp;
     [SerializeField] protected int def;
+    [SerializeField] protected int evade;
 
     [SerializeField] protected TYPE_SIZE mySize;            // 유닛 사이즈 유니티 사이즈 1과 같다!
     [SerializeField] protected TYPE_SELECTABLE myType;
@@ -25,9 +26,12 @@ public class Stats : ScriptableObject
 
     [SerializeField] protected int addedHp;
     [SerializeField] protected int addedDef;
+    [SerializeField] protected int addedEvade;
 
     public int MaxHp => maxHp;
     public int Def => def;
+
+    public int Evade => evade;
 
     public int GetAddHp(int _upgrade)
     {
@@ -39,6 +43,12 @@ public class Stats : ScriptableObject
     {
 
         return addedDef * _upgrade;
+    }
+
+    public int GetAddEvade(int _upgrade)
+    {
+
+        return addedEvade * _upgrade;
     }
 
     public int MySize => (int)mySize;
@@ -89,6 +99,4 @@ public class Stats : ScriptableObject
     public string MyName => myName;
 
     public int HitBarPos => hitBarPos;
-
-
 }

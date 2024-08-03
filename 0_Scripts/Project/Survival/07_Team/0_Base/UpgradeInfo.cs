@@ -13,6 +13,7 @@ public class UpgradeInfo
     public int lvlAtk;              // 추가 공격력
     public int lvlDef;              // 추가 방어력
     public int lvlHp;               // 추가 체력
+    public int lvlEvade;
 
     public int lvlGetGold;          // 획득 골드 추가
     public int lvlMaxSupply;           // 추가 인구

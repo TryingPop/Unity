@@ -15,6 +15,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private UnitSlots unitSlots;
     [SerializeField] private InputManager inputManager;
 
+    [SerializeField] private GameScreen gameScreen;
+
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
 

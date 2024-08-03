@@ -19,6 +19,8 @@ public class TeamInfo
     public int lvlDef => upgradeInfo.lvlDef;
     public int lvlHp => upgradeInfo.lvlHp;
 
+    public int lvlEvade => upgradeInfo.lvlEvade;
+
     public int lvlGetGold => upgradeInfo.lvlGetGold;
     public int lvlMaxSupply => upgradeInfo.lvlMaxSupply;
 

@@ -6,6 +6,9 @@ using UnityEngine;
 public abstract class Attack : ScriptableObject
 {
 
+    [SerializeField] protected bool isPure;
+    [SerializeField] protected bool isEvade;
+
     public int atk;                             // °ø°Ý·Â
     [SerializeField] protected int addedAtk;
 

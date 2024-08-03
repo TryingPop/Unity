@@ -44,7 +44,6 @@ public enum TYPE_SIZE
     GIANT = 6,
 }
 
-
 /// <summary>
 /// -1 ~ 5 번까지는 일반 유닛이 갖는 번호
 /// 6번부터는 특수!

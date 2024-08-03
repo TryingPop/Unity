@@ -180,13 +180,14 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 피격 메서드, 모든 유닛과 건물은 피격 가능하다!
     /// </summary>
-    public virtual void OnDamaged(int _dmg, Transform _trans = null, bool _ignoreDef = false)
+    public virtual void OnDamaged(int _dmg, Transform _trans = null, bool _pure = false, bool _evade = true)
     {
 
-        if (ChkInvincible()) return;
+        if (ChkInvincible() || (_evade && ChkEvade())) return;
 
-        if (_ignoreDef) curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
-        else curHp -= _dmg < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg;
+        if (_pure) curHp -= _dmg < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg;
+        else curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
+
 
         if (curHp < 0) curHp = 0;
         myHitBar.SetHp();
@@ -210,6 +211,15 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         }
 
         return false;
+    }
+
+    protected bool ChkEvade()
+    {
+
+        int random = Random.Range(0, 101);
+        int evade = myStat.Evade + myStat.GetAddEvade(myTeam.lvlEvade);
+
+        return random < evade;
     }
 
     /// <summary>

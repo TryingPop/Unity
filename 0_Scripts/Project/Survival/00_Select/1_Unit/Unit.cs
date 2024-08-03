@@ -206,10 +206,10 @@ public class Unit : Selectable
     }
 
 
-    public override void OnDamaged(int _dmg, Transform _trans = null, bool _ignoreDef = false)
+    public override void OnDamaged(int _dmg, Transform _trans = null, bool _pure = false, bool _evade = true)
     {
 
-        base.OnDamaged(_dmg, _trans, _ignoreDef);
+        base.OnDamaged(_dmg, _trans, _pure, _evade);
 
         Selectable select = null;
         if (_trans != null) select = _trans.GetComponent<Selectable>();

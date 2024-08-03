@@ -23,6 +23,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIChat acquired;               // È¹µæ ? È¤Àº Ã¤ÆÃ?
     [SerializeField] private CameraMovement camMove;
 
+    [SerializeField] private GameScreen gameScreen;
+
+
     [SerializeField] private RectTransform frameRectTrans;
 
     [Header("Äµ¹ö½º")]

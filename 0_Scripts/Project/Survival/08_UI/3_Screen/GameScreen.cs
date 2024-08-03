@@ -7,7 +7,6 @@ public class GameScreen : MonoBehaviour,
     IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
 
-    // [SerializeField] private InputManager inputManager;
     [SerializeField] private RectTransform canvasRectTrans;
     [SerializeField] private RectTransform myRectTrans;
     
@@ -19,12 +18,15 @@ public class GameScreen : MonoBehaviour,
     private bool chkDoubleClick = false;
 
     // ui 크기
-    private Vector2 myLeftBottom;
-    private Vector2 myRightTop;
+    [SerializeField] private Vector2 myLeftBottom;
+    [SerializeField] private Vector2 myRightTop;
 
 
     // 클릭 부분
     private Vector2 clickPos;
+
+    public Vector2 MyLeftBottom => myLeftBottom;
+    public Vector2 MyRightTop => myRightTop;
 
 
     private void Start()
@@ -65,6 +67,7 @@ public class GameScreen : MonoBehaviour,
 
                 // 누른 위치 저장 및 드래그 준비
                 chkSelect = true;
+
                 if (Time.time - clickTime < doubleClickInterval)
                 {
 
@@ -125,7 +128,7 @@ public class GameScreen : MonoBehaviour,
                     playerManager.SavePointToRay(false, true);
 
                     if (playerManager.CmdTargetIsCommandable
-                        && (chkDoubleClick 
+                        && (chkDoubleClick
                         || inputManager.GroupKey))
                     {
 
@@ -142,10 +145,10 @@ public class GameScreen : MonoBehaviour,
                     }
                 }
                 // 드래그 선택
-                else 
+                else
                 {
 
-                    playerManager.DragSelect(ref clickPos, ref nowPos); 
+                    playerManager.DragSelect(ref clickPos, ref nowPos);
                 }
 
                 chkSelect = false;
@@ -165,5 +168,4 @@ public class GameScreen : MonoBehaviour,
 
         if (chkSelect) DrawRect.DrawDragScreenRect(clickPos, inputManager.MousePos);
     }
-
 }

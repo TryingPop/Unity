@@ -11,7 +11,7 @@ public class MiniMap : MonoBehaviour,
     [SerializeField] protected RectTransform myRectTrans;
     // [SerializeField] protected Transform camFollow;
     [SerializeField] protected PlayerManager inputManager;
-    [SerializeField] private Camera miniMapCam;
+    [SerializeField] private Camera miniCam;
 
     // protected Vector2 screenRatio;
     protected Vector2 miniMapOffset;
@@ -49,7 +49,8 @@ public class MiniMap : MonoBehaviour,
     }
 
     /// <summary>
-    /// 미니맵 안의 마우스 좌표를 스케일링한 포인트로 바꾼다
+    /// 미니맵 안의 마우스 좌표를 
+    /// 미니맵 좌표의 비율로 스케일링한 좌표로 바꾼다
     /// </summary>
     public Vector2 GetMiniMapScaleValue(Vector2 _mousePos)
     {
@@ -64,10 +65,10 @@ public class MiniMap : MonoBehaviour,
     public Vector3 ScaleValueToWorldMap(Vector2 _scaleValue, bool _onGround)
     {
 
-        float mapHalfHeight = miniMapCam.orthographicSize;
-        float mapHalfWidth = mapHalfHeight * miniMapCam.aspect;
+        float mapHalfHeight = miniCam.orthographicSize;
+        float mapHalfWidth = mapHalfHeight * miniCam.aspect;
 
-        Vector3 camPos = miniMapCam.transform.position;
+        Vector3 camPos = miniCam.transform.position;
         float posX = _scaleValue.x * mapHalfWidth * 2 + (camPos.x - mapHalfWidth);
         float posZ = _scaleValue.y * mapHalfHeight * 2 + (camPos.z - mapHalfHeight);
         
