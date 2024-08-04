@@ -14,8 +14,8 @@ public class BossShot : ISkillAction
     [SerializeField] protected int waitTurn;
     [SerializeField] protected int moveTurn;
 
+    [SerializeField] protected Attack atk;
     [SerializeField] protected Vector3 offset;
-    [SerializeField] protected int atk;
 
     protected int PrefabIdx
     {
@@ -44,6 +44,9 @@ public class BossShot : ISkillAction
         {
 
             _unit.MyAnimator.SetTrigger($"Skill{skillNum}");
+            atk.OnAttack(_unit);
+            /*
+            // 해당부분 Attack으로 이관
 
             Transform unitTrans = _unit.transform;
             Vector3 dir = Quaternion.LookRotation(unitTrans.forward) * offset;
@@ -58,13 +61,9 @@ public class BossShot : ISkillAction
                 missile.WaitTurn = waitTurn;
                 missile.MoveTurn = moveTurn;
             }
+            */
         }
-        else if (_unit.MyTurn == waitTurn)
-        {
-
-            _unit.MyTurn = 0;
-        }
-
+        else if (_unit.MyTurn == waitTurn) _unit.MyTurn = 0;
         if (_unit.MyTurn == 0)
         {
 

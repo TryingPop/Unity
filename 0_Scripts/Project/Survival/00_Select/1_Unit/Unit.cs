@@ -72,17 +72,6 @@ public class Unit : Selectable
         }
     }
 
-    public int Atk
-    {
-
-        get
-        {
-
-            int atk = myAttack.atk + myAttack.GetAddAtk(myTeam.lvlAtk);
-            return atk;
-        }
-    }
-
     public override int MyTurn
     {
 
@@ -206,10 +195,10 @@ public class Unit : Selectable
     }
 
 
-    public override void OnDamaged(int _dmg, Transform _trans = null, bool _pure = false, bool _evade = true)
+    public override void OnDamaged(int _dmg, bool _pure = false, bool _evade = true, Transform _trans = null)
     {
 
-        base.OnDamaged(_dmg, _trans, _pure, _evade);
+        base.OnDamaged(_dmg, _pure, _evade, _trans);
 
         Selectable select = null;
         if (_trans != null) select = _trans.GetComponent<Selectable>();
@@ -311,8 +300,8 @@ public class Unit : Selectable
         if (myAttack != null)
         {
 
-            temp = myAttack.GetAddAtk(myTeam.lvlAtk);
-            string strAtk = temp == 0 ? myAttack.atk.ToString() : $"{myAttack.atk}(+{temp})";
+            temp = myAttack.GetAddedAtk(myTeam.lvlAtk);
+            string strAtk = temp == 0 ? myAttack.Atk.ToString() : $"{myAttack.Atk}(+{temp})";
 
             temp = myStat.GetAddDef(myTeam.lvlDef);
             string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";

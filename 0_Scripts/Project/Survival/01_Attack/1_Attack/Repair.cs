@@ -12,6 +12,6 @@ public class Repair : Attack
     public override void OnAttack(Unit _unit)
     {
 
-        _unit.Target.Heal(_unit.Atk);
+        _unit.Target.Heal(atk);
     }
 }

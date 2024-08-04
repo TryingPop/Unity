@@ -24,20 +24,21 @@ public class Grenade : Missile
     protected float deltaY;
 
     protected int prefabIdx;
-    protected int atk;
 
     // 이건 추후에 scripatble로 대체하기!
     protected static RaycastHit[] hits = new RaycastHit[25];
 
-    public override void Init(Selectable _atker, int _atk, int _prefabIdx)
+    public override void Init(Selectable _atker, Attack _atkType, int _prefabIdx)
     {
 
         myTrail.enabled = true;
         myTrail.Clear();
+
+        atkType = _atkType;
+
         if (_atker.Target != null) destination = _atker.Target.transform.position;
         else destination = _atker.TargetPos;
 
-        atk = _atk;
         targetMask = _atker.MyTeam.EnemyLayer;
         prefabIdx = _prefabIdx;
 
@@ -48,7 +49,7 @@ public class Grenade : Missile
         
         // float dis = Vector3.SqrMagnitude(dir);
 
-        maxTurn = (ushort)((dir.magnitude / moveSpeed) * 50);
+        maxTurn = (int)((dir.magnitude / moveSpeed) * 50);
         dir = dir.normalized * moveSpeed;
         
         if (maxTurn < 1) maxTurn = 1;
@@ -112,7 +113,7 @@ public class Grenade : Missile
         for (int i = 0; i < len; i++)
         {
 
-            hits[i].transform.GetComponent<Selectable>().OnDamaged(atk);
+            hits[i].transform.GetComponent<Selectable>().OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
         }
 
         Used();

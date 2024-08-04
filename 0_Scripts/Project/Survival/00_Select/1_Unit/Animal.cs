@@ -22,9 +22,9 @@ public class Animal : Unit
     /// <summary>
     /// 죽이면 골드 올라오는 이펙트 생성과 죽인 유저에게 골드 준다
     /// </summary>
-    public override void OnDamaged(int _dmg, Transform _trans = null, bool _pure = false, bool _evade = true)
+    public override void OnDamaged(int _dmg, bool _pure = false, bool _evade = true, Transform _trans = null)
     {
-        base.OnDamaged(_dmg, _trans, _pure, _evade);
+        base.OnDamaged(_dmg, _pure, _evade, _trans);
 
         if (myState == STATE_SELECTABLE.DEAD
             && _trans)

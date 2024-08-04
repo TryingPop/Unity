@@ -29,6 +29,7 @@ public class Stats : ScriptableObject
     [SerializeField] protected int addedEvade;
 
     public int MaxHp => maxHp;
+
     public int Def => def;
 
     public int Evade => evade;

@@ -8,15 +8,13 @@ using UnityEngine;
 public class GuidedMissile : Missile
 {
 
-    protected Transform atker;          // 공격자
+    // protected Transform atker;          // 공격자
     protected Selectable target;        // 대상
 
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected float moveSpeed;
 
     [SerializeField] protected int prefabIdx;
-
-    protected int atk;
 
     /*
     /// <summary>
@@ -39,12 +37,12 @@ public class GuidedMissile : Missile
     }
     */
 
-    public override void Init(Selectable _atker, int _atk, int _prefabIdx)
+    public override void Init(Selectable _atker, Attack _atkType, int _prefabIdx)
     {
 
-        atker = _atker.transform;
+        atker = _atker;
+        atkType = _atkType;
         target = _atker.Target;
-        atk = _atk;
         prefabIdx = _prefabIdx;
 
         ActionManager.instance.AddMissile(this);
@@ -82,29 +80,10 @@ public class GuidedMissile : Missile
         transform.LookAt(target.transform.position);
     }
 
-    /// <summary>
-    /// 언덕 보정 용도
-    /// </summary>
-    protected void ChkMiss(int num = 0)
-    {
-
-        int n = (int)(target.transform.position.y - atker.position.y);
-
-        if (n > 0)
-        {
-
-            if (num == 0 && Random.Range(0, VarianceManager.ONE_MISS_PER_N_TIMES) < n) atk = 0;
-            else if (num > 0 && Random.Range(0, num) < n) atk = 0;
-        }
-    }
-
     protected override void TargetAttack()
     {
 
-        ChkMiss();
-
-        target.OnDamaged(atk, atker);
-
+        target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade, atker.transform);
         Used();
     }
 

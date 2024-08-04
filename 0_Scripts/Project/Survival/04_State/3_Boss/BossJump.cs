@@ -8,12 +8,13 @@ public class BossJump : ISkillAction
 {
 
     // Atk로 바꿔야하지 않을까 싶다
-    [SerializeField] protected short startAnimTime;
-    [SerializeField] protected short atkTime;
+    [SerializeField] protected int startAnimTime;
+    [SerializeField] protected int atkTime;
 
     [SerializeField] protected float jumpRange;
     [SerializeField] protected float atkRange;
     [SerializeField] protected int atk;
+    [SerializeField] protected Attack atkType;
 
     [SerializeField] protected int selectIdx;
     protected int prefabIdx = -1;
@@ -41,25 +42,14 @@ public class BossJump : ISkillAction
 
         _unit.MyTurn++;
 
-        if (_unit.MyTurn == startAnimTime)
-        {
-
+        if (atkType.StartAnimTime(_unit.MyTurn))
             _unit.MyAnimator.SetTrigger($"Skill{skillNum}");
-        }
-        else if (_unit.MyTurn > atkTime)
+        else if (atkType.AtkTime(_unit.MyTurn) == 1)
         {
 
             _unit.MyTurn = 0;
 
-            int num = Physics.SphereCastNonAlloc(_unit.transform.position, 
-                atkRange, Vector3.up, VarianceManager.hits, 1f, _unit.MyTeam.EnemyLayer);
-            for (int i = 0; i < num; i++)
-            {
-
-                if (VarianceManager.hits[i].transform == _unit.transform) continue;
-
-                VarianceManager.hits[i].transform.GetComponent<Selectable>()?.OnDamaged(atk);
-            }
+            atkType.OnAttack(_unit);
         }
        
 

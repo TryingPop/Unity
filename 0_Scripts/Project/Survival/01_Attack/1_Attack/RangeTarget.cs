@@ -44,7 +44,7 @@ public class RangeTarget : Attack
         {
 
             go.SetActive(true);
-            go.GetComponent<Missile>().Init(_unit, _unit.Atk, prefabIdx);
+            go.GetComponent<Missile>().Init(_unit, this, prefabIdx);
         }
     }
 }

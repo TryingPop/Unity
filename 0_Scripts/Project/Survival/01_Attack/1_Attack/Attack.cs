@@ -8,24 +8,36 @@ public abstract class Attack : ScriptableObject
 
     [SerializeField] protected bool isPure;
     [SerializeField] protected bool isEvade;
-
-    public int atk;                             // 공격력
+    [SerializeField] protected int atk;
     [SerializeField] protected int addedAtk;
 
-    public int GetAddAtk(int _upgrade)
+    public bool IsPure => isPure;
+    public bool IsEvade => isEvade;
+
+    public int Atk => atk;
+
+    public int GetAddedAtk(int _upgrade)
     {
 
-        return addedAtk * _upgrade;
+        return _upgrade * addedAtk;
+    }
+
+    public int GetAtk(Selectable _unit)
+    {
+
+        TeamInfo team = _unit.MyTeam;
+        if (team == null) return atk;
+        return atk + GetAddedAtk(team.lvlAtk);
     }
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
     [SerializeField] protected int startAnimTime;                   // 애니메이션 시작 턴
     [SerializeField] protected int atkTime;                         // 데미지 연산 시작 턴
 
-    public float atkRange;                      // 공격 범위
+    public float atkRange;                                          // 공격 범위
     public float chaseRange;
 
-    [SerializeField] protected ushort chkTime;
+    [SerializeField] protected int chkTime;                         // 정찰 타임 간격
 
     /// <summary>
     /// 혹시 몰라 세팅용

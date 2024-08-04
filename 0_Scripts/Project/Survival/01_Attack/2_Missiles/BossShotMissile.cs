@@ -19,7 +19,6 @@ public class BossShotMissile : Missile
     [SerializeField] protected int calcTurn;      // 연산용
     protected bool isMove = false;                  // 연산용
 
-    protected int atk;
     [SerializeField] protected float moveSpeed;
 
     [SerializeField] protected LayerMask targetLayer;
@@ -64,11 +63,11 @@ public class BossShotMissile : Missile
     /// <summary>
     /// 초기화 및 기본 변수 세팅
     /// </summary>
-    public override void Init(Selectable _atker, int _atk, int _prefabIdx)
+    public override void Init(Selectable _atker, Attack _atkType, int _prefabIdx)
     {
 
         prefabIdx = _prefabIdx;
-        atk = _atk;
+        atkType = _atkType;
 
         Vector3 destination = _atker.TargetPos;
         transform.LookAt(destination);
@@ -78,7 +77,6 @@ public class BossShotMissile : Missile
         dir = (destination).normalized;
 
         targetLayer = _atker.MyTeam.EnemyLayer;
-
 
         calcTurn = 0;
         isMove = false;
@@ -110,25 +108,13 @@ public class BossShotMissile : Missile
                 myRigid.useGravity = false;
                 myRigid.isKinematic = false;
             }
-            else
-            {
-
-                transform.localScale += sizeUp;
-            }
+            else transform.localScale += sizeUp;
         }
         else
         {
 
-            if (calcTurn <= moveTurn)
-            {
-
-                myRigid.velocity = dir * moveSpeed;
-            }
-            else
-            {
-
-                Used();
-            }
+            if (calcTurn <= moveTurn) myRigid.velocity = dir * moveSpeed;
+            else Used();
         }
 
         myRotation.Rotation();
@@ -145,11 +131,7 @@ public class BossShotMissile : Missile
         PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
     }
 
-    protected override void TargetAttack()
-    {
-
-        
-    }
+    protected override void TargetAttack() { }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -166,10 +148,7 @@ public class BossShotMissile : Missile
             {
 
                 if (((1 << other.gameObject.layer) & targetLayer) != 0)
-                {
-
-                    target.OnDamaged(atk);
-                }
+                    target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
             }
         }
     }
@@ -177,10 +156,6 @@ public class BossShotMissile : Missile
     private void OnTriggerExit(Collider other)
     {
         
-        if (other.CompareTag("Ground"))
-        {
-
-            Used();
-        }
+        if (other.CompareTag("Ground")) Used();
     }
 }

@@ -16,6 +16,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [Header("생존 관련 변수")]
     protected int curHp;                                // 현재 Hp
+    [SerializeField] protected int myTurn;           // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
+
+    [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
 
     protected HitBar myHitBar;                          // 체력바
 
@@ -27,10 +30,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [SerializeField] protected Selectable target;       // 목표물
     [SerializeField] protected Vector3 targetPos;       // 목표 좌표
-
-    [SerializeField] protected ushort myTurn;           // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
-
-    [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
 
     [SerializeField] protected STATE_SELECTABLE myState;
 
@@ -74,14 +73,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     {
 
         get { return myTurn; }
-        set 
-        {
-
-            if (value > ushort.MaxValue) value = ushort.MaxValue;
-            else if (value < ushort.MinValue) value = ushort.MinValue;
-
-            myTurn = (ushort)value; 
-        }
+        set { myTurn = value; }
     }
 
     public Selectable Target
@@ -180,7 +172,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 피격 메서드, 모든 유닛과 건물은 피격 가능하다!
     /// </summary>
-    public virtual void OnDamaged(int _dmg, Transform _trans = null, bool _pure = false, bool _evade = true)
+    public virtual void OnDamaged(int _dmg, bool _pure = false, bool _evade = true, Transform _trans = null)
     {
 
         if (ChkInvincible() || (_evade && ChkEvade())) return;
