@@ -6,7 +6,7 @@ using UnityEngine;
 /// ÃÑ¾Ë »ý¼º
 /// </summary>
 [CreateAssetMenu(fileName = "Gun", menuName = "Attack/Gun")]
-public class GunAttack : RangeTarget
+public class GunAttack : GenerateMissile
 {
 
     [SerializeField] protected int effectIdx;            // ÅºÇÇ ÀÌÆåÆ®

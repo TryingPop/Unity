@@ -8,27 +8,18 @@ public abstract class Attack : ScriptableObject
 
     [SerializeField] protected bool isPure;
     [SerializeField] protected bool isEvade;
-    [SerializeField] protected int atk;
-    [SerializeField] protected int addedAtk;
 
     public bool IsPure => isPure;
     public bool IsEvade => isEvade;
 
-    public int Atk => atk;
+    /// <summary>
+    /// 공격력 반환
+    /// </summary>
+    /// <param name="_unit">유닛</param>
+    /// <returns></returns>
+    public abstract int GetAtk(Selectable _unit);
 
-    public int GetAddedAtk(int _upgrade)
-    {
-
-        return _upgrade * addedAtk;
-    }
-
-    public int GetAtk(Selectable _unit)
-    {
-
-        TeamInfo team = _unit.MyTeam;
-        if (team == null) return atk;
-        return atk + GetAddedAtk(team.lvlAtk);
-    }
+    public abstract int GetAddedAtk(int _lvlInfo);
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
     [SerializeField] protected int startAnimTime;                   // 애니메이션 시작 턴
@@ -100,11 +91,7 @@ public abstract class Attack : ScriptableObject
         for (int i = 0; i < len; i++)
         {
 
-            if (VarianceManager.hits[i].transform == _unit.transform)
-            {
-
-                continue;
-            }
+            if (VarianceManager.hits[i].transform == _unit.transform) continue;
 
             // 가장 가까운 적 공격!
             float targetDis = Vector3.SqrMagnitude(_unit.transform.position - VarianceManager.hits[i].transform.position);

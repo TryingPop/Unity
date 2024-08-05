@@ -6,17 +6,17 @@ using UnityEngine;
 public class BossShot : ISkillAction
 {
 
-    [SerializeField] protected int startAnimTime;
+    // [SerializeField] protected int startAnimTime;
 
-    [SerializeField] protected int missileIdx;
-    protected int prefabIdx = -1;
+    // [SerializeField] protected int missileIdx;
+    // protected int prefabIdx = -1;
 
-    [SerializeField] protected int waitTurn;
-    [SerializeField] protected int moveTurn;
+    // [SerializeField] protected int waitTurn;
+    // [SerializeField] protected int moveTurn;
 
     [SerializeField] protected Attack atk;
-    [SerializeField] protected Vector3 offset;
-
+    // [SerializeField] protected Vector3 offset;
+    /*
     protected int PrefabIdx
     {
 
@@ -32,6 +32,7 @@ public class BossShot : ISkillAction
             return prefabIdx;
         }
     }
+    */
 
     public override void Action(Unit _unit)
     {
@@ -40,7 +41,7 @@ public class BossShot : ISkillAction
 
         _unit.MyTurn++;
 
-        if (_unit.MyTurn == startAnimTime)
+        if (atk.StartAnimTime(_unit.MyTurn))
         {
 
             _unit.MyAnimator.SetTrigger($"Skill{skillNum}");
@@ -63,7 +64,7 @@ public class BossShot : ISkillAction
             }
             */
         }
-        else if (_unit.MyTurn == waitTurn) _unit.MyTurn = 0;
+        else if (atk.AtkTime(_unit.MyTurn) == 1) _unit.MyTurn = 0;
         if (_unit.MyTurn == 0)
         {
 

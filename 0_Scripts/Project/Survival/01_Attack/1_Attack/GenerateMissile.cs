@@ -5,15 +5,28 @@ using UnityEngine;
 /// <summary>
 /// 固荤老 积己
 /// </summary>
-[CreateAssetMenu(fileName = "RangeTarget", menuName = "Attack/RangeTarget")]
-public class RangeTarget : Attack
+[CreateAssetMenu(fileName = "GenerateMissile", menuName = "Attack/GenerateMissile")]
+public class GenerateMissile : Attack
 {
 
     [SerializeField] protected int missileIdx;       // 固荤老 积己
     [SerializeField] protected Vector3 offset;          // 积己 困摹
+    [SerializeField] protected Attack atkType;
 
     protected int prefabIdx = -1;
-    
+
+    public override int GetAtk(Selectable _unit)
+    {
+
+        return atkType.GetAtk(_unit);
+    }
+
+    public override int GetAddedAtk(int _lvlInfo)
+    {
+
+        return atkType.GetAddedAtk(_lvlInfo);
+    }
+
     protected int PrefabIdx
     {
 

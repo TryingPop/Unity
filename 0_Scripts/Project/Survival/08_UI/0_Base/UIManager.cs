@@ -23,9 +23,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIChat acquired;               // È¹µæ ? È¤Àº Ã¤ÆÃ?
     [SerializeField] private CameraMovement camMove;
 
-    [SerializeField] private GameScreen gameScreen;
-
-
     [SerializeField] private RectTransform frameRectTrans;
 
     [Header("Äµ¹ö½º")]
@@ -33,6 +30,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas warningCanvas;
     [SerializeField] private Canvas scriptCanvas;
     [SerializeField] private Canvas acquiredCanvas;
+
+    [Header("°ÔÀÓ ½ºÅ©¸°")]
+    [SerializeField] private GameScreen gameScreen;
+    [SerializeField] private MiniMap miniMap;
 
     private bool activeInfo = false;
     private bool activeWarning = false;
@@ -142,6 +143,11 @@ public class UIManager : MonoBehaviour
 
         resources.Teams = TeamManager.instance.GetTeamInfo(VarianceManager.LAYER_PLAYER);
         updateResources = true;
+
+        gameScreen.GetMyUIPos();
+        miniMap.Init();
+
+        SetMiniMap();
     }
 
     public void LateUpdate()
@@ -150,9 +156,10 @@ public class UIManager : MonoBehaviour
         ReadKey();
 
         if (camMove.IsMove()) 
-        { 
-            
+        {
+
             camMove.Move(); 
+            SetMiniMap();
         }
 
         if (btns.IsChanged)
@@ -229,7 +236,16 @@ public class UIManager : MonoBehaviour
         }
 
         selects.SetPos();
+    }
 
+    private void SetMiniMap()
+    {
+
+        PlayerManager playerManager = PlayerManager.instance;
+        playerManager.UiPosToWorldPos(gameScreen.MyLeftBottom, out Vector3 worldLeftBot);
+        playerManager.UiPosToWorldPos(gameScreen.MyRightTop, out Vector3 worldRightTop);
+
+        miniMap.SetMiniCamUI(worldLeftBot, worldRightTop);
     }
 
     private void ReadKey()
@@ -402,15 +418,28 @@ public class UIManager : MonoBehaviour
         slots.SetScreenSize();
     }
 
+    /// <summary>
+    /// Ä· ÀÌµ¿ °¡´É
+    /// </summary>
     public void CamMovable(bool _isControl)
     {
 
         camMove.IsControl = _isControl;
     }
 
+    /// <summary>
+    /// Ä· °­Á¦ ÀÌµ¿
+    /// </summary>
     public void GoCam(ref Vector3 _pos, bool _forcedMove = false)
     {
 
         camMove.SetPos(ref _pos, _forcedMove);
+    }
+
+    public void OnGUI()
+    {
+
+        if (gameScreen.ChkSelect) DrawRect.DrawDragScreenRect(gameScreen.ClickPos, inputManager.MousePos);
+        DrawRect.DrawDragScreenRect(miniMap.LeftBot, miniMap.RightTop);
     }
 }

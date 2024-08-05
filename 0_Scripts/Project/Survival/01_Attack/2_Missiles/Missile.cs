@@ -13,6 +13,4 @@ public abstract class Missile : MonoBehaviour
     protected abstract void Used();
 
     public abstract void Action();
-
-    protected abstract void TargetAttack();
 }

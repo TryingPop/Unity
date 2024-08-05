@@ -14,16 +14,33 @@ public class MiniMap : MonoBehaviour,
     [SerializeField] private Camera miniCam;
 
     // protected Vector2 screenRatio;
-    protected Vector2 miniMapOffset;
-    protected Vector2 miniMapScale;
-    
+    protected Vector2 miniMapOffset;        // 왼쪽 아래
+    protected Vector2 miniMapScale;         // 실제 화면 좌표에서 미니맵 크기의 역수
+    [SerializeField] protected Vector2 mapSize; // 맵 사이즈
 
-    private void Start()
+    public Vector2 MapSize => mapSize;
+
+    [SerializeField] private Vector2 leftBot;
+    [SerializeField] private Vector2 rightTop;
+
+    public Vector2 LeftBot => leftBot;
+    public Vector2 RightTop => rightTop;
+
+    public void Init()
     {
 
+        SetMapSize();
         SetMiniMapPos();
     }
 
+    public void SetMapSize()
+    {
+
+        miniCam.orthographicSize = mapSize.y;
+        miniCam.aspect = mapSize.x / mapSize.y;
+    }
+
+    /*
     /// <summary>
     /// 변수 선언
     /// </summary>
@@ -33,18 +50,47 @@ public class MiniMap : MonoBehaviour,
         miniMapOffset = _miniMapOffset;
         miniMapScale = _miniMapSize;
     }
+    */
+
+    public Vector2 WorldMapToMiniMap(Vector3 _worldMap)
+    {
+
+        Vector2 ret;
+        ret.x = (_worldMap.x + mapSize.x) / (2 * mapSize.x);
+        ret.y = (_worldMap.z + mapSize.y) / (2 * mapSize.y);
+
+        return ret / miniMapScale + miniMapOffset;
+    }
+
+
+    public void SetMiniCamUI(Vector3 _worldLeftBot, Vector3 _worldRightTop)
+    {
+
+        leftBot = WorldMapToMiniMap(_worldLeftBot);
+        rightTop = WorldMapToMiniMap(_worldRightTop);
+
+        // 가장자리 확인
+        float lX = miniMapOffset.x;
+        float lY = miniMapOffset.y;
+        if (leftBot.x < lX) leftBot.x = lX;
+        if (leftBot.y < lY) leftBot.y = lY;
+
+        float rX = miniMapOffset.x + 1.0f / miniMapScale.x;
+        float rY = miniMapOffset.y + 1.0f / miniMapScale.y;
+        if (rightTop.x > rX) rightTop.x = rX;
+        if (rightTop.y > rY) rightTop.y = rY;
+    }
 
     /// <summary>
     /// 미니맵 크기 계산
     /// </summary>
-    protected void SetMiniMapPos()
+    public void SetMiniMapPos()
     {
 
         Vector2 screenRatio = UIManager.instance.screenRatio;
         miniMapOffset = myRectTrans.anchoredPosition / screenRatio;
 
         var miniMapRect = myRectTrans.sizeDelta;
-
         miniMapScale = screenRatio / miniMapRect;
     }
 

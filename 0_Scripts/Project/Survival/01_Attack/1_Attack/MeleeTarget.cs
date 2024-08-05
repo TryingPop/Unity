@@ -9,6 +9,25 @@ using UnityEngine;
 public class MeleeTarget : Attack
 {
 
+    [SerializeField] protected int atk;
+    [SerializeField] protected int addedAtk;
+
+    public override int GetAddedAtk(int _lvlInfo)
+    {
+
+        return addedAtk * _lvlInfo;
+    }
+
+    public override int GetAtk(Selectable _unit)
+    {
+
+        TeamInfo team = _unit.MyTeam;
+
+        if (team == null) return atk;
+
+        return atk + GetAddedAtk(team.lvlAtk);
+    }
+
     public override void OnAttack(Unit _unit)
     {
 

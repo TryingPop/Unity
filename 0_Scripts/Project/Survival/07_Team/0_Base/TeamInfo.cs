@@ -115,7 +115,6 @@ public class TeamInfo
         if (_supply <= 0) return true;
         if (MaxSupply - resourcesInfo.curSupply >= _supply) return true;
 
-        
         UIManager.instance.SetWarningText("보급이 부족합니다.", Color.yellow, 2.0f);
         return false;
     }
@@ -144,16 +143,11 @@ public class TeamInfo
     {
 
         if (_add)
-        {
-
             // 동맹 추가
             allianceInfo.allyLayer |= (1 << _layer);
-        }
         else
-        {
-
+            // 동맹 제거
             allianceInfo.allyLayer &= ~(1 << _layer);
-        }
     }
     /// <summary>
     /// 적 추가, 제거

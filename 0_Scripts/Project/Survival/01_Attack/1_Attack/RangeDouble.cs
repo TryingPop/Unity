@@ -6,7 +6,7 @@ using UnityEngine;
 /// 보스용 두 발 쏘는거
 /// </summary>
 [CreateAssetMenu(fileName = "BossAtk", menuName = "Attack/BossAtk")]
-public class RangeDouble : RangeTarget
+public class RangeDouble : GenerateMissile
 {
 
     [SerializeField] protected Vector3 nextOffset;

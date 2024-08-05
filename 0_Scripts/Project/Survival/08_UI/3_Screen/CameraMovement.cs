@@ -28,6 +28,17 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private bool isControl = true;
     public bool IsControl { set { isControl = value; } }
 
+    public void SetBound(ref Vector3 _min, ref Vector3 _max)
+    {
+
+
+        minBound.x = _min.x;
+        minBound.z = _min.z;
+
+        maxBound.x = _max.x;
+        maxBound.z = _max.z;
+    }
+
     public bool IsMove()
     {
 

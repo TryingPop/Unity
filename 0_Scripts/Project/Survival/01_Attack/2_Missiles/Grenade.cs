@@ -25,15 +25,13 @@ public class Grenade : Missile
 
     protected int prefabIdx;
 
-    // 이건 추후에 scripatble로 대체하기!
-    protected static RaycastHit[] hits = new RaycastHit[25];
-
     public override void Init(Selectable _atker, Attack _atkType, int _prefabIdx)
     {
 
         myTrail.enabled = true;
         myTrail.Clear();
 
+        atker = _atker;
         atkType = _atkType;
 
         if (_atker.Target != null) destination = _atker.Target.transform.position;
@@ -100,22 +98,18 @@ public class Grenade : Missile
         {
 
             myRigid.MovePosition(destination);
-            TargetAttack();
+
+            int len = Physics.SphereCastNonAlloc(transform.position + meshTrans.localPosition, 3f, Vector3.up, VarianceManager.hits, 0f, targetMask);
+
+            for (int i = 0; i < len; i++)
+            {
+
+                VarianceManager.hits[i].transform.GetComponent<Selectable>().OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
+            }
+
+            Used();
         }
     }
 
-    protected override void TargetAttack()
-    {
 
-        // RaycastHit로 ..!
-        int len = Physics.SphereCastNonAlloc(transform.position + meshTrans.localPosition, 3f, Vector3.up, hits, 0f, targetMask);
-
-        for (int i = 0; i < len; i++)
-        {
-
-            hits[i].transform.GetComponent<Selectable>().OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
-        }
-
-        Used();
-    }
 }

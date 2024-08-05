@@ -24,6 +24,11 @@ public class TargetMissile : GuidedMissile
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.transform == target.transform) TargetAttack();
+        if (other.transform == target.transform)
+        {
+
+            target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade, atker.transform);
+            Used();
+        }
     }
 }

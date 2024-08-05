@@ -301,7 +301,7 @@ public class Unit : Selectable
         {
 
             temp = myAttack.GetAddedAtk(myTeam.lvlAtk);
-            string strAtk = temp == 0 ? myAttack.Atk.ToString() : $"{myAttack.Atk}(+{temp})";
+            string strAtk = temp == 0 ? myAttack.GetAtk(this).ToString() : $"{myAttack.GetAtk(this)}(+{temp})";
 
             temp = myStat.GetAddDef(myTeam.lvlDef);
             string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";

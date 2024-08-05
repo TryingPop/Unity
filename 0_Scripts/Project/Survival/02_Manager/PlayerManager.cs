@@ -275,7 +275,7 @@ public class PlayerManager : MonoBehaviour
     /// <summary>
     /// 마우스가 가리키는 월드 좌표
     /// </summary>
-    public void MouseToWorldPos(Vector2 _uiPos, out Vector3 _pos)
+    public void UiPosToWorldPos(Vector2 _uiPos, out Vector3 _pos)
     {
 
         Ray ray = mainCam.ScreenPointToRay(_uiPos);
@@ -399,8 +399,8 @@ public class PlayerManager : MonoBehaviour
     public void DragSelect(ref Vector2 _startPos, ref Vector2 _endPos)
     {
 
-        MouseToWorldPos(_startPos, out Vector3 startPos);
-        MouseToWorldPos(_endPos, out Vector3 endPos);
+        UiPosToWorldPos(_startPos, out Vector3 startPos);
+        UiPosToWorldPos(_endPos, out Vector3 endPos);
         
         // 좌표 검사
         if (IsInValidPos(ref startPos) 
@@ -431,8 +431,8 @@ public class PlayerManager : MonoBehaviour
     public void DoubleClickSelect(ref Vector2 _rightTop, ref Vector2 _leftBottom)
     {
 
-        MouseToWorldPos(_rightTop, out Vector3 rightTop);
-        MouseToWorldPos(_leftBottom, out Vector3 leftBottom);
+        UiPosToWorldPos(_rightTop, out Vector3 rightTop);
+        UiPosToWorldPos(_leftBottom, out Vector3 leftBottom);
 
         if (IsInValidPos(ref rightTop)
             || IsInValidPos(ref leftBottom)) return;

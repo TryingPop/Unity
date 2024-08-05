@@ -16,5 +16,5 @@ public class UpgradeInfo
     public int lvlEvade;
 
     public int lvlGetGold;          // »πµÊ ∞ÒµÂ √ﬂ∞°
-    public int lvlMaxSupply;           // √ﬂ∞° ¿Œ±∏
+    public int lvlMaxSupply;        // √ﬂ∞° ¿Œ±∏
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Obsolete("¾È½á¿ë")]
-public class BossShotAttack : RangeTarget
+public class BossShotAttack : GenerateMissile
 {
 
     public override void OnAttack(Unit _unit)

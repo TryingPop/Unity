@@ -13,52 +13,20 @@ public class BossShotMissile : Missile
     [SerializeField] protected Vector3 dir;         // 연산용
     [SerializeField] protected Vector3 sizeUp;      // 사이즈 업
 
-    protected int waitTurn;                       // 기 모으는 턴
-    protected int moveTurn;                       // 이동 턴
+    [SerializeField] protected int waitTurn = 50;   // 기 모으는 턴
+    [SerializeField] protected int moveTurn = 250;  // 이동 턴
 
-    [SerializeField] protected int calcTurn;      // 연산용
+    [SerializeField] protected int calcTurn;        // 연산용
     protected bool isMove = false;                  // 연산용
 
     [SerializeField] protected float moveSpeed;
 
     [SerializeField] protected LayerMask targetLayer;
+
     [SerializeField] protected MissileRotation myRotation;
     [SerializeField] protected GameObject engageParticle;
 
     protected int prefabIdx;
-
-    public int WaitTurn
-    {
-
-        set 
-        { 
-            
-            waitTurn = value;
-            if (waitTurn != 0)
-            {
-
-                sizeUp = Vector3.one * (1.0f / waitTurn);
-                transform.localScale = Vector3.zero;
-            }
-            else
-            {
-
-                transform.localScale = Vector3.one;
-            }
-        }
-    }
-
-    public int MoveTurn
-    {
-
-        set
-        {
-
-            moveTurn = value;
-        }
-    }
-
-    // public Selectable target;
 
     /// <summary>
     /// 초기화 및 기본 변수 세팅
@@ -68,6 +36,7 @@ public class BossShotMissile : Missile
 
         prefabIdx = _prefabIdx;
         atkType = _atkType;
+        atker = _atker;
 
         Vector3 destination = _atker.TargetPos;
         transform.LookAt(destination);
@@ -86,6 +55,14 @@ public class BossShotMissile : Missile
         engageParticle.SetActive(true);
 
         ActionManager.instance.AddMissile(this);
+
+        if (waitTurn != 0)
+        {
+
+            sizeUp = Vector3.one * (1.0f / waitTurn);
+            transform.localScale = Vector3.zero;
+        }
+        else transform.localScale = Vector3.one;
     }
 
     /// <summary>
@@ -131,16 +108,10 @@ public class BossShotMissile : Missile
         PoolManager.instance.UsedPrefab(gameObject, prefabIdx);
     }
 
-    protected override void TargetAttack() { }
-
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.CompareTag("Wall"))
-        {
-
-            Used();
-        }
+        if (other.CompareTag("Wall")) Used();
         else if (other.CompareTag("Unit"))
         {
 

@@ -21,19 +21,15 @@ public class GameScreen : MonoBehaviour,
     [SerializeField] private Vector2 myLeftBottom;
     [SerializeField] private Vector2 myRightTop;
 
-
     // 클릭 부분
     private Vector2 clickPos;
 
+    public bool ChkSelect => chkSelect;
+
+    public Vector2 ClickPos => clickPos;
+
     public Vector2 MyLeftBottom => myLeftBottom;
     public Vector2 MyRightTop => myRightTop;
-
-
-    private void Start()
-    {
-
-        GetMyUIPos();
-    }
 
     public void GetMyUIPos()
     {
@@ -163,9 +159,11 @@ public class GameScreen : MonoBehaviour,
         chkSelect = false;
     }
 
+    /*
     public void OnGUI()
     {
 
         if (chkSelect) DrawRect.DrawDragScreenRect(clickPos, inputManager.MousePos);
     }
+    */
 }

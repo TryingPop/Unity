@@ -51,7 +51,6 @@ public class BossJump : ISkillAction
 
             atkType.OnAttack(_unit);
         }
-       
 
         if (_unit.MyTurn == 0)
         {

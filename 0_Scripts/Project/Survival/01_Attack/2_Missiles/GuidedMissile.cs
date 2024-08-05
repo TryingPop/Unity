@@ -80,16 +80,14 @@ public class GuidedMissile : Missile
         transform.LookAt(target.transform.position);
     }
 
-    protected override void TargetAttack()
-    {
-
-        target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade, atker.transform);
-        Used();
-    }
-
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.transform == target.transform) TargetAttack();
+        if (other.transform == target.transform) 
+        {
+
+            target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade, atker.transform);
+            Used();
+        }
     }
 }
