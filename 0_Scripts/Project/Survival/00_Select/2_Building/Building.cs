@@ -274,7 +274,7 @@ public class Building : Selectable
 
         // ÆÄ±« ÀÌº¥Æ®
         PoolManager.instance.GetPrefabs(opt.DestroyPoolIdx, VarianceManager.LAYER_DEAD, transform.position + Vector3.up * 0.5f);
-
+        myTeam.AddCnt(myStat.MyType, -1);
         base.Dead(_immediately);
     }
 

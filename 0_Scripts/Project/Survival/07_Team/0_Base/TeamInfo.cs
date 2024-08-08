@@ -10,6 +10,8 @@ public class TeamInfo
     [SerializeField] protected AllianceInfo allianceInfo;
     [SerializeField] protected ResourcesInfo resourcesInfo;
     [SerializeField] protected UpgradeInfo upgradeInfo;
+    [SerializeField] protected LimitInfo limitInfo;
+
     protected UpgradeManager upgradeManager;
 
     public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
@@ -156,16 +158,35 @@ public class TeamInfo
     {
 
         if (_add)
-        {
-
             // 적 추가
             allianceInfo.enemyLayer |= (1 << _layer);
-        }
         else
-        {
-
             // 적에서 해제
             allianceInfo.enemyLayer &= ~(1 << _layer);
-        }
+    }
+
+    /// <summary>
+    /// 제한 판별
+    /// </summary>
+    /// <param name="_type"></param>
+    /// <returns></returns>
+    public bool ChkLimit(TYPE_SELECTABLE _type)
+    {
+
+        int idx = limitInfo.GetBuildingIdx(_type);
+
+        // 유닛이므로 성공
+        if (idx < 0) return true;
+
+        return limitInfo.ChkBuilding(idx);
+    }
+
+    public void AddCnt(TYPE_SELECTABLE _type, int _add = 1)
+    {
+
+        int idx = limitInfo.GetBuildingIdx(_type);
+        if (idx < 0) return;
+
+        limitInfo.AddCntBuilding(idx, _add);
     }
 }

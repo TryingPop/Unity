@@ -12,7 +12,6 @@ public class BuildBuilding : IUnitAction
     [SerializeField] private LayerMask chkLayer;
     private RaycastHit[] hit = new RaycastHit[2];       // 건설 전에 오브젝트를 판별하므로
                                                         // 최대 담을 수 있는게 건설자와 건설자 이외 obj 2개만 담을 수 있으면 된다
-
     public override void Action(Unit _unit)
     {
 
@@ -31,16 +30,20 @@ public class BuildBuilding : IUnitAction
             _unit.MyAnimator.SetFloat("Move", 0f);
 
             // 돈, 인구 확인
-            int supply = _unit.Target.MyStat.Supply;
-            int gold = _unit.Target.MyStat.Cost;
+            Stats stats = _unit.Target.MyStat;
 
-            if (_unit.MyTeam.ChkGold(gold)
+            int supply = stats.Supply;
+            int gold = stats.Cost;
+            
+
+            if (_unit.MyTeam.ChkLimit(stats.MyType)
+                && _unit.MyTeam.ChkGold(gold)
                 && _unit.MyTeam.ChkSupply(supply))
             {
 
                 // 건물 겹치기 방지용도
                 int chk = Physics.BoxCastNonAlloc(_unit.TargetPos, Vector3.one * (_unit.Target.MyStat.MySize * 0.5f), Vector3.up, hit, Quaternion.identity, 2f, chkLayer);
-
+                
                 // 충돌하는 유닛이 없거나, 충돌하는 유닛이 건설자 뿐일 경우
                 if (chk == 0
                     || (chk == 1 
@@ -49,7 +52,7 @@ public class BuildBuilding : IUnitAction
 
                     // 골드 소모
                     _unit.MyTeam.AddGold(-gold);
-
+                    _unit.MyTeam.AddCnt(stats.MyType);
                     var go = PoolManager.instance.GetSamePrefabs(_unit.Target, _unit.gameObject.layer, _unit.TargetPos);
 
                     if (go)
