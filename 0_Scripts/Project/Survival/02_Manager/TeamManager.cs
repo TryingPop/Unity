@@ -16,8 +16,6 @@ public class TeamManager : MonoBehaviour
     public TeamInfo AllyTeamInfo => teams[VarianceManager.TEAM_ALLY];
 
     [SerializeField] private TeamInfo[] teams;                  // 팀 정보들
-    [SerializeField] private UpgradeManager upgradeManager;     // 업그레이드 메니저
-
 
     private void Awake()
     {
@@ -36,7 +34,7 @@ public class TeamManager : MonoBehaviour
         for (int i = 0; i < teams.Length; i++)
         {
 
-            teams[i].UpgradeManager = upgradeManager;
+            teams[i].Init();
         }
     }
 

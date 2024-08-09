@@ -48,7 +48,7 @@ public class ButtonHandler : StateHandler<ButtonInfo>
     {
 
         int idx = GetIdx(_selectManager.MyState);
-        if (idx != -1) actions[idx].OnEnter(_selectManager);
+        if (actions[idx].ActiveBtn && idx != -1) actions[idx].OnEnter(_selectManager);
     }
 
     /// <summary>

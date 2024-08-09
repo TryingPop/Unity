@@ -10,59 +10,120 @@ public class TeamInfo
     [SerializeField] protected AllianceInfo allianceInfo;
     [SerializeField] protected ResourcesInfo resourcesInfo;
     [SerializeField] protected UpgradeInfo upgradeInfo;
-    [SerializeField] protected LimitInfo limitInfo;
+    [SerializeField] protected BuildingInfo limitInfo;
 
-    protected UpgradeManager upgradeManager;
+    // protected UpgradeManager upgradeManager;
 
-    public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
+    // public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
 
     // 공방체 부분
-    public int lvlAtk => upgradeInfo.lvlAtk;
-    public int lvlDef => upgradeInfo.lvlDef;
-    public int lvlHp => upgradeInfo.lvlHp;
+    public int lvlAtk => upgradeInfo.lvlUnitAtk;
+    public int lvlDef => upgradeInfo.lvlUnitDef;
+    public int lvlHp => upgradeInfo.lvlUnitHp;
 
-    public int lvlEvade => upgradeInfo.lvlEvade;
+    public int lvlEvade => upgradeInfo.lvlUnitEvade;
 
-    public int lvlGetGold => upgradeInfo.lvlGetGold;
+    public int lvlGetTurnGold => upgradeInfo.lvlGetTurnGold;
     public int lvlMaxSupply => upgradeInfo.lvlMaxSupply;
 
+    public void Init()
+    {
+
+        limitInfo.Init();
+    }
+
     /// <summary>
-    /// 업그레이드는 행동에도 같이 쓰이니 다음과 같이 메서드로 추가 가능
+    /// 유닛 업그레이드
+    /// 공, 체, 방
     /// </summary>
-    public void Upgrade(TYPE_MANAGEMENT _type, int _grade)
+    public void UpgradeUnit(TYPE_MANAGEMENT _type, int _grade)
     {
 
         switch (_type)
         {
 
-            case TYPE_MANAGEMENT.UP_HP:
-                upgradeInfo.lvlHp += _grade;
+            case TYPE_MANAGEMENT.UP_UNIT_HP:
+                upgradeInfo.lvlUnitHp += _grade;
 
                 UIManager.instance.SetMaxHp = true;
                 break;
 
-            case TYPE_MANAGEMENT.UP_ATK:
-                upgradeInfo.lvlAtk += _grade;
+            case TYPE_MANAGEMENT.UP_UNIT_ATK:
+                upgradeInfo.lvlUnitAtk += _grade;
                 break;
 
-            case TYPE_MANAGEMENT.UP_DEF:
-                upgradeInfo.lvlDef += _grade;
+            case TYPE_MANAGEMENT.UP_UNIT_DEF:
+                upgradeInfo.lvlUnitDef += _grade;
+                break;
+                
+#if UNITY_EDITOR
+            default:
+
+
+                Debug.Log("유닛 업그레이드만 가능합니다.");
+                break;
+#endif
+        }
+    }
+
+    /// <summary>
+    /// 건물 업그레이드
+    /// 체, 방
+    /// </summary>
+    public void UpgradeBuilding(TYPE_MANAGEMENT _type, int _grade)
+    {
+
+        switch (_type)
+        {
+
+            case TYPE_MANAGEMENT.UP_BUILDING_HP:
+                upgradeInfo.lvlBuildingHp += _grade;
+
+                UIManager.instance.SetMaxHp = true;
                 break;
 
-            case TYPE_MANAGEMENT.UP_GOLD:
-                upgradeInfo.lvlGetGold += _grade;
+            case TYPE_MANAGEMENT.UP_BUILDING_DEF:
+                upgradeInfo.lvlBuildingDef += _grade;
+                break;
+
+#if UNITY_EDITOR
+            default:
+
+
+                Debug.Log("건물 업그레이드만 가능합니다.");
+                break;
+#endif
+        }
+    }
+
+    /// <summary>
+    /// 자원 업그레이드
+    /// 골드, 보급
+    /// </summary>
+    public void UpgradeResource(TYPE_MANAGEMENT _type, int _grade, int _val)
+    {
+
+        switch (_type)
+        {
+
+            case TYPE_MANAGEMENT.UP_TURN_GOLD:
+                upgradeInfo.lvlGetTurnGold += _grade;
+                upgradeInfo.addTurnGold += _val * _grade;
                 break;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
                 upgradeInfo.lvlMaxSupply += _grade;
+                upgradeInfo.addMaxSupply += _val * _grade;
                 if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
                 break;
-
+#if UNITY_EDITOR
             default:
+
+                Debug.Log("자원 업그레이드만 가능합니다.");
                 break;
+#endif
         }
     }
-
 
     public int MaxSupply
     {
@@ -70,7 +131,7 @@ public class TeamInfo
         get
         {
 
-            int result = resourcesInfo.maxSupply + (upgradeManager.AddSupply * upgradeInfo.lvlMaxSupply);
+            int result = resourcesInfo.maxSupply + upgradeInfo.addMaxSupply;
             if (result > VarianceManager.MAX_SUPPLY) result = VarianceManager.MAX_SUPPLY;
             return result;
         }
@@ -85,11 +146,12 @@ public class TeamInfo
     {
 
         resourcesInfo.gold += _amount;
-        if (_addBonus) resourcesInfo.gold += +upgradeManager.AddGold * upgradeInfo.lvlGetGold;
+        if (_addBonus) resourcesInfo.gold += upgradeInfo.addTurnGold;
 
         if (resourcesInfo.gold > VarianceManager.MAX_GOLD) resourcesInfo.gold = VarianceManager.MAX_GOLD;
         if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
+
     /// <summary>
     /// 현재 인구 변동용
     /// </summary>
@@ -108,6 +170,7 @@ public class TeamInfo
         resourcesInfo.maxSupply += _amount;
         if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
+
     /// <summary>
     /// 인구 확인
     /// </summary>
@@ -120,6 +183,7 @@ public class TeamInfo
         UIManager.instance.SetWarningText("보급이 부족합니다.", Color.yellow, 2.0f);
         return false;
     }
+
     /// <summary>
     /// 해당 골드 이상 보유 중인지 체크
     /// </summary>

@@ -23,7 +23,7 @@ public class RandomUpgrade : BuildingAction
             int rand = Random.Range(0, types.Length);
 
             var alliance = _building.MyTeam;
-            _building.MyTeam.Upgrade(types[rand], amounts[rand]);
+            _building.MyTeam.UpgradeUnit(types[rand], amounts[rand]);
             OnExit(_building);
         }
     }

@@ -74,13 +74,17 @@ public enum STATE_SELECTABLE
 public enum TYPE_MANAGEMENT
 {
 
-    UP_ATK = 1,
-    UP_DEF = 2,
-    UP_HP = 3,
-    UP_SUPPLY = 4,      // 최대 인구! 제한은 못뚫는다!
-    UP_GOLD = 5,
+    UP_UNIT_ATK = 1,
+    UP_UNIT_DEF,
+    UP_UNIT_HP,
 
-    GOLD = 101,
+    UP_BUILDING_DEF,
+    UP_BUILDING_HP,
+
+    UP_SUPPLY = 11,      // 최대 인구! 제한은 못뚫는다!
+    UP_TURN_GOLD = 12,
+
+    TURN_GOLD = 101,
     CUR_SUPPLY = 102,   // 게임 상에서 사용
     MAX_SUPPLY = 103,   // 게임 상에서 사용
 }

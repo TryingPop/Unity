@@ -59,7 +59,7 @@ public class TurnManager : MonoBehaviour
     public void CalcGold()
     {
 
-        gold = cntGoldBuilding * teamInfo.lvlGetGold + turnGold;
+        gold = cntGoldBuilding * teamInfo.lvlGetTurnGold + turnGold;
     }
 
     private void GetGold()

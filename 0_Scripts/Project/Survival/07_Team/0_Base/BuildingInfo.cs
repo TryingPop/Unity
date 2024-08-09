@@ -10,13 +10,30 @@ using UnityEngine;
 /// int배열 2개로 한다
 /// </summary>
 [System.Serializable]
-public class LimitInfo
+public class BuildingInfo
 {
 
     
-    [SerializeField] private int[] cntBuilding = new int[10];       // 현재 사용중인 수
-    [SerializeField] private int[] limitBuilding = new int[10];     // 최대 제한
-    [SerializeField] private bool[] notCntBuilding = new bool[10];
+    [SerializeField] private int[] cntBuilding = new int[8];       // 현재 사용중인 수
+    [SerializeField] private int[] limitBuilding = new int[8];     // 최대 제한
+    [SerializeField] private bool[] notCntBuilding = new bool[8];
+    [SerializeField] private ButtonInfo[] chkBtns = new ButtonInfo[8];
+
+    public void Init()
+    {
+
+        for (int i = 0; i < chkBtns.Length; i++)
+        {
+
+            UpdateBtn(i);
+        }
+    }
+
+    private void UpdateBtn(int _idx)
+    {
+
+        if (chkBtns[_idx] != null) chkBtns[_idx].ActiveBtn = cntBuilding[_idx] < limitBuilding[_idx];
+    }
 
     /// <summary>
     /// 해당 건물 더 지을 수 있는지 확인
@@ -35,6 +52,7 @@ public class LimitInfo
     {
 
         cntBuilding[_idx]+= _add;
+        UpdateBtn(_idx);
     }
 
     /// <summary>
@@ -43,7 +61,8 @@ public class LimitInfo
     public void AddLimitBuilding(int _idx, int _add = 1)
     {
 
-        limitBuilding[_idx] += _add; 
+        limitBuilding[_idx] += _add;
+        UpdateBtn(_idx);
     }
 
     /// <summary>

@@ -326,7 +326,9 @@ public class PlayerManager : MonoBehaviour
         ActiveBtns(true, false, false);
     }
 
-
+    /// <summary>
+    /// 마우스 오른쪽 명령
+    /// </summary>
     public void MouseRCmd(Vector2 _pos)
     {
 

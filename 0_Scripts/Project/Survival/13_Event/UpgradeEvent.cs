@@ -18,9 +18,9 @@ public class UpgradeEvent : BaseGameEvent
 
             // 골드만 따로 구분해서 올라가게 한다
             // 인구는 업그레이드 말고 증가 안되게 했다
-            if (type == TYPE_MANAGEMENT.GOLD) teamInfo.AddGold(amount);
+            if (type == TYPE_MANAGEMENT.TURN_GOLD) teamInfo.AddGold(amount);
             else if (type == TYPE_MANAGEMENT.MAX_SUPPLY) teamInfo.AddMaxSupply(amount);
-            else teamInfo.Upgrade(type, amount);
+            // else teamInfo.Upgrade(type, amount);
         }
     }
 }

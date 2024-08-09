@@ -5,13 +5,13 @@ using UnityEngine;
 /// <summary>
 /// 대장간용도
 /// </summary>
-[CreateAssetMenu(fileName = "Upgrade", menuName = "Action/Building/Upgrade")]
-public class UpgradeStat : BuildingAction
+[CreateAssetMenu(fileName = "UpgradeUnit", menuName = "Action/Building/UpgradeUnit")]
+public class UpgradeUnit : BuildingAction
 {
 
     [SerializeField] protected TYPE_MANAGEMENT upgradeType;
     [SerializeField] protected int cost;
-    [SerializeField] protected int add;
+    [SerializeField] protected int grade;
 
     public override void Action(Building _building)
     {
@@ -21,7 +21,7 @@ public class UpgradeStat : BuildingAction
         if (_building.MyTurn >= turn)
         {
 
-            _building.MyTeam.Upgrade(upgradeType, add);
+            _building.MyTeam.UpgradeUnit(upgradeType, grade);
             _building.MyTurn = 0;
             OnExit(_building);
         }

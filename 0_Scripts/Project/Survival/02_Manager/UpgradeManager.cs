@@ -6,9 +6,9 @@ using UnityEngine;
 public class UpgradeManager
 {
 
-    [SerializeField] public int addGold;
+    [SerializeField] public int addTurnGold;
     [SerializeField] private int addSupply;
 
-    public int AddGold => addGold;
+    public int AddTurnGold => addTurnGold;
     public int AddSupply => addSupply;
 }

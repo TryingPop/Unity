@@ -17,6 +17,38 @@ public abstract class ButtonInfo : IAction<PlayerManager>
     [SerializeField] protected Vector2 infoSize;
     [TextArea(0, 3), SerializeField] protected string desc;
 
+    [SerializeField] protected bool activeBtn = true;
+    [SerializeField] protected bool updateBtn = false;
+
+    public bool ActiveBtn
+    {
+
+        set
+        {
+
+            activeBtn = value;
+            updateBtn = true;
+        }
+        get { return activeBtn; }
+    }
+
+    public bool UpdateBtn
+    {
+
+        get
+        {
+
+            if (updateBtn)
+            {
+
+                updateBtn = false;
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     public TYPE_INPUT BtnKey => btnKey;
 
     public int CmdType => (int)cmdType;

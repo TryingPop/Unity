@@ -32,7 +32,7 @@ public class UnitAtkHold : UnitHold
                 int turn = ++_unit.MyTurn;
 
                 if (unitAttack.StartAnimTime(turn)) _unit.MyAnimator.SetTrigger("Skill0");
-                else if (unitAttack.AtkTime(turn) != 1)
+                else if (unitAttack.AtkTime(turn) == 1)
                 {
 
                     _unit.MyTurn = 0;

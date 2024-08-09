@@ -25,20 +25,20 @@ public class BtnUpgrade : BtnDefault
         switch (upgradeType)
         {
 
-            case TYPE_MANAGEMENT.UP_ATK:
+            case TYPE_MANAGEMENT.UP_UNIT_ATK:
                 return myTeam.lvlAtk;
 
-            case TYPE_MANAGEMENT.UP_DEF:
+            case TYPE_MANAGEMENT.UP_UNIT_DEF:
                 return myTeam.lvlDef;
 
-            case TYPE_MANAGEMENT.UP_HP:
+            case TYPE_MANAGEMENT.UP_UNIT_HP:
                 return myTeam.lvlHp;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
                 return myTeam.lvlMaxSupply;
 
-            case TYPE_MANAGEMENT.UP_GOLD:
-                return myTeam.lvlGetGold;
+            case TYPE_MANAGEMENT.UP_TURN_GOLD:
+                return myTeam.lvlGetTurnGold;
 
             default:
                 return -1;
