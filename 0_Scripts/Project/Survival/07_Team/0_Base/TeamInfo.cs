@@ -17,9 +17,9 @@ public class TeamInfo
     // public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
 
     // 공방체 부분
-    public int lvlAtk => upgradeInfo.lvlUnitAtk;
-    public int lvlDef => upgradeInfo.lvlUnitDef;
-    public int lvlHp => upgradeInfo.lvlUnitHp;
+    public int lvlAtk => upgradeInfo.unitAtk.CurLvl;
+    public int lvlDef => upgradeInfo.unitDef.CurLvl;
+    public int lvlHp => upgradeInfo.unitHp.CurLvl;
 
     public int lvlEvade => upgradeInfo.lvlUnitEvade;
 
@@ -43,17 +43,17 @@ public class TeamInfo
         {
 
             case TYPE_MANAGEMENT.UP_UNIT_HP:
-                upgradeInfo.lvlUnitHp += _grade;
+                upgradeInfo.unitHp.AddVal(_grade);
 
                 UIManager.instance.SetMaxHp = true;
                 break;
 
             case TYPE_MANAGEMENT.UP_UNIT_ATK:
-                upgradeInfo.lvlUnitAtk += _grade;
+                upgradeInfo.unitAtk.AddVal(_grade);
                 break;
 
             case TYPE_MANAGEMENT.UP_UNIT_DEF:
-                upgradeInfo.lvlUnitDef += _grade;
+                upgradeInfo.unitDef.AddVal(_grade);
                 break;
                 
 #if UNITY_EDITOR
@@ -77,13 +77,13 @@ public class TeamInfo
         {
 
             case TYPE_MANAGEMENT.UP_BUILDING_HP:
-                upgradeInfo.lvlBuildingHp += _grade;
+                upgradeInfo.buildingHp.AddVal(_grade);
 
                 UIManager.instance.SetMaxHp = true;
                 break;
 
             case TYPE_MANAGEMENT.UP_BUILDING_DEF:
-                upgradeInfo.lvlBuildingDef += _grade;
+                upgradeInfo.buildingDef.AddVal(_grade);
                 break;
 
 #if UNITY_EDITOR
