@@ -3,22 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class LvlData
+public struct UpgradeResourceData : ILimitData
 {
 
     [SerializeField] private int curLvl;
     [SerializeField] private int maxLvl;
-    [SerializeField] private int addCost;
+
+    [SerializeField] private int cost;
+    [SerializeField] private int lvlCost;
+
+    [SerializeField] private int val;
+    [SerializeField] private int addVal;
+
+    [SerializeField] private ButtonInfo lockBtn;
 
     /// <summary>
     /// 현재 lvl 반환
     /// </summary>
-    public int CurLvl => curLvl;
+    public int CurLvl() => curLvl;
+    public int CurVal() => curLvl * addVal + val;
 
     /// <summary>
     /// 업그레이드당 추가 비용
     /// </summary>
-    public int AddCost => addCost * curLvl;
+    public int Cost => lvlCost * curLvl + cost;
+
 
     /// <summary>
     /// 더 값을 올릴 수 있는지 확인
@@ -26,7 +35,7 @@ public class LvlData
     public bool ChkLimit()
     {
 
-        return maxLvl <= curLvl;
+        return curLvl < maxLvl;
     }
 
     public void AddVal(int _add)
@@ -42,14 +51,10 @@ public class LvlData
             return;
         }
 
-        if (maxLvl <= curLvl + _add)
-        {
+        if (maxLvl <= curLvl + _add) curLvl = maxLvl;
+        else curLvl += _add;
 
-            curLvl = maxLvl;
-            return;
-        }
-
-        curLvl += _add;
+        ChkLockBtn();
     }
 
     public void RemoveVal(int _remove)
@@ -67,6 +72,8 @@ public class LvlData
 
         if (curLvl - _remove < 0) curLvl = 0;
         else curLvl -= _remove;
+
+        ChkLockBtn();
     }
 
     public void AddMax(int _add)
@@ -83,6 +90,8 @@ public class LvlData
         }
 
         maxLvl += _add;
+
+        ChkLockBtn();
     }
 
     public void RemoveMax(int _remove)
@@ -100,5 +109,48 @@ public class LvlData
         }
 
         maxLvl -= _remove;
+
+        ChkLockBtn();
     }
+
+    /// <summary>
+    /// 추가량 증가
+    /// 이건 빼는거 없다!
+    /// </summary>
+    public void AddAdd(int _add)
+    {
+
+        if (_add < 0)
+        {
+
+#if UNITY_EDITOR
+
+            Debug.LogWarning("AddAdd의 값이 음수입니다.");
+#endif
+
+            return;
+        }
+
+        addVal += _add;
+    }
+
+
+    private void ChkLockBtn()
+    {
+
+        if (lockBtn == null)
+        {
+
+#if UNITY_EDITOR
+
+            Debug.LogWarning("LockBtn이 없습니다.");
+#endif
+
+            return;
+        }
+
+        lockBtn.ActiveBtn = ChkLimit();
+    }
+
+
 }

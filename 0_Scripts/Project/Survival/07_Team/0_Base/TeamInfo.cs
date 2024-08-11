@@ -17,14 +17,14 @@ public class TeamInfo
     // public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
 
     // 공방체 부분
-    public int lvlAtk => upgradeInfo.unitAtk.CurLvl;
-    public int lvlDef => upgradeInfo.unitDef.CurLvl;
-    public int lvlHp => upgradeInfo.unitHp.CurLvl;
+    public int lvlAtk => upgradeInfo.unitAtk.CurLvl();
+    public int lvlDef => upgradeInfo.unitDef.CurLvl();
+    public int lvlHp => upgradeInfo.unitHp.CurLvl();
 
-    public int lvlEvade => upgradeInfo.lvlUnitEvade;
+    public int lvlEvade => upgradeInfo.unitEvade.CurLvl();
 
-    public int lvlGetTurnGold => upgradeInfo.lvlGetTurnGold;
-    public int lvlMaxSupply => upgradeInfo.lvlMaxSupply;
+    public int lvlGetTurnGold => upgradeInfo.turnGold.CurLvl();
+    public int lvlMaxSupply => upgradeInfo.maxSupply.CurLvl();
 
     public void Init()
     {
@@ -107,13 +107,11 @@ public class TeamInfo
         {
 
             case TYPE_MANAGEMENT.UP_TURN_GOLD:
-                upgradeInfo.lvlGetTurnGold += _grade;
-                upgradeInfo.addTurnGold += _val * _grade;
+                upgradeInfo.turnGold.AddVal(_grade);
                 break;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
-                upgradeInfo.lvlMaxSupply += _grade;
-                upgradeInfo.addMaxSupply += _val * _grade;
+                upgradeInfo.maxSupply.AddVal(_grade);
                 if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
                 break;
 #if UNITY_EDITOR
@@ -131,7 +129,7 @@ public class TeamInfo
         get
         {
 
-            int result = resourcesInfo.maxSupply + upgradeInfo.addMaxSupply;
+            int result = resourcesInfo.maxSupply + upgradeInfo.maxSupply.CurVal();
             if (result > VarianceManager.MAX_SUPPLY) result = VarianceManager.MAX_SUPPLY;
             return result;
         }
@@ -146,7 +144,7 @@ public class TeamInfo
     {
 
         resourcesInfo.gold += _amount;
-        if (_addBonus) resourcesInfo.gold += upgradeInfo.addTurnGold;
+        if (_addBonus) resourcesInfo.gold += upgradeInfo.turnGold.CurVal();
 
         if (resourcesInfo.gold > VarianceManager.MAX_GOLD) resourcesInfo.gold = VarianceManager.MAX_GOLD;
         if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
@@ -242,15 +240,15 @@ public class TeamInfo
         // 유닛이므로 성공
         if (idx < 0) return true;
 
-        return limitInfo.ChkBuilding(idx);
+        return limitInfo.ChkLimit(idx);
     }
 
-    public void AddCnt(TYPE_SELECTABLE _type, int _add = 1)
+    public void AddCnt(TYPE_SELECTABLE _type, bool _add = true)
     {
 
         int idx = limitInfo.GetBuildingIdx(_type);
         if (idx < 0) return;
 
-        limitInfo.AddCntBuilding(idx, _add);
+        limitInfo.AddBuilding(idx, _add);
     }
 }

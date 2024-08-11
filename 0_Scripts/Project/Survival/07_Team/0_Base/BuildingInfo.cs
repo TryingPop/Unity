@@ -13,56 +13,42 @@ using UnityEngine;
 public class BuildingInfo
 {
 
-    
-    [SerializeField] private int[] cntBuilding = new int[8];       // 현재 사용중인 수
-    [SerializeField] private int[] limitBuilding = new int[8];     // 최대 제한
-    [SerializeField] private bool[] notCntBuilding = new bool[8];
-    [SerializeField] private ButtonInfo[] chkBtns = new ButtonInfo[8];
+
+    [SerializeField] private LimitData[] buildings;
 
     public void Init()
     {
 
-        for (int i = 0; i < chkBtns.Length; i++)
+        for (int i = 0; i < buildings.Length; i++)
         {
 
-            UpdateBtn(i);
+            buildings[i].Init();
         }
-    }
-
-    private void UpdateBtn(int _idx)
-    {
-
-        if (chkBtns[_idx] != null) chkBtns[_idx].ActiveBtn = cntBuilding[_idx] < limitBuilding[_idx];
-    }
-
-    /// <summary>
-    /// 해당 건물 더 지을 수 있는지 확인
-    /// </summary>
-    public bool ChkBuilding(int _idx)
-    {
-
-        return notCntBuilding[_idx]
-            || limitBuilding[_idx] - cntBuilding[_idx] > 0;
     }
 
     /// <summary>
     /// 건물 추가
     /// </summary>
-    public void AddCntBuilding(int _idx, int _add = 1)
+    public void AddBuilding(int _idx, bool _add)
     {
 
-        cntBuilding[_idx]+= _add;
-        UpdateBtn(_idx);
+        if (_add) buildings[_idx].AddVal(1);
+        else buildings[_idx].RemoveVal(1);
     }
 
     /// <summary>
     /// 제한 늘리기
     /// </summary>
-    public void AddLimitBuilding(int _idx, int _add = 1)
+    public void AddMaxBuilding(int _idx, int _add = 1)
     {
 
-        limitBuilding[_idx] += _add;
-        UpdateBtn(_idx);
+        buildings[_idx].AddMax(_add);
+    }
+
+    public bool ChkLimit(int _idx)
+    {
+
+        return buildings[_idx].ChkLimit();
     }
 
     /// <summary>

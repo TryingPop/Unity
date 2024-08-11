@@ -11,20 +11,21 @@ public class UpgradeInfo
 {
 
     // 업그레이드 정도
-    public LvlData unitAtk;             // 유닛 공격력
-    public LvlData unitDef;             // 유닛 방어력
-    public LvlData unitHp;              // 유닛 체력
+    [Header("유닛")]
+    public UpgradeData unitAtk;
+    public UpgradeData unitDef;
+    public UpgradeData unitHp;
 
-    public LvlData buildingDef;
-    public LvlData buildingHp;
+    public UpgradeData unitEvade;
 
+    [Header("건물")]
+    public UpgradeData buildingDef;
+    public UpgradeData buildingHp;
 
-    public int lvlUnitEvade;            // 회피 업글
-
-    // 외부에서 값 추가
-    public int lvlGetTurnGold;          // 획득 골드 추가
-    public int lvlMaxSupply;            // 추가 인구
-
-    public int addTurnGold;
-    public int addMaxSupply;
+    [Header("자원")]
+    
+    [Tooltip("턴당 추가 자원 획득량, 1턴 : 10초")]
+    public UpgradeResourceData turnGold;    // 획득 골드 추가
+    [Tooltip("최대 인구")]
+    public UpgradeResourceData maxSupply;   // 추가 인구
 }
