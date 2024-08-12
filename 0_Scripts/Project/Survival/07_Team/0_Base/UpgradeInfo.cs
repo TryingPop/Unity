@@ -28,4 +28,20 @@ public class UpgradeInfo
     public UpgradeResourceData turnGold;    // »πµÊ ∞ÒµÂ √ﬂ∞°
     [Tooltip("√÷¥Î ¿Œ±∏")]
     public UpgradeResourceData maxSupply;   // √ﬂ∞° ¿Œ±∏
+
+    public void Init()
+    {
+
+        unitAtk.Init();
+        unitDef.Init();
+        unitHp.Init();
+
+        unitEvade.Init();
+
+        buildingDef.Init();
+        buildingHp.Init();
+
+        turnGold.Init();
+        maxSupply.Init();
+    }
 }

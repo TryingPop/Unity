@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static CaptureManager;
 
 [System.Serializable]
 public class TeamInfo
@@ -12,48 +13,47 @@ public class TeamInfo
     [SerializeField] protected UpgradeInfo upgradeInfo;
     [SerializeField] protected BuildingInfo limitInfo;
 
-    // protected UpgradeManager upgradeManager;
-
-    // public UpgradeManager UpgradeManager { set { upgradeManager = value; } }
-
-    // 공방체 부분
-    public int lvlAtk => upgradeInfo.unitAtk.CurLvl();
-    public int lvlDef => upgradeInfo.unitDef.CurLvl();
-    public int lvlHp => upgradeInfo.unitHp.CurLvl();
-
-    public int lvlEvade => upgradeInfo.unitEvade.CurLvl();
-
-    public int lvlGetTurnGold => upgradeInfo.turnGold.CurLvl();
-    public int lvlMaxSupply => upgradeInfo.maxSupply.CurLvl();
-
     public void Init()
     {
 
         limitInfo.Init();
+        upgradeInfo.Init();
+
+
     }
+
+    // 공방체 부분
+    public int lvlAtk => upgradeInfo.unitAtk.CurVal();
+    public int lvlDef => upgradeInfo.unitDef.CurVal();
+    public int lvlHp => upgradeInfo.unitHp.CurVal();
+
+    public int lvlEvade => upgradeInfo.unitEvade.CurVal();
+
+    public int lvlGetTurnGold => upgradeInfo.turnGold.CurVal();
+    public int lvlMaxSupply => upgradeInfo.maxSupply.CurVal();
 
     /// <summary>
     /// 유닛 업그레이드
     /// 공, 체, 방
     /// </summary>
-    public void UpgradeUnit(TYPE_MANAGEMENT _type, int _grade)
+    public void UpgradeUnit(TYPE_MANAGEMENT _type)
     {
 
         switch (_type)
         {
 
             case TYPE_MANAGEMENT.UP_UNIT_HP:
-                upgradeInfo.unitHp.AddVal(_grade);
+                upgradeInfo.unitHp.AddVal();
 
                 UIManager.instance.SetMaxHp = true;
                 break;
 
             case TYPE_MANAGEMENT.UP_UNIT_ATK:
-                upgradeInfo.unitAtk.AddVal(_grade);
+                upgradeInfo.unitAtk.AddVal();
                 break;
 
             case TYPE_MANAGEMENT.UP_UNIT_DEF:
-                upgradeInfo.unitDef.AddVal(_grade);
+                upgradeInfo.unitDef.AddVal();
                 break;
                 
 #if UNITY_EDITOR
@@ -70,20 +70,20 @@ public class TeamInfo
     /// 건물 업그레이드
     /// 체, 방
     /// </summary>
-    public void UpgradeBuilding(TYPE_MANAGEMENT _type, int _grade)
+    public void UpgradeBuilding(TYPE_MANAGEMENT _type)
     {
 
         switch (_type)
         {
 
             case TYPE_MANAGEMENT.UP_BUILDING_HP:
-                upgradeInfo.buildingHp.AddVal(_grade);
+                upgradeInfo.buildingHp.AddVal();
 
                 UIManager.instance.SetMaxHp = true;
                 break;
 
             case TYPE_MANAGEMENT.UP_BUILDING_DEF:
-                upgradeInfo.buildingDef.AddVal(_grade);
+                upgradeInfo.buildingDef.AddVal();
                 break;
 
 #if UNITY_EDITOR
@@ -100,18 +100,20 @@ public class TeamInfo
     /// 자원 업그레이드
     /// 골드, 보급
     /// </summary>
-    public void UpgradeResource(TYPE_MANAGEMENT _type, int _grade, int _val)
+    public void UpgradeResource(TYPE_MANAGEMENT _type)
     {
 
         switch (_type)
         {
 
             case TYPE_MANAGEMENT.UP_TURN_GOLD:
-                upgradeInfo.turnGold.AddVal(_grade);
+                upgradeInfo.turnGold.AddVal();
+
                 break;
 
             case TYPE_MANAGEMENT.UP_SUPPLY:
-                upgradeInfo.maxSupply.AddVal(_grade);
+                upgradeInfo.maxSupply.AddVal();
+
                 if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
                 break;
 #if UNITY_EDITOR

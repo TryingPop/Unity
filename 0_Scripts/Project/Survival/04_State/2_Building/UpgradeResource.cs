@@ -6,8 +6,6 @@ using UnityEngine;
 public class UpgradeResource : UpgradeUnit
 {
 
-    public int add;
-
     public override void Action(Building _building)
     {
 
@@ -16,7 +14,7 @@ public class UpgradeResource : UpgradeUnit
         if (_building.MyTurn >= turn)
         {
 
-            _building.MyTeam.UpgradeResource(upgradeType, grade, add);
+            _building.MyTeam.UpgradeResource(upgradeType);
             _building.MyTurn = 0;
             OnExit(_building);
         }

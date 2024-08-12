@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct LimitData : ILimitData
+public class LimitData : ILimitData
 {
 
-    [SerializeField] private int curVal;
-    [SerializeField] private int maxVal;
+    [SerializeField] protected int curVal;
+    [SerializeField] protected int maxVal;
 
-    [SerializeField] private ButtonInfo lockBtn;
+    [SerializeField] protected ButtonInfo lockBtn;
 
-    public int CurVal() => curVal;
+    public virtual int CurVal() => curVal;
 
     public void Init()
     {
@@ -19,7 +19,7 @@ public struct LimitData : ILimitData
         ChkLockBtn();
     }
 
-    private void ChkLockBtn()
+    public void ChkLockBtn()
     {
 
         if (!lockBtn)
@@ -38,7 +38,7 @@ public struct LimitData : ILimitData
 
     public bool ChkLimit() => curVal < maxVal;
 
-    public void AddVal(int _add)
+    public void AddVal(int _add = 1)
     {
 
         if (_add < 0)
@@ -51,18 +51,12 @@ public struct LimitData : ILimitData
             return;
         }
 
-        if (maxVal <= curVal + _add)
-        {
-
-            curVal = maxVal;
-            return;
-        }
-
-        curVal += _add;
+        if (maxVal <= curVal + _add) curVal = maxVal;
+        else curVal += _add;
         ChkLockBtn();
     }
 
-    public void RemoveVal(int _remove)
+    public void RemoveVal(int _remove = 1)
     {
 
         if (_remove < 0)

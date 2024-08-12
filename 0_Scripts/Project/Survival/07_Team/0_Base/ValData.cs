@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct ValData : ILimitData
+public class ValData : ILimitData
 {
 
-    [SerializeField] private int curVal;
-    [SerializeField] private int maxVal;
+    [SerializeField] protected int curVal;
+    [SerializeField] protected int maxVal;
 
     [SerializeField] private int addVal;
 
@@ -28,14 +28,8 @@ public struct ValData : ILimitData
             return;
         }
 
-        if (maxVal <= curVal + _add)
-        {
-
-            curVal = maxVal;
-            return;
-        }
-
-        curVal += _add;
+        if (maxVal <= curVal + _add) curVal = maxVal;
+        else curVal += _add;
     }
 
     public void RemoveVal(int _remove)
