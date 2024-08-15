@@ -137,7 +137,7 @@ public class Building : Selectable
     /// <summary>
     /// 미완성 시와 사망 시 아무런 행동도 안한다
     /// </summary>
-    public void Action()
+    public override void Action()
     {
 
         if (myState == STATE_SELECTABLE.DEAD

@@ -18,8 +18,6 @@ public class TeamInfo
 
         limitInfo.Init();
         upgradeInfo.Init();
-
-
     }
 
     // 공방체 부분

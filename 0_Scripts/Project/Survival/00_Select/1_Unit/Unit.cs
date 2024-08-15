@@ -162,7 +162,7 @@ public class Unit : Selectable
     /// <summary>
     /// 해당 유닛의 행동
     /// </summary>
-    public void Action()
+    public override void Action()
     {
 
         if (myState == STATE_SELECTABLE.DEAD) return;

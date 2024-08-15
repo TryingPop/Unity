@@ -12,10 +12,15 @@ public class ActionManager : MonoBehaviour
 
     public static ActionManager instance;
 
-    private List<Unit> playerUnits;
-    private List<Unit> enemyUnits;
-    private List<Unit> neutralUnits;
-    private List<Unit> allyUnits;
+    // private List<Unit> playerUnits;
+    // private List<Unit> enemyUnits;
+    // private List<Unit> neutralUnits;
+    // private List<Unit> allyUnits;
+
+    private ActionGroup<Unit> playerUnits;
+    private ActionGroup<Unit> enemyUnits;
+    private ActionGroup<Unit> neutralUnits;
+    private ActionGroup<Unit> allyUnits;
 
 
     private List<Building> playerBuildings;
@@ -31,10 +36,10 @@ public class ActionManager : MonoBehaviour
     public Mission.ChkMissionDelegate DeadUnit;
     public Mission.ChkMissionDelegate DeadBuilding;
 
-    public List<Unit> PlayerUnits => playerUnits;
-    public List<Unit> EnemyUnits => enemyUnits;
-    public List<Unit> NeutralUnits => neutralUnits;
-    public List<Unit> AllyUnits => allyUnits;
+    public ActionGroup<Unit> PlayerUnits => playerUnits;
+    public ActionGroup<Unit> EnemyUnits => enemyUnits;
+    public ActionGroup<Unit> NeutralUnits => neutralUnits;
+    public ActionGroup<Unit> AllyUnits => allyUnits;
     
 
     public List<Building> PlayerBuildings => playerBuildings;
@@ -62,16 +67,16 @@ public class ActionManager : MonoBehaviour
         DeadBuilding = null;
 
         // 리스트들 초기화
-        playerUnits = new List<Unit>(VarianceManager.INIT_UNIT_LIST_NUM);
+        playerUnits = new(VarianceManager.INIT_UNIT_LIST_NUM);
         playerBuildings = new List<Building>(VarianceManager.INIT_BUILDING_LIST_NUM);
         
-        enemyUnits = new List<Unit>(VarianceManager.INIT_UNIT_LIST_NUM);
+        enemyUnits = new(VarianceManager.INIT_UNIT_LIST_NUM);
         enemyBuildings = new List<Building>(VarianceManager.INIT_BUILDING_LIST_NUM);
 
-        neutralUnits = new List<Unit>(VarianceManager.INIT_NEUTRAL_LIST_NUM);
+        neutralUnits = new(VarianceManager.INIT_NEUTRAL_LIST_NUM);
         neutralBuilding = new List<Building>(VarianceManager.INIT_NEUTRAL_LIST_NUM);
 
-        allyUnits = new List<Unit>(VarianceManager.INIT_ALLY_LIST_NUM);
+        allyUnits = new(VarianceManager.INIT_ALLY_LIST_NUM);
         allyBuilding = new List<Building>(VarianceManager.INIT_ALLY_LIST_NUM);
 
         missiles = new List<Missile>(VarianceManager.INIT_MISSILE_LIST_NUM);
@@ -120,11 +125,7 @@ public class ActionManager : MonoBehaviour
             playerBuildings[i].Action();
         }
 
-        for (int i = 0; i < playerUnits.Count; i++)
-        {
-
-            playerUnits[i].Action();
-        }
+        playerUnits.Action();
 
         for (int i = 0; i < enemyBuildings.Count; i++)
         {
@@ -132,11 +133,7 @@ public class ActionManager : MonoBehaviour
             enemyBuildings[i].Action();
         }
 
-        for (int i = 0; i < enemyUnits.Count; i++)
-        {
-
-            enemyUnits[i].Action();
-        }
+        enemyUnits.Action();
 
         for (int i = 0; i < allyBuilding.Count; i++)
         {
@@ -144,18 +141,10 @@ public class ActionManager : MonoBehaviour
             allyBuilding[i].Action();
         }
 
-        for (int i = 0; i < allyUnits.Count; i++)
-        {
-
-            allyUnits[i].Action();
-        }
+        allyUnits.Action();
 
         // neutral Building은 활동 X!
-        for (int i = 0; i < neutralUnits.Count; i++)
-        {
-
-            neutralUnits[i].Action();
-        }
+        neutralUnits.Action();
     }
 
     /// <summary>
@@ -167,10 +156,10 @@ public class ActionManager : MonoBehaviour
 
         int layer = _unit.MyTeam.TeamLayerNumber;
 
-        if (layer == VarianceManager.LAYER_PLAYER) playerUnits.Add(_unit);
-        else if (layer == VarianceManager.LAYER_ENEMY) enemyUnits.Add(_unit);
-        else if (layer == VarianceManager.LAYER_NEUTRAL) neutralUnits.Add(_unit);
-        else if (layer == VarianceManager.LAYER_ALLY) allyUnits.Add(_unit);
+        if (layer == VarianceManager.LAYER_PLAYER) playerUnits.AddLast(_unit);
+        else if (layer == VarianceManager.LAYER_ENEMY) enemyUnits.AddLast(_unit);
+        else if (layer == VarianceManager.LAYER_NEUTRAL) neutralUnits.AddLast(_unit);
+        else if (layer == VarianceManager.LAYER_ALLY) allyUnits.AddLast(_unit);
     }
 
     /// <summary>
@@ -181,10 +170,10 @@ public class ActionManager : MonoBehaviour
     {
 
         int layer = _unit.MyTeam.TeamLayerNumber;
-        if (layer == VarianceManager.LAYER_PLAYER) playerUnits.Remove(_unit);
-        else if (layer == VarianceManager.LAYER_ENEMY) enemyUnits.Remove(_unit);
-        else if (layer == VarianceManager.LAYER_NEUTRAL) neutralUnits.Remove(_unit);
-        else if (layer == VarianceManager.LAYER_ALLY) allyUnits.Remove(_unit);
+        if (layer == VarianceManager.LAYER_PLAYER) playerUnits.Pop(_unit);
+        else if (layer == VarianceManager.LAYER_ENEMY) enemyUnits.Pop(_unit);
+        else if (layer == VarianceManager.LAYER_NEUTRAL) neutralUnits.Pop(_unit);
+        else if (layer == VarianceManager.LAYER_ALLY) allyUnits.Pop(_unit);
 
         // 미션 확인용
         if (DeadUnit != null) DeadUnit(_unit);

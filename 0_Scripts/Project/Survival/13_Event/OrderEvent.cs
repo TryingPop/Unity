@@ -23,7 +23,7 @@ public class OrderEvent : BaseGameEvent
         {
 
             // ¥ÎªÛ¿Ã ¿Ø¥÷
-            List<Unit> units = null;
+            ActionGroup<Unit> units = null;
             if (groupLayer == VarianceManager.LAYER_PLAYER) units = ActionManager.instance.PlayerUnits;
             else if (groupLayer == VarianceManager.LAYER_ENEMY) units = ActionManager.instance.EnemyUnits;
             else if (groupLayer == VarianceManager.LAYER_ALLY) units = ActionManager.instance.AllyUnits;
@@ -31,12 +31,16 @@ public class OrderEvent : BaseGameEvent
             if (units != null) 
             { 
                 
-                var cmd = Command.GetCommand(units.Count, cmdType, pos, target); 
+                var cmd = Command.GetCommand(units.Count, cmdType, pos, target);
+                units.GetCommand(cmd);
+
+                /*
                 for (int i = 0; i < units.Count; i++)
                 {
 
                     units[i].GetCommand(cmd);
                 }
+                */
             }
         }
         else

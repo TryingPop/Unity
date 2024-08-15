@@ -9,8 +9,8 @@ using UnityEngine.AI;
 public class EnemyOrderManager : MonoBehaviour
 {
 
-    [SerializeField] private List<Unit> playerUnits;
-    [SerializeField] private List<Unit> enemyUnits;
+    [SerializeField] private ActionGroup<Unit> playerUnits;
+    [SerializeField] private ActionGroup<Unit> enemyUnits;
 
     [SerializeField] private List<Building> playerBuildings;
     [SerializeField] private List<Building> enemyBuildings;
@@ -99,7 +99,7 @@ public class EnemyOrderManager : MonoBehaviour
         else if (playerUnits.Count != 0)
         {
 
-            target = playerUnits[Random.Range(0, playerUnits.Count)].transform;
+            target = playerUnits.First?.transform;
         }
     }
 
@@ -139,11 +139,15 @@ public class EnemyOrderManager : MonoBehaviour
         if (_isUnit)
         {
 
+
+            enemyUnits.GetCommand(cmd, false);
+            /*
             for (int i = 0; i < _num; i++)
             {
 
                 enemyUnits[i].GetCommand(cmd, false);
             }
+            */
         }
         else
         {

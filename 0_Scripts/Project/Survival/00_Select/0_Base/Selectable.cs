@@ -7,8 +7,6 @@ using UnityEngine.UI;
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
 /// </summary>
-// [RequireComponent(typeof(Stats)),
-//     RequireComponent(typeof(SightMesh))]
 public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
                                     IDamagable,         // 모든 유닛은 피격 가능하다!
                                     IInfoTxt            // 인포 메시지 
@@ -35,6 +33,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [SerializeField] protected SoundGroup mySound;
     [SerializeField] protected AudioSource myAudio;
+
+    public abstract void Action();
 
     /// <summary>
     /// 체력 회복

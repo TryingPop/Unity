@@ -9,6 +9,11 @@ public class LimitData : ILimitData
     [SerializeField] protected int curVal;
     [SerializeField] protected int maxVal;
 
+#if UNITY_EDITOR
+
+    [SerializeField] bool chkBtn;
+#endif
+
     [SerializeField] protected ButtonInfo lockBtn;
 
     public virtual int CurVal() => curVal;
@@ -27,7 +32,7 @@ public class LimitData : ILimitData
 
 #if UNITY_EDITOR
 
-            Debug.LogWarning("LockBtn이 없습니다.");
+            if (chkBtn) Debug.LogWarning("LockBtn이 없습니다.");
 #endif
 
             return;
