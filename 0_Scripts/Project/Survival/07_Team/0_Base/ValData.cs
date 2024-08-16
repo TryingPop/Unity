@@ -13,7 +13,7 @@ public class ValData : ILimitData
 
     public int CurVal(int _upgrade) => curVal + addVal * _upgrade;
 
-    public bool ChkLimit() => curVal < maxVal;
+    public bool ChkAdd() => curVal < maxVal;
 
     public void AddVal(int _add)
     {

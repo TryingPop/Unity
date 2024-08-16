@@ -33,21 +33,13 @@ public class OrderEvent : BaseGameEvent
                 
                 var cmd = Command.GetCommand(units.Count, cmdType, pos, target);
                 units.GetCommand(cmd);
-
-                /*
-                for (int i = 0; i < units.Count; i++)
-                {
-
-                    units[i].GetCommand(cmd);
-                }
-                */
             }
         }
         else
         {
 
             // 대상이 건물
-            List<Building> buildings = null;
+            ActionGroup<Building> buildings = null;
 
             if (groupLayer == VarianceManager.LAYER_PLAYER) buildings = ActionManager.instance.PlayerBuildings;
             else if (groupLayer == VarianceManager.LAYER_ENEMY) buildings = ActionManager.instance.PlayerBuildings;
@@ -57,11 +49,7 @@ public class OrderEvent : BaseGameEvent
             {
 
                 var cmd = Command.GetCommand(buildings.Count, cmdType, pos, target);
-                for (int i = 0; i < buildings.Count; i++)
-                {
-
-                    buildings[i].GetCommand(cmd);
-                }
+                buildings.First.GetCommand(cmd);
             }
         }
     }

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class BtnUpgrade : BtnDefault
 {
 
-    [SerializeField] TYPE_MANAGEMENT upgradeType;
+    [SerializeField] TYPE_SELECTABLE upgradeType;
 
     public override void GetTitle(Text _titleText)
     {
@@ -21,27 +21,6 @@ public class BtnUpgrade : BtnDefault
     {
 
         TeamInfo myTeam = TeamManager.instance.PlayerTeamInfo;
-
-        switch (upgradeType)
-        {
-
-            case TYPE_MANAGEMENT.UP_UNIT_ATK:
-                return myTeam.lvlAtk;
-
-            case TYPE_MANAGEMENT.UP_UNIT_DEF:
-                return myTeam.lvlDef;
-
-            case TYPE_MANAGEMENT.UP_UNIT_HP:
-                return myTeam.lvlHp;
-
-            case TYPE_MANAGEMENT.UP_SUPPLY:
-                return myTeam.lvlMaxSupply;
-
-            case TYPE_MANAGEMENT.UP_TURN_GOLD:
-                return myTeam.lvlGetTurnGold;
-
-            default:
-                return -1;
-        }
+        return myTeam.GetLvl(upgradeType);
     }
 }

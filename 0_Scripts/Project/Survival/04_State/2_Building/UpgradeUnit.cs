@@ -9,7 +9,7 @@ using UnityEngine;
 public class UpgradeUnit : BuildingAction
 {
 
-    [SerializeField] protected TYPE_MANAGEMENT upgradeType;
+    [SerializeField] protected TYPE_SELECTABLE upgradeType;
     [SerializeField] protected int cost;
 
     public override void Action(Building _building)
@@ -20,7 +20,7 @@ public class UpgradeUnit : BuildingAction
         if (_building.MyTurn >= turn)
         {
 
-            _building.MyTeam.UpgradeUnit(upgradeType);
+            _building.MyTeam.Upgrade(upgradeType);
             _building.MyTurn = 0;
             OnExit(_building);
         }

@@ -13,50 +13,45 @@ using UnityEngine;
 public class BuildingInfo
 {
 
-
     [SerializeField] private LimitData[] buildings;
+    private Dictionary<TYPE_SELECTABLE, LimitData> dic;
 
     public void Init()
     {
 
+        dic = new();
         for (int i = 0; i < buildings.Length; i++)
         {
 
             buildings[i].Init();
+            dic[buildings[i].MyType] = buildings[i];
         }
     }
+
+    public bool Contains(TYPE_SELECTABLE _type) => dic.ContainsKey(_type);
 
     /// <summary>
     /// °Ç¹° Ãß°¡
     /// </summary>
-    public void AddBuilding(int _idx, bool _add)
+    public void AddBuilding(TYPE_SELECTABLE _type, bool _add)
     {
 
-        if (_add) buildings[_idx].AddVal(1);
-        else buildings[_idx].RemoveVal(1);
+        if (_add) dic[_type].AddVal(1);
+        else dic[_type].RemoveVal(1);
     }
 
     /// <summary>
     /// Á¦ÇÑ ´Ã¸®±â
     /// </summary>
-    public void AddMaxBuilding(int _idx, int _add = 1)
+    public void AddMaxBuilding(TYPE_SELECTABLE _type, int _add = 1)
     {
 
-        buildings[_idx].AddMax(_add);
+        if (dic.ContainsKey(_type)) dic[_type].AddMax(_add);
     }
 
-    public bool ChkLimit(int _idx)
+    public bool ChkAdd(TYPE_SELECTABLE _type)
     {
 
-        return buildings[_idx].ChkLimit();
-    }
-
-    /// <summary>
-    /// °Ç¹° idx È¹µæ
-    /// </summary>
-    public int GetBuildingIdx(TYPE_SELECTABLE _building)
-    {
-
-        return (int)_building - 301;
+        return dic[_type].ChkAdd();
     }
 }

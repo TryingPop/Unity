@@ -15,22 +15,21 @@ public class Building : Selectable
     [SerializeField] protected SightMesh mySight;                   // 시야
 
     [SerializeField] protected BuildOpt opt;
-    
+
     protected ushort curBuildTurn;                                  // 건설 진행 시간
     protected ushort maxTurn;                                       // 행동 최대 턴
 
-    // public static WaitForSeconds completeTimer;                     // 완성 알려주는 시간
     protected List<Command> cmds;                                   // 명령
 
     public override STATE_SELECTABLE MyState
     {
 
         get { return myState; }
-        set 
+        set
         {
 
             myTurn = 0;
-            myState = value; 
+            myState = value;
         }
     }
 
@@ -49,9 +48,13 @@ public class Building : Selectable
     public ushort MaxTurn
     {
 
-        get { return maxTurn;}
+        get { return maxTurn; }
         set { maxTurn = value; }
     }
+
+    public override int Def => myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
+
+    public override int MaxHp => myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
 
     public override bool IsCancelBtn => true;
 
@@ -59,7 +62,6 @@ public class Building : Selectable
     {
 
         if (cmds == null) cmds = new List<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
-        // if (completeTimer == null) completeTimer = new WaitForSeconds(0.1f);
 
         if (opt.BuildTurn != 0)
         {

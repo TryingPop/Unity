@@ -9,7 +9,7 @@ using UnityEngine;
 public class RandomUpgrade : BuildingAction
 {
 
-    [SerializeField] protected TYPE_MANAGEMENT[] types;
+    [SerializeField] protected TYPE_SELECTABLE[] types;
     [SerializeField] protected short[] amounts;
 
     public override void Action(Building _building)
@@ -23,7 +23,7 @@ public class RandomUpgrade : BuildingAction
             int rand = Random.Range(0, types.Length);
 
             var alliance = _building.MyTeam;
-            _building.MyTeam.UpgradeUnit(types[rand]);
+            _building.MyTeam.Upgrade(types[rand]);
             OnExit(_building);
         }
     }

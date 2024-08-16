@@ -98,10 +98,10 @@ public class ActionGroup<T> where T : Selectable
     /// </summary>
     public int Count => dic.Count;
 
-    /// <summary>
-    /// 노드 추가 가능 확인 메서드
-    /// </summary>
-    public bool CanAdd => dic.Count < capacity;
+    // /// <summary>
+    // /// 노드 추가 가능 확인 메서드
+    // /// </summary>
+    // public bool CanAdd => dic.Count < capacity;
 
     public void Action()
     {

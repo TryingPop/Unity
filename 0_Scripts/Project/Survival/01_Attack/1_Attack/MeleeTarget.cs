@@ -25,7 +25,7 @@ public class MeleeTarget : Attack
 
         if (team == null) return atk;
 
-        return atk + GetAddedAtk(team.lvlAtk);
+        return atk + GetAddedAtk(team.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK));
     }
 
     public override void OnAttack(Unit _unit)

@@ -292,7 +292,7 @@ public class Unit : Selectable
     public override void SetInfo(Text _txt)
     {
 
-        int temp = myStat.GetAddHp(myTeam.lvlHp);
+        int temp = myStat.GetAddHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
 
         string strHp = MaxHp == VarianceManager.INFINITE ? "Infinity" 
             : temp == 0? $"{curHp} / {MaxHp}" : $"{curHp} / {MaxHp}(+{temp})";
@@ -300,16 +300,17 @@ public class Unit : Selectable
         if (myAttack != null)
         {
 
-            temp = myAttack.GetAddedAtk(myTeam.lvlAtk);
+            temp = myAttack.GetAddedAtk(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK));
             string strAtk = temp == 0 ? myAttack.GetAtk(this).ToString() : $"{myAttack.GetAtk(this)}(+{temp})";
 
-            temp = myStat.GetAddDef(myTeam.lvlDef);
+            temp = myStat.GetAddDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
             string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";
             _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
         }
         else
         {
-            temp = myStat.GetAddDef(myTeam.lvlDef);
+
+            temp = myStat.GetAddDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
             string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";
             _txt.text = $"체력 : {strHp}\n방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
         }

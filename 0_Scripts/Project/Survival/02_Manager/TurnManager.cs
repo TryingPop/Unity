@@ -59,7 +59,7 @@ public class TurnManager : MonoBehaviour
     public void CalcGold()
     {
 
-        gold = cntGoldBuilding * teamInfo.lvlGetTurnGold + turnGold;
+        gold = cntGoldBuilding * teamInfo.GetResourceLvl(TYPE_SELECTABLE.UP_TURN_GOLD) + turnGold;
     }
 
     private void GetGold()

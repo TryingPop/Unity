@@ -36,7 +36,7 @@ public class BuildBuilding : IUnitAction
             int gold = stats.Cost;
             
 
-            if (_unit.MyTeam.ChkLimit(stats.MyType)
+            if (_unit.MyTeam.ChkAdd(stats.MyType)
                 && _unit.MyTeam.ChkGold(gold)
                 && _unit.MyTeam.ChkSupply(supply))
             {

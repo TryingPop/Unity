@@ -12,8 +12,8 @@ public class EnemyOrderManager : MonoBehaviour
     [SerializeField] private ActionGroup<Unit> playerUnits;
     [SerializeField] private ActionGroup<Unit> enemyUnits;
 
-    [SerializeField] private List<Building> playerBuildings;
-    [SerializeField] private List<Building> enemyBuildings;
+    [SerializeField] private ActionGroup<Building> playerBuildings;
+    [SerializeField] private ActionGroup<Building> enemyBuildings;
 
 
     [SerializeField, Range(5f, 600f)] private float waveStartTime;          // 적 활동 시작 시간
@@ -94,7 +94,7 @@ public class EnemyOrderManager : MonoBehaviour
         if (playerBuildings.Count != 0)
         {
 
-            target = playerBuildings[Random.Range(0, playerBuildings.Count)].transform;
+            target = playerBuildings.First?.transform;
         }
         else if (playerUnits.Count != 0)
         {
@@ -137,27 +137,9 @@ public class EnemyOrderManager : MonoBehaviour
 
         // 명령 전달인데 예약명령이 아닌 바로 실행할 명령이다!
         if (_isUnit)
-        {
-
-
             enemyUnits.GetCommand(cmd, false);
-            /*
-            for (int i = 0; i < _num; i++)
-            {
-
-                enemyUnits[i].GetCommand(cmd, false);
-            }
-            */
-        }
         else
-        {
-
-            for (int i = 0; i < _num; i++)
-            {
-
-                enemyBuildings[i].GetCommand(cmd, false);
-            }
-        }
+            enemyBuildings.First.GetCommand(cmd, false);
     }
 
     private void GiveCommand(Unit _unit, STATE_SELECTABLE _type, Vector3 _dir)
@@ -200,7 +182,7 @@ public class EnemyOrderManager : MonoBehaviour
         waveStart = false;
         initPos = new Vector3[3];
 
-        Vector3 pos = enemyBuildings[0].transform.position;
+        Vector3 pos = enemyBuildings.First.transform.position;
         for (int i = 0; i < 3; i++)
         {
 

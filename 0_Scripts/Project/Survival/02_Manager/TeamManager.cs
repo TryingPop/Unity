@@ -31,7 +31,7 @@ public class TeamManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        for (int i = 0; i < teams.Length; i++)
+        for (int i = 0; i < teams.Length; i++) 
         {
 
             teams[i].Init();

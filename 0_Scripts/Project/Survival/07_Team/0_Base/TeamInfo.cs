@@ -13,114 +13,120 @@ public class TeamInfo
     [SerializeField] protected UpgradeInfo upgradeInfo;
     [SerializeField] protected BuildingInfo limitInfo;
 
+    protected ActionGroup<Unit> actionUnits;
+    protected ActionGroup<Building> actionBuildings;
+
+    Dictionary<TYPE_SELECTABLE, UpgradeData> upDic;
+    Dictionary<TYPE_SELECTABLE, UpgradeResourceData> upResource;
+
     public void Init()
     {
 
+        upDic = new();
+        upResource = new();
+
         limitInfo.Init();
-        upgradeInfo.Init();
+        upgradeInfo.Init(upDic, upResource);
+
+#if UNITY_EDITOR
+
+        foreach(var item in upDic.Keys)
+        {
+
+            Debug.Log(item);
+        }
+
+        foreach(var item in upResource.Keys)
+        {
+
+            Debug.Log(item);
+        }
+#endif
+
+        actionUnits = new(VarianceManager.INIT_UNIT_LIST_NUM);
+        actionBuildings = new(VarianceManager.INIT_BUILDING_LIST_NUM);
+    }
+
+    // 유닛 넣기
+    public void AddUnit(Unit _unit)
+    {
+
+        actionUnits.AddLast(_unit);
+    }
+
+    public void PopUnit(Unit _unit)
+    {
+
+        actionUnits.Pop(_unit);
+    }
+
+    public void AddBuilding(Building _building)
+    {
+
+        actionBuildings.AddLast(_building);
+    }
+
+    public void PopBuilding(Building _building)
+    {
+
+        actionBuildings.Pop(_building);
     }
 
     // 공방체 부분
-    public int lvlAtk => upgradeInfo.unitAtk.CurVal();
-    public int lvlDef => upgradeInfo.unitDef.CurVal();
-    public int lvlHp => upgradeInfo.unitHp.CurVal();
+    public int GetLvl(TYPE_SELECTABLE _type)
+    {
 
-    public int lvlEvade => upgradeInfo.unitEvade.CurVal();
+        if (upDic.ContainsKey(_type)) return upDic[_type].CurVal();
+        return 0;
+    }
 
-    public int lvlGetTurnGold => upgradeInfo.turnGold.CurVal();
-    public int lvlMaxSupply => upgradeInfo.maxSupply.CurVal();
+    public int GetResourceLvl(TYPE_SELECTABLE _type) 
+    {
+
+
+        if (upResource.ContainsKey(_type)) return upResource[_type].CurVal();
+        else return 0;
+    }
 
     /// <summary>
     /// 유닛 업그레이드
     /// 공, 체, 방
     /// </summary>
-    public void UpgradeUnit(TYPE_MANAGEMENT _type)
+    public void Upgrade(TYPE_SELECTABLE _type)
     {
 
-        switch (_type)
+        if (upDic.ContainsKey(_type))
         {
 
-            case TYPE_MANAGEMENT.UP_UNIT_HP:
-                upgradeInfo.unitHp.AddVal();
-
-                UIManager.instance.SetMaxHp = true;
-                break;
-
-            case TYPE_MANAGEMENT.UP_UNIT_ATK:
-                upgradeInfo.unitAtk.AddVal();
-                break;
-
-            case TYPE_MANAGEMENT.UP_UNIT_DEF:
-                upgradeInfo.unitDef.AddVal();
-                break;
-                
-#if UNITY_EDITOR
-            default:
-
-
-                Debug.Log("유닛 업그레이드만 가능합니다.");
-                break;
-#endif
+            upDic[_type].AddVal();
+            if (_type == TYPE_SELECTABLE.UP_UNIT_HP) UIManager.instance.SetMaxHp = true;
+            return;
         }
-    }
-
-    /// <summary>
-    /// 건물 업그레이드
-    /// 체, 방
-    /// </summary>
-    public void UpgradeBuilding(TYPE_MANAGEMENT _type)
-    {
-
-        switch (_type)
-        {
-
-            case TYPE_MANAGEMENT.UP_BUILDING_HP:
-                upgradeInfo.buildingHp.AddVal();
-
-                UIManager.instance.SetMaxHp = true;
-                break;
-
-            case TYPE_MANAGEMENT.UP_BUILDING_DEF:
-                upgradeInfo.buildingDef.AddVal();
-                break;
 
 #if UNITY_EDITOR
-            default:
 
-
-                Debug.Log("건물 업그레이드만 가능합니다.");
-                break;
+        Debug.Log("존재하지 않는 업그레이드 입니다.");
 #endif
-        }
     }
 
     /// <summary>
     /// 자원 업그레이드
     /// 골드, 보급
     /// </summary>
-    public void UpgradeResource(TYPE_MANAGEMENT _type)
+    public void UpgradeResource(TYPE_SELECTABLE _type)
     {
 
-        switch (_type)
+        if (upResource.ContainsKey(_type))
         {
 
-            case TYPE_MANAGEMENT.UP_TURN_GOLD:
-                upgradeInfo.turnGold.AddVal();
-
-                break;
-
-            case TYPE_MANAGEMENT.UP_SUPPLY:
-                upgradeInfo.maxSupply.AddVal();
-
-                if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
-                break;
-#if UNITY_EDITOR
-            default:
-
-                Debug.Log("자원 업그레이드만 가능합니다.");
-                break;
-#endif
+            upResource[_type].AddVal();
+            if (_type == TYPE_SELECTABLE.UP_SUPPLY 
+                && allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+            return;
         }
+#if UNITY_EDITOR
+        Debug.Log("존재하지 않는 자원 업그레이드 입니다.");
+#endif
     }
 
     public int MaxSupply
@@ -129,7 +135,8 @@ public class TeamInfo
         get
         {
 
-            int result = resourcesInfo.maxSupply + upgradeInfo.maxSupply.CurVal();
+            // int result = resourcesInfo.maxSupply + upgradeInfo.maxSupply.CurVal();
+            int result = resourcesInfo.maxSupply + GetResourceLvl(TYPE_SELECTABLE.UP_SUPPLY);
             if (result > VarianceManager.MAX_SUPPLY) result = VarianceManager.MAX_SUPPLY;
             return result;
         }
@@ -144,8 +151,7 @@ public class TeamInfo
     {
 
         resourcesInfo.gold += _amount;
-        if (_addBonus) resourcesInfo.gold += upgradeInfo.turnGold.CurVal();
-
+        
         if (resourcesInfo.gold > VarianceManager.MAX_GOLD) resourcesInfo.gold = VarianceManager.MAX_GOLD;
         if (allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
     }
@@ -228,27 +234,18 @@ public class TeamInfo
     }
 
     /// <summary>
-    /// 제한 판별
+    /// 해당 건물 추가 가능한지 판별 판별
     /// </summary>
-    /// <param name="_type"></param>
-    /// <returns></returns>
-    public bool ChkLimit(TYPE_SELECTABLE _type)
+    public bool ChkAdd(TYPE_SELECTABLE _type)
     {
 
-        int idx = limitInfo.GetBuildingIdx(_type);
-
-        // 유닛이므로 성공
-        if (idx < 0) return true;
-
-        return limitInfo.ChkLimit(idx);
+        if (limitInfo.Contains(_type)) return limitInfo.ChkAdd(_type);
+        return true;
     }
 
     public void AddCnt(TYPE_SELECTABLE _type, bool _add = true)
     {
 
-        int idx = limitInfo.GetBuildingIdx(_type);
-        if (idx < 0) return;
-
-        limitInfo.AddBuilding(idx, _add);
+        if (limitInfo.Contains(_type)) limitInfo.AddBuilding(_type, _add);
     }
 }

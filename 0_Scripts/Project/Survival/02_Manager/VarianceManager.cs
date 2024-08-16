@@ -6,8 +6,8 @@ using UnityEngine;
 public enum TYPE_SELECTABLE 
 { 
     
+    // 큰 타입
     UNFINISHED_BUILDING = -2,
-
     NONE = 0, 
     
     NONCOMBAT = 1,
@@ -15,19 +15,39 @@ public enum TYPE_SELECTABLE
 
     BUILDING = 3,
 
+    // 유닛
     WORKER = 101,
     CHICKEN = 102,
 
     BOSS_D = 201,
 
-    ENEMYCASTLE = 351,
-
+    // 건물
     FARM = 301,
     TOWN = 302,
     BLACKSMITH = 303,
     WALL = 304,
     WINDMILL = 305,
     GUILD = 306,
+
+    ENEMYCASTLE = 351,
+
+    // 업그레이드
+    UP_UNIT_ATK = 1_000,
+    UP_UNIT_DEF,
+    UP_UNIT_HP,
+
+    UP_BUILDING_DEF,
+    UP_BUILDING_HP,
+
+    UP_SUPPLY = 1_011,      // 최대 인구! 제한은 못뚫는다!
+    UP_TURN_GOLD = 1_012,
+    KILL_GOLD = 1_013,
+
+
+    // 자원
+    TURN_GOLD = 2_001,
+    CUR_SUPPLY = 2_002,   // 게임 상에서 사용
+    MAX_SUPPLY = 2_003,   // 게임 상에서 사용
 }
 
 /// <summary>
@@ -66,27 +86,6 @@ public enum STATE_SELECTABLE
 
     MOUSE_R = VarianceManager.MOUSE_R,          // 건물이랑, 유닛 읽는게 다르다!
     BUILDING_CANCEL = 100,                      // 취소
-}
-
-/// <summary>
-/// 업그레이드 번호
-/// </summary>
-public enum TYPE_MANAGEMENT
-{
-
-    UP_UNIT_ATK = 1,
-    UP_UNIT_DEF,
-    UP_UNIT_HP,
-
-    UP_BUILDING_DEF,
-    UP_BUILDING_HP,
-
-    UP_SUPPLY = 11,      // 최대 인구! 제한은 못뚫는다!
-    UP_TURN_GOLD = 12,
-
-    TURN_GOLD = 101,
-    CUR_SUPPLY = 102,   // 게임 상에서 사용
-    MAX_SUPPLY = 103,   // 게임 상에서 사용
 }
 
 public enum TYPE_INPUT

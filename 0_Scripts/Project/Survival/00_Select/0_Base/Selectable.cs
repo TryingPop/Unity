@@ -60,9 +60,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// </summary>
     public bool FullHp { get { return curHp == MaxHp; } }
 
-    public int MaxHp { get { return myStat.MaxHp + myStat.GetAddHp(myTeam.lvlHp); } }
+    public virtual int MaxHp { get { return myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP)); } }
     public int CurHp => curHp;
-    public int Def { get { return myStat.Def + myStat.GetAddDef(myTeam.lvlDef); } }
+    public virtual int Def { get { return myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF)); } }
 
     /// <summary>
     /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
@@ -131,31 +131,17 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
 
             if (_isDead)
-            {
-
                 // 사망 시 이므로 최대 인구 깎기
                 myTeam.AddMaxSupply(supply);
-            }
             else
-            {
-
                 // 소환 시 최대 인구 증가
                 myTeam.AddMaxSupply(-supply);
-            }
         }
         else
         {
 
-            if (_isDead)
-            {
-
-                myTeam.AddCurSupply(-supply);
-            }
-            else
-            {
-
-                myTeam.AddCurSupply(supply);
-            }
+            if (_isDead) myTeam.AddCurSupply(-supply);
+            else myTeam.AddCurSupply(supply);
         }
     }
 
@@ -209,7 +195,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     {
 
         int random = Random.Range(0, 101);
-        int evade = myStat.Evade + myStat.GetAddEvade(myTeam.lvlEvade);
+        int evade = myStat.Evade;
 
         return random < evade;
     }

@@ -8,7 +8,7 @@ public class LimitData : ILimitData
 
     [SerializeField] protected int curVal;
     [SerializeField] protected int maxVal;
-
+    [SerializeField] protected TYPE_SELECTABLE myType;
 #if UNITY_EDITOR
 
     [SerializeField] bool chkBtn;
@@ -17,6 +17,8 @@ public class LimitData : ILimitData
     [SerializeField] protected ButtonInfo lockBtn;
 
     public virtual int CurVal() => curVal;
+
+    public TYPE_SELECTABLE MyType => myType;
 
     public void Init()
     {
@@ -38,10 +40,10 @@ public class LimitData : ILimitData
             return;
         }
 
-        lockBtn.ActiveBtn = ChkLimit();
+        lockBtn.ActiveBtn = ChkAdd();
     }
 
-    public bool ChkLimit() => curVal < maxVal;
+    public bool ChkAdd() => curVal < maxVal;
 
     public void AddVal(int _add = 1)
     {

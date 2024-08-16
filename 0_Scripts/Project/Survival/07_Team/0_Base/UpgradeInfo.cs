@@ -12,36 +12,38 @@ public class UpgradeInfo
 
     // 업그레이드 정도
     [Header("유닛")]
-    public UpgradeData unitAtk;
-    public UpgradeData unitDef;
-    public UpgradeData unitHp;
-
-    public UpgradeData unitEvade;
-
+    public UpgradeData[] unit;
+    
     [Header("건물")]
-    public UpgradeData buildingDef;
-    public UpgradeData buildingHp;
+    public UpgradeData[] building;
+    
 
     [Header("자원")]
-    
-    [Tooltip("턴당 추가 자원 획득량, 1턴 : 10초")]
-    public UpgradeResourceData turnGold;    // 획득 골드 추가
-    [Tooltip("최대 인구")]
-    public UpgradeResourceData maxSupply;   // 추가 인구
+    public UpgradeResourceData[] resource;
 
-    public void Init()
+    public void Init(Dictionary<TYPE_SELECTABLE, UpgradeData> _upDic,
+        Dictionary<TYPE_SELECTABLE, UpgradeResourceData> _resourceDic)
     {
 
-        unitAtk.Init();
-        unitDef.Init();
-        unitHp.Init();
+        for (int i = 0; i < unit.Length; i++)
+        {
 
-        unitEvade.Init();
+            unit[i].Init();
+            if (_upDic != null) _upDic[unit[i].MyType] = unit[i];
+        }
 
-        buildingDef.Init();
-        buildingHp.Init();
+        for (int i = 0; i < building.Length; i++)
+        {
 
-        turnGold.Init();
-        maxSupply.Init();
+            building[i].Init();
+            if (_upDic != null) _upDic[building[i].MyType] = building[i];
+        }
+
+        for (int i = 0; i < resource.Length; i++)
+        {
+
+            resource[i].Init();
+            if (_upDic != null) _resourceDic[resource[i].MyType] = resource[i];
+        }
     }
 }

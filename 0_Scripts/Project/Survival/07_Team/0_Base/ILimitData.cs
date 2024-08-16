@@ -8,7 +8,7 @@ public interface ILimitData
     /// <summary>
     /// 더 올릴 수 있는지 확인
     /// </summary>
-    public bool ChkLimit();
+    public bool ChkAdd();
 
     /// <summary>
     /// lvl 값 추가
