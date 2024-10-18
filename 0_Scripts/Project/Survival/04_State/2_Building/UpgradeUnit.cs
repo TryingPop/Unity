@@ -10,7 +10,7 @@ public class UpgradeUnit : BuildingAction
 {
 
     [SerializeField] protected TYPE_SELECTABLE upgradeType;
-    [SerializeField] protected int cost;
+    // [SerializeField] protected int cost;
 
     public override void Action(Building _building)
     {
@@ -30,6 +30,7 @@ public class UpgradeUnit : BuildingAction
     {
 
         // 환불
+        int cost = _building.MyTeam.GetUpgradeCost(upgradeType);
         int refundCost = Mathf.FloorToInt(VarianceManager.REFUND_RATE * cost);
         _building.MyTeam.AddGold(refundCost);
         OnExit(_building);
@@ -39,7 +40,9 @@ public class UpgradeUnit : BuildingAction
     {
 
         // 골드 확인
-        if (!_building.MyTeam.ChkGold(cost))
+        int cost = _building.MyTeam.GetUpgradeCost(upgradeType);
+        
+        if (cost == -1 || !_building.MyTeam.ChkGold(cost))
         {
 
             OnExit(_building);
@@ -47,6 +50,7 @@ public class UpgradeUnit : BuildingAction
         }
 
         _building.MyTeam.AddGold(-cost);
-        base.OnEnter(_building);
+        _building.MaxTurn = turn;
+        _building.MyTurn = 0;
     }
 }

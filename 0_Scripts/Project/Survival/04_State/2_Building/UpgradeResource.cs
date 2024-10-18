@@ -19,4 +19,32 @@ public class UpgradeResource : UpgradeUnit
             OnExit(_building);
         }
     }
+
+    public override void ForcedQuit(Building _building)
+    {
+
+        // 환불
+        int cost = _building.MyTeam.GetUpgradeResourceCost(upgradeType);
+        int refundCost = Mathf.FloorToInt(VarianceManager.REFUND_RATE * cost);
+        _building.MyTeam.AddGold(refundCost);
+        OnExit(_building);
+    }
+
+    public override void OnEnter(Building _building)
+    {
+
+        // 골드 확인
+        int cost = _building.MyTeam.GetUpgradeResourceCost(upgradeType);
+
+        if (cost == -1 || !_building.MyTeam.ChkGold(cost))
+        {
+
+            OnExit(_building);
+            return;
+        }
+
+        _building.MyTeam.AddGold(-cost);
+        _building.MaxTurn = turn;
+        _building.MyTurn = 0;
+    }
 }

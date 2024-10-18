@@ -105,6 +105,16 @@ public class Unit : Selectable
         Init();
     }
 
+    public override void GetStat()
+    {
+
+
+        maxHp = myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
+        def = myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
+        evade = myStat.Evade;
+        atk = myAttack.GetAtk(this);
+    }
+
     protected override void Init()
     {
         
@@ -129,7 +139,8 @@ public class Unit : Selectable
 
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
 
-        curHp = MaxHp;
+        GetStat();
+        curHp = maxHp;
         int layer = myTeam != null ? myTeam.TeamLayerNumber : gameObject.layer;
         if (layer == VarianceManager.LAYER_PLAYER
             || layer == VarianceManager.LAYER_ALLY)

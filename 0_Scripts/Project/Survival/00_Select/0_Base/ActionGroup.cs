@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// 움직이는 그룹을 모아놓은 자료구조
+/// 연결 리스트 자료구조를 확장시킨 형태다
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class ActionGroup<T> where T : Selectable
 {
 
@@ -54,13 +59,13 @@ public class ActionGroup<T> where T : Selectable
         }
     }
 
-    private Node head;                       // 시작
-    private Node tail;                       // 끝
+    protected Node head;                       // 시작
+    protected Node tail;                       // 끝
 
     protected Stack<Node> pool;              // 풀링
     protected Dictionary<T, Node> dic;       // 중복 확인용
 
-    protected int capacity;                     // 허용 용량
+    protected int capacity;                 // 허용 용량
 
     /// <summary>
     /// 해당 팀의 최대 제한
@@ -179,7 +184,7 @@ public class ActionGroup<T> where T : Selectable
         {
 
 #if UNITY_EDITOR
-            Debug.LogError("해당 유닛이 이미 노드에 할당되어 있습니다.");
+            Debug.Log("해당 유닛이 이미 노드에 할당되어 있습니다.");
 #endif
 
             return;

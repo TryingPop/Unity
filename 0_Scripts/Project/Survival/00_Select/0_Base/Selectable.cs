@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,16 +13,22 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
                                     IInfoTxt            // 인포 메시지 
 {
 
-    [Header("생존 관련 변수")]
+
     protected int curHp;                                // 현재 Hp
-    [SerializeField] protected int myTurn;           // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
+    protected int maxHp;
+
+    protected int atk;
+    protected int def;
+    protected int evade;
+
+    [Header("스텟")]
+    [SerializeField] protected int myTurn;              // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
 
     [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
 
     protected HitBar myHitBar;                          // 체력바
 
     protected TeamInfo myTeam;                          // 팀 정보
-
     [SerializeField] protected Stats myStat;            // 스텟
     [SerializeField] protected SightMesh myMinimap;
     public Stats MyStat => myStat;                      
@@ -35,6 +42,11 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     [SerializeField] protected AudioSource myAudio;
 
     public abstract void Action();
+
+    /// <summary>
+    /// 스텟 정보 받아오기
+    /// </summary>
+    public abstract void GetStat();
 
     /// <summary>
     /// 체력 회복
@@ -58,11 +70,11 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// <summary>
     /// 풀 Hp 인지 확인
     /// </summary>
-    public bool FullHp { get { return curHp == MaxHp; } }
+    public bool FullHp => curHp == maxHp;
 
-    public virtual int MaxHp { get { return myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP)); } }
+    public virtual int MaxHp => maxHp;
     public int CurHp => curHp;
-    public virtual int Def { get { return myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF)); } }
+    public int Def => def;
 
     /// <summary>
     /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다

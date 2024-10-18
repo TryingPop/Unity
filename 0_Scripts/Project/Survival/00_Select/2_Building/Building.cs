@@ -52,10 +52,6 @@ public class Building : Selectable
         set { maxTurn = value; }
     }
 
-    public override int Def => myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
-
-    public override int MaxHp => myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
-
     public override bool IsCancelBtn => true;
 
     protected void Awake()
@@ -78,6 +74,12 @@ public class Building : Selectable
         Init();
     }
 
+    public override void GetStat()
+    {
+
+        maxHp = myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
+        def = myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
+    }
 
     protected override void Init()
     {
@@ -123,6 +125,7 @@ public class Building : Selectable
 
         myTeam = TeamManager.instance.GetTeamInfo(myLayer);
 
+        GetStat();
         ActionManager.instance.AddBuilding(this);
         UIManager.instance.AddHitBar(this);
 

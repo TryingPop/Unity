@@ -7,13 +7,12 @@ public class TurnManager : MonoBehaviour
 
     public static TurnManager instance;
 
-    [SerializeField] private int turnSecond = 10;
-    private int turnTime;
-    private int turn;
-    private int gold;
+    [SerializeField] private int turnSecond = 10;           // 턴 간격
+    private int turnTime;                                   // 현재 턴
+    private int turn;                                       // 턴간격 계산해서 넣어준다
+    private int gold;                                       // 턴골드
 
-    [SerializeField] private int turnGold = 0;
-    [SerializeField] private int cntGoldBuilding = 0;
+    [SerializeField] private int turnGold = 0;              // 초기 골드
 
     [SerializeField] private TeamInfo teamInfo;
 
@@ -25,18 +24,9 @@ public class TurnManager : MonoBehaviour
             
             turnGold += value;
             CalcGold();
-        } 
+        }
     }
-    public int AddCntGoldBuilding 
-    { 
-        
-        set 
-        { 
-            
-            cntGoldBuilding += value;
-            CalcGold();
-        } 
-    }
+
     public TeamInfo TeamInfo { set { TeamInfo = value; } }
 
     private void Awake()
@@ -59,7 +49,7 @@ public class TurnManager : MonoBehaviour
     public void CalcGold()
     {
 
-        gold = cntGoldBuilding * teamInfo.GetResourceLvl(TYPE_SELECTABLE.UP_TURN_GOLD) + turnGold;
+        gold = turnGold;
     }
 
     private void GetGold()

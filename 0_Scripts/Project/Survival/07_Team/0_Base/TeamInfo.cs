@@ -17,31 +17,16 @@ public class TeamInfo
     protected ActionGroup<Building> actionBuildings;
 
     Dictionary<TYPE_SELECTABLE, UpgradeData> upDic;
-    Dictionary<TYPE_SELECTABLE, UpgradeResourceData> upResource;
+    Dictionary<TYPE_SELECTABLE, UpgradeResourceData> upResourceDic;
 
     public void Init()
     {
 
         upDic = new();
-        upResource = new();
+        upResourceDic = new();
 
         limitInfo.Init();
-        upgradeInfo.Init(upDic, upResource);
-
-#if UNITY_EDITOR
-
-        foreach(var item in upDic.Keys)
-        {
-
-            Debug.Log(item);
-        }
-
-        foreach(var item in upResource.Keys)
-        {
-
-            Debug.Log(item);
-        }
-#endif
+        upgradeInfo.Init(upDic, upResourceDic);
 
         actionUnits = new(VarianceManager.INIT_UNIT_LIST_NUM);
         actionBuildings = new(VarianceManager.INIT_BUILDING_LIST_NUM);
@@ -84,7 +69,7 @@ public class TeamInfo
     {
 
 
-        if (upResource.ContainsKey(_type)) return upResource[_type].CurVal();
+        if (upResourceDic.ContainsKey(_type)) return upResourceDic[_type].CurVal();
         else return 0;
     }
 
@@ -116,18 +101,49 @@ public class TeamInfo
     public void UpgradeResource(TYPE_SELECTABLE _type)
     {
 
-        if (upResource.ContainsKey(_type))
+        if (upResourceDic.ContainsKey(_type))
         {
 
-            upResource[_type].AddVal();
+            upResourceDic[_type].AddVal();
             if (_type == TYPE_SELECTABLE.UP_SUPPLY 
                 && allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
+
+            // 턴골드 1 증가
+            else if (_type == TYPE_SELECTABLE.UP_TURN_GOLD && allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER)
+                TurnManager.instance.AddTurnGold = 1;
             return;
         }
 #if UNITY_EDITOR
         Debug.Log("존재하지 않는 자원 업그레이드 입니다.");
 #endif
     }
+
+    public int GetUpgradeCost(TYPE_SELECTABLE _type)
+    {
+
+        if (upDic.ContainsKey(_type)) return upDic[_type].Cost;
+
+#if UNITY_EDITOR
+
+        Debug.LogError($"{_type}에 해당하는 업그레이드가 없습니다.");
+#endif
+
+        return -1;
+    }
+
+    public int GetUpgradeResourceCost(TYPE_SELECTABLE _type)
+    {
+
+        if (upResourceDic.ContainsKey(_type)) return upResourceDic[_type].Cost;
+
+#if UNITY_EDITOR
+
+        Debug.LogError($"{_type}에 해당하는 업그레이드가 없습니다.");
+#endif
+
+        return -1;
+    }
+
 
     public int MaxSupply
     {
