@@ -12,18 +12,18 @@ public class ActionManager : MonoBehaviour
 
     public static ActionManager instance;
 
-    private ActionGroup<Unit> playerUnits;
-    private ActionGroup<Unit> enemyUnits;
-    private ActionGroup<Unit> neutralUnits;
-    private ActionGroup<Unit> allyUnits;
+    private CommandGroup playerUnits;
+    private CommandGroup enemyUnits;
+    private CommandGroup neutralUnits;
+    private CommandGroup allyUnits;
 
 
-    private ActionGroup<Building> playerBuildings;
-    private ActionGroup<Building> enemyBuildings;
-    private ActionGroup<Building> neutralBuilding;
-    private ActionGroup<Building> allyBuilding;
+    private CommandGroup playerBuildings;
+    private CommandGroup enemyBuildings;
+    private CommandGroup neutralBuilding;
+    private CommandGroup allyBuilding;
 
-    private List<Missile> missiles;
+    private ActionGroup<Missile> missiles;
 
     public List<Follower> followMouse;
 
@@ -31,16 +31,15 @@ public class ActionManager : MonoBehaviour
     public Mission.ChkMissionDelegate DeadUnit;
     public Mission.ChkMissionDelegate DeadBuilding;
 
-    public ActionGroup<Unit> PlayerUnits => playerUnits;
-    public ActionGroup<Unit> EnemyUnits => enemyUnits;
-    public ActionGroup<Unit> NeutralUnits => neutralUnits;
-    public ActionGroup<Unit> AllyUnits => allyUnits;
-    
+    public CommandGroup PlayerUnits => playerUnits;
+    public CommandGroup EnemyUnits => enemyUnits;
+    public CommandGroup NeutralUnits => neutralUnits;
+    public CommandGroup AllyUnits => allyUnits;
 
-    public ActionGroup<Building> PlayerBuildings => playerBuildings;
-    public ActionGroup<Building> EnemyBuildings => enemyBuildings;
-    public ActionGroup<Building> NeutralBuilding => neutralBuilding;
-    public ActionGroup<Building> AllyBuildings => allyBuilding;
+    public CommandGroup PlayerBuildings => playerBuildings;
+    public CommandGroup EnemyBuildings => enemyBuildings;
+    public CommandGroup NeutralBuilding => neutralBuilding;
+    public CommandGroup AllyBuildings => allyBuilding;
 
    
     private void Awake()
@@ -74,7 +73,7 @@ public class ActionManager : MonoBehaviour
         allyUnits = new(VarianceManager.INIT_ALLY_LIST_NUM);
         allyBuilding = new(VarianceManager.INIT_ALLY_LIST_NUM);
 
-        missiles = new List<Missile>(VarianceManager.INIT_MISSILE_LIST_NUM);
+        missiles = new ActionGroup<Missile>(VarianceManager.INIT_MISSILE_LIST_NUM);
 
         followMouse = new List<Follower>();
     }
@@ -91,29 +90,14 @@ public class ActionManager : MonoBehaviour
         SetPos();
     }
 
-    private void Update()
-    {
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-            Debug.Log(1 << 0);
-            Debug.Log(0b_0000_0001);
-        }
-    }
-
     /// <summary>
     /// 플레이어 건물 > 플레이어 유닛 > 적군 건물 > 적군 유닛 순으로 행동한다!
     /// </summary>
     private void Action()
     {
 
-        for (int i = 0; i < missiles.Count; i++)
-        {
+        missiles.Action();
 
-            missiles[i].Action();
-        }
-        
         playerBuildings.Action();
         playerUnits.Action();
 
@@ -220,13 +204,13 @@ public class ActionManager : MonoBehaviour
     public void AddMissile(Missile _missile)
     {
 
-        if (!missiles.Contains(_missile))missiles.Add(_missile);
+        if (!missiles.Contains(_missile))missiles.AddLast(_missile);
     }
 
     public void RemoveMissile(Missile _missile)
     {
 
-        missiles.Remove(_missile);
+        missiles.Pop(_missile);
     }
 
     public void AddFollowMouse(Follower _followMouse)

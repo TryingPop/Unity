@@ -10,7 +10,7 @@ using UnityEngine.UI;
 /// </summary>
 public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
                                     IDamagable,         // 모든 유닛은 피격 가능하다!
-                                    IInfoTxt            // 인포 메시지 
+                                    ICommandable        // 명령 가능 오브젝트 -> 선택과 행동가능!
 {
 
 
@@ -40,6 +40,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     [SerializeField] protected SoundGroup mySound;
     [SerializeField] protected AudioSource myAudio;
+
 
     public abstract void Action();
 
@@ -310,10 +311,8 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     #endregion info
 
     #region command
-    /// <summary>
-    /// 명령을 받는다
-    /// </summary>
-    public abstract void GetCommand(Command _cmd, bool _add = false);
+
+    public abstract void GetCommand(Command _cmd, bool _reserve = false);
 
     /// <summary>
     /// 명령을 수행할 수 있는 상태인지 혹은 명령을 수행할 수 잇는지 확인
@@ -324,5 +323,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
     /// 예약된 명령을 받을지 확인하고 예약된 명령 시작
     /// </summary>
     protected abstract void ReadCommand(Command _cmd);
+
     #endregion command
 }

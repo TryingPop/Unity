@@ -23,6 +23,7 @@ public class Command
 
     public STATE_SELECTABLE type;       // 명령 타입
 
+    #region 생성자
     // 생성자
     public Command(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, Selectable _target = null)
     {
@@ -36,8 +37,9 @@ public class Command
 
         Init(_unitNums, _type);
     }
+    #endregion
 
-
+    #region 메서드
     public bool ChkUsedCommand(int _size)
     {
 
@@ -72,7 +74,6 @@ public class Command
         }
     }
 
-
     /// <summary>
     /// 초기화
     /// </summary>
@@ -100,7 +101,9 @@ public class Command
         target = null;
         pos = Vector3.zero;
     }
+    #endregion
 
+    #region static 메서드
     /// <summary>
     /// 회오리? 모양의 배치
     /// </summary>
@@ -191,4 +194,5 @@ public class Command
 
         else return new Command(_unitNums, _type);
     }
+#endregion
 }

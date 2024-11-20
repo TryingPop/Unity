@@ -8,7 +8,7 @@ using UnityEngine;
 /// 연결 리스트 자료구조를 확장시킨 형태다
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ActionGroup<T> where T : Selectable
+public class ActionGroup<T> where T : IActionable
 {
 
     /// <summary>
@@ -116,7 +116,7 @@ public class ActionGroup<T> where T : Selectable
         while (!IsLast(node))
         {
 
-            if (node == null)
+            if (node == null || node.Val == null)
             {
 
 #if UNITY_EDITOR
@@ -132,32 +132,7 @@ public class ActionGroup<T> where T : Selectable
             node = node.Next;
         }
     }
-
-    public void GetCommand(Command _cmd, bool _add = false)
-    {
-
-        Node node = head.Next;
-
-        while (!IsLast(node))
-        {
-
-            if (node == null)
-            {
-
-#if UNITY_EDITOR
-
-                Debug.LogError("ActionGroup의 Node 순서에 이상이 있어\n" +
-                    "행동이 정상적으로 작동하지 않습니다.");
-#endif
-
-                return;
-            }
-
-            node.Val.GetCommand(_cmd, _add);
-            node = node.Next;
-        }
-    }
-
+   
     /// <summary>
     /// 해당 노드 포함 여부
     /// </summary>

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Missile : MonoBehaviour
+public abstract class Missile : MonoBehaviour, IActionable
 {
 
     protected Selectable atker;

@@ -23,7 +23,7 @@ public class OrderEvent : BaseGameEvent
         {
 
             // 대상이 유닛
-            ActionGroup<Unit> units = null;
+            CommandGroup units = null;
             if (groupLayer == VarianceManager.LAYER_PLAYER) units = ActionManager.instance.PlayerUnits;
             else if (groupLayer == VarianceManager.LAYER_ENEMY) units = ActionManager.instance.EnemyUnits;
             else if (groupLayer == VarianceManager.LAYER_ALLY) units = ActionManager.instance.AllyUnits;
@@ -39,7 +39,7 @@ public class OrderEvent : BaseGameEvent
         {
 
             // 대상이 건물
-            ActionGroup<Building> buildings = null;
+            CommandGroup buildings = null;
 
             if (groupLayer == VarianceManager.LAYER_PLAYER) buildings = ActionManager.instance.PlayerBuildings;
             else if (groupLayer == VarianceManager.LAYER_ENEMY) buildings = ActionManager.instance.PlayerBuildings;

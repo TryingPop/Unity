@@ -9,11 +9,11 @@ using UnityEngine.AI;
 public class EnemyOrderManager : MonoBehaviour
 {
 
-    [SerializeField] private ActionGroup<Unit> playerUnits;
-    [SerializeField] private ActionGroup<Unit> enemyUnits;
+    [SerializeField] private CommandGroup playerUnits;
+    [SerializeField] private CommandGroup enemyUnits;
 
-    [SerializeField] private ActionGroup<Building> playerBuildings;
-    [SerializeField] private ActionGroup<Building> enemyBuildings;
+    [SerializeField] private CommandGroup playerBuildings;
+    [SerializeField] private CommandGroup enemyBuildings;
 
 
     [SerializeField, Range(5f, 600f)] private float waveStartTime;          // 적 활동 시작 시간
