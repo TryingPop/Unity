@@ -17,6 +17,7 @@ public class RandomAction : BuildingAction
         if (_building.MyTurn >= turn)
         {
 
+            Debug.LogError($"{this.name} 의 로직을 수정할 필요가 있습니다.");
 
             int next = Random.Range(1, _building.MyStateAction.GetSize());
 

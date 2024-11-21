@@ -18,7 +18,7 @@ public class MeleeTarget : Attack
         return addedAtk * _lvlInfo;
     }
 
-    public override int GetAtk(Selectable _unit)
+    public override int GetAtk(GameEntity _unit)
     {
 
         TeamInfo team = _unit.MyTeam;

@@ -12,8 +12,8 @@ public class SelectedUI : MonoBehaviour
     private TargetUI[] selectedUIs;
 
 
-    private List<Selectable> curGroup;
-    public List<Selectable> CurGroup { set { curGroup = value; } }
+    private List<GameEntity> curGroup;
+    public List<GameEntity> CurGroup { set { curGroup = value; } }
 
     private int selectedNums;
 

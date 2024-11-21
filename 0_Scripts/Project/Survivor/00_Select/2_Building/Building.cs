@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class Building : Selectable
+public class Building : GameEntity
 {
 
     [SerializeField] protected Transform buildingObj;               // 건물 생성과 관련된 옵션
@@ -20,18 +20,6 @@ public class Building : Selectable
     protected ushort maxTurn;                                       // 행동 최대 턴
 
     protected List<Command> cmds;                                   // 명령
-
-    public override STATE_SELECTABLE MyState
-    {
-
-        get { return myState; }
-        set
-        {
-
-            myTurn = 0;
-            myState = value;
-        }
-    }
 
     public BuildingStateAction MyStateAction
     {

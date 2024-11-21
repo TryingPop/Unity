@@ -31,7 +31,7 @@ public class BossShotMissile : Missile
     /// <summary>
     /// 초기화 및 기본 변수 세팅
     /// </summary>
-    public override void Init(Selectable _atker, Attack _atkType, int _prefabIdx)
+    public override void Init(GameEntity _atker, Attack _atkType, int _prefabIdx)
     {
 
         prefabIdx = _prefabIdx;
@@ -115,7 +115,7 @@ public class BossShotMissile : Missile
         else if (other.CompareTag("Unit"))
         {
 
-            if (other.TryGetComponent<Selectable>(out Selectable target))
+            if (other.TryGetComponent<GameEntity>(out GameEntity target))
             {
 
                 if (((1 << other.gameObject.layer) & targetLayer) != 0)

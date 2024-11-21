@@ -23,11 +23,13 @@ public class BuildingAction : IAction<Building>
     {
 
         _building.MyState = _nextState;
+        _building.MyTurn = 0;
     }
 
     public virtual void ForcedQuit(Building _building) 
     {
 
         _building.MyState = 0;
+        _building.MyTurn = 0;
     }
 }

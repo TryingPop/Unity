@@ -14,7 +14,7 @@ public class BtnTargetOrPos : BtnPos
 
         _inputManager.SavePointToRay(true, true);
         Vector3 pos = _inputManager.CmdPos;
-        Selectable target = _inputManager.CmdTarget;
+        GameEntity target = _inputManager.CmdTarget;
         
         if (pos.y < 100f
             || target)

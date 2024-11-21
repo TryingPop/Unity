@@ -17,7 +17,7 @@ public abstract class Attack : ScriptableObject
     /// </summary>
     /// <param name="_unit">РЏДж</param>
     /// <returns></returns>
-    public abstract int GetAtk(Selectable _unit);
+    public abstract int GetAtk(GameEntity _unit);
 
     public abstract int GetAddedAtk(int _lvlInfo);
 
@@ -103,6 +103,6 @@ public abstract class Attack : ScriptableObject
             }
         }
 
-        if (target != null) _unit.Target = target.GetComponent<Selectable>();
+        if (target != null) _unit.Target = target.GetComponent<GameEntity>();
     }
 }

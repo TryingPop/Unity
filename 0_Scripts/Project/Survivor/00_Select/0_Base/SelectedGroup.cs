@@ -8,10 +8,10 @@ using UnityEngine;
 public class SelectedGroup
 {
 
-    private List<Selectable> curSelected;                          // 현재 선택된 그룹
+    private List<GameEntity> curSelected;                          // 현재 선택된 그룹
 
     // ctrl + 1 ~ 3 
-    private List<List<Selectable>> saved;
+    private List<List<GameEntity>> saved;
 
     private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
     [SerializeField] private LayerMask commandLayer = 1 << VarianceManager.LAYER_PLAYER;
@@ -84,11 +84,11 @@ public class SelectedGroup
     public SelectedGroup(int _layer)
     {
 
-        curSelected = new List<Selectable>(VarianceManager.MAX_SELECT);
+        curSelected = new List<GameEntity>(VarianceManager.MAX_SELECT);
 
-        saved = new List<List<Selectable>>(3) { new List<Selectable>(VarianceManager.MAX_SELECT),
-                                                new List<Selectable>(VarianceManager.MAX_SELECT),
-                                                new List<Selectable>(VarianceManager.MAX_SELECT)};
+        saved = new List<List<GameEntity>>(3) { new List<GameEntity>(VarianceManager.MAX_SELECT),
+                                                new List<GameEntity>(VarianceManager.MAX_SELECT),
+                                                new List<GameEntity>(VarianceManager.MAX_SELECT)};
 
         commandLayer.value = 1 << _layer;
     }
@@ -103,7 +103,7 @@ public class SelectedGroup
         isCommandable = true;
     }
 
-    public void SelectOne(Selectable _select)
+    public void SelectOne(GameEntity _select)
     {
 
         // 선택된게 없으면 탈출한다
@@ -121,7 +121,7 @@ public class SelectedGroup
         isCommandable = ChkCommandable(_select);
     }
 
-    public void AddSelect(Selectable _select)
+    public void AddSelect(GameEntity _select)
     {
 
         if (curSelected.Count == 0) SelectOne(_select);
@@ -130,7 +130,7 @@ public class SelectedGroup
 
     }
 
-    public void AppendSelect(Selectable _select)
+    public void AppendSelect(GameEntity _select)
     {
 
         if (curSelected.Count >= VarianceManager.MAX_SELECT      // 선택가능한 갯수를 넘거나
@@ -152,7 +152,7 @@ public class SelectedGroup
             for (int i = 0; i < len; i++)
             {
 
-                Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
+                GameEntity select = VarianceManager.hits[i].transform.GetComponent<GameEntity>();
                 curSelected.Add(select);
             }
 
@@ -163,7 +163,7 @@ public class SelectedGroup
         if (len > 0)
         {
 
-            Selectable select = VarianceManager.hit[0].transform.GetComponent<Selectable>();
+            GameEntity select = VarianceManager.hit[0].transform.GetComponent<GameEntity>();
             SelectOne(select);
 
             return;
@@ -183,7 +183,7 @@ public class SelectedGroup
         for (int i = 0; i < len; i++)
         {
 
-            Selectable select = VarianceManager.hits[i].transform.GetComponent<Selectable>();
+            GameEntity select = VarianceManager.hits[i].transform.GetComponent<GameEntity>();
 
             if (curSelected.Count < VarianceManager.MAX_SELECT
                 && !curSelected.Contains(select)) curSelected.Add(select);
@@ -206,7 +206,7 @@ public class SelectedGroup
         for (int i = 0; i < hits.Length; i++)
         {
 
-            Selectable select = hits[i].transform.GetComponent<Selectable>();
+            GameEntity select = hits[i].transform.GetComponent<GameEntity>();
             if (select.MyStat.SelectIdx == _selectIdx
                 && !curSelected.Contains(select)
                 && curSelected.Count < VarianceManager.MAX_SELECT) curSelected.Add(select);
@@ -271,7 +271,7 @@ public class SelectedGroup
     }
 
     // 유닛이 죽으면 해제되게 한다!
-    public void DeSelect(Selectable _select)
+    public void DeSelect(GameEntity _select)
     {
 
         curSelected.Remove(_select);
@@ -279,7 +279,7 @@ public class SelectedGroup
         if (curSelected.Count == 0) isCommandable = true;
     }
 
-    public void DeselectSavedGroup(Selectable _select)
+    public void DeselectSavedGroup(GameEntity _select)
     {
 
         for (int i = 0; i < saved.Count; i++)
@@ -289,7 +289,7 @@ public class SelectedGroup
         }
     }
 
-    public bool ContainsSavedGroup(Selectable _select)
+    public bool ContainsSavedGroup(GameEntity _select)
     {
 
         for (int i = 0; i < saved.Count; i++)
@@ -305,13 +305,13 @@ public class SelectedGroup
     /// <summary>
     /// 해당 유닛 포함 여부
     /// </summary>
-    public bool Contains(Selectable _select)
+    public bool Contains(GameEntity _select)
     {
 
         return curSelected.Contains(_select);
     }
 
-    public bool ChkCommandable(Selectable _select) 
+    public bool ChkCommandable(GameEntity _select) 
     {
 
         if (_select == null
@@ -327,7 +327,7 @@ public class SelectedGroup
     /// <summary>
     /// 선택 유닛 정보 넘긴다 유닛 슬롯쪽에서 활용
     /// </summary>
-    public List<Selectable> Get(int groupNum = 0)
+    public List<GameEntity> Get(int groupNum = 0)
     {
 
         switch (groupNum)
@@ -412,7 +412,7 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, Selectable _trans = null, bool _add = false, int _num = -1)
+    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, GameEntity _trans = null, bool _add = false, int _num = -1)
     {
 
         // 선택된 유닛이 없는 경우 명령 생성 안한다!

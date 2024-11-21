@@ -13,7 +13,7 @@ public class BtnTarget : BtnPos
     {
 
         _inputManager.SavePointToRay(true, true);
-        Selectable target = _inputManager.CmdTarget;
+        GameEntity target = _inputManager.CmdTarget;
         if (target) 
         {
 

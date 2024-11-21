@@ -7,7 +7,7 @@ public class SelectMission : Mission
 
     protected SelectedGroup group;
     
-    [SerializeField] protected Selectable target;
+    [SerializeField] protected GameEntity target;
     [SerializeField] protected int teamLayer = -1;
     [SerializeField] protected int selectNum = 0;
     

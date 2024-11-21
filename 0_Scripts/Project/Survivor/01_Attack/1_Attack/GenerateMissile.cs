@@ -15,7 +15,7 @@ public class GenerateMissile : Attack
 
     protected int prefabIdx = -1;
 
-    public override int GetAtk(Selectable _unit)
+    public override int GetAtk(GameEntity _unit)
     {
 
         return atkType.GetAtk(_unit);

@@ -39,7 +39,7 @@ public class PoisonArea : MonoBehaviour
         // 타겟이 아니면 반응 X
         if (((1 << other.gameObject.layer) & targetLayers) == 0) return;
 
-        var selectable = other.GetComponent<Selectable>();
+        var selectable = other.GetComponent<GameEntity>();
         if (selectable)
             // 방어력 무시 데미지를 준다!
             selectable.OnDamaged(poisonDmg, true, false, null);

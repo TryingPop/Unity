@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CommandGroup : ActionGroup<Selectable>
+public class CommandGroup : ActionGroup<Commandable>
 {
 
     public CommandGroup(int _capacity) : base(_capacity) { }

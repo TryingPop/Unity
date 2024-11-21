@@ -5,7 +5,7 @@ using UnityEngine;
 public class MindControl : BaseGameEvent
 {
 
-    [SerializeField] private Selectable[] targets;
+    [SerializeField] private GameEntity[] targets;
     [SerializeField] private int targetLayer;
 
     public override void InitalizeEvent()

@@ -8,11 +8,10 @@ using UnityEngine.UI;
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
 /// </summary>
-public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 transform 을 이용할 예정
-                                    IDamagable,         // 모든 유닛은 피격 가능하다!
-                                    ICommandable        // 명령 가능 오브젝트 -> 선택과 행동가능!
+public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 -> 선택과 행동가능!
+                                    IDamagable          // 모든 유닛은 피격 가능하다!
+                                          
 {
-
 
     protected int curHp;                                // 현재 Hp
     protected int maxHp;
@@ -28,21 +27,15 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     protected HitBar myHitBar;                          // 체력바
 
-    protected TeamInfo myTeam;                          // 팀 정보
     [SerializeField] protected Stats myStat;            // 스텟
     [SerializeField] protected SightMesh myMinimap;
     public Stats MyStat => myStat;                      
 
-    [SerializeField] protected Selectable target;       // 목표물
+    [SerializeField] protected GameEntity target;       // 목표물
     [SerializeField] protected Vector3 targetPos;       // 목표 좌표
-
-    [SerializeField] protected STATE_SELECTABLE myState;
 
     [SerializeField] protected SoundGroup mySound;
     [SerializeField] protected AudioSource myAudio;
-
-
-    public abstract void Action();
 
     /// <summary>
     /// 스텟 정보 받아오기
@@ -89,7 +82,7 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         set { myTurn = value; }
     }
 
-    public Selectable Target
+    public GameEntity Target
     {
 
         get { return target; }
@@ -120,15 +113,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
             myHitBar = value; 
         }
     }
-
-    public virtual STATE_SELECTABLE MyState
-    {
-
-        get { return myState; }
-        set { myState = value; }
-    }
-
-    public TeamInfo MyTeam => myTeam;
 
     public void ChkSupply(bool _isDead = false)
     {
@@ -179,7 +163,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         if (_pure) curHp -= _dmg < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg;
         else curHp -= _dmg - Def < VarianceManager.MIN_DAMAGE ? VarianceManager.MIN_DAMAGE : _dmg - Def;
 
-
         if (curHp < 0) curHp = 0;
         myHitBar.SetHp();
         
@@ -222,14 +205,6 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
         myState = STATE_SELECTABLE.DEAD;
         // 시체 레이어로 변경
         gameObject.layer = VarianceManager.LAYER_DEAD;
-
-        /*
-        // 현재 선택 중이면 해제한다
-        CurGroupDeSelect();
-
-        // 저장된 그룹에서 해제
-        SavedGroupDeSelect();
-        */
 
         if (_immediately) PoolManager.instance.UsedPrefab(gameObject, MyStat.MyPoolIdx);
         else StartCoroutine(Disabled());
@@ -297,32 +272,9 @@ public abstract class Selectable : MonoBehaviour,       // 선택되었다는 UI 에서 
 
     #endregion
 
-    #region Info
-    public void SetTitle(Text _titleTxt)
+    public override void SetTitle(Text _titleTxt)
     {
 
-        _titleTxt.text = myStat.MyName;
+        _titleTxt.text = myStat.name;
     }
-
-    public abstract void SetRectTrans(RectTransform _rectTrans);
-
-    public abstract void SetInfo(Text _descTxt);
-
-    #endregion info
-
-    #region command
-
-    public abstract void GetCommand(Command _cmd, bool _reserve = false);
-
-    /// <summary>
-    /// 명령을 수행할 수 있는 상태인지 혹은 명령을 수행할 수 잇는지 확인
-    /// </summary>
-    protected abstract bool ChkCommand(Command _cmd);
-
-    /// <summary>
-    /// 예약된 명령을 받을지 확인하고 예약된 명령 시작
-    /// </summary>
-    protected abstract void ReadCommand(Command _cmd);
-
-    #endregion command
 }

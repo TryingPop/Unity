@@ -12,7 +12,7 @@ using UnityEngine.UI;
     RequireComponent(typeof(NavMeshAgent)),
     RequireComponent(typeof(Rigidbody)),
     RequireComponent(typeof(UnitStateAction))]
-public class Unit : Selectable
+public class Unit : GameEntity
 {
 
     #region 변수
@@ -211,8 +211,8 @@ public class Unit : Selectable
 
         base.OnDamaged(_dmg, _pure, _evade, _trans);
 
-        Selectable select = null;
-        if (_trans != null) select = _trans.GetComponent<Selectable>();
+        GameEntity select = null;
+        if (_trans != null) select = _trans.GetComponent<GameEntity>();
         OnDamageAction(select);
     }
 
@@ -229,7 +229,7 @@ public class Unit : Selectable
     /// <summary>
     /// 피격 후 액션
     /// </summary>
-    protected virtual void OnDamageAction(Selectable _trans)
+    protected virtual void OnDamageAction(GameEntity _trans)
     {
 
         if (_trans == null || !ChkDmgReaction()) return;

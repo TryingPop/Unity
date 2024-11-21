@@ -19,9 +19,9 @@ public class Slot : MonoBehaviour,
     
     public RectTransform myRectTrans;
 
-    protected Selectable target;
+    protected GameEntity target;
 
-    public void Init(Selectable _selectable)
+    public void Init(GameEntity _selectable)
     {
 
         target = _selectable;

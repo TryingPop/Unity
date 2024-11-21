@@ -5,7 +5,7 @@ using UnityEngine;
 public class ActiveObjs : BaseGameEvent
 {
 
-    [SerializeField] private Selectable[] targets;
+    [SerializeField] private GameEntity[] targets;
     [SerializeField] private bool isActive;
 
 

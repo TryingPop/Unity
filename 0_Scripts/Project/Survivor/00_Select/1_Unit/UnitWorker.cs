@@ -8,7 +8,7 @@ public class UnitWorker : Unit
     /// 데미지 반응
     /// </summary>
     /// <param name="_trans"></param>
-    protected override void OnDamageAction(Selectable _trans)
+    protected override void OnDamageAction(GameEntity _trans)
     {
 
         if (_trans == null || !ChkDmgReaction()) return;
@@ -22,7 +22,6 @@ public class UnitWorker : Unit
     /// <summary>
     /// 공격이 수리므로 따로 설정
     /// </summary>
-    /// <param name="_cmd"></param>
     protected override void ReadCommand(Command _cmd)
     {
 

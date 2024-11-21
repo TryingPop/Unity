@@ -59,7 +59,7 @@ public class BuildBuilding : IUnitAction
                     {
 
                         go.transform.position = _unit.TargetPos;
-                        var _target = go.GetComponent<Selectable>();
+                        var _target = go.GetComponent<GameEntity>();
                         
                         _target.AfterSettingLayer();
                         _target.ChkSupply();

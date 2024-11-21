@@ -9,7 +9,7 @@ public class GuidedMissile : Missile
 {
 
     // protected Transform atker;          // 공격자
-    protected Selectable target;        // 대상
+    protected GameEntity target;        // 대상
 
     [SerializeField] protected Rigidbody myRigid;
     [SerializeField] protected float moveSpeed;
@@ -37,7 +37,7 @@ public class GuidedMissile : Missile
     }
     */
 
-    public override void Init(Selectable _atker, Attack _atkType, int _prefabIdx)
+    public override void Init(GameEntity _atker, Attack _atkType, int _prefabIdx)
     {
 
         atker = _atker;
