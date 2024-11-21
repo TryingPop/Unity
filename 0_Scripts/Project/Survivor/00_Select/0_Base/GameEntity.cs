@@ -75,11 +75,19 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
     /// </summary>
     public virtual bool IsCancelBtn => false;
 
-    public virtual int MyTurn
+    public int MyTurn
     {
 
         get { return myTurn; }
-        set { myTurn = value; }
+        set 
+        {
+
+#if UNITY_EDITOR
+
+            if (value < 0) Debug.LogError("턴 입력값이 0입니다.");
+#endif
+            myTurn = value; 
+        }
     }
 
     public GameEntity Target
@@ -88,7 +96,6 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
         get { return target; }
         set { target = value; }
     }
-
 
     public Vector3 TargetPos
     {
@@ -117,7 +124,15 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
     public void ChkSupply(bool _isDead = false)
     {
 
-        if (myTeam == null) return;
+        if (myTeam == null) 
+        {
+
+#if UNITY_EDITOR
+
+            Debug.LogError($"{this.name}은 유닛인데 팀 정보가 없습니다.");
+#endif
+            return; 
+        }
 
         int supply = myStat.Supply;
         
@@ -250,7 +265,6 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
     protected IEnumerator Disabled()
     {
 
-        
         if (myStat.DisableTime <= 0) yield return null;
         else if (myStat.DisableTime == 2) yield return VarianceManager.BASE_WAITFORSECONDS;
         else yield return new WaitForSeconds(myStat.DisableTime);

@@ -71,7 +71,7 @@ public class SelectedGroup
             for (int i = 0; i < curSelected.Count; i++)
             {
 
-                if (curSelected[i].IsCancelBtn) return true;
+                // if (curSelected[i].IsCancelBtn) return true;
             }
 
             return false;
@@ -86,9 +86,9 @@ public class SelectedGroup
 
         curSelected = new List<GameEntity>(VarianceManager.MAX_SELECT);
 
-        saved = new List<List<GameEntity>>(3) { new List<GameEntity>(VarianceManager.MAX_SELECT),
-                                                new List<GameEntity>(VarianceManager.MAX_SELECT),
-                                                new List<GameEntity>(VarianceManager.MAX_SELECT)};
+        saved = new List<List<GameEntity>>(3) { new(VarianceManager.MAX_SELECT),
+                                                new(VarianceManager.MAX_SELECT),
+                                                new(VarianceManager.MAX_SELECT)};
 
         commandLayer.value = 1 << _layer;
     }

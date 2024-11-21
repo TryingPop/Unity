@@ -46,6 +46,7 @@ public class Unit : GameEntity
     public Rigidbody MyRigid => myRigid;
 
     public Attack MyAttack => myAttack;
+
     public UnitStateAction MyStateAction => myStateAction;
 
 
@@ -72,25 +73,11 @@ public class Unit : GameEntity
         }
     }
 
-    public override int MyTurn
-    {
-
-        get { return myTurn; }
-        set
-        {
-
-            if (value > ushort.MaxValue) value = short.MaxValue;
-            else if (value < ushort.MinValue) value = short.MinValue;
-
-            myTurn = (ushort)value;
-        }
-    }
-
     public bool OnlyReserveCmd { set { onlyReserveCmd = value; } }
 
     #endregion 프로퍼티
 
-    protected virtual void Awake()
+    protected void Awake()
     {
 
         cmds = new Queue<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
@@ -219,7 +206,7 @@ public class Unit : GameEntity
     /// <summary>
     /// 피격 액션해야하는가
     /// </summary>
-    protected virtual bool ChkDmgReaction()
+    protected bool ChkDmgReaction()
     {
 
         return myState == STATE_SELECTABLE.NONE
@@ -257,7 +244,7 @@ public class Unit : GameEntity
 
         ResetTeam();
 
-        for (int i = cmds.Count; i > 0; i--)
+        while (cmds.Count > 0)
         {
 
             cmds.Dequeue().Canceled();
