@@ -5,14 +5,14 @@ using UnityEngine;
 public class TargetPos : Mission
 {
     public override bool IsSuccess => isSuccess;
-    [SerializeField] protected GameEntity target;
+    [SerializeField] protected BaseObj target;
     [SerializeField] protected int targetLayer;
     protected bool isSuccess = false;
     [SerializeField] protected string spotName;
     
     [SerializeField] protected MeshRenderer miniMapMesh;      // 미니맵에 비칠 이미지
 
-    public void ChkMission(GameEntity _target)
+    public void ChkMission(BaseObj _target)
     {
 
         // 확인 layer는 triggerenter에서 확인!
@@ -73,7 +73,7 @@ public class TargetPos : Mission
         if (other.gameObject.layer == targetLayer)
         {
 
-            ChkMission(other.GetComponent<GameEntity>());
+            ChkMission(other.GetComponent<BaseObj>());
 
             if (isSuccess) 
             { 

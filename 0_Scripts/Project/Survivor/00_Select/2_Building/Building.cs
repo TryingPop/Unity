@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class Building : GameEntity
+public class Building : BaseObj
 {
 
     [SerializeField] protected Transform buildingObj;               // 扒拱 积己苞 包访等 可记
@@ -42,6 +42,12 @@ public class Building : GameEntity
 
     public override bool IsCancelBtn => true;
 
+    public override bool FullHp => curHp == MaxHp;
+
+    public override int MaxHp => myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
+
+    public override int Def => myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
+
     protected void Awake()
     {
 
@@ -60,13 +66,6 @@ public class Building : GameEntity
     {
 
         Init();
-    }
-
-    public override void GetStat()
-    {
-
-        maxHp = myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
-        def = myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
     }
 
     protected override void Init()
@@ -113,7 +112,6 @@ public class Building : GameEntity
 
         myTeam = TeamManager.instance.GetTeamInfo(myLayer);
 
-        GetStat();
         ActionManager.instance.AddBuilding(this);
         UIManager.instance.AddHitBar(this);
 

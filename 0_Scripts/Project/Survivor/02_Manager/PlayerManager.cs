@@ -35,7 +35,7 @@ public class PlayerManager : MonoBehaviour
     // 명령용 
     private Vector2 savePos;
     private Vector3 cmdPos;
-    private GameEntity cmdTarget;
+    private BaseObj cmdTarget;
 
     public delegate void ChkMission(int _num);
     public ChkMission chkSelect;
@@ -57,7 +57,7 @@ public class PlayerManager : MonoBehaviour
     /// <summary>
     /// 강제로 설정하는 경우에는 레이를 쏠 수 있는 상황이 아니므로 CmdTarget의 좌표도 받는다!
     /// </summary>
-    public GameEntity CmdTarget
+    public BaseObj CmdTarget
     {
 
         get { return cmdTarget; }
@@ -268,7 +268,7 @@ public class PlayerManager : MonoBehaviour
 
         // 유닛 체크
         if (_chkUnit
-            && Physics.Raycast(ray, out RaycastHit selectHit, 500f, selectLayer)) cmdTarget = selectHit.transform.GetComponent<GameEntity>();
+            && Physics.Raycast(ray, out RaycastHit selectHit, 500f, selectLayer)) cmdTarget = selectHit.transform.GetComponent<BaseObj>();
         else cmdTarget = null;
     }
 
@@ -343,7 +343,7 @@ public class PlayerManager : MonoBehaviour
     /// <summary>
     /// 지정된 좌표와 유닛으로 명령 전달
     /// </summary>
-    public void GiveCmd(Vector3 _pos, GameEntity _target = null, int _num = -1)
+    public void GiveCmd(Vector3 _pos, BaseObj _target = null, int _num = -1)
     {
 
         curGroup.GiveCommand(cmdType, _pos, _target, inputManager.AddKey);
@@ -446,7 +446,7 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    public void UISelect(GameEntity _select)
+    public void UISelect(BaseObj _select)
     {
 
         bool deselect = inputManager.AddKey;
@@ -465,7 +465,7 @@ public class PlayerManager : MonoBehaviour
         ChkUIs();
     }
 
-    public void UIGroupSelect(GameEntity _select)
+    public void UIGroupSelect(BaseObj _select)
     {
 
         bool deselect = inputManager.AddKey;

@@ -50,7 +50,7 @@ public class BoxScript : MonoBehaviour
         if (IsIdx)
         {
 
-            var select = _other.GetComponent<GameEntity>();
+            var select = _other.GetComponent<BaseObj>();
             // selectIdx가 존재하고, idx가 일치 할경우만
             if (!select
                 || select.MyStat.SelectIdx != targetIdx) return false;

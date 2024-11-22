@@ -5,10 +5,10 @@ using UnityEngine;
 public abstract class Missile : MonoBehaviour, IActionable
 {
 
-    protected GameEntity atker;
+    protected BaseObj atker;
     protected Attack atkType;
 
-    public abstract void Init(GameEntity _atker, Attack _atkType, int _prefabIdx);
+    public abstract void Init(BaseObj _atker, Attack _atkType, int _prefabIdx);
 
     protected abstract void Used();
 

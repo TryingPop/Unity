@@ -25,7 +25,7 @@ public class Grenade : Missile
 
     protected int prefabIdx;
 
-    public override void Init(GameEntity _atker, Attack _atkType, int _prefabIdx)
+    public override void Init(BaseObj _atker, Attack _atkType, int _prefabIdx)
     {
 
         myTrail.enabled = true;
@@ -104,7 +104,7 @@ public class Grenade : Missile
             for (int i = 0; i < len; i++)
             {
 
-                VarianceManager.hits[i].transform.GetComponent<GameEntity>().OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
+                VarianceManager.hits[i].transform.GetComponent<BaseObj>().OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
             }
 
             Used();

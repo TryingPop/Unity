@@ -328,13 +328,13 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void AddHitBar(GameEntity _target)
+    public void AddHitBar(BaseObj _target)
     {
 
         _target.MyHitBar = hitbars.GetHitBar();
     }
 
-    public void RemoveHitBar(GameEntity _target)
+    public void RemoveHitBar(BaseObj _target)
     {
 
         hitbars.UsedHitBar(_target.MyHitBar);

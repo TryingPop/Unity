@@ -37,9 +37,9 @@ public class UnitSlots : MonoBehaviour
     /// </summary>
     protected int[] matrixSize = new int[2];
 
-    protected List<GameEntity> curGroup;
+    protected List<BaseObj> curGroup;
     // 현재 선택된 유닛 정보
-    public List<GameEntity> CurGroup
+    public List<BaseObj> CurGroup
     {
 
         set
@@ -225,7 +225,7 @@ public class UnitSlots : MonoBehaviour
     /// <summary>
     /// 슬롯 활성화 이벤트
     /// </summary>
-    private void ActiveSlot(int _slotIdx, GameEntity _selectable, bool _active)
+    private void ActiveSlot(int _slotIdx, BaseObj _selectable, bool _active)
     {
 
         slots[_slotIdx].gameObject.SetActive(_active);

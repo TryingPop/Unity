@@ -9,7 +9,7 @@ public class TargetUI : MonoBehaviour
 {
 
     [SerializeField] private Transform target;
-    private GameEntity follow;
+    private BaseObj follow;
     private ParticleSystem myParticle;
 
 
@@ -20,7 +20,7 @@ public class TargetUI : MonoBehaviour
     }
 
 
-    public void Init(GameEntity _follow)
+    public void Init(BaseObj _follow)
     {
 
         follow = _follow;

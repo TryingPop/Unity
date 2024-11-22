@@ -9,7 +9,7 @@ using UnityEngine;
 public class TargetUnit : Mission
 {
 
-    [SerializeField] protected GameEntity target;   // Å¸°Ù À¯´Ö
+    [SerializeField] protected BaseObj target;   // Å¸°Ù À¯´Ö
     [SerializeField] protected int targetLayer;     // Å¸°ÙÀÇ ÆÀ Á¤º¸
     [SerializeField] protected Vector3 initPos;   // ½ÃÀÛ ½Ã »ý¼ºÇÒ À§Ä¡
     [SerializeField] protected int targetNum;       // Å¸°Ù ¼ö
@@ -61,14 +61,14 @@ public class TargetUnit : Mission
         {
 
 
-            GameEntity genTarget = null;
+            BaseObj genTarget = null;
 
             if (prefabIdx != -1)
             {
 
 
                 var go = PoolManager.instance.GetPrefabs(prefabIdx, targetLayer);
-                if (go) genTarget = go.GetComponent<GameEntity>();
+                if (go) genTarget = go.GetComponent<BaseObj>();
             }
 
             if (genTarget == null)
@@ -87,7 +87,7 @@ public class TargetUnit : Mission
     /// <summary>
     /// Æ¯Á¤ À¯´ÖÀÌ Á×¾ú´ÂÁö ÆÇº°
     /// </summary>
-    public void ChkMission(GameEntity _target)
+    public void ChkMission(BaseObj _target)
     {
 
         if (_target.MyStat.SelectIdx == target.MyStat.SelectIdx

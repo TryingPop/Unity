@@ -8,17 +8,12 @@ using UnityEngine.UI;
 /// 선택에 기본이 되는 클래스
 /// 아군 건물, 유닛 뿐만 아니라 적 유닛도 명령하는 객체를 둘 예정이라 적도 이 클래스를 상속받는다
 /// </summary>
-public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 -> 선택과 행동가능!
+public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선택과 행동가능!
                                     IDamagable          // 모든 유닛은 피격 가능하다!
                                           
 {
 
     protected int curHp;                                // 현재 Hp
-    protected int maxHp;
-
-    protected int atk;
-    protected int def;
-    protected int evade;
 
     [Header("스텟")]
     [SerializeField] protected int myTurn;              // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
@@ -31,16 +26,11 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
     [SerializeField] protected SightMesh myMinimap;
     public Stats MyStat => myStat;                      
 
-    [SerializeField] protected GameEntity target;       // 목표물
+    [SerializeField] protected BaseObj target;       // 목표물
     [SerializeField] protected Vector3 targetPos;       // 목표 좌표
 
     [SerializeField] protected SoundGroup mySound;
     [SerializeField] protected AudioSource myAudio;
-
-    /// <summary>
-    /// 스텟 정보 받아오기
-    /// </summary>
-    public abstract void GetStat();
 
     /// <summary>
     /// 체력 회복
@@ -64,11 +54,11 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
     /// <summary>
     /// 풀 Hp 인지 확인
     /// </summary>
-    public bool FullHp => curHp == maxHp;
+    public abstract bool FullHp { get; }
 
-    public virtual int MaxHp => maxHp;
+    public abstract int MaxHp { get; }
     public int CurHp => curHp;
-    public int Def => def;
+    public abstract int Def { get; }
 
     /// <summary>
     /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
@@ -90,7 +80,7 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
         }
     }
 
-    public GameEntity Target
+    public BaseObj Target
     {
 
         get { return target; }
@@ -291,4 +281,6 @@ public abstract class GameEntity : Commandable,         // 명령 가능 오브젝트 ->
 
         _titleTxt.text = myStat.name;
     }
+
+    // public abstract void SetStat();
 }

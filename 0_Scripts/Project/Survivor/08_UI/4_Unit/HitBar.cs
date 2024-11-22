@@ -14,7 +14,7 @@ public class HitBar : MonoBehaviour
 {
     
     [SerializeField] private Slider mySlider;               // 유닛 남은 체력 슬라이더
-    [SerializeField] private GameEntity target;             // 타겟
+    [SerializeField] private BaseObj target;             // 타겟
     [SerializeField] private Transform targetTrans;         // 따라갈 타겟
     [SerializeField] private RectTransform myTrans;         // 나의 위치
     [SerializeField] private Image[] myImgs;                // 해제 시 안보일 이미지
@@ -33,7 +33,7 @@ public class HitBar : MonoBehaviour
     /// <summary>
     /// 초기화, 마찬가지로 풀링
     /// </summary>
-    public void Init(GameEntity _target, int _maxHp, int _ups)
+    public void Init(BaseObj _target, int _maxHp, int _ups)
     {
 
         myImgs[0].enabled = true;

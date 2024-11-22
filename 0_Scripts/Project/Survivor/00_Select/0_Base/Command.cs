@@ -19,13 +19,13 @@ public class Command
     public int unitNums;             // 전달할 유닛 수
     protected int receiveNum;        // 받은 변수, 풀링확인용
     public Vector3 pos;                 // 명령의 목적지
-    public GameEntity target;           // 명령의 표적
+    public BaseObj target;           // 명령의 표적
 
     public STATE_SELECTABLE type;       // 명령 타입
 
     #region 생성자
     // 생성자
-    public Command(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, GameEntity _target = null)
+    public Command(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, BaseObj _target = null)
     {
 
         Init(_unitNums, _type, _pos, _target);
@@ -77,7 +77,7 @@ public class Command
     /// <summary>
     /// 초기화
     /// </summary>
-    public void Init(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, GameEntity _target = null)
+    public void Init(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, BaseObj _target = null)
     {
 
         unitNums = (ushort)_unitNums;
@@ -155,7 +155,7 @@ public class Command
     /// <summary>
     /// 명령 생성, 여기서 풀링
     /// </summary>
-    public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, GameEntity _target = null)
+    public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, BaseObj _target = null)
     {
 
         if (pool == null) pool = new Stack<Command>(VarianceManager.MAX_SAVE_COMMANDS);

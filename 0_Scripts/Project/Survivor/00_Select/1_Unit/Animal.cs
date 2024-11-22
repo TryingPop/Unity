@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 /// <summary>
 /// 치킨
 /// </summary>
-public class Animal : Unit
+public class Animal : SupportUnit
 {
 
     [SerializeField] protected AnimalOpt opt;               // 동물 옵션 - 동물은 2가지 행동 밖에 없다 이동할 좌표설정 & 대기
@@ -75,4 +76,6 @@ public class Animal : Unit
             myStateAction.Changed(this);
         }
     }
+
+    protected override void ReadCommand(Command _cmd) { }
 }

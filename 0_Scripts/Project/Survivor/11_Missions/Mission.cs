@@ -10,7 +10,7 @@ public abstract class Mission : MonoBehaviour
 {
 
     // 미션 확인용 딜리게이트
-    public delegate void ChkMissionDelegate(GameEntity _select);
+    public delegate void ChkMissionDelegate(BaseObj _select);
 
     [SerializeField] protected ScriptGroup startScripts;
     [SerializeField] protected BaseGameEvent[] startEvent;

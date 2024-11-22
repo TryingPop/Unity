@@ -176,7 +176,7 @@ public class PoolManager : MonoBehaviour
     /// <summary>
     /// 같은 오브젝트 생성
     /// </summary>
-    public GameObject GetSamePrefabs(GameEntity _chkObj, int _layer, Vector3 _pos, Vector3 _forward)
+    public GameObject GetSamePrefabs(BaseObj _chkObj, int _layer, Vector3 _pos, Vector3 _forward)
     {
 
         int prefabIdx = ChkIdx(_chkObj.MyStat.SelectIdx);
@@ -186,7 +186,7 @@ public class PoolManager : MonoBehaviour
     /// <summary>
     /// 같은 오브젝트 생성
     /// </summary>
-    public GameObject GetSamePrefabs(GameEntity _chkObj, int _layer, Vector3 _pos)
+    public GameObject GetSamePrefabs(BaseObj _chkObj, int _layer, Vector3 _pos)
     {
 
         int prefabIdx = ChkIdx(_chkObj.MyStat.SelectIdx);

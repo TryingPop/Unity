@@ -39,7 +39,7 @@ public class RecruitSoldier : BuildingAction
     {
 
         var data = PoolManager.instance.GetData(PrefabIdx);
-        var selectable = data?.GetComponent<GameEntity>();
+        var selectable = data?.GetComponent<BaseObj>();
 
         if (selectable)
         {
@@ -75,7 +75,7 @@ public class RecruitSoldier : BuildingAction
 
             var go = PoolManager.instance.GetPrefabs(PrefabIdx, _building.gameObject.layer, _building.transform.position);
             // 이게 없다면 다른 것들 실행 안되어서 딱히 ActionManager에서 제거할 필요도 없다!
-            GameEntity unit = go?.GetComponent<GameEntity>();
+            BaseObj unit = go?.GetComponent<BaseObj>();
             if (unit)
             {
 

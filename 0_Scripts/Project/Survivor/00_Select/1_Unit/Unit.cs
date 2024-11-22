@@ -5,14 +5,10 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 /// <summary>
-/// 이 클래스를 상속받은 클래스들의 행동을 수행할 수 있는 가장 작은 클래스
+/// 유닛의 기본이 되는 클래스
+/// 비공격 유닛에 초점이 맞춰져 있다.
 /// </summary>
-[RequireComponent(typeof(SightMesh)),
-    RequireComponent(typeof(Animator)),
-    RequireComponent(typeof(NavMeshAgent)),
-    RequireComponent(typeof(Rigidbody)),
-    RequireComponent(typeof(UnitStateAction))]
-public class Unit : GameEntity
+public abstract class Unit : BaseObj
 {
 
     #region 변수
@@ -23,7 +19,7 @@ public class Unit : GameEntity
     [SerializeField] protected Rigidbody myRigid;                   
 
     [SerializeField] protected UnitStateAction myStateAction;       // 상태 패턴으로 구현된 행동
-    [SerializeField] protected Attack myAttack;                     // 공격 방법 및 공격 정보
+    
     [SerializeField] protected SightMesh mySight;                   // 시야
 
     [SerializeField] protected Vector3 patrolPos;
@@ -45,7 +41,7 @@ public class Unit : GameEntity
 
     public Rigidbody MyRigid => myRigid;
 
-    public Attack MyAttack => myAttack;
+    public virtual Attack MyAttack => null;
 
     public UnitStateAction MyStateAction => myStateAction;
 
@@ -75,11 +71,18 @@ public class Unit : GameEntity
 
     public bool OnlyReserveCmd { set { onlyReserveCmd = value; } }
 
+    public override bool FullHp => MaxHp == curHp;
+
+    public override int MaxHp => myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
+
+    public override int Def => myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
+
     #endregion 프로퍼티
 
     protected void Awake()
     {
 
+        Debug.Log($"{myStat.MyType} : Awake");
         cmds = new Queue<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
     }
 
@@ -89,22 +92,23 @@ public class Unit : GameEntity
     protected virtual void OnEnable()
     {
 
+        Debug.Log($"{myStat.MyType} : OnEnable");
         Init();
-    }
-
-    public override void GetStat()
-    {
-
-
-        maxHp = myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
-        def = myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
-        evade = myStat.Evade;
-        atk = myAttack.GetAtk(this);
     }
 
     protected override void Init()
     {
+
+#if UNITY_EDITOR
+
+        if (myAnimator is null) Debug.LogError($"{this.MyStat.MyType}의 Animator가 없습니다!");
+        if (myAgent is null) Debug.LogError($"{this.MyStat.MyType}의 NavMeshAgent가 없습니다!");
+        if (myRigid is null) Debug.LogError($"{this.MyStat.MyType}의 Rigidbody가 없습니다!");
+        if (myStateAction is null) Debug.LogError($"{this.MyStat.MyType}의 StateAction이 없습니다!");
+        if (mySight is null) Debug.LogError($"{this.MyStat.MyType}의 mySight가 없습니다!");
+#endif
         
+        // 행동 초기화
         ActionDone();
         
         // 처음 배치된 유닛 확인
@@ -126,15 +130,14 @@ public class Unit : GameEntity
 
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
 
-        GetStat();
-        curHp = maxHp;
+        curHp = MaxHp;
         int layer = myTeam != null ? myTeam.TeamLayerNumber : gameObject.layer;
         if (layer == VarianceManager.LAYER_PLAYER
             || layer == VarianceManager.LAYER_ALLY)
         {
 
             mySight.IsActive = true;
-            mySight.SetSize(myAttack == null ? 10 : myAttack.chaseRange);
+            mySight.SetSize(myStat.Sight);
         }
         else
         {
@@ -192,15 +195,13 @@ public class Unit : GameEntity
         if (!myAgent.updateRotation) myAgent.updateRotation = true;
     }
 
+    protected abstract void OnDamagedAction(Transform _trans);
 
     public override void OnDamaged(int _dmg, bool _pure = false, bool _evade = true, Transform _trans = null)
     {
 
         base.OnDamaged(_dmg, _pure, _evade, _trans);
-
-        GameEntity select = null;
-        if (_trans != null) select = _trans.GetComponent<GameEntity>();
-        OnDamageAction(select);
+        OnDamagedAction(_trans);
     }
 
     /// <summary>
@@ -213,31 +214,7 @@ public class Unit : GameEntity
             || myState == STATE_SELECTABLE.UNIT_PATROL;
     }
 
-    /// <summary>
-    /// 피격 후 액션
-    /// </summary>
-    protected virtual void OnDamageAction(GameEntity _trans)
-    {
-
-        if (_trans == null || !ChkDmgReaction()) return;
-
-        if (myAttack == null || ((1 << _trans.gameObject.layer) & myTeam.AllyLayer) == 0)
-        {
-
-            // 공격할 수 없거나 공격한 대상이 아군일 경우 반대 방향으로 도주
-            Vector3 dir = (transform.position - _trans.transform.position).normalized;
-            targetPos = transform.position + dir * myAgent.speed;
-            ActionDone(STATE_SELECTABLE.UNIT_MOVE);
-        }
-        else
-        {
-
-            // 공격할 수 있고 적이 때렸을 경우 맞받아친다!
-            target = _trans;
-            targetPos = _trans.transform.position;
-            ActionDone(STATE_SELECTABLE.UNIT_ATTACK);
-        }
-    }
+    
 
     public override void Dead(bool _immediately = false)
     {
@@ -281,37 +258,6 @@ public class Unit : GameEntity
 
         _rectTrans.sizeDelta = new Vector2(160f, 80f);
         _rectTrans.pivot = new Vector2(0f, 0.5f);
-    }
-
-    /// <summary>
-    /// 유닛 Type과 hp, 공격력 방어력 출력
-    /// </summary>
-    /// <param name="_txt"></param>
-    public override void SetInfo(Text _txt)
-    {
-
-        int temp = myStat.GetAddHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
-
-        string strHp = MaxHp == VarianceManager.INFINITE ? "Infinity" 
-            : temp == 0? $"{curHp} / {MaxHp}" : $"{curHp} / {MaxHp}(+{temp})";
-
-        if (myAttack != null)
-        {
-
-            temp = myAttack.GetAddedAtk(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK));
-            string strAtk = temp == 0 ? myAttack.GetAtk(this).ToString() : $"{myAttack.GetAtk(this)}(+{temp})";
-
-            temp = myStat.GetAddDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
-            string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";
-            _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
-        }
-        else
-        {
-
-            temp = myStat.GetAddDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
-            string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";
-            _txt.text = $"체력 : {strHp}\n방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
-        }
     }
 
     #region Command
@@ -387,46 +333,5 @@ public class Unit : GameEntity
         ReadCommand(cmd);
     }
 
-    /// <summary>
-    /// 명령 읽기
-    /// </summary>
-    /// <param name="_cmd"></param>
-    protected override void ReadCommand(Command _cmd)
-    {
-
-        if (_cmd.ChkUsedCommand(myStat.MySize)) return;
-
-        STATE_SELECTABLE type = _cmd.type;
-
-        if (type == STATE_SELECTABLE.MOUSE_R)
-        {
-
-            // 마우스 R버튼을 누른 경우 이동이나 공격 타입으로 바꾼다
-            if (myAttack == null 
-                ||_cmd.target == null)
-            {
-
-                // 대상이 없거나 공격이 없을 경우
-                type = STATE_SELECTABLE.UNIT_MOVE;
-            }
-            else if ((myTeam.EnemyLayer & (1 << _cmd.target.gameObject.layer)) != 0)
-            {
-
-                // 대상이 공격 해야할 대상이면 공격
-                type = STATE_SELECTABLE.UNIT_ATTACK;
-            }
-            else
-            {
-
-                // 공격 대상이 아니면 따라간다
-                type = STATE_SELECTABLE.UNIT_MOVE;
-            }
-        }
-
-        myState = type;
-        // 자기 자신은 대상이 될 수 없다!
-        target = _cmd.target != this ? _cmd.target : null;
-        targetPos = _cmd.pos;
-    }
     #endregion Command
 }
