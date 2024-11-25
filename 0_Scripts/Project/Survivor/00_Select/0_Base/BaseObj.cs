@@ -18,7 +18,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     [Header("스텟")]
     [SerializeField] protected int myTurn;              // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
 
-    [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
+    // [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
 
     protected HitBar myHitBar;                          // 체력바
 
@@ -101,17 +101,19 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
         set 
         {
 
-            if (value != null)
-            {
+#if UNITY_EDITOR
 
-                value.Init(this, MaxHp, myStat.HitBarPos);
-                value.SetHp();
-            }
+            if (value == null) Debug.LogWarning($"{name} 오브젝트의 hitbar가 null입니다.");
+#endif
+
+            value.Init(this, myStat.HitBarPos);
+            value.SetMaxHp();
+            value.SetHp();
             myHitBar = value; 
         }
     }
 
-    public void ChkSupply(bool _isDead = false)
+    protected void ChkSupply(bool _isDead = false)
     {
 
         if (myTeam == null) 
@@ -119,7 +121,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
 
 #if UNITY_EDITOR
 
-            Debug.LogError($"{this.name}은 유닛인데 팀 정보가 없습니다.");
+            Debug.Log($"{this.name}은 유닛인데 팀 정보가 없습니다.");
 #endif
             return; 
         }
@@ -155,7 +157,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     /// <summary>
     /// 유닛 생성하고, 레이어 바꾼뒤 실행할 기능들 모아둔 메서드
     /// </summary>
-    public abstract void AfterSettingLayer();
+    public abstract void ApplyTeamStat();
 
     /// <summary>
     /// 피격 메서드, 모든 유닛과 건물은 피격 가능하다!
@@ -192,6 +194,9 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
         return false;
     }
 
+    /// <summary>
+    /// 회피 여부
+    /// </summary>
     protected bool ChkEvade()
     {
 
@@ -215,6 +220,9 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
         else StartCoroutine(Disabled());
     }
 
+    /// <summary>
+    /// 현재 그룹 해제
+    /// </summary>
     protected void CurGroupDeSelect()
     {
 
@@ -228,20 +236,20 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
         }
     }
 
+    /// <summary>
+    /// 저장된 그룹 해제
+    /// </summary>
     protected void SavedGroupDeSelect()
     {
 
         if (PlayerManager.instance.curGroup.ContainsSavedGroup(this))
-        {
-
             PlayerManager.instance.curGroup.DeselectSavedGroup(this);
-        }
     }
 
     /// <summary>
     /// 선택되어 있으면 해제
     /// </summary>
-    public virtual void ResetTeam()
+    public virtual void ResetTeamStat()
     {
 
         CurGroupDeSelect();

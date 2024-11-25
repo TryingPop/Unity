@@ -65,7 +65,7 @@ public class CombatUnit : Unit
     }
 
     /// <summary>
-    /// 
+    /// 공격 가능하면 공격한다.
     /// </summary>
     protected override void ReadCommand(Command _cmd)
     {
@@ -78,25 +78,15 @@ public class CombatUnit : Unit
         {
 
             // 마우스 R버튼을 누른 경우 이동이나 공격 타입으로 바꾼다
-            if (myAttack == null
-                || _cmd.target == null)
-            {
-
+            if (_cmd.target == null)
                 // 대상이 없거나 공격이 없을 경우
                 type = STATE_SELECTABLE.UNIT_MOVE;
-            }
             else if ((myTeam.EnemyLayer & (1 << _cmd.target.gameObject.layer)) != 0)
-            {
-
                 // 대상이 공격 해야할 대상이면 공격
                 type = STATE_SELECTABLE.UNIT_ATTACK;
-            }
             else
-            {
-
                 // 공격 대상이 아니면 따라간다
                 type = STATE_SELECTABLE.UNIT_MOVE;
-            }
         }
 
         myState = type;

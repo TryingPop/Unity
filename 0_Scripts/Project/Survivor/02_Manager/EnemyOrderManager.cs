@@ -244,8 +244,6 @@ public class EnemyOrderManager : MonoBehaviour
                 
                 Unit unit = go.GetComponent<Unit>();
                 
-                if (unit) unit.AfterSettingLayer();
-
                 if (target != null) GiveCommand(unit, STATE_SELECTABLE.UNIT_ATTACK, target.position);
             }
         }

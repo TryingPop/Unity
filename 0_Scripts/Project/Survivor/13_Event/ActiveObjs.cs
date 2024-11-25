@@ -23,8 +23,6 @@ public class ActiveObjs : BaseGameEvent
         {
 
             targets[i].gameObject.SetActive(true);
-            targets[i].AfterSettingLayer();
-            targets[i].ChkSupply(false);
         }
     }
 

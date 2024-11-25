@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[System.Serializable]
+[System.Serializable, SerializeField]
 public class TeamInfo
 {
 

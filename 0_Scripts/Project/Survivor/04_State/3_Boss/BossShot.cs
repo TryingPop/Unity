@@ -83,7 +83,6 @@ public class BossShot : ISkillAction
             return;
         }
 
-        _unit.CurMp -= usingMp;
         _unit.MyTurn = 0;
 
         if (_unit.MyAgent.enabled) _unit.MyAgent.ResetPath();

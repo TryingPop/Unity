@@ -7,7 +7,7 @@ public abstract class Commandable : MonoBehaviour, IInfoTxt, IActionable
 {
 
     [SerializeField] protected STATE_SELECTABLE myState;
-    protected TeamInfo myTeam;                          
+    [SerializeField] protected TeamInfo myTeam;                          
 
     public STATE_SELECTABLE MyState
     {

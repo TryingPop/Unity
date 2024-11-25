@@ -79,12 +79,16 @@ public class RecruitSoldier : BuildingAction
             if (unit)
             {
 
-                unit.AfterSettingLayer();
                 Command cmd = Command.GetCommand(1, STATE_SELECTABLE.MOUSE_R, _building.TargetPos, _building.Target);
                 unit.GetCommand(cmd);  
             }
             else
             {
+
+#if UNITY_EDITOR
+
+                Debug.LogWarning($"{PrefabIdx}는 존재하지 않는 prefabidx입니다.");
+#endif
 
                 if (go) PoolManager.instance.UsedPrefab(go, PrefabIdx);
                 ForcedQuit(_building);

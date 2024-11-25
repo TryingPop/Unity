@@ -61,8 +61,6 @@ public class BuildBuilding : IUnitAction
                         go.transform.position = _unit.TargetPos;
                         var _target = go.GetComponent<BaseObj>();
                         
-                        _target.AfterSettingLayer();
-                        _target.ChkSupply();
                         _unit.Target = _target;
                         _unit.TargetPos = _target.transform.position;
                         OnExit(_unit, STATE_SELECTABLE.UNIT_REPAIR);

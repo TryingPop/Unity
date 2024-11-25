@@ -26,14 +26,6 @@ public class GenerateUnits : BaseGameEvent
 
             Command.SetNextPos(size, i, ref pos);
             var go = PoolManager.instance.GetPrefabs(idx, layer, pos);
-            var select = go.GetComponent<BaseObj>();
-
-            if (select != null)
-            {
-
-                select.AfterSettingLayer();
-                select.ChkSupply();
-            }
         }
     }
 }

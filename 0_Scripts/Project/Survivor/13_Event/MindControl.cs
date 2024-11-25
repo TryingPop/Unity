@@ -14,10 +14,9 @@ public class MindControl : BaseGameEvent
         for (int i = 0; i < targets.Length; i++)
         {
 
-            targets[i].ResetTeam();
+            targets[i].ResetTeamStat();
             targets[i].gameObject.layer = targetLayer;
-            targets[i].AfterSettingLayer();
-            targets[i].ChkSupply(false);
+            targets[i].ApplyTeamStat();
         }
     }
 }

@@ -27,9 +27,6 @@ public abstract class Unit : BaseObj
     [Header("값 변수")]
     [SerializeField] protected bool stateChange;                    // 행동 변화 감지
     [SerializeField] protected bool onlyReserveCmd = false;         // 탈출 불가능한 행동인지 판별
-    [SerializeField] protected short maxMp; 
-    protected short curMp;
-    // protected int atk;
 
     protected Queue<Command> cmds;                                  // 예약된 명령
     #endregion 변수
@@ -43,9 +40,6 @@ public abstract class Unit : BaseObj
 
     public virtual Attack MyAttack => null;
 
-    public UnitStateAction MyStateAction => myStateAction;
-
-
     public Vector3 PatrolPos
     {
 
@@ -53,36 +47,25 @@ public abstract class Unit : BaseObj
         set { patrolPos = value; }
     }
 
-    /// <summary>
-    /// 스킬용인데 당장은 안쓴다
-    /// </summary>
-    public int CurMp
-    {
-
-        get { return maxMp == 0 ? -1 : curMp; }
-        set
-        {
-
-            if (maxMp == VarianceManager.INFINITE) return;
-            if (value > maxMp) value = maxMp;
-            curMp = (byte)value;
-        }
-    }
-
     public bool OnlyReserveCmd { set { onlyReserveCmd = value; } }
 
     public override bool FullHp => MaxHp == curHp;
 
-    public override int MaxHp => myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
+    public override int MaxHp => myTeam == null ? 
+        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
 
-    public override int Def => myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
+    public override int Def => myTeam == null ? 
+        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
 
     #endregion 프로퍼티
 
     protected void Awake()
     {
 
+#if UNITY_EDITOR
+
         Debug.Log($"{myStat.MyType} : Awake");
+#endif
         cmds = new Queue<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
     }
 
@@ -92,7 +75,10 @@ public abstract class Unit : BaseObj
     protected virtual void OnEnable()
     {
 
+#if UNITY_EDITOR
+
         Debug.Log($"{myStat.MyType} : OnEnable");
+#endif
         Init();
     }
 
@@ -110,27 +96,25 @@ public abstract class Unit : BaseObj
         
         // 행동 초기화
         ActionDone();
-        
-        // 처음 배치된 유닛 확인
-        // 다음 진입은 풀링에서 꺼내질 때므로 못하게 막아야한다
-        if (isStarting)
-        {
 
-            AfterSettingLayer();
-            ChkSupply(false);
-            isStarting = false;
-        }
+        myAgent.enabled = true;
+        myAnimator.SetBool("Die", false);
+
+        targetPos = transform.position;
+        target = null;
+
+        ApplyTeamStat();
     }
 
     /// <summary>
-    /// 유닛을 생성한 경우 layer 설정 이후에 다시 한 번 더 실행한다!
+    /// 팀에 따른 정보 갱신
     /// </summary>
-    public override void AfterSettingLayer()
+    public override void ApplyTeamStat()
     {
 
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);
-
         curHp = MaxHp;
+
         int layer = myTeam != null ? myTeam.TeamLayerNumber : gameObject.layer;
         if (layer == VarianceManager.LAYER_PLAYER
             || layer == VarianceManager.LAYER_ALLY)
@@ -139,11 +123,7 @@ public abstract class Unit : BaseObj
             mySight.IsActive = true;
             mySight.SetSize(myStat.Sight);
         }
-        else
-        {
-
-            mySight.IsActive = false;
-        }
+        else mySight.IsActive = false;
 
         ActionManager.instance.AddUnit(this);
         UIManager.instance.AddHitBar(this);
@@ -153,11 +133,7 @@ public abstract class Unit : BaseObj
         else teamColor = Color.black;
         myMinimap.SetColor(teamColor);
 
-        myAgent.enabled = true;
-        myAnimator.SetBool("Die", false);
-
-        targetPos = transform.position;
-        target = null;
+        ChkSupply(false);
     }
 
     /// <summary>
@@ -179,14 +155,13 @@ public abstract class Unit : BaseObj
         }
         // 행동 실행
         else myStateAction.Action(this);
-
     }
 
     /// <summary>
     /// 행동이 완료 혹은 변경이 필요
     /// </summary>
     /// <param name="_nextState">다음 상태</param>
-    public virtual void ActionDone(STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
+    public void ActionDone(STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
     {
 
         myState = _nextState;
@@ -214,12 +189,10 @@ public abstract class Unit : BaseObj
             || myState == STATE_SELECTABLE.UNIT_PATROL;
     }
 
-    
-
     public override void Dead(bool _immediately = false)
     {
 
-        ResetTeam();
+        ResetTeamStat();
 
         while (cmds.Count > 0)
         {
@@ -238,10 +211,10 @@ public abstract class Unit : BaseObj
     /// 인구 확인을 하기에 상태 변경 전에 확인해야한다!
     /// 또한, ActionManager 그룹에서 확인하기에 layer 변경 전에 해야한다!
     /// </summary>
-    public override void ResetTeam()
+    public override void ResetTeamStat()
     {
 
-        base.ResetTeam();
+        base.ResetTeamStat();
 
         // 인구 확인
         ChkSupply(true);
@@ -294,10 +267,7 @@ public abstract class Unit : BaseObj
         } 
         // 대기상태에서 shift로 명령을 넣었을 경우
         else if (myState == STATE_SELECTABLE.NONE)
-        {
-
             stateChange = true;
-        }
 
         // 명령 등록
         if (cmds.Count < VarianceManager.MAX_RESERVE_COMMANDS) cmds.Enqueue(_cmd);

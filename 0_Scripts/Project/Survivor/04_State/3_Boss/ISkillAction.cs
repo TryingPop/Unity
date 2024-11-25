@@ -20,11 +20,6 @@ public abstract class ISkillAction : IUnitAction
             return false;
         }
 
-        if (_unit.CurMp != -1 &&  _unit.CurMp < usingMp)
-        {
-
-            return false;
-        }
 
         return true;
     }

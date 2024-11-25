@@ -72,16 +72,9 @@ public class Building : BaseObj
     {
 
         myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
-        
 
-        if (isStarting)
-        {
-         
-            ChkBuilding(true);
-            AfterSettingLayer();
-            isStarting = false;
-        }
-        else ChkBuilding();
+        ChkBuilding(true);
+        ApplyTeamStat();
     }
 
     public void ChkBuilding(bool _forcedCompleted = false)
@@ -105,7 +98,7 @@ public class Building : BaseObj
         }
     }
 
-    public override void AfterSettingLayer()
+    public override void ApplyTeamStat()
     {
 
         int myLayer = gameObject.layer;
@@ -253,7 +246,7 @@ public class Building : BaseObj
 
         // 상태 변경 전이다
         
-        ResetTeam();
+        ResetTeamStat();
         for (int i = 0; i < cmds.Count; i++)
         {
 
@@ -269,10 +262,10 @@ public class Building : BaseObj
         base.Dead(_immediately);
     }
 
-    public override void ResetTeam()
+    public override void ResetTeamStat()
     {
 
-        base.ResetTeam();
+        base.ResetTeamStat();
 
         ChkSupply(true);
         ActionManager.instance.RemoveBuilding(this);

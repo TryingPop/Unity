@@ -111,25 +111,30 @@ public class ActionGroup<T> where T : IActionable
     public void Action()
     {
 
-        Node node = head.Next;
+        Node node = head.Next, curNode;
 
         while (!IsLast(node))
         {
 
-            if (node == null || node.Val == null)
+            // 수류탄 같은 경우 내부에서 Used로 해제되기에 null을 참조할 수 있다.
+            // 그래서 미리 다음껄 받아놓는다.
+            curNode = node;
+            node = node.Next;
+
+            if (curNode == null || curNode.Val == null)
             {
 
 #if UNITY_EDITOR
 
-                Debug.LogError("ActionGroup의 Node 순서에 이상이 있어\n" +
+                Debug.LogError($"ActionGroup<{typeof(T)}>의 Node 순서에 이상이 있어\n" +
                     "행동이 정상적으로 작동하지 않습니다.");
+                Debug.LogWarning(node == null ? "Node가 비어있습니다." : "노드에 등록된 유닛이 없습니다.");
 #endif
 
                 return;
             }
 
-            node.Val.Action();
-            node = node.Next;
+            curNode.Val.Action();
         }
     }
    
@@ -159,6 +164,7 @@ public class ActionGroup<T> where T : IActionable
         {
 
 #if UNITY_EDITOR
+
             Debug.Log("해당 유닛이 이미 노드에 할당되어 있습니다.");
 #endif
 

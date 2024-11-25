@@ -95,7 +95,6 @@ public class BossJump : ISkillAction
         }
 
         _unit.MyTurn = 0;
-        _unit.CurMp -= usingMp;
 
         // ½ºÅ³ ¹øÈ£ È¹µæ
         int skillNum = GetSkillNum(_unit.MyState);

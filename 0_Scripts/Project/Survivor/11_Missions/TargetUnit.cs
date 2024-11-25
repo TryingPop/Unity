@@ -70,17 +70,9 @@ public class TargetUnit : Mission
                 var go = PoolManager.instance.GetPrefabs(prefabIdx, targetLayer);
                 if (go) genTarget = go.GetComponent<BaseObj>();
             }
-
-            if (genTarget == null)
-            {
-
-                genTarget = Instantiate(target);
-            }
             
             Command.SetNextPos(genTarget.MyStat.MySize, i, ref pos);
             genTarget.transform.position = pos;
-            genTarget.AfterSettingLayer();
-            genTarget.ChkSupply(false);
         }
     }
 

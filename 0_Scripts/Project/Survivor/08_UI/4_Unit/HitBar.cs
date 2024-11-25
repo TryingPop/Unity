@@ -33,14 +33,13 @@ public class HitBar : MonoBehaviour
     /// <summary>
     /// 초기화, 마찬가지로 풀링
     /// </summary>
-    public void Init(BaseObj _target, int _maxHp, int _ups)
+    public void Init(BaseObj _target, int _ups)
     {
 
         myImgs[0].enabled = true;
         myImgs[1].enabled = true;
         target = _target;
         targetTrans = _target.transform;
-        SetMaxHp();
         offset = Vector3.up * _ups;
     }
 
