@@ -56,14 +56,10 @@ public class Grenade : Missile
 
         gravity = (8 * jumpHeight) * temp * temp;
 
-
         if (gravity < 0) gravity = 0;
         else if (gravity > 0.01f) gravity = 0.01f;
 
         deltaY = 0.5f * gravity * maxTurn;
-
-        // deltaY = (4 * jumpHeight) * temp;
-        // gravity = 2 * deltaY * temp;
 
         ActionManager.instance.AddMissile(this);
     }
@@ -100,11 +96,12 @@ public class Grenade : Missile
             myRigid.MovePosition(destination);
 
             int len = Physics.SphereCastNonAlloc(transform.position + meshTrans.localPosition, 3f, Vector3.up, VarianceManager.hits, 0f, targetMask);
+            int atk = StatManager.CalcUnitAtk(atker.MyTeam, atkType);
 
             for (int i = 0; i < len; i++)
             {
 
-                VarianceManager.hits[i].transform.GetComponent<BaseObj>().OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
+                VarianceManager.hits[i].transform.GetComponent<BaseObj>().OnDamaged(atk, atkType.IsPure, atkType.IsEvade);
             }
 
             Used();

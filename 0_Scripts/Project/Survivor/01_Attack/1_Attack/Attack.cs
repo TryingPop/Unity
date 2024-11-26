@@ -15,11 +15,7 @@ public abstract class Attack : ScriptableObject
     /// <summary>
     /// 공격력 반환
     /// </summary>
-    /// <param name="_unit">유닛</param>
-    /// <returns></returns>
-    public abstract int GetAtk(BaseObj _unit);
-
-    public abstract int GetAddedAtk(int _lvlInfo);
+    public abstract int GetAtk(int _lvlInfo);
 
     // 물리 연산 주기 0.02초를 turn에 곱하면 시간이 된다
     [SerializeField] protected int startAnimTime;                   // 애니메이션 시작 턴
@@ -67,13 +63,13 @@ public abstract class Attack : ScriptableObject
     /// <summary>
     /// 공격! - 데미지 주거나 미사일 생성
     /// </summary>
-    public abstract void OnAttack(Unit _unit);
+    public abstract void OnAttack(BaseObj _unit);
 
     /// <summary>
     /// 범위안 타겟 찾기
     /// </summary>
     /// <param name="_isChase">true면 추적 범위, false면 공격 범위</param>
-    public virtual void FindTarget(Unit _unit, bool _isChase, bool _isAlly = false)
+    public virtual void FindTarget(BaseObj _unit, bool _isChase, bool _isAlly = false)
     {
 
         // 검사하는 유닛이 박스 콜라이더를 갖고 있어 hits는 최소 크기 1이 보장된다

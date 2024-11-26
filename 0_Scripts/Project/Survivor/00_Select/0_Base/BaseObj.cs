@@ -18,15 +18,13 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     [Header("스텟")]
     [SerializeField] protected int myTurn;              // 진행 턴 수 <<< 주변에 적 탐색, 건물 행동에서 쓰인다
 
-    // [SerializeField] protected bool isStarting = false; // 씬에 배치된 몬스터 인지 확인
-
     protected HitBar myHitBar;                          // 체력바
 
     [SerializeField] protected Stats myStat;            // 스텟
     [SerializeField] protected SightMesh myMinimap;
     public Stats MyStat => myStat;                      
 
-    [SerializeField] protected BaseObj target;       // 목표물
+    [SerializeField] protected BaseObj target;          // 목표물
     [SerializeField] protected Vector3 targetPos;       // 목표 좌표
 
     [SerializeField] protected SoundGroup mySound;
@@ -101,15 +99,20 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
         set 
         {
 
+            if (value == null)
+            {
+
 #if UNITY_EDITOR
 
-            if (value == null) Debug.LogWarning($"{name} 오브젝트의 hitbar가 null입니다.");
+                Debug.LogWarning($"{name} 오브젝트의 hitbar가 null입니다.");
 #endif
+                return;
+            }
 
             value.Init(this, myStat.HitBarPos);
             value.SetMaxHp();
             value.SetHp();
-            myHitBar = value; 
+            myHitBar = value;
         }
     }
 
@@ -121,7 +124,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
 
 #if UNITY_EDITOR
 
-            Debug.Log($"{this.name}은 유닛인데 팀 정보가 없습니다.");
+            Debug.Log($"{name}은 유닛인데 팀 정보가 없습니다.");
 #endif
             return; 
         }
@@ -157,7 +160,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     /// <summary>
     /// 유닛 생성하고, 레이어 바꾼뒤 실행할 기능들 모아둔 메서드
     /// </summary>
-    public abstract void ApplyTeamStat();
+    public abstract void ChkTeamStat();
 
     /// <summary>
     /// 피격 메서드, 모든 유닛과 건물은 피격 가능하다!

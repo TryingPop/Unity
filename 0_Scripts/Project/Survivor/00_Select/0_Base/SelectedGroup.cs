@@ -314,14 +314,10 @@ public class SelectedGroup
     public bool ChkCommandable(BaseObj _select) 
     {
 
-        if (_select == null
-            || _select.MyTeam == null) return false;
+        if (_select == null) return false;
 
-        int chk = 1 << _select.MyTeam.TeamLayerNumber;
-
-        if ((chk & commandLayer) != 0) return true;
-
-        return false;
+        int chk = 1 << _select.gameObject.layer;
+        return (chk & commandLayer) != 0;
     }
 
     /// <summary>

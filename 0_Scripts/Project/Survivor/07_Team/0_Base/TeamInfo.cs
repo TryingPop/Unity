@@ -67,7 +67,6 @@ public class TeamInfo
     public int GetResourceLvl(TYPE_SELECTABLE _type) 
     {
 
-
         if (upResourceDic.ContainsKey(_type)) return upResourceDic[_type].CurVal();
         else return 0;
     }
@@ -220,6 +219,12 @@ public class TeamInfo
     public LayerMask EnemyLayer => allianceInfo.enemyLayer;
     public Color TeamColor => allianceInfo.teamColor;
     public int TeamLayerNumber => allianceInfo.teamLayerNumber;
+
+    public bool ChkAlly(int _layer)
+        => (allianceInfo.allyLayer & (1 << _layer)) != 0;
+
+    public bool ChkEnemy(int _layer)
+        => (allianceInfo.enemyLayer & (1 << _layer)) != 0;
 
     /// <summary>
     /// 동맹 추가, 제거

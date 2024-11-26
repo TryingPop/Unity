@@ -12,33 +12,15 @@ public class Repair : Attack
     [SerializeField] protected int atk;
     [SerializeField] protected int addedAtk;
 
-    public override int GetAddedAtk(int _lvlInfo)
+    public override int GetAtk(int _lvlInfo)
     {
 
-        return addedAtk * _lvlInfo;
+        return atk + addedAtk * _lvlInfo;
     }
 
-    public override int GetAtk(BaseObj _unit)
+    public override void OnAttack(BaseObj _atker)
     {
 
-        TeamInfo team = _unit.MyTeam;
-
-        if (team == null) 
-        {
-
-#if UNITY_EDITOR
-
-            Debug.Log($"{_unit.name}의 Team 정보가 없습니다.");
-#endif
-            return atk; 
-        }
-
-        return atk + GetAddedAtk(team.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK));
-    }
-
-    public override void OnAttack(Unit _unit)
-    {
-
-        _unit.Target.Heal(GetAtk(_unit));
+        _atker.Target.Heal(StatManager.CalcUnitAtk(_atker.MyTeam, this));
     }
 }

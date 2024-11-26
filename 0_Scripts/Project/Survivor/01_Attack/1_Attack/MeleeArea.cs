@@ -9,18 +9,18 @@ using UnityEngine;
 public class MeleeArea : MeleeTarget
 {
 
-    public override void OnAttack(Unit _unit)
+    public override void OnAttack(BaseObj _atker)
     {
 
-        int len = Physics.SphereCastNonAlloc(_unit.transform.position, 
-            atkRange, _unit.transform.forward, VarianceManager.hits, 0f, _unit.MyTeam.EnemyLayer);
+        int len = Physics.SphereCastNonAlloc(_atker.transform.position, 
+            atkRange, _atker.transform.forward, VarianceManager.hits, 0f, _atker.MyTeam.EnemyLayer);
 
+        int atk = StatManager.CalcUnitAtk(_atker.MyTeam, this);
         for (int i = 0; i < len; i++)
         {
 
-            if (VarianceManager.hits[i].transform == _unit.transform) continue;
-
-            VarianceManager.hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(GetAtk(_unit), isPure, isEvade);
+            if (VarianceManager.hits[i].transform == _atker.transform) continue;
+            VarianceManager.hits[i].transform.GetComponent<IDamagable>()?.OnDamaged(atk, isPure, isEvade);
         }
     }
 }

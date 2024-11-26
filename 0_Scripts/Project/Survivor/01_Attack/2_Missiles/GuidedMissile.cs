@@ -16,27 +16,6 @@ public class GuidedMissile : Missile
 
     [SerializeField] protected int prefabIdx;
 
-    /*
-    /// <summary>
-    /// 미사일 초기 세팅
-    /// </summary>
-    /// <param name="_attacker">공격자 위치</param>
-    /// <param name="_targetPos">대상 위치</param>
-    /// <param name="_target">대상</param>
-    /// <param name="_moveSpeed">투사체 속도</param>
-    /// <param name="_atk">공격력</param>
-    public void Init(Transform _attacker, Selectable _target, int _atk, short _prefabIdx)
-    {
-
-        atker = _attacker;
-        target = _target;
-        atk = _atk;
-        prefabIdx = _prefabIdx;
-
-        ActionManager.instance.AddMissile(this);
-    }
-    */
-
     public override void Init(BaseObj _atker, Attack _atkType, int _prefabIdx)
     {
 
@@ -86,7 +65,7 @@ public class GuidedMissile : Missile
         if (other.transform == target.transform) 
         {
 
-            target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade, atker.transform);
+            target.OnDamaged(StatManager.CalcUnitAtk(atker.MyTeam, atkType), atkType.IsPure, atkType.IsEvade, atker.transform);
             Used();
         }
     }

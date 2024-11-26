@@ -13,12 +13,15 @@ public class SupportUnit : Unit
     public override void SetInfo(Text _txt)
     {
 
-        int temp = myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP);
+        int temp = 0;
+        if (myTeam != null) myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP);
 
         string strHp = MaxHp == VarianceManager.INFINITE ? "Infinity"
             : temp == 0 ? $"{curHp} / {MaxHp}" : $"{curHp} / {MaxHp}(+{temp})";
 
-        temp = myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF);
+        if (myTeam != null) temp = myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF);
+        else temp = 0;
+
         string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";
         _txt.text = $"체력 : {strHp}\n방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
     }

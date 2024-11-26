@@ -51,11 +51,9 @@ public abstract class Unit : BaseObj
 
     public override bool FullHp => MaxHp == curHp;
 
-    public override int MaxHp => myTeam == null ? 
-        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
+    public override int MaxHp => StatManager.CalcUnitMaxHp(myTeam, myStat);
 
-    public override int Def => myTeam == null ? 
-        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
+    public override int Def => StatManager.CalcUnitDef(myTeam, myStat);
 
     #endregion 프로퍼티
 
@@ -103,13 +101,13 @@ public abstract class Unit : BaseObj
         targetPos = transform.position;
         target = null;
 
-        ApplyTeamStat();
+        ChkTeamStat();
     }
 
     /// <summary>
     /// 팀에 따른 정보 갱신
     /// </summary>
-    public override void ApplyTeamStat()
+    public override void ChkTeamStat()
     {
 
         myTeam = TeamManager.instance.GetTeamInfo(gameObject.layer);

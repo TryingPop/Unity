@@ -74,7 +74,7 @@ public class Building : BaseObj
         myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
 
         ChkBuilding(true);
-        ApplyTeamStat();
+        ChkTeamStat();
     }
 
     public void ChkBuilding(bool _forcedCompleted = false)
@@ -98,7 +98,7 @@ public class Building : BaseObj
         }
     }
 
-    public override void ApplyTeamStat()
+    public override void ChkTeamStat()
     {
 
         int myLayer = gameObject.layer;

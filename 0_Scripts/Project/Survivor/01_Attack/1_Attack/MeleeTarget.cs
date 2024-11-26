@@ -12,25 +12,15 @@ public class MeleeTarget : Attack
     [SerializeField] protected int atk;
     [SerializeField] protected int addedAtk;
 
-    public override int GetAddedAtk(int _lvlInfo)
+    public override int GetAtk(int _lvlInfo)
     {
 
-        return addedAtk * _lvlInfo;
+        return addedAtk * _lvlInfo + atk;
     }
 
-    public override int GetAtk(BaseObj _unit)
+    public override void OnAttack(BaseObj _atker)
     {
 
-        TeamInfo team = _unit.MyTeam;
-
-        if (team == null) return atk;
-
-        return atk + GetAddedAtk(team.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK));
-    }
-
-    public override void OnAttack(Unit _unit)
-    {
-
-        _unit.Target.OnDamaged(GetAtk(_unit), isPure, isEvade, _unit.transform);
+        _atker.Target.OnDamaged(StatManager.CalcUnitAtk(_atker.MyTeam, this), isPure, isEvade, _atker.transform);
     }
 }

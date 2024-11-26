@@ -27,7 +27,7 @@ public class TargetMissile : GuidedMissile
         if (other.transform == target.transform)
         {
 
-            target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade, atker.transform);
+            target.OnDamaged(StatManager.CalcUnitAtk(atker.MyTeam, atkType), atkType.IsPure, atkType.IsEvade, atker.transform);
             Used();
         }
     }

@@ -119,7 +119,10 @@ public class BossShotMissile : Missile
             {
 
                 if (((1 << other.gameObject.layer) & targetLayer) != 0)
-                    target.OnDamaged(atkType.GetAtk(atker), atkType.IsPure, atkType.IsEvade);
+                {
+
+                    target.OnDamaged(StatManager.CalcUnitAtk(atker.MyTeam, atkType), atkType.IsPure, atkType.IsEvade);
+                }
             }
         }
     }

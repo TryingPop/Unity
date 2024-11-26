@@ -7,7 +7,7 @@ public abstract class Commandable : MonoBehaviour, IInfoTxt, IActionable
 {
 
     [SerializeField] protected STATE_SELECTABLE myState;
-    [SerializeField] protected TeamInfo myTeam;                          
+    [SerializeField] protected TYPE_SELECTABLE myType;
 
     public STATE_SELECTABLE MyState
     {
@@ -16,7 +16,13 @@ public abstract class Commandable : MonoBehaviour, IInfoTxt, IActionable
         set { myState = value; }
     }
 
+    public TYPE_SELECTABLE MyType => myType;
+
+    #region 팀 정보
+
+    [SerializeField] protected TeamInfo myTeam;                          
     public TeamInfo MyTeam => myTeam;
+    #endregion
 
     /// <summary>
     /// 행동할 메소드

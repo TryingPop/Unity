@@ -15,16 +15,10 @@ public class GenerateMissile : Attack
 
     protected int prefabIdx = -1;
 
-    public override int GetAtk(BaseObj _unit)
-    {
-
-        return atkType.GetAtk(_unit);
-    }
-
-    public override int GetAddedAtk(int _lvlInfo)
-    {
-
-        return atkType.GetAddedAtk(_lvlInfo);
+    public override int GetAtk(int _lvlInfo)
+    { 
+        
+        return atkType.GetAtk(_lvlInfo); 
     }
 
     protected int PrefabIdx
@@ -44,7 +38,7 @@ public class GenerateMissile : Attack
     }
 
 
-    public override void OnAttack(Unit _unit)
+    public override void OnAttack(BaseObj _unit)
     {
 
         Transform unitTrans = _unit.transform;

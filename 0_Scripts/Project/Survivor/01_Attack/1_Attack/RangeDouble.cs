@@ -20,7 +20,7 @@ public class RangeDouble : GenerateMissile
         else return -1;
     }
 
-    public override void OnAttack(Unit _unit)
+    public override void OnAttack(BaseObj _unit)
     {
 
         Transform unitTrans = _unit.transform;

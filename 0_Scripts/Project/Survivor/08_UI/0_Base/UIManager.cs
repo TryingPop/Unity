@@ -338,7 +338,6 @@ public class UIManager : MonoBehaviour
     {
 
         hitbars.UsedHitBar(_target.MyHitBar);
-        _target.MyHitBar = null;
     }
 
     public void SetWarningText(string _text, Color _color, float _chkTime)

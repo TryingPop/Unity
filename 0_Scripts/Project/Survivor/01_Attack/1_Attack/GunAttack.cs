@@ -31,7 +31,7 @@ public class GunAttack : GenerateMissile
     /// <summary>
     /// 공격 탄피 생성
     /// </summary>
-    public override void OnAttack(Unit _unit)
+    public override void OnAttack(BaseObj _unit)
     {
 
         Transform unitTrans = _unit.transform;

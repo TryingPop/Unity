@@ -7,7 +7,7 @@ using UnityEngine;
 public class BossShotAttack : GenerateMissile
 {
 
-    public override void OnAttack(Unit _unit)
+    public override void OnAttack(BaseObj _unit)
     {
 
         Transform unitTrans = _unit.transform;
