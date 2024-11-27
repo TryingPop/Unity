@@ -21,6 +21,6 @@ public class MeleeTarget : Attack
     public override void OnAttack(BaseObj _atker)
     {
 
-        _atker.Target.OnDamaged(StatManager.CalcUnitAtk(_atker.MyTeam, this), isPure, isEvade, _atker.transform);
+        _atker.Target.OnDamaged(CalcUnitAtk(_atker.MyTeam), isPure, isEvade, _atker.transform);
     }
 }

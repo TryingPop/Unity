@@ -96,7 +96,7 @@ public class Grenade : Missile
             myRigid.MovePosition(destination);
 
             int len = Physics.SphereCastNonAlloc(transform.position + meshTrans.localPosition, 3f, Vector3.up, VarianceManager.hits, 0f, targetMask);
-            int atk = StatManager.CalcUnitAtk(atker.MyTeam, atkType);
+            int atk = atkType.CalcUnitAtk(atker.MyTeam);
 
             for (int i = 0; i < len; i++)
             {

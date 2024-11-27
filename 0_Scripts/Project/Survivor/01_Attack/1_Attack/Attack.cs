@@ -101,4 +101,11 @@ public abstract class Attack : ScriptableObject
 
         if (target != null) _unit.Target = target.GetComponent<BaseObj>();
     }
+
+    public int CalcUnitAtk(TeamInfo _team)
+    {
+
+        int lvl = _team == null ? 0 : _team.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK);
+        return GetAtk(lvl);
+    }
 }

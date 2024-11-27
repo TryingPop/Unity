@@ -51,9 +51,11 @@ public abstract class Unit : BaseObj
 
     public override bool FullHp => MaxHp == curHp;
 
-    public override int MaxHp => StatManager.CalcUnitMaxHp(myTeam, myStat);
+    public override int MaxHp => myTeam == null ?
+        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
 
-    public override int Def => StatManager.CalcUnitDef(myTeam, myStat);
+    public override int Def => myTeam == null ? 
+        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
 
     #endregion 프로퍼티
 

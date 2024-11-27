@@ -16,13 +16,14 @@ public class SupportUnit : Unit
         int temp = 0;
         if (myTeam != null) myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP);
 
-        string strHp = MaxHp == VarianceManager.INFINITE ? "Infinity"
-            : temp == 0 ? $"{curHp} / {MaxHp}" : $"{curHp} / {MaxHp}(+{temp})";
+        int maxHp = myStat.GetMaxHp(temp);
+        string strHp = maxHp == VarianceManager.INFINITE ? "Infinity"
+            : temp == 0 ? $"{curHp} / {maxHp}" : $"{curHp} / {maxHp}(+{temp})";
 
         if (myTeam != null) temp = myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF);
         else temp = 0;
 
-        string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.Def}(+{temp})";
+        string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.GetDef(temp)}(+{temp})";
         _txt.text = $"체력 : {strHp}\n방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
     }
 

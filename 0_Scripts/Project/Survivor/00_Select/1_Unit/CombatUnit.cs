@@ -24,16 +24,16 @@ public class CombatUnit : Unit
     public override void SetInfo(Text _txt)
     {
 
-        int temp = StatManager.GetUpgrade(myTeam, TYPE_SELECTABLE.UP_UNIT_HP);
-        int maxHp = StatManager.CalcUnitMaxHp(temp, myStat);
+        int temp = myTeam == null ? 0 : myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP);
+        int maxHp = myStat.GetMaxHp(temp);
         string strHp = maxHp == VarianceManager.INFINITE ? "Infinity"
             : temp == 0 ? $"{curHp} / {maxHp}" : $"{curHp} / {maxHp}(+{temp})";
 
-        temp = StatManager.GetUpgrade(myTeam, TYPE_SELECTABLE.UP_UNIT_ATK);
-        string strAtk = temp == 0 ? StatManager.CalcUnitAtk(temp, myAttack).ToString() : $"{StatManager.CalcUnitAtk(temp, myAttack)}(+{temp})";
+        temp = myTeam == null ? 0 : myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK);
+        string strAtk = temp == 0 ? myAttack.GetAtk(0).ToString() : $"{myAttack.GetAtk(temp)}(+{temp})";
 
-        temp = StatManager.GetUpgrade(myTeam, TYPE_SELECTABLE.UP_UNIT_DEF);
-        string strDef = temp == 0 ? StatManager.CalcUnitDef(temp, myStat).ToString() : $"{StatManager.CalcUnitDef(temp, myStat)}(+{temp})";
+        temp = myTeam == null ? 0 : myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF);
+        string strDef = temp == 0 ? myStat.GetDef(0).ToString() : $"{myStat.GetDef(temp)}(+{temp})";
 
         _txt.text = $"체력 : {strHp}\n공격력 : {strAtk}   방어력 : {strDef}\n{myStateAction.GetStateName(myState)} 중";
     }

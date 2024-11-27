@@ -36,9 +36,10 @@ public class BuildBuilding : IUnitAction
             int gold = stats.Cost;
             
 
-            if (_unit.MyTeam.ChkAdd(stats.MyType)
-                && _unit.MyTeam.ChkGold(gold)
-                && _unit.MyTeam.ChkSupply(supply))
+            TeamInfo unitTeam = _unit.MyTeam;
+            if (unitTeam.ChkAdd(stats.MyType)
+                && unitTeam.ChkGold(gold)
+                && unitTeam.ChkSupply(supply))
             {
 
                 // 건물 겹치기 방지용도
@@ -51,8 +52,8 @@ public class BuildBuilding : IUnitAction
                 {
 
                     // 골드 소모
-                    _unit.MyTeam.AddGold(-gold);
-                    _unit.MyTeam.AddCnt(stats.MyType);
+                    unitTeam.AddGold(-gold);
+                    unitTeam.AddCnt(stats.MyType);
                     var go = PoolManager.instance.GetSamePrefabs(_unit.Target, _unit.gameObject.layer, _unit.TargetPos);
 
                     if (go)

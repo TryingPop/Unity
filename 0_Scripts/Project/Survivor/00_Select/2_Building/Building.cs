@@ -44,9 +44,11 @@ public class Building : BaseObj
 
     public override bool FullHp => curHp == MaxHp;
 
-    public override int MaxHp => myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
+    public override int MaxHp => myTeam == null ? 
+        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
 
-    public override int Def => myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
+    public override int Def => myTeam == null ? 
+        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
 
     protected void Awake()
     {

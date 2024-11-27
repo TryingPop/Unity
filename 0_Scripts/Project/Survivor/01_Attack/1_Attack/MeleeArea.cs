@@ -15,7 +15,7 @@ public class MeleeArea : MeleeTarget
         int len = Physics.SphereCastNonAlloc(_atker.transform.position, 
             atkRange, _atker.transform.forward, VarianceManager.hits, 0f, _atker.MyTeam.EnemyLayer);
 
-        int atk = StatManager.CalcUnitAtk(_atker.MyTeam, this);
+        int atk = CalcUnitAtk(_atker.MyTeam);
         for (int i = 0; i < len; i++)
         {
 

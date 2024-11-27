@@ -123,7 +123,13 @@ public class PrepareBuilding : MonoBehaviour, Follower
 
         if (!isBuild) return null;
 
-        var go = PoolManager.instance.GetPrefabs(PrefabIdx, gameObject.layer, transform.position);
+#if UNITY_EDITOR
+
+        Debug.Log("일꾼 유닛은 플레이어 입니다.\n그래서 당장은 플레이어 레이어로 가져오나,\n"
+            + "추후 확장에서는 레이어를 다른 방법으로 지정해주셔야 합니다.");
+#endif
+        // 건물 건설하는 레이어는 플레이어로 설정된다.
+        var go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_PLAYER, transform.position);
         Building building = go.GetComponent<Building>();
         building?.DisableSelectable();
 

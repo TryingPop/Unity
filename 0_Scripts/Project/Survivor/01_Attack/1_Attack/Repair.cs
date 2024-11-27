@@ -21,6 +21,6 @@ public class Repair : Attack
     public override void OnAttack(BaseObj _atker)
     {
 
-        _atker.Target.Heal(StatManager.CalcUnitAtk(_atker.MyTeam, this));
+        _atker.Target.Heal(CalcUnitAtk(_atker.MyTeam));
     }
 }
