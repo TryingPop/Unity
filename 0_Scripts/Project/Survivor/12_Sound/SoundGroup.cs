@@ -8,9 +8,9 @@ public class SoundGroup : ScriptableObject
 
     // 상태 값을 해당 인덱스로 변환
 
-    protected Dictionary<STATE_SELECTABLE, int> myIdx;
+    protected Dictionary<MY_STATE.GAMEOBJECT, int> myIdx;
 
-    public Dictionary<STATE_SELECTABLE, int> MyIdx
+    public Dictionary<MY_STATE.GAMEOBJECT, int> MyIdx
     {
 
         get
@@ -19,7 +19,7 @@ public class SoundGroup : ScriptableObject
             if (myIdx == null)
             {
 
-                myIdx = new Dictionary<STATE_SELECTABLE, int>(sounds.Length);
+                myIdx = new Dictionary<MY_STATE.GAMEOBJECT, int>(sounds.Length);
 
                 for (int i = 0; i < sounds.Length; i++)
                 {
@@ -40,7 +40,7 @@ public class SoundGroup : ScriptableObject
     /// <summary>
     /// 해당 상태에 맞는 소리 반환
     /// </summary>
-    public AudioClip GetSound(STATE_SELECTABLE _state)
+    public AudioClip GetSound(MY_STATE.GAMEOBJECT _state)
     {
 
         int idx = MyIdx[_state];

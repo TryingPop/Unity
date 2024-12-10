@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class BtnUpgrade : BtnDefault
 {
 
-    [SerializeField] TYPE_SELECTABLE upgradeType;
+    [SerializeField] MY_TYPE.UPGRADE upgradeType;
 
     public override void GetTitle(Text _titleText)
     {

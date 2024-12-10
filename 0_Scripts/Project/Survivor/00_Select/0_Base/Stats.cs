@@ -11,8 +11,9 @@ public class Stats : ScriptableObject
     [SerializeField] protected int evade;
     [SerializeField] protected int sight;
 
-    [SerializeField] protected TYPE_SIZE mySize;            // 유닛 사이즈 유니티 사이즈 1과 같다!
-    [SerializeField] protected TYPE_SELECTABLE myType;
+    [SerializeField] protected MY_TYPE.GAMEOBJECT myType;
+    [SerializeField] protected MY_TYPE.SIZE mySize;          // 유닛의 사이즈
+
 
     [SerializeField] protected int selectIdx;               // 오브젝트 번호
     [SerializeField] protected int myPoolIdx;               // 풀 인덱스
@@ -97,7 +98,7 @@ public class Stats : ScriptableObject
         }
     }
 
-    public TYPE_SELECTABLE MyType => myType;
+    public MY_TYPE.GAMEOBJECT MyType => myType;
 
     public Sprite MySprite => mySprite;
 

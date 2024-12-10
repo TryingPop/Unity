@@ -52,10 +52,10 @@ public abstract class Unit : BaseObj
     public override bool FullHp => MaxHp == curHp;
 
     public override int MaxHp => myTeam == null ?
-        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP));
+        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(MY_TYPE.UPGRADE.UNIT_HP));
 
     public override int Def => myTeam == null ? 
-        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF));
+        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(MY_TYPE.UPGRADE.UNIT_DEF));
 
     #endregion 프로퍼티
 
@@ -142,7 +142,7 @@ public abstract class Unit : BaseObj
     public override void Action()
     {
 
-        if (myState == STATE_SELECTABLE.DEAD) return;
+        if (myState == MY_STATE.GAMEOBJECT.DEAD) return;
 
         // 상태 변화가 있는지
         else if (stateChange)
@@ -161,7 +161,7 @@ public abstract class Unit : BaseObj
     /// 행동이 완료 혹은 변경이 필요
     /// </summary>
     /// <param name="_nextState">다음 상태</param>
-    public void ActionDone(STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
+    public void ActionDone(MY_STATE.GAMEOBJECT _nextState = MY_STATE.GAMEOBJECT.NONE)
     {
 
         myState = _nextState;
@@ -185,8 +185,8 @@ public abstract class Unit : BaseObj
     protected bool ChkDmgReaction()
     {
 
-        return myState == STATE_SELECTABLE.NONE
-            || myState == STATE_SELECTABLE.UNIT_PATROL;
+        return myState == MY_STATE.GAMEOBJECT.NONE
+            || myState == MY_STATE.GAMEOBJECT.UNIT_PATROL;
     }
 
     public override void Dead(bool _immediately = false)
@@ -200,7 +200,7 @@ public abstract class Unit : BaseObj
             cmds.Dequeue().Canceled();
         }
 
-        ActionDone(STATE_SELECTABLE.DEAD);
+        ActionDone(MY_STATE.GAMEOBJECT.DEAD);
         myAgent.enabled = false;
         myAnimator.SetBool("Die", true);
 
@@ -266,7 +266,7 @@ public abstract class Unit : BaseObj
             if (!onlyReserveCmd) ActionDone();
         } 
         // 대기상태에서 shift로 명령을 넣었을 경우
-        else if (myState == STATE_SELECTABLE.NONE)
+        else if (myState == MY_STATE.GAMEOBJECT.NONE)
             stateChange = true;
 
         // 명령 등록
@@ -278,11 +278,11 @@ public abstract class Unit : BaseObj
     {
 
         // 읽을 수 있는 상태 판별
-        if (myState == STATE_SELECTABLE.DEAD) return false;
+        if (myState == MY_STATE.GAMEOBJECT.DEAD) return false;
 
         // 읽을 수 잇는 명령 판별
-        if (_cmd.type == STATE_SELECTABLE.NONE
-            || _cmd.type == STATE_SELECTABLE.BUILDING_CANCEL) return false;
+        if (_cmd.type == MY_STATE.GAMEOBJECT.NONE
+            || _cmd.type == MY_STATE.GAMEOBJECT.CANCEL) return false;
 
         return true;
     }
@@ -294,7 +294,7 @@ public abstract class Unit : BaseObj
     {
 
         // 명령을 읽을 상황인지 확인
-        if (myState != STATE_SELECTABLE.NONE
+        if (myState != MY_STATE.GAMEOBJECT.NONE
             || cmds.Count == 0) return;
 
 

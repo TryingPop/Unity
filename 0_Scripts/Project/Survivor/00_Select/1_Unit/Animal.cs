@@ -27,7 +27,7 @@ public class Animal : SupportUnit
     {
         base.OnDamaged(_dmg, _pure, _evade, _trans);
 
-        if (myState == STATE_SELECTABLE.DEAD
+        if (myState == MY_STATE.GAMEOBJECT.DEAD
             && _trans)
         {
 
@@ -51,7 +51,7 @@ public class Animal : SupportUnit
 
             yield return opt.WaitTime;
 
-            if (myState == STATE_SELECTABLE.DEAD) yield break;
+            if (myState == MY_STATE.GAMEOBJECT.DEAD) yield break;
 
 
             int num = opt.RandActions;
@@ -63,15 +63,15 @@ public class Animal : SupportUnit
                 {
 
                     targetPos = hit.position;
-                    MyState = STATE_SELECTABLE.UNIT_MOVE;
+                    MyState = MY_STATE.GAMEOBJECT.UNIT_MOVE;
                 }
                 else
                 {
 
-                    MyState = STATE_SELECTABLE.NONE;
+                    MyState = MY_STATE.GAMEOBJECT.NONE;
                 }
             }
-            else MyState = STATE_SELECTABLE.NONE;
+            else MyState = MY_STATE.GAMEOBJECT.NONE;
 
             myStateAction.Changed(this);
         }

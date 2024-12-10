@@ -27,8 +27,6 @@ public class TargetUnit : Mission
     public override void Init()
     {
 
-        typeNum = (int)myType;
-
         curNum = 0;
         if (generateTarget) SetTargets();
 

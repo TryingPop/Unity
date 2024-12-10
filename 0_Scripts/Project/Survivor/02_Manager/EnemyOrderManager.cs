@@ -111,13 +111,13 @@ public class EnemyOrderManager : MonoBehaviour
 
         int unitNum = enemyUnits.Count;
         if (enemyUnits.Count > ushort.MaxValue) unitNum = enemyUnits.Count;
-        GiveCommand((ushort)unitNum, STATE_SELECTABLE.UNIT_ATTACK, target.position, true);
+        GiveCommand((ushort)unitNum, MY_STATE.GAMEOBJECT.UNIT_ATTACK, target.position, true);
     }
     
     /// <summary>
     /// 적의 명령 주기!
     /// </summary>
-    private void GiveCommand(ushort _num, STATE_SELECTABLE _type, Vector3 _dir, bool _isUnit)
+    private void GiveCommand(ushort _num, MY_STATE.GAMEOBJECT _type, Vector3 _dir, bool _isUnit)
     {
 
         Command cmd;
@@ -142,7 +142,7 @@ public class EnemyOrderManager : MonoBehaviour
             enemyBuildings.First.GetCommand(cmd, false);
     }
 
-    private void GiveCommand(Unit _unit, STATE_SELECTABLE _type, Vector3 _dir)
+    private void GiveCommand(Unit _unit, MY_STATE.GAMEOBJECT _type, Vector3 _dir)
     {
 
         Command cmd;
@@ -167,7 +167,7 @@ public class EnemyOrderManager : MonoBehaviour
     public void BuildingAction()
     {
 
-        STATE_SELECTABLE type = (STATE_SELECTABLE)Random.Range((int)STATE_SELECTABLE.BUILDING_ACTION1, (int)STATE_SELECTABLE.BUILDING_ACTION3 + 1);
+        MY_STATE.GAMEOBJECT type = (MY_STATE.GAMEOBJECT)Random.Range((int)MY_STATE.GAMEOBJECT.BUILDING_ACTION1, (int)MY_STATE.GAMEOBJECT.BUILDING_ACTION3 + 1);
 
         ushort num = (ushort)enemyBuildings.Count;
         GiveCommand(num, type, Vector3.positiveInfinity, false);
@@ -244,7 +244,7 @@ public class EnemyOrderManager : MonoBehaviour
                 
                 Unit unit = go.GetComponent<Unit>();
                 
-                if (target != null) GiveCommand(unit, STATE_SELECTABLE.UNIT_ATTACK, target.position);
+                if (target != null) GiveCommand(unit, MY_STATE.GAMEOBJECT.UNIT_ATTACK, target.position);
             }
         }
 

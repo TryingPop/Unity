@@ -14,8 +14,6 @@ public class TargetBuilding : TargetUnit
     public override void Init()
     {
 
-        typeNum = (int)myType;
-
         curNum = 0;
         if (generateTarget) SetTargets();
 

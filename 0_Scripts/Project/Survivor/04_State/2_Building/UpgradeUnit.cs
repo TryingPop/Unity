@@ -9,7 +9,7 @@ using UnityEngine;
 public class UpgradeUnit : BuildingAction
 {
 
-    [SerializeField] protected TYPE_SELECTABLE upgradeType;
+    [SerializeField] protected MY_TYPE.UPGRADE upgradeType;
     // [SerializeField] protected int cost;
 
     public override void Action(Building _building)

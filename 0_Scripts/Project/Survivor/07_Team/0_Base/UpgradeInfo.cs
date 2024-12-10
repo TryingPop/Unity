@@ -21,8 +21,8 @@ public class UpgradeInfo
     [Header("ÀÚ¿ø")]
     public UpgradeResourceData[] resource;
 
-    public void Init(Dictionary<TYPE_SELECTABLE, UpgradeData> _upDic,
-        Dictionary<TYPE_SELECTABLE, UpgradeResourceData> _resourceDic)
+    public void Init(Dictionary<MY_TYPE.UPGRADE, UpgradeData> _upDic,
+        Dictionary<MY_TYPE.UPGRADE, UpgradeResourceData> _resourceDic)
     {
 
         for (int i = 0; i < unit.Length; i++)

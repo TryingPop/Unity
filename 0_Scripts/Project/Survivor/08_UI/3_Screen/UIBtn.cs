@@ -10,12 +10,12 @@ public class UIBtn : MonoBehaviour,
 
     // [SerializeField] private int stateNum;
     [SerializeField] private ButtonInfo btnInfo;
-    [SerializeField] private TYPE_INPUT key;
+    [SerializeField] private MY_STATE.INPUT key;
 
     [SerializeField] private Image myImg;
     [SerializeField] private Image lockImg;
     [SerializeField] private RectTransform myRectTrans;
-    public TYPE_INPUT Key => key;
+    public MY_STATE.INPUT Key => key;
 
     public void Init(ButtonInfo _info, Vector2 _pos)
     {
@@ -32,7 +32,7 @@ public class UIBtn : MonoBehaviour,
 
         if (!btnInfo.ActiveBtn) return;
         PlayerManager.instance.MyState = key;
-        UIManager.instance.ExitInfo(TYPE_INFO.BTN);
+        UIManager.instance.ExitInfo(MY_TYPE.UI.BTN);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -42,13 +42,13 @@ public class UIBtn : MonoBehaviour,
 
         Vector2 uiPos = myRectTrans.position;
         uiPos.y += myRectTrans.rect.height * 0.5f;
-        UIManager.instance.EnterInfo(this, uiPos, TYPE_INFO.BTN);
+        UIManager.instance.EnterInfo(this, uiPos, MY_TYPE.UI.BTN);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
-        UIManager.instance.ExitInfo(TYPE_INFO.BTN);
+        UIManager.instance.ExitInfo(MY_TYPE.UI.BTN);
     }
 
     public void SetInfo(Text _descTxt)

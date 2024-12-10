@@ -24,22 +24,22 @@ public abstract class ISkillAction : IUnitAction
         return true;
     }
 
-    protected int GetSkillNum(STATE_SELECTABLE _unitState)
+    protected int GetSkillNum(MY_STATE.GAMEOBJECT _unitState)
     {
 
         switch (_unitState)
         {
 
-            case STATE_SELECTABLE.UNIT_SKILL0:
+            case MY_STATE.GAMEOBJECT.UNIT_SKILL0:
                 return 0;
 
-            case STATE_SELECTABLE.UNIT_SKILL1:
+            case MY_STATE.GAMEOBJECT.UNIT_SKILL1:
                 return 1;
 
-            case STATE_SELECTABLE.UNIT_SKILL2: 
+            case MY_STATE.GAMEOBJECT.UNIT_SKILL2: 
                 return 2;
 
-            case STATE_SELECTABLE.UNIT_SKILL3:
+            case MY_STATE.GAMEOBJECT.UNIT_SKILL3:
                 return 3;
 
             default:

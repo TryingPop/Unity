@@ -9,9 +9,9 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
-    private STATE_GAME myState;
+    private MY_STATE.GAME myState;
 
-    public STATE_GAME MyState => myState;
+    public MY_STATE.GAME MyState => myState;
 
     [SerializeField] protected MissionManager missions;
     public MissionManager Missions { set { missions = value; } }
@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
         get
         {
 
-            return myState == STATE_GAME.WIN
-                || myState == STATE_GAME.LOSE;
+            return myState == MY_STATE.GAME.WIN
+                || myState == MY_STATE.GAME.LOSE;
         }
     }
 
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
     {
 
         isStop = false;
-        myState = STATE_GAME.NONE;
+        myState = MY_STATE.GAME.NONE;
 
         missions.Init();
     }
@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         if (_isWin) 
         { 
             
-            myState = STATE_GAME.WIN;
+            myState = MY_STATE.GAME.WIN;
             missions.Clear();
 
             // 마지막 판 같은 경우 다음판이 없기에 재시작 버튼을 그냥 살려둔다
@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
             }
 
         }
-        else myState = STATE_GAME.LOSE;
+        else myState = MY_STATE.GAME.LOSE;
 
         SetGameOverSnd(_isWin);
 

@@ -6,7 +6,7 @@ public class OrderEvent : BaseGameEvent
 {
 
     [SerializeField] protected int groupLayer;
-    [SerializeField] protected STATE_SELECTABLE cmdType;
+    [SerializeField] protected MY_STATE.GAMEOBJECT cmdType;
     [SerializeField] protected Vector3 pos;
     [SerializeField] protected BaseObj target;
     [SerializeField] protected bool isUnit;

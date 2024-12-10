@@ -15,8 +15,8 @@ public class TeamInfo
     protected ActionGroup<Unit> actionUnits;
     protected ActionGroup<Building> actionBuildings;
 
-    Dictionary<TYPE_SELECTABLE, UpgradeData> upDic;
-    Dictionary<TYPE_SELECTABLE, UpgradeResourceData> upResourceDic;
+    Dictionary<MY_TYPE.UPGRADE, UpgradeData> upDic;
+    Dictionary<MY_TYPE.UPGRADE, UpgradeResourceData> upResourceDic;
 
     public void Init()
     {
@@ -57,14 +57,14 @@ public class TeamInfo
     }
 
     // 공방체 부분
-    public int GetLvl(TYPE_SELECTABLE _type)
+    public int GetLvl(MY_TYPE.UPGRADE _type)
     {
 
         if (upDic.ContainsKey(_type)) return upDic[_type].CurVal();
         return 0;
     }
 
-    public int GetResourceLvl(TYPE_SELECTABLE _type) 
+    public int GetResourceLvl(MY_TYPE.UPGRADE _type) 
     {
 
         if (upResourceDic.ContainsKey(_type)) return upResourceDic[_type].CurVal();
@@ -75,14 +75,14 @@ public class TeamInfo
     /// 유닛 업그레이드
     /// 공, 체, 방
     /// </summary>
-    public void Upgrade(TYPE_SELECTABLE _type)
+    public void Upgrade(MY_TYPE.UPGRADE _type)
     {
 
         if (upDic.ContainsKey(_type))
         {
 
             upDic[_type].AddVal();
-            if (_type == TYPE_SELECTABLE.UP_UNIT_HP) UIManager.instance.SetMaxHp = true;
+            if (_type == MY_TYPE.UPGRADE.UNIT_HP) UIManager.instance.SetMaxHp = true;
             return;
         }
 
@@ -96,18 +96,18 @@ public class TeamInfo
     /// 자원 업그레이드
     /// 골드, 보급
     /// </summary>
-    public void UpgradeResource(TYPE_SELECTABLE _type)
+    public void UpgradeResource(MY_TYPE.UPGRADE _type)
     {
 
         if (upResourceDic.ContainsKey(_type))
         {
 
             upResourceDic[_type].AddVal();
-            if (_type == TYPE_SELECTABLE.UP_SUPPLY 
+            if (_type == MY_TYPE.UPGRADE.SUPPLY 
                 && allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER) UIManager.instance.UpdateResources = true;
 
             // 턴골드 1 증가
-            else if (_type == TYPE_SELECTABLE.UP_TURN_GOLD && allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER)
+            else if (_type == MY_TYPE.UPGRADE.ADD_TURN_GOLD && allianceInfo.teamLayerNumber == VarianceManager.LAYER_PLAYER)
                 TurnManager.instance.AddTurnGold = 1;
             return;
         }
@@ -116,7 +116,7 @@ public class TeamInfo
 #endif
     }
 
-    public int GetUpgradeCost(TYPE_SELECTABLE _type)
+    public int GetUpgradeCost(MY_TYPE.UPGRADE _type)
     {
 
         if (upDic.ContainsKey(_type)) return upDic[_type].Cost;
@@ -129,7 +129,7 @@ public class TeamInfo
         return -1;
     }
 
-    public int GetUpgradeResourceCost(TYPE_SELECTABLE _type)
+    public int GetUpgradeResourceCost(MY_TYPE.UPGRADE _type)
     {
 
         if (upResourceDic.ContainsKey(_type)) return upResourceDic[_type].Cost;
@@ -150,7 +150,7 @@ public class TeamInfo
         {
 
             // int result = resourcesInfo.maxSupply + upgradeInfo.maxSupply.CurVal();
-            int result = resourcesInfo.maxSupply + GetResourceLvl(TYPE_SELECTABLE.UP_SUPPLY);
+            int result = resourcesInfo.maxSupply + GetResourceLvl(MY_TYPE.UPGRADE.SUPPLY);
             if (result > VarianceManager.MAX_SUPPLY) result = VarianceManager.MAX_SUPPLY;
             return result;
         }
@@ -256,14 +256,14 @@ public class TeamInfo
     /// <summary>
     /// 해당 건물 추가 가능한지 판별 판별
     /// </summary>
-    public bool ChkAdd(TYPE_SELECTABLE _type)
+    public bool ChkAdd(MY_TYPE.GAMEOBJECT _type)
     {
 
         if (limitInfo.Contains(_type)) return limitInfo.ChkAdd(_type);
         return true;
     }
 
-    public void AddCnt(TYPE_SELECTABLE _type, bool _add = true)
+    public void AddCnt(MY_TYPE.GAMEOBJECT _type, bool _add = true)
     {
 
         if (limitInfo.Contains(_type)) limitInfo.AddBuilding(_type, _add);

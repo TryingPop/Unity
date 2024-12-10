@@ -6,6 +6,6 @@ using UnityEngine;
 public class ButtonData
 {
 
-    public TYPE_SELECTABLE type;
+    public MY_TYPE.GAMEOBJECT type;
     public ButtonHandler handler;
 }

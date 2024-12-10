@@ -190,7 +190,7 @@ public class MiniMap : MonoBehaviour,
                 Vector3 pos = ScaleValueToWorldMap(scaleValue, true);
 
                 // 해당 좌표로 이동?
-                inputManager.CmdType = STATE_SELECTABLE.MOUSE_R;
+                inputManager.CmdType = MY_STATE.GAMEOBJECT.MOUSE_R;
                 inputManager.GiveCmd(pos);
             }
             // 현재 키입력 취소

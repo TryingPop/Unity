@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class LimitData : ILimitData
+public abstract class LimitData : ILimitData
 {
 
     [SerializeField] protected int curVal;
     [SerializeField] protected int maxVal;
-    [SerializeField] protected TYPE_SELECTABLE myType;
+
 #if UNITY_EDITOR
 
     [SerializeField] bool chkBtn;
 #endif
 
     [SerializeField] protected ButtonInfo lockBtn;
-
     public virtual int CurVal() => curVal;
 
-    public TYPE_SELECTABLE MyType => myType;
+    // [SerializeField] protected MYTYPE.UPGRADE myType;
+    // public MYTYPE.UPGRADE MyType => myType;
 
     public void Init()
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 /// 추가 부분 없는 업그레이드 데이터
 /// </summary>
 [System.Serializable]
-public class UpgradeData : LimitData
+public class UpgradeData : LimitUpgrade
 {
 
     [SerializeField] protected int cost;

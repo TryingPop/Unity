@@ -82,8 +82,6 @@ public class SelectMission : Mission
     public override void Init()
     {
 
-        typeNum = (int)myType;
-
         isSuccess = false;
         group = PlayerManager.instance.curGroup;
         PlayerManager.instance.chkSelect += ChkMission;

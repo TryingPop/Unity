@@ -5,7 +5,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
 
-    private TYPE_INPUT cmdKey;
+    private MY_STATE.INPUT cmdKey;
     private Vector2 mousePos;
 
     private float horizontalMove;
@@ -17,7 +17,7 @@ public class InputManager : MonoBehaviour
     private bool groupKey = false;
     private bool addKey = false;
     private bool isCmdKey = false;
-    public TYPE_INPUT CmdKey => cmdKey;
+    public MY_STATE.INPUT CmdKey => cmdKey;
     public bool IsCmdKey => isCmdKey;
 
     public Vector2 MousePos => mousePos;
@@ -46,15 +46,15 @@ public class InputManager : MonoBehaviour
     {
 
         isCmdKey = true;
-        if (Input.GetKeyDown(KeyCode.M)) cmdKey = TYPE_INPUT.KEY_M;
-        else if (Input.GetKeyDown(KeyCode.S)) cmdKey = TYPE_INPUT.KEY_S;
-        else if (Input.GetKeyDown(KeyCode.P)) cmdKey = TYPE_INPUT.KEY_P;
-        else if (Input.GetKeyDown(KeyCode.H)) cmdKey = TYPE_INPUT.KEY_H;
-        else if (Input.GetKeyDown(KeyCode.A)) cmdKey = TYPE_INPUT.KEY_A;
-        else if (Input.GetKeyDown(KeyCode.Q)) cmdKey = TYPE_INPUT.KEY_Q;
-        else if (Input.GetKeyDown(KeyCode.W)) cmdKey = TYPE_INPUT.KEY_W;
-        else if (Input.GetKeyDown(KeyCode.E)) cmdKey = TYPE_INPUT.KEY_E;
-        else if (Input.GetKeyDown(KeyCode.Escape)) cmdKey = TYPE_INPUT.CANCEL;
+        if (Input.GetKeyDown(KeyCode.M)) cmdKey = MY_STATE.INPUT.KEY_M;
+        else if (Input.GetKeyDown(KeyCode.S)) cmdKey = MY_STATE.INPUT.KEY_S;
+        else if (Input.GetKeyDown(KeyCode.P)) cmdKey = MY_STATE.INPUT.KEY_P;
+        else if (Input.GetKeyDown(KeyCode.H)) cmdKey = MY_STATE.INPUT.KEY_H;
+        else if (Input.GetKeyDown(KeyCode.A)) cmdKey = MY_STATE.INPUT.KEY_A;
+        else if (Input.GetKeyDown(KeyCode.Q)) cmdKey = MY_STATE.INPUT.KEY_Q;
+        else if (Input.GetKeyDown(KeyCode.W)) cmdKey = MY_STATE.INPUT.KEY_W;
+        else if (Input.GetKeyDown(KeyCode.E)) cmdKey = MY_STATE.INPUT.KEY_E;
+        else if (Input.GetKeyDown(KeyCode.Escape)) cmdKey = MY_STATE.INPUT.CANCEL;
         else isCmdKey = false;
     }
 

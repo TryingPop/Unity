@@ -135,7 +135,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
         {
 
             // 미완성인 경우는 탈출!
-            if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
+            if (myState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED) return;
 
             if (_isDead)
                 // 사망 시 이므로 최대 인구 깎기
@@ -188,7 +188,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     {
 
         if (MaxHp == VarianceManager.INFINITE
-            || myState == STATE_SELECTABLE.DEAD)
+            || myState == MY_STATE.GAMEOBJECT.DEAD)
         {
 
             return true;
@@ -215,7 +215,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     public virtual void Dead(bool _immediately = false)
     {
 
-        myState = STATE_SELECTABLE.DEAD;
+        myState = MY_STATE.GAMEOBJECT.DEAD;
         // 시체 레이어로 변경
         gameObject.layer = VarianceManager.LAYER_DEAD;
 
@@ -235,7 +235,7 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
             PlayerManager.instance.curGroup.DeSelect(this);
             PlayerManager.instance.ChkUIs();
             // slot과 버튼 종료!
-            UIManager.instance.ExitInfo(TYPE_INFO.ALL);
+            UIManager.instance.ExitInfo(MY_TYPE.UI.ALL);
         }
     }
 

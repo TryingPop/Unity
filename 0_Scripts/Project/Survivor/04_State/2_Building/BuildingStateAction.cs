@@ -9,8 +9,8 @@ using UnityEngine;
 public class BuildingStateAction : StateHandler<BuildingAction>
 {
 
-    protected Dictionary<STATE_SELECTABLE, int> myActionNum;
-    protected Dictionary<STATE_SELECTABLE, int> MyActionNum
+    protected Dictionary<MY_STATE.GAMEOBJECT, int> myActionNum;
+    protected Dictionary<MY_STATE.GAMEOBJECT, int> MyActionNum
     {
 
         get
@@ -19,12 +19,12 @@ public class BuildingStateAction : StateHandler<BuildingAction>
             if (myActionNum == null)
             {
 
-                myActionNum = new Dictionary<STATE_SELECTABLE, int>(actions.Length);
+                myActionNum = new Dictionary<MY_STATE.GAMEOBJECT, int>(actions.Length);
 
                 for (int i = 0; i < actions.Length; i++)
                 {
 
-                    myActionNum.Add((STATE_SELECTABLE)(i + 1), i);
+                    myActionNum.Add((MY_STATE.GAMEOBJECT)(i + 1), i);
                 }
             }
 
@@ -32,7 +32,7 @@ public class BuildingStateAction : StateHandler<BuildingAction>
         }
     }
 
-    public int GetIdx(STATE_SELECTABLE _state)
+    public int GetIdx(MY_STATE.GAMEOBJECT _state)
     {
 
         return MyActionNum.ContainsKey(_state) ? MyActionNum[_state] : -1;
@@ -65,7 +65,7 @@ public class BuildingStateAction : StateHandler<BuildingAction>
         if (idx != -1) actions[idx].ForcedQuit(_building);
     }
 
-    public string GetStateName(STATE_SELECTABLE _state)
+    public string GetStateName(MY_STATE.GAMEOBJECT _state)
     {
 
         if (MyActionNum.ContainsKey(_state))

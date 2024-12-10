@@ -63,7 +63,7 @@ public class UnitAtk : IUnitAction
 
                         // 타겟이 공격 범위를 벗어난 경우
                         _unit.Target = null;
-                        OnExit(_unit, STATE_SELECTABLE.UNIT_ATTACK);
+                        OnExit(_unit, MY_STATE.GAMEOBJECT.UNIT_ATTACK);
                     }
                 }
                 else
@@ -104,7 +104,7 @@ public class UnitAtk : IUnitAction
 
                 // 대상을 잡았을 경우 다시 Attack상태에 진입하게 한다!
                 _unit.Target = null;
-                OnExit(_unit, STATE_SELECTABLE.UNIT_ATTACK);
+                OnExit(_unit, MY_STATE.GAMEOBJECT.UNIT_ATTACK);
             }
 
             return;
@@ -126,7 +126,7 @@ public class UnitAtk : IUnitAction
         _unit.MyAnimator.SetFloat("Move", 1f);
     }
 
-    protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
+    protected override void OnExit(Unit _unit, MY_STATE.GAMEOBJECT _nextState = MY_STATE.GAMEOBJECT.NONE)
     {
 
         base.OnExit(_unit, _nextState);

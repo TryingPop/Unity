@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static MY_TYPE;
 
 /// <summary>
 /// 미션
@@ -24,24 +25,23 @@ public abstract class Mission : MonoBehaviour
     // [SerializeField] protected bool isHidden;               // 숨겨진 미션 >> 숨겨진 경우 표현 X
     // [SerializeField] protected bool isWin;                  // 승패 미션 여부
     // [SerializeField] protected bool isRemove;
-    [SerializeField] protected TYPE_MISSION myType;
-    protected int typeNum;
+    [SerializeField] protected MISSION myType;
     [SerializeField] protected string missionName;
 
-    public bool IsMain { get { return (typeNum & (1 << 0)) != 0; } }
-    public bool IsSub { get { return (typeNum & (1 << 1)) != 0; } }
-    public bool IsHidden { get { return (typeNum & (1 << 2)) != 0; } }
-    public bool IsEvent { get { return (typeNum & (1 << 3)) != 0; } }
-    public bool IsEnd { get { return (typeNum & (1 << 4)) != 0; } }
-    public bool IsRemove { get { return (typeNum & (1 << 5)) != 0; } }
-    public bool IsRepeat { get { return (typeNum & (1 << 6)) != 0; } }
-    public bool IsWin { get { return (typeNum & (1 << 7)) != 0; } }
+    public bool IsMain { get { return (myType & MISSION.MAIN) != MISSION.NONE; } }
+    public bool IsSub { get { return (myType & MISSION.SUB) != MISSION.NONE; } }
+    public bool IsHidden { get { return (myType & MISSION.HIDDEN) != MISSION.NONE; } }
+    public bool IsEvent { get { return (myType & MISSION.EVENT) != MISSION.NONE; } }
+    public bool IsEnd { get { return (myType & MISSION.END) != MISSION.NONE; } }
+    public bool IsRemove { get { return (myType & MISSION.REMOVE) != MISSION.NONE; } }
+    public bool IsRepeat { get { return (myType & MISSION.REPEAT) != MISSION.NONE; } }
+    public bool IsWin { get { return (myType & MISSION.WIN) != MISSION.NONE; } }
     
 
 
     public abstract bool IsSuccess { get; }
 
-    public TYPE_MISSION MyType => myType;
+    public MISSION MyType => myType;
 
     /// <summary>
     /// 미션 시작시 할꺼

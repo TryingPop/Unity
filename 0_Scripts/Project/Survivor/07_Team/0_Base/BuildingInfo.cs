@@ -13,8 +13,8 @@ using UnityEngine;
 public class BuildingInfo
 {
 
-    [SerializeField] private LimitData[] buildings;
-    private Dictionary<TYPE_SELECTABLE, LimitData> dic;
+    [SerializeField] private LimitObject[] buildings;
+    private Dictionary<MY_TYPE.GAMEOBJECT, LimitData> dic;
 
     public void Init()
     {
@@ -28,12 +28,12 @@ public class BuildingInfo
         }
     }
 
-    public bool Contains(TYPE_SELECTABLE _type) => dic.ContainsKey(_type);
+    public bool Contains(MY_TYPE.GAMEOBJECT _type) => dic.ContainsKey(_type);
 
     /// <summary>
     /// 건물 추가
     /// </summary>
-    public void AddBuilding(TYPE_SELECTABLE _type, bool _add)
+    public void AddBuilding(MY_TYPE.GAMEOBJECT _type, bool _add)
     {
 
         if (_add) dic[_type].AddVal(1);
@@ -43,13 +43,13 @@ public class BuildingInfo
     /// <summary>
     /// 제한 늘리기
     /// </summary>
-    public void AddMaxBuilding(TYPE_SELECTABLE _type, int _add = 1)
+    public void AddMaxBuilding(MY_TYPE.GAMEOBJECT _type, int _add = 1)
     {
 
         if (dic.ContainsKey(_type)) dic[_type].AddMax(_add);
     }
 
-    public bool ChkAdd(TYPE_SELECTABLE _type)
+    public bool ChkAdd(MY_TYPE.GAMEOBJECT _type)
     {
 
         return dic[_type].ChkAdd();

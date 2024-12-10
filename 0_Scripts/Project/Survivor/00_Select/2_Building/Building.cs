@@ -45,13 +45,18 @@ public class Building : BaseObj
     public override bool FullHp => curHp == MaxHp;
 
     public override int MaxHp => myTeam == null ? 
-        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_HP));
+        myStat.GetMaxHp(0) : myStat.GetMaxHp(myTeam.GetLvl(MY_TYPE.UPGRADE.BUILDING_HP));
 
     public override int Def => myTeam == null ? 
-        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(TYPE_SELECTABLE.UP_BUILDING_DEF));
+        myStat.GetDef(0) : myStat.GetDef(myTeam.GetLvl(MY_TYPE.UPGRADE.BUILDING_DEF));
 
     protected void Awake()
     {
+
+#if UNITY_EDITOR
+
+        Debug.Log($"{name} : Awake");
+#endif
 
         if (cmds == null) cmds = new List<Command>(VarianceManager.MAX_RESERVE_COMMANDS);
 
@@ -68,14 +73,23 @@ public class Building : BaseObj
     {
 
         Init();
+
+#if UNITY_EDITOR
+
+        Debug.Log($"{name} : after - {myState}");
+#endif
     }
 
     protected override void Init()
     {
 
-        myState = STATE_SELECTABLE.BUILDING_UNFINISHED;
+        myState = MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED;
 
-        ChkBuilding(true);
+#if UNITY_EDITOR
+
+        Debug.Log($"{name} : before - {myState}");
+#endif
+        ChkBuilding();
         ChkTeamStat();
     }
 
@@ -85,11 +99,12 @@ public class Building : BaseObj
         if (opt.BuildTurn == 0 || _forcedCompleted)
         {
 
-            myState = STATE_SELECTABLE.NONE;
+            myState = MY_STATE.GAMEOBJECT.NONE;
             if (myStat.MaxHp != VarianceManager.INFINITE) curHp = myStat.MaxHp;
             Vector3 pos = buildingObj.localPosition;
             pos.y = opt.InitPosY + opt.IncreaseY;
             buildingObj.localPosition = pos;
+            ActionManager.instance.AddBuilding(this);
         }
         else
         {
@@ -107,7 +122,7 @@ public class Building : BaseObj
 
         myTeam = TeamManager.instance.GetTeamInfo(myLayer);
 
-        ActionManager.instance.AddBuilding(this);
+        // ActionManager.instance.AddBuilding(this);
         UIManager.instance.AddHitBar(this);
 
         Color teamColor;
@@ -126,11 +141,11 @@ public class Building : BaseObj
     public override void Action()
     {
 
-        if (myState == STATE_SELECTABLE.DEAD
-            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return;
+        if (myState == MY_STATE.GAMEOBJECT.DEAD
+            || myState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED) return;
 
         if (cmds.Count > 0
-            && myState == STATE_SELECTABLE.NONE)
+            && myState == MY_STATE.GAMEOBJECT.NONE)
         {
             
             ChkReservedCommand();
@@ -154,11 +169,11 @@ public class Building : BaseObj
             myObstacle.carving = true;
             mySight.SetSize(myStat.MySize * 2);
             height = opt.IncreaseY;
-            myState = STATE_SELECTABLE.NONE;
+            myState = MY_STATE.GAMEOBJECT.NONE;
 
             // 인구 추가는 완성시에 추가된다
             if (myStat.Supply < 0) ChkSupply(false);
-
+            ActionManager.instance.AddBuilding(this);
 
             StartCoroutine(FinishedBuildCoroutine());
             if (PlayerManager.instance.curGroup.Contains(this)) PlayerManager.instance.ChkUIs();
@@ -196,7 +211,7 @@ public class Building : BaseObj
     public override void Heal(int _atk)
     {
 
-        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
+        if (myState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED)
         {
 
             Build();
@@ -247,7 +262,6 @@ public class Building : BaseObj
         myStateAction.ForcedQuit(this);
 
         // 상태 변경 전이다
-        
         ResetTeamStat();
         for (int i = 0; i < cmds.Count; i++)
         {
@@ -289,8 +303,8 @@ public class Building : BaseObj
 
         string hp = myStat.MaxHp == VarianceManager.INFINITE ? "Infinity" : $"{curHp} / {MaxHp}";
         
-        if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
-        else if (myState == STATE_SELECTABLE.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
+        if (myState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED) _txt.text = $"건설 : {100 * curBuildTurn / opt.BuildTurn}%\n체력 : {hp}";
+        else if (myState == MY_STATE.GAMEOBJECT.NONE) _txt.text = $"명령 대기 중\n체력 : {hp}";
         else if (maxTurn != 0) _txt.text = $"{myStateAction.GetStateName(myState)} : {100 * myTurn / maxTurn}%\n체력 : {hp}";
         else _txt.text = $"{myStateAction.GetStateName(myState)}\n체력 : {hp}";
 
@@ -307,7 +321,7 @@ public class Building : BaseObj
         // 먼저 상태 체크부터.. 해야할 필요가 있다;
         // 즉시 실행해야 하는 명령인지부터 확인
         var type = _cmd.type;
-        if (type == STATE_SELECTABLE.MOUSE_R)
+        if (type == MY_STATE.GAMEOBJECT.MOUSE_R)
         {
 
             // 바로 읽으므로 읽을 수 있는지 체크
@@ -318,13 +332,13 @@ public class Building : BaseObj
             
             return;
         }
-        else if (type == STATE_SELECTABLE.BUILDING_CANCEL)
+        else if (type == MY_STATE.GAMEOBJECT.CANCEL)
         {
 
             // 바로 읽어서 사용하므로 읽을 수 있는지 체크
             if (_cmd.ChkUsedCommand(0)) return;
 
-            if (myState == STATE_SELECTABLE.BUILDING_UNFINISHED)
+            if (myState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED)
             {
 
                 // 기본 40% 환불!
@@ -358,8 +372,8 @@ public class Building : BaseObj
     protected override bool ChkCommand(Command _cmd)
     {
 
-        if (myState == STATE_SELECTABLE.DEAD
-            || myState == STATE_SELECTABLE.BUILDING_UNFINISHED) return false;
+        if (myState == MY_STATE.GAMEOBJECT.DEAD
+            || myState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED) return false;
 
         return true;
     }

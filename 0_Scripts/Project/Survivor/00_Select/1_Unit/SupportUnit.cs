@@ -14,13 +14,13 @@ public class SupportUnit : Unit
     {
 
         int temp = 0;
-        if (myTeam != null) myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_HP);
+        if (myTeam != null) myTeam.GetLvl(MY_TYPE.UPGRADE.UNIT_HP);
 
         int maxHp = myStat.GetMaxHp(temp);
         string strHp = maxHp == VarianceManager.INFINITE ? "Infinity"
             : temp == 0 ? $"{curHp} / {maxHp}" : $"{curHp} / {maxHp}(+{temp})";
 
-        if (myTeam != null) temp = myTeam.GetLvl(TYPE_SELECTABLE.UP_UNIT_DEF);
+        if (myTeam != null) temp = myTeam.GetLvl(MY_TYPE.UPGRADE.UNIT_DEF);
         else temp = 0;
 
         string strDef = temp == 0 ? myStat.Def.ToString() : $"{myStat.GetDef(temp)}(+{temp})";
@@ -35,11 +35,11 @@ public class SupportUnit : Unit
 
         if (_cmd.ChkUsedCommand(myStat.MySize)) return;
 
-        STATE_SELECTABLE type = _cmd.type;
+        MY_STATE.GAMEOBJECT type = _cmd.type;
 
         // 마우스 R인 경우 명령을 바꾼다!
-        if (type == STATE_SELECTABLE.MOUSE_R)
-            type = STATE_SELECTABLE.UNIT_MOVE;
+        if (type == MY_STATE.GAMEOBJECT.MOUSE_R)
+            type = MY_STATE.GAMEOBJECT.UNIT_MOVE;
 
         myState = type;
         target = _cmd.target != transform ? _cmd.target : null;
@@ -57,6 +57,6 @@ public class SupportUnit : Unit
         // 공격을 못하면 반대 방향으로 도주!
         Vector3 dir = (transform.position - _trans.position).normalized;
         targetPos = transform.position + dir * myAgent.speed;
-        ActionDone(STATE_SELECTABLE.UNIT_MOVE);
+        ActionDone(MY_STATE.GAMEOBJECT.UNIT_MOVE);
     }
 }

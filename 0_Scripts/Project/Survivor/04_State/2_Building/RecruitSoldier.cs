@@ -79,7 +79,7 @@ public class RecruitSoldier : BuildingAction
             if (unit)
             {
 
-                Command cmd = Command.GetCommand(1, STATE_SELECTABLE.MOUSE_R, _building.TargetPos, _building.Target);
+                Command cmd = Command.GetCommand(1, MY_STATE.GAMEOBJECT.MOUSE_R, _building.TargetPos, _building.Target);
                 unit.GetCommand(cmd);  
             }
             else

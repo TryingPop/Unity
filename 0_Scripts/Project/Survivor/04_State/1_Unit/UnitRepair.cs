@@ -6,6 +6,8 @@ using UnityEngine;
 public class UnitRepair : IUnitAction
 {
 
+    [SerializeField] Attack repair;
+
     public override void Action(Unit _unit)
     {
 
@@ -21,22 +23,21 @@ public class UnitRepair : IUnitAction
         // 길 찾기 연산 중이면 행동 안함
         if (_unit.MyAgent.pathPending) return;
 
-        Attack unitAttack = _unit.MyAttack;
-
-        float sqrRepairDis = unitAttack.atkRange + (_unit.Target.MyStat.MySize * 0.5f);
+        float sqrRepairDis = repair.atkRange + (_unit.Target.MyStat.MySize * 0.5f);
         sqrRepairDis = sqrRepairDis * sqrRepairDis;
 
         if (Vector3.SqrMagnitude(_unit.transform.position - _unit.Target.transform.position) < sqrRepairDis)
         {
 
-            // 수리 거리 안인지 확인
+            // 수리 거리 안에 있는 경우
+            MY_STATE.GAMEOBJECT targetState = _unit.Target.MyState;
 
-            STATE_SELECTABLE targetState = _unit.Target.MyState;
-            if (targetState == STATE_SELECTABLE.BUILDING_UNFINISHED)
-            {
-
-                //건설 해야하는 상태
+            //건설 해야하는 상태
+            if (targetState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED)
+            { 
+                
                 _unit.Target.Heal(0);
+                return;
             }
 
             // 수리인 경우
@@ -55,17 +56,17 @@ public class UnitRepair : IUnitAction
 
                 // 후연산으로 변경 1을 카운팅 못한다!
                 int turn = _unit.MyTurn++;
-                if (unitAttack.StartAnimTime(turn))
+                if (repair.StartAnimTime(turn))
                 {
 
                     _unit.MyAnimator.SetTrigger("Skill0");
                     _unit.MyStateSong();
                 }
-                else if (unitAttack.AtkTime(turn) == 1)
+                else if (repair.AtkTime(turn) == 1)
                 {
 
                     _unit.MyTurn = 0;
-                    if (targetState != STATE_SELECTABLE.BUILDING_UNFINISHED) unitAttack.OnAttack(_unit);
+                    if (targetState != MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED) repair.OnAttack(_unit);
                 }
 
                 // 수리 다됐으면 상태 탈출
@@ -77,16 +78,22 @@ public class UnitRepair : IUnitAction
 
         if (!_unit.MyAgent.updateRotation) _unit.MyAgent.updateRotation = true;
 
-        if (_unit.MyTurn < 5)
-        {
-
-            _unit.MyTurn++;
-        }
+        if (_unit.MyTurn < 5) _unit.MyTurn++;
         else _unit.MyAgent.SetDestination(_unit.Target.transform.position);
     }
 
     public override void OnEnter(Unit _unit)
     {
+
+#if UNITY_EDITOR
+
+        if (repair == null) 
+        { 
+            
+            Debug.LogWarning("수리에 수리량을 나타내는 공격이 없습니다.");
+            return; 
+        }
+#endif
 
         _unit.MyTurn = 0;
         if (_unit.Target == null) 
@@ -99,7 +106,7 @@ public class UnitRepair : IUnitAction
         _unit.MyAnimator.SetFloat("Move", 1f);
     }
 
-    protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
+    protected override void OnExit(Unit _unit, MY_STATE.GAMEOBJECT _nextState = MY_STATE.GAMEOBJECT.NONE)
     {
 
         base.OnExit(_unit, _nextState);

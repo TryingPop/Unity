@@ -6,7 +6,7 @@ using UnityEngine;
 public class BossNone : UnitAtkNone
 {
 
-    [SerializeField] protected STATE_SELECTABLE[] types;
+    [SerializeField] protected MY_STATE.GAMEOBJECT[] types;
     [SerializeField] protected int[] per;
 
     protected int len = 0;

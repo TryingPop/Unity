@@ -26,10 +26,7 @@ public class WaitTimeMission : Mission
     public override void Init()
     {
 
-        typeNum = (int)myType;
-
         isSuccess = false;
-
 
         if (startScripts != null) 
         { 

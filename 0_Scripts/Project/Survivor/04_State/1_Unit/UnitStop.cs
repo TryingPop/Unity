@@ -21,7 +21,7 @@ public class UnitStop : IUnitAction
         _unit.MyAnimator.SetFloat("Move", 0f);
     }
 
-    protected override void OnExit(Unit _unit, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
+    protected override void OnExit(Unit _unit, MY_STATE.GAMEOBJECT _nextState = MY_STATE.GAMEOBJECT.NONE)
     {
 
         _unit.MyAgent.ResetPath();

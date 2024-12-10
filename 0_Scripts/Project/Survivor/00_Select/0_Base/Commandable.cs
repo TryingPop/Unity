@@ -6,17 +6,17 @@ using UnityEngine.UI;
 public abstract class Commandable : MonoBehaviour, IInfoTxt, IActionable
 {
 
-    [SerializeField] protected STATE_SELECTABLE myState;
-    [SerializeField] protected TYPE_SELECTABLE myType;
+    [SerializeField] protected MY_STATE.GAMEOBJECT myState;
+    [SerializeField] protected MY_TYPE.GAMEOBJECT myType;
 
-    public STATE_SELECTABLE MyState
+    public MY_STATE.GAMEOBJECT MyState
     {
 
         get { return myState; }
         set { myState = value; }
     }
 
-    public TYPE_SELECTABLE MyType => myType;
+    public MY_TYPE.GAMEOBJECT MyType => myType;
 
     #region ÆÀ Á¤º¸
 

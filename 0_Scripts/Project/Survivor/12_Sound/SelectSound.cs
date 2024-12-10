@@ -7,6 +7,6 @@ using UnityEngine;
 public class SelectSound
 {
 
-    public STATE_SELECTABLE type;
+    public MY_STATE.GAMEOBJECT type;
     public AudioClip sound;
 }

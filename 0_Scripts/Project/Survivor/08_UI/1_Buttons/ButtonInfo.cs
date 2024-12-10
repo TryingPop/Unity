@@ -9,9 +9,9 @@ using UnityEngine.UI;
 public abstract class ButtonInfo : IAction<PlayerManager>
 {
 
-    [SerializeField] protected TYPE_INPUT btnKey;
+    [SerializeField] protected MY_STATE.INPUT btnKey;
     [SerializeField] protected Sprite btnSprite;
-    [SerializeField] protected STATE_SELECTABLE cmdType;
+    [SerializeField] protected MY_STATE.GAMEOBJECT cmdType;
 
     [SerializeField] protected string title;
     [SerializeField] protected Vector2 infoSize;
@@ -49,7 +49,7 @@ public abstract class ButtonInfo : IAction<PlayerManager>
         }
     }
 
-    public TYPE_INPUT BtnKey => btnKey;
+    public MY_STATE.INPUT BtnKey => btnKey;
 
     public int CmdType => (int)cmdType;
     public Sprite BtnSprite => btnSprite;
@@ -58,7 +58,7 @@ public abstract class ButtonInfo : IAction<PlayerManager>
     /// <summary>
     /// 외부에서는 강제 탈출할 때 사용하는 메서드
     /// </summary>
-    public virtual void OnExit(PlayerManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
+    public virtual void OnExit(PlayerManager _inputManager, MY_STATE.INPUT _nextKey = MY_STATE.INPUT.NONE)
     {
 
         _inputManager.ActionDone(_nextKey);

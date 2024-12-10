@@ -6,8 +6,8 @@ using UnityEngine;
 public class UnitStateAction : StateHandler<IUnitAction>
 {
 
-    protected Dictionary<STATE_SELECTABLE, int> myActionNum;
-    protected Dictionary<STATE_SELECTABLE, int> MyActionNum
+    protected Dictionary<MY_STATE.GAMEOBJECT, int> myActionNum;
+    protected Dictionary<MY_STATE.GAMEOBJECT, int> MyActionNum
     {
 
         get
@@ -16,11 +16,11 @@ public class UnitStateAction : StateHandler<IUnitAction>
             if (myActionNum == null)
             {
 
-                myActionNum = new Dictionary<STATE_SELECTABLE, int>(actions.Length);
+                myActionNum = new Dictionary<MY_STATE.GAMEOBJECT, int>(actions.Length);
                 for (int i = 0; i < actions.Length; i++)
                 {
 
-                    myActionNum.Add((STATE_SELECTABLE)i, i);
+                    myActionNum.Add((MY_STATE.GAMEOBJECT)i, i);
                 }
             }
 
@@ -28,7 +28,7 @@ public class UnitStateAction : StateHandler<IUnitAction>
         }
     }
 
-    public int GetIdx(STATE_SELECTABLE _state)
+    public int GetIdx(MY_STATE.GAMEOBJECT _state)
     {
 
         return MyActionNum.ContainsKey(_state) ? myActionNum[_state] : -1;
@@ -59,7 +59,7 @@ public class UnitStateAction : StateHandler<IUnitAction>
         // else Debug.Log($"{gameObject.name}의 {(STATE_UNIT)_unit.MyState} 행동이 없습니다.");
     }
 
-    public string GetStateName(STATE_SELECTABLE _state)
+    public string GetStateName(MY_STATE.GAMEOBJECT _state)
     {
 
         if (MyActionNum.ContainsKey(_state))

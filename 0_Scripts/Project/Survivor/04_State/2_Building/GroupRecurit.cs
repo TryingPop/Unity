@@ -55,7 +55,7 @@ public class GroupRecurit : BuildingAction
                 {
 
                     // 목표 지점 이동 명령어
-                    Command cmd = Command.GetCommand(1, STATE_SELECTABLE.UNIT_MOVE, _building.TargetPos, _building.Target);
+                    Command cmd = Command.GetCommand(1, MY_STATE.GAMEOBJECT.UNIT_MOVE, _building.TargetPos, _building.Target);
                     unit.GetCommand(cmd);
                 }
             }

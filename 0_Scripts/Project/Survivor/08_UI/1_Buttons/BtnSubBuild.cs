@@ -52,7 +52,7 @@ public class BtnSubBuild : ButtonInfo
         }
     }
 
-    public override void OnExit(PlayerManager _inputManager, TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
+    public override void OnExit(PlayerManager _inputManager, MY_STATE.INPUT _nextKey = MY_STATE.INPUT.NONE)
     {
 
         // OnEnter에서 걸러지기에 null 체크 안한다!

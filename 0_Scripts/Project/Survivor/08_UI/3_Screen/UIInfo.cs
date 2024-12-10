@@ -14,8 +14,8 @@ public class UIInfo : MonoBehaviour, Follower
     public RectTransform txtRectTrans;      // 위치
     public IInfoTxt target;                 // 설명할 대상
 
-    private TYPE_INFO myType;
-    public TYPE_INFO MyType => myType;
+    private MY_TYPE.UI myType;
+    public MY_TYPE.UI MyType => myType;
 
     public void SetPos()
     {
@@ -26,7 +26,7 @@ public class UIInfo : MonoBehaviour, Follower
     /// <summary>
     /// 유닛 슬롯에 들어가면 활성화!
     /// </summary>
-    public void EnterUIInfo(IInfoTxt _target, Vector2 _uiPos, TYPE_INFO _type)
+    public void EnterUIInfo(IInfoTxt _target, Vector2 _uiPos, MY_TYPE.UI _type)
     {
 
         infoCanvas.enabled = true;
@@ -49,13 +49,13 @@ public class UIInfo : MonoBehaviour, Follower
         infoCanvas.enabled = false;
     }
 
-    public bool IsUpdateType(TYPE_INFO _chkType)
+    public bool IsUpdateType(MY_TYPE.UI _chkType)
     {
 
         switch (_chkType) 
         {
 
-            case TYPE_INFO.SLOT:
+            case MY_TYPE.UI.SLOT:
             // 더 생기면 여기에 추가
                 return true;
 

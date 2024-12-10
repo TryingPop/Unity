@@ -105,7 +105,7 @@ public abstract class Attack : ScriptableObject
     public int CalcUnitAtk(TeamInfo _team)
     {
 
-        int lvl = _team == null ? 0 : _team.GetLvl(TYPE_SELECTABLE.UP_UNIT_ATK);
+        int lvl = _team == null ? 0 : _team.GetLvl(MY_TYPE.UPGRADE.UNIT_ATK);
         return GetAtk(lvl);
     }
 }

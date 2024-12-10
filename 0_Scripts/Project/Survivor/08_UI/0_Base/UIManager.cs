@@ -305,7 +305,7 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void EnterInfo(IInfoTxt _target, Vector2 _uiPos, TYPE_INFO _type)
+    public void EnterInfo(IInfoTxt _target, Vector2 _uiPos, MY_TYPE.UI _type)
     {
 
         activeInfo = info.IsUpdateType(_type);
@@ -314,11 +314,11 @@ public class UIManager : MonoBehaviour
         ChkBoundary(info.txtRectTrans);
     }
 
-    public void ExitInfo(TYPE_INFO _type)
+    public void ExitInfo(MY_TYPE.UI _type)
     {
 
         // 타입이 같아야 종료!
-        if (_type == TYPE_INFO.ALL
+        if (_type == MY_TYPE.UI.ALL
             || info.MyType == _type)
         {
 

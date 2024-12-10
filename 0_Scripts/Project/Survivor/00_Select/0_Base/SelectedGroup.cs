@@ -13,7 +13,7 @@ public class SelectedGroup
     // ctrl + 1 ~ 3 
     private List<List<BaseObj>> saved;
 
-    private TYPE_SELECTABLE groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
+    private MY_TYPE.GAMEOBJECT groupType;                          // 그룹 타입 > 버튼 정보 받아오기!
     [SerializeField] private LayerMask commandLayer = 1 << VarianceManager.LAYER_PLAYER;
 
     private bool isCommandable;                                 // 명령 가능 판별
@@ -21,7 +21,7 @@ public class SelectedGroup
     
     public bool IsEmpty { get { return curSelected.Count == 0 ? true : false; } }  // 비었는지 확인
 
-    public TYPE_SELECTABLE GroupType => groupType;              // 외부는 읽기 전용
+    public MY_TYPE.GAMEOBJECT GroupType => groupType;              // 외부는 읽기 전용
 
     private bool IsBuildingType
     {
@@ -31,8 +31,8 @@ public class SelectedGroup
 
             int typeNum = GetBaseTypeNum(groupType);
 
-            return typeNum == (int)TYPE_SELECTABLE.BUILDING
-                || typeNum == (int)TYPE_SELECTABLE.UNFINISHED_BUILDING;
+            return typeNum == (int)MY_TYPE.GAMEOBJECT.BUILDING
+                || typeNum == (int)MY_TYPE.GAMEOBJECT.UNFINISHED_BUILDING;
         }
     }
 
@@ -48,7 +48,7 @@ public class SelectedGroup
             for (int i = 0; i < curSelected.Count; i++)
             {
 
-                if (curSelected[i].MyState != STATE_SELECTABLE.BUILDING_UNFINISHED)
+                if (curSelected[i].MyState != MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED)
                 {
 
                     return false;
@@ -223,7 +223,7 @@ public class SelectedGroup
         if (curSelected.Count == 0)
         {
 
-            groupType = TYPE_SELECTABLE.NONE;
+            groupType = MY_TYPE.GAMEOBJECT.NONE;
             return;
         }
         
@@ -233,7 +233,7 @@ public class SelectedGroup
         {
 
 
-            TYPE_SELECTABLE type = curSelected[i].MyStat.MyType;
+            MY_TYPE.GAMEOBJECT type = curSelected[i].MyStat.MyType;
             
             int groupNum = GetBaseTypeNum(groupType);
             int typeNum = GetBaseTypeNum(type);
@@ -241,27 +241,27 @@ public class SelectedGroup
             if (groupType == type) continue;
 
             // 그룹 타입이 같은지 확인
-            if (groupNum == typeNum) groupType = (TYPE_SELECTABLE)groupNum;
+            if (groupNum == typeNum) groupType = (MY_TYPE.GAMEOBJECT)groupNum;
                 
             // 전투 유닛과 비전투 유닛이 섞인 그룹이면 비전투 유닛 버튼을 준다
-            else if ((groupNum == (int)TYPE_SELECTABLE.UNIT && typeNum == (int)TYPE_SELECTABLE.NONCOMBAT)
-                || (groupNum == (int)TYPE_SELECTABLE.NONCOMBAT && typeNum == (int)TYPE_SELECTABLE.UNIT)) groupType = TYPE_SELECTABLE.NONCOMBAT;
+            else if ((groupNum == (int)MY_TYPE.GAMEOBJECT.COMBAT_UNIT && typeNum == (int)MY_TYPE.GAMEOBJECT.SUPPORT_UNIT)
+                || (groupNum == (int)MY_TYPE.GAMEOBJECT.SUPPORT_UNIT && typeNum == (int)MY_TYPE.GAMEOBJECT.COMBAT_UNIT)) groupType = MY_TYPE.GAMEOBJECT.SUPPORT_UNIT;
 
             else
             {
 
                 // 건물과 유닛이 섞여있는 경우 NONE 이고 바로 탈출한다
-                groupType = TYPE_SELECTABLE.NONE;
+                groupType = MY_TYPE.GAMEOBJECT.NONE;
                 return;
             }
         }
 
         // 마지막으로 건물이면 미완성 타입인지 확인
-        if (IsBuildingType && IsUnfinishedbuildType) groupType = TYPE_SELECTABLE.UNFINISHED_BUILDING;
+        if (IsBuildingType && IsUnfinishedbuildType) groupType = MY_TYPE.GAMEOBJECT.UNFINISHED_BUILDING;
     }
 
 
-    private int GetBaseTypeNum(TYPE_SELECTABLE _type)
+    private int GetBaseTypeNum(MY_TYPE.GAMEOBJECT _type)
     {
 
         // 100 미만의 숫자들은 각 타입의 Base 타입을 나타내는데, 해당 타입을 찾아준다
@@ -408,7 +408,7 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    public void GiveCommand(STATE_SELECTABLE _type, Vector3 _pos, BaseObj _trans = null, bool _add = false, int _num = -1)
+    public void GiveCommand(MY_STATE.GAMEOBJECT _type, Vector3 _pos, BaseObj _trans = null, bool _add = false, int _num = -1)
     {
 
         // 선택된 유닛이 없는 경우 명령 생성 안한다!
@@ -444,7 +444,7 @@ public class SelectedGroup
     /// <summary>
     /// 명령하기
     /// </summary>
-    public void GiveCommand(STATE_SELECTABLE _type, bool _add, int _num = -1)
+    public void GiveCommand(MY_STATE.GAMEOBJECT _type, bool _add, int _num = -1)
     {
 
         // 선택된 유닛이 없는 경우 명령 생성을 안한다!

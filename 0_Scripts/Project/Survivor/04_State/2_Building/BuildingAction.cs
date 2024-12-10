@@ -19,7 +19,7 @@ public class BuildingAction : IAction<Building>
         _building.MyTurn = 0;
     }
 
-    protected virtual void OnExit(Building _building, STATE_SELECTABLE _nextState = STATE_SELECTABLE.NONE)
+    protected virtual void OnExit(Building _building, MY_STATE.GAMEOBJECT _nextState = MY_STATE.GAMEOBJECT.NONE)
     {
 
         _building.MyState = _nextState;

@@ -99,10 +99,7 @@ public class PoolManager : MonoBehaviour
 
         var go = GetPrefabs(_idx, _layer);
         if (go)
-        {
-
             go.transform.position = _pos;
-        }
 
         return go;
     }

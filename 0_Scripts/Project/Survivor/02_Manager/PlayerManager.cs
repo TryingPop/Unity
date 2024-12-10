@@ -20,9 +20,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private LayerMask selectLayer;     // 타겟팅 레이어
     [SerializeField] private LayerMask groundLayer;     // 좌표 레이어
 
-    [SerializeField] private TYPE_INPUT myState;
+    [SerializeField] private MY_STATE.INPUT myState;
 
-    private STATE_SELECTABLE cmdType;
+    private MY_STATE.GAMEOBJECT cmdType;
 
     [SerializeField] private UIButton btns;
 
@@ -123,7 +123,7 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    public TYPE_INPUT MyState
+    public MY_STATE.INPUT MyState
     {
 
         get { return myState; }
@@ -136,14 +136,14 @@ public class PlayerManager : MonoBehaviour
             if (!curGroup.IsCommandable)
             {
 
-                myState = TYPE_INPUT.NONE;
+                myState = MY_STATE.INPUT.NONE;
                 return;
             }
 
-            if (value == TYPE_INPUT.CANCEL)
+            if (value == MY_STATE.INPUT.CANCEL)
             {
 
-                UIManager.instance.ExitInfo(TYPE_INFO.BTN);
+                UIManager.instance.ExitInfo(MY_TYPE.UI.BTN);
                 Cancel();
                 return;
             }
@@ -152,11 +152,11 @@ public class PlayerManager : MonoBehaviour
 
             myState = value;
             MyHandler.Changed(this);
-            UIManager.instance.ExitInfo(TYPE_INFO.BTN);              // 켜져 있으면 끈다
+            UIManager.instance.ExitInfo(MY_TYPE.UI.BTN);              // 켜져 있으면 끈다
         }
     }
 
-    public STATE_SELECTABLE CmdType { set { cmdType = value; } }
+    public MY_STATE.GAMEOBJECT CmdType { set { cmdType = value; } }
 
     public bool IsSubBtn => isSubBtn;
 
@@ -206,7 +206,7 @@ public class PlayerManager : MonoBehaviour
         if (inputManager.IsSaveGroup) SaveGroup(inputManager.SaveGroup);
     }
 
-    private bool ChkReturn(TYPE_INPUT _key)
+    private bool ChkReturn(MY_STATE.INPUT _key)
     {
 
         if (curGroup.GetSize() == 0
@@ -215,10 +215,10 @@ public class PlayerManager : MonoBehaviour
         {
 
             // 버튼에 등록안된 키
-            myState = TYPE_INPUT.NONE;
+            myState = MY_STATE.INPUT.NONE;
             return true;
         }
-        else if (myState != TYPE_INPUT.NONE) return true;
+        else if (myState != MY_STATE.INPUT.NONE) return true;
 
         return false;
     }
@@ -232,7 +232,7 @@ public class PlayerManager : MonoBehaviour
         {
 
             // 서브 행동 중이면 해당 서브 행동만 강제 탈출
-            if (myState != TYPE_INPUT.NONE)
+            if (myState != MY_STATE.INPUT.NONE)
             {
 
                 subHandler.ForcedQuit(this);
@@ -247,7 +247,7 @@ public class PlayerManager : MonoBehaviour
         { 
             
             mainHandler?.ForcedQuit(this);
-            if (curGroup.IsCancelBtn) curGroup.GiveCommand(STATE_SELECTABLE.BUILDING_CANCEL, inputManager.AddKey);
+            if (curGroup.IsCancelBtn) curGroup.GiveCommand(MY_STATE.GAMEOBJECT.CANCEL, inputManager.AddKey);
             ActiveBtns(true, false, false);
         }
     }
@@ -284,7 +284,7 @@ public class PlayerManager : MonoBehaviour
         else _pos = new Vector3(0, -100f, 0f);
     }
 
-    public void ActionDone(TYPE_INPUT _nextKey = TYPE_INPUT.NONE)
+    public void ActionDone(MY_STATE.INPUT _nextKey = MY_STATE.INPUT.NONE)
     {
 
         myState = _nextKey;
@@ -319,10 +319,10 @@ public class PlayerManager : MonoBehaviour
     private void ResetCmd()
     {
 
-        cmdType = STATE_SELECTABLE.NONE;
+        cmdType = MY_STATE.GAMEOBJECT.NONE;
         cmdPos.Set(0f, -100f, 0f);
         cmdTarget = null;
-        myState = TYPE_INPUT.NONE;
+        myState = MY_STATE.INPUT.NONE;
         ActiveBtns(true, false, false);
     }
 
@@ -335,7 +335,7 @@ public class PlayerManager : MonoBehaviour
         if (!curGroup.IsCommandable) return;
 
         savePos = _pos;
-        cmdType = STATE_SELECTABLE.MOUSE_R;
+        cmdType = MY_STATE.GAMEOBJECT.MOUSE_R;
         SavePointToRay(true, true);
         GiveCmd(true, true);
     }
@@ -533,7 +533,7 @@ public class PlayerManager : MonoBehaviour
 
         // 버튼 활성화 수정
         ActiveBtns(true, false, curGroup.IsCancelBtn);
-        UIManager.instance.ExitInfo(TYPE_INFO.ALL);
+        UIManager.instance.ExitInfo(MY_TYPE.UI.ALL);
 
         if (chkSelect != null) chkSelect(0);
     }

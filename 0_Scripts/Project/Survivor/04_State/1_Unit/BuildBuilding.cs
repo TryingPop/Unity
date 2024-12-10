@@ -18,7 +18,7 @@ public class BuildBuilding : IUnitAction
         if (_unit.Target == null)
         {
          
-            OnExit(_unit, STATE_SELECTABLE.NONE);
+            OnExit(_unit, MY_STATE.GAMEOBJECT.NONE);
             return;
         }
 
@@ -64,23 +64,22 @@ public class BuildBuilding : IUnitAction
                         
                         _unit.Target = _target;
                         _unit.TargetPos = _target.transform.position;
-                        OnExit(_unit, STATE_SELECTABLE.UNIT_REPAIR);
+                        OnExit(_unit, MY_STATE.GAMEOBJECT.UNIT_SKILL0);
                     }
+#if UNITY_EDITOR
+
+                    else
+                        Debug.LogWarning("건설할 대상이 없어 건물 건설을 실패했습니다.");
+#endif
                 }
                 else
-                {
-
                     // 건설자 외에 다른 게 있으면 못 짓는다
                     UIManager.instance.SetWarningText("해당 지점에 건설할 수 없습니다", Color.yellow, 2f);
-                    OnExit(_unit, STATE_SELECTABLE.NONE);
-                }
+                    OnExit(_unit, MY_STATE.GAMEOBJECT.NONE);
             }
             else
-            {
-
                 // 건설 못한 경우는 일반 상태로 탈출
-                OnExit(_unit, STATE_SELECTABLE.NONE);
-            }
+                OnExit(_unit, MY_STATE.GAMEOBJECT.NONE);
         }
 
     }

@@ -21,18 +21,18 @@ public class Command
     public Vector3 pos;                 // 명령의 목적지
     public BaseObj target;           // 명령의 표적
 
-    public STATE_SELECTABLE type;       // 명령 타입
+    public MY_STATE.GAMEOBJECT type;       // 명령 타입
 
     #region 생성자
     // 생성자
-    public Command(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, BaseObj _target = null)
+    public Command(int _unitNums, MY_STATE.GAMEOBJECT _type, Vector3 _pos, BaseObj _target = null)
     {
 
         Init(_unitNums, _type, _pos, _target);
     }
 
 
-    public Command(int _unitNums, STATE_SELECTABLE _type)
+    public Command(int _unitNums, MY_STATE.GAMEOBJECT _type)
     {
 
         Init(_unitNums, _type);
@@ -77,7 +77,7 @@ public class Command
     /// <summary>
     /// 초기화
     /// </summary>
-    public void Init(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, BaseObj _target = null)
+    public void Init(int _unitNums, MY_STATE.GAMEOBJECT _type, Vector3 _pos, BaseObj _target = null)
     {
 
         unitNums = (ushort)_unitNums;
@@ -91,7 +91,7 @@ public class Command
     /// <summary>
     /// 초기화
     /// </summary>
-    public void Init(int _unitNums, STATE_SELECTABLE _type)
+    public void Init(int _unitNums, MY_STATE.GAMEOBJECT _type)
     {
 
         unitNums = _unitNums;
@@ -155,7 +155,7 @@ public class Command
     /// <summary>
     /// 명령 생성, 여기서 풀링
     /// </summary>
-    public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type, Vector3 _pos, BaseObj _target = null)
+    public static Command GetCommand(int _unitNums, MY_STATE.GAMEOBJECT _type, Vector3 _pos, BaseObj _target = null)
     {
 
         if (pool == null) pool = new Stack<Command>(VarianceManager.MAX_SAVE_COMMANDS);
@@ -177,7 +177,7 @@ public class Command
     /// <summary>
     /// 명령 생성, 여기서 풀링
     /// </summary>
-    public static Command GetCommand(int _unitNums, STATE_SELECTABLE _type)
+    public static Command GetCommand(int _unitNums, MY_STATE.GAMEOBJECT _type)
     {
 
         if (pool == null) pool = new Stack<Command>(VarianceManager.MAX_SAVE_COMMANDS);

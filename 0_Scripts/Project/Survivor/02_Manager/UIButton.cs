@@ -7,7 +7,7 @@ using UnityEngine;
 public class UIButton : MonoBehaviour
 {
 
-    private Dictionary<TYPE_SELECTABLE, ButtonHandler> btnDict;
+    private Dictionary<MY_TYPE.GAMEOBJECT, ButtonHandler> btnDict;
     
     [SerializeField] private List<ButtonData> btns;
 
@@ -26,7 +26,7 @@ public class UIButton : MonoBehaviour
     private void Awake()
     {
         
-        btnDict = new Dictionary<TYPE_SELECTABLE, ButtonHandler>();
+        btnDict = new Dictionary<MY_TYPE.GAMEOBJECT, ButtonHandler>();
 
         for (int i = btns.Count - 1; i >= 0; i--)
         {
@@ -44,7 +44,7 @@ public class UIButton : MonoBehaviour
     /// <summary>
     /// 타입에 맞는 버튼 핸들러 반환
     /// </summary>
-    public ButtonHandler GetHandler(TYPE_SELECTABLE _type, bool _isCommandable)
+    public ButtonHandler GetHandler(MY_TYPE.GAMEOBJECT _type, bool _isCommandable)
     {
 
         if (!_isCommandable) return null;

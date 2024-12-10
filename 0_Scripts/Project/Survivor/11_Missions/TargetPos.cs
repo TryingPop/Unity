@@ -41,8 +41,6 @@ public class TargetPos : Mission
     public override void Init()
     {
         
-        typeNum = (int)myType;
-
         isSuccess = false;
         GetComponent<Collider>().enabled = true;
 
