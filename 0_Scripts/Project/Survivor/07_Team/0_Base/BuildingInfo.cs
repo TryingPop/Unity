@@ -14,7 +14,7 @@ public class BuildingInfo
 {
 
     [SerializeField] private LimitObject[] buildings;
-    private Dictionary<MY_TYPE.GAMEOBJECT, LimitData> dic;
+    private Dictionary<MY_TYPE.GAMEOBJECT, LimitObject> dic;
 
     public void Init()
     {

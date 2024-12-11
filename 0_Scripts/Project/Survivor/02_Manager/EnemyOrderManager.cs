@@ -183,6 +183,7 @@ public class EnemyOrderManager : MonoBehaviour
         initPos = new Vector3[3];
 
         Vector3 pos = enemyBuildings.First.transform.position;
+
         for (int i = 0; i < 3; i++)
         {
 

@@ -76,7 +76,7 @@ public class Building : BaseObj
 
 #if UNITY_EDITOR
 
-        Debug.Log($"{name} : after - {myState}");
+        Debug.Log($"{myTeam.TeamLayerNumber} - {name} : after - {myState}");
 #endif
     }
 
@@ -87,10 +87,10 @@ public class Building : BaseObj
 
 #if UNITY_EDITOR
 
-        Debug.Log($"{name} : before - {myState}");
+        Debug.Log($"{myTeam.TeamLayerNumber} - {name} : before - {myState}");
 #endif
-        ChkBuilding();
         ChkTeamStat();
+        ChkBuilding();
     }
 
     public void ChkBuilding(bool _forcedCompleted = false)

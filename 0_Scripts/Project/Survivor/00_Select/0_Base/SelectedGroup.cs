@@ -29,10 +29,8 @@ public class SelectedGroup
         get
         {
 
-            int typeNum = GetBaseTypeNum(groupType);
-
-            return typeNum == (int)MY_TYPE.GAMEOBJECT.BUILDING
-                || typeNum == (int)MY_TYPE.GAMEOBJECT.UNFINISHED_BUILDING;
+            return groupType == MY_TYPE.GAMEOBJECT.BUILDING
+                || groupType == MY_TYPE.GAMEOBJECT.UNFINISHED_BUILDING;
         }
     }
 
@@ -71,7 +69,7 @@ public class SelectedGroup
             for (int i = 0; i < curSelected.Count; i++)
             {
 
-                // if (curSelected[i].IsCancelBtn) return true;
+                if (curSelected[i].IsCancelBtn) return true;
             }
 
             return false;
@@ -232,43 +230,18 @@ public class SelectedGroup
         for (int i = 1; i < curSelected.Count; i++)
         {
 
-
             MY_TYPE.GAMEOBJECT type = curSelected[i].MyStat.MyType;
             
-            int groupNum = GetBaseTypeNum(groupType);
-            int typeNum = GetBaseTypeNum(type);
-
             if (groupType == type) continue;
-
-            // 그룹 타입이 같은지 확인
-            if (groupNum == typeNum) groupType = (MY_TYPE.GAMEOBJECT)groupNum;
-                
-            // 전투 유닛과 비전투 유닛이 섞인 그룹이면 비전투 유닛 버튼을 준다
-            else if ((groupNum == (int)MY_TYPE.GAMEOBJECT.COMBAT_UNIT && typeNum == (int)MY_TYPE.GAMEOBJECT.SUPPORT_UNIT)
-                || (groupNum == (int)MY_TYPE.GAMEOBJECT.SUPPORT_UNIT && typeNum == (int)MY_TYPE.GAMEOBJECT.COMBAT_UNIT)) groupType = MY_TYPE.GAMEOBJECT.SUPPORT_UNIT;
-
-            else
-            {
-
-                // 건물과 유닛이 섞여있는 경우 NONE 이고 바로 탈출한다
-                groupType = MY_TYPE.GAMEOBJECT.NONE;
-                return;
-            }
+            groupType &= type;
         }
 
         // 마지막으로 건물이면 미완성 타입인지 확인
         if (IsBuildingType && IsUnfinishedbuildType) groupType = MY_TYPE.GAMEOBJECT.UNFINISHED_BUILDING;
+
+        Debug.Log($"{curSelected.Count} : {groupType}");
     }
 
-
-    private int GetBaseTypeNum(MY_TYPE.GAMEOBJECT _type)
-    {
-
-        // 100 미만의 숫자들은 각 타입의 Base 타입을 나타내는데, 해당 타입을 찾아준다
-        int type = (int)_type;
-        if (type >= VarianceManager.TYPE_SELECTABLE_INTERVAL) return type /= VarianceManager.TYPE_SELECTABLE_INTERVAL;
-        else return type;
-    }
 
     // 유닛이 죽으면 해제되게 한다!
     public void DeSelect(BaseObj _select)

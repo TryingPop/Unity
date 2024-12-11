@@ -19,19 +19,19 @@ public static class MY_TYPE
 
         // 20 부터는 비트마스킹 i.e 최대 종류 100만개 제한이다.
         UNIT = 1 << 20,
-        SUPPORT_UNIT = 1 << 21,
-        COMBAT_UNIT = 1 << 22,
-        SKILL_UNIT = 1 << 23,
-        ANIMAL = 1 << 24,
+        SUPPORT_UNIT = UNIT | (1 << 21),
+        COMBAT_UNIT = UNIT | (1 << 22),
+        SKILL_UNIT = UNIT | (1 << 23),
+        ANIMAL = UNIT | (1 << 24),
 
         BUILDING = 1 << 25,
-        UNFINISHED_BUILDING = 1 << 26,
+        UNFINISHED_BUILDING = BUILDING | (1 << 26),
 
         // 유닛
-        WORKER = UNIT | SUPPORT_UNIT | 1,
-        CHICKEN = UNIT | ANIMAL | 1,
+        WORKER = SUPPORT_UNIT | 1,
+        CHICKEN = ANIMAL | 1,
 
-        BOSS_D = UNIT | SKILL_UNIT | 1,
+        BOSS_D = COMBAT_UNIT | SKILL_UNIT | 1,
 
         // 건물
         FARM = BUILDING | 1,

@@ -61,8 +61,6 @@ public class VarianceManager
     public static readonly int INIT_NEUTRAL_LIST_NUM = 20;
     public static readonly int INIT_ALLY_LIST_NUM = 10;
 
-    public static readonly int TYPE_SELECTABLE_INTERVAL = 100;
-
     public static readonly float REFUND_RATE = 0.6f;
 
     #endregion 기본 타입
