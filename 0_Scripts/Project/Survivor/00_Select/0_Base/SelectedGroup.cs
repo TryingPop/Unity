@@ -47,10 +47,7 @@ public class SelectedGroup
             {
 
                 if (curSelected[i].MyState != MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED)
-                {
-
                     return false;
-                }
             }
 
             return true;
@@ -66,13 +63,7 @@ public class SelectedGroup
         get
         {
 
-            for (int i = 0; i < curSelected.Count; i++)
-            {
-
-                if (curSelected[i].IsCancelBtn) return true;
-            }
-
-            return false;
+            return (groupType & MY_TYPE.GAMEOBJECT.BUILDING) != MY_TYPE.GAMEOBJECT.NONE;
         }
     }
 
@@ -211,6 +202,7 @@ public class SelectedGroup
             else if (curSelected.Count >= VarianceManager.MAX_SELECT) return;
         }
     }
+
     
     /// <summary>
     /// 외부에서 타입 체크!
@@ -227,19 +219,27 @@ public class SelectedGroup
         
         groupType = curSelected[0].MyStat.MyType;
 
+        bool multiFlag = true;
         for (int i = 1; i < curSelected.Count; i++)
         {
 
+            
             MY_TYPE.GAMEOBJECT type = curSelected[i].MyStat.MyType;
             
             if (groupType == type) continue;
+
+            if (multiFlag)
+            {
+
+                groupType &= MY_TYPE.GAMEOBJECT.MULTI;
+                multiFlag = false;
+            }
+            // 서로 다른게 섞이는 경우다
             groupType &= type;
         }
 
         // 마지막으로 건물이면 미완성 타입인지 확인
         if (IsBuildingType && IsUnfinishedbuildType) groupType = MY_TYPE.GAMEOBJECT.UNFINISHED_BUILDING;
-
-        Debug.Log($"{curSelected.Count} : {groupType}");
     }
 
 

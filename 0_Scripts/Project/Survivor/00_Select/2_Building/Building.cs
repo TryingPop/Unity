@@ -40,8 +40,6 @@ public class Building : BaseObj
         set { maxTurn = value; }
     }
 
-    public override bool IsCancelBtn => true;
-
     public override bool FullHp => curHp == MaxHp;
 
     public override int MaxHp => myTeam == null ? 

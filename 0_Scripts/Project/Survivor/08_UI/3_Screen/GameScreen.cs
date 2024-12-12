@@ -89,11 +89,8 @@ public class GameScreen : MonoBehaviour,
             PlayerManager playerManager = PlayerManager.instance;
 
             if (playerManager.MyState == MY_STATE.INPUT.NONE)
-            {
-
                 //명령 수행
                 playerManager.MouseRCmd(eventData.position);
-            }
             else playerManager.MyState = MY_STATE.INPUT.CANCEL;
         }
     }
@@ -158,12 +155,4 @@ public class GameScreen : MonoBehaviour,
 
         chkSelect = false;
     }
-
-    /*
-    public void OnGUI()
-    {
-
-        if (chkSelect) DrawRect.DrawDragScreenRect(clickPos, inputManager.MousePos);
-    }
-    */
 }

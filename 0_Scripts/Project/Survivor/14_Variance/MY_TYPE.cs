@@ -9,13 +9,16 @@ public static class MY_TYPE
 {
 
     /// <summary>
-    /// 종류
+    /// 종류, 풀링, 선택 파악에 쓰인다.
     /// </summary>
     public enum GAMEOBJECT
     {
 
         // 큰 타입
         NONE = 0,
+        // 20 ~ 29까지
+        MULTI = 0b0111_1111_1111_0000_0000_0000_0000_0000,
+
 
         // 20 부터는 비트마스킹 i.e 최대 종류 100만개 제한이다.
         UNIT = 1 << 20,
@@ -26,6 +29,8 @@ public static class MY_TYPE
 
         BUILDING = 1 << 25,
         UNFINISHED_BUILDING = BUILDING | (1 << 26),
+
+        MISSILE = 1 << 28,
 
         // 유닛
         WORKER = SUPPORT_UNIT | 1,

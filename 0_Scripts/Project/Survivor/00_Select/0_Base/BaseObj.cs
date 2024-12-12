@@ -58,11 +58,6 @@ public abstract class BaseObj : Commandable,         // 명령 가능 오브젝트 -> 선
     public int CurHp => curHp;
     public abstract int Def { get; }
 
-    /// <summary>
-    /// 취소 버튼 활성화는 TYPE만으로 결정할 수 없어서 유닛들에게 활성화 해야하는지 묻는다
-    /// </summary>
-    public virtual bool IsCancelBtn => false;
-
     public int MyTurn
     {
 

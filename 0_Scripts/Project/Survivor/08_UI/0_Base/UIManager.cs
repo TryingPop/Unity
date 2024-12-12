@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIChat acquired;               // È¹µæ ? È¤Àº Ã¤ÆÃ?
     [SerializeField] private CameraMovement camMove;
 
+    [Header("ÄÄÆ÷³ÍÆ®")]
     [SerializeField] private RectTransform frameRectTrans;
 
     [Header("Äµ¹ö½º")]
@@ -49,6 +51,8 @@ public class UIManager : MonoBehaviour
     // ½ºÅ©¸³Æ® ¼ø¼­¸¦ ¹Ù²ãÁà¾ßÇÑ´Ù UI -> GameScreen or MiniMap
     public Vector2 screenRatio;
     public Vector2 screenSize;
+
+    [SerializeField] private Vector3 addCamPos;
 
     public bool ActiveHitBar
     {
@@ -115,7 +119,6 @@ public class UIManager : MonoBehaviour
         set { setMaxHp = value; }
     }
 
-
     private void Awake()
     {
         
@@ -147,7 +150,8 @@ public class UIManager : MonoBehaviour
         gameScreen.GetMyUIPos();
         miniMap.Init();
 
-        SetMiniMap();
+        SetAddCamPos();
+        UpdateMiniMap();
     }
 
     public void LateUpdate()
@@ -159,7 +163,7 @@ public class UIManager : MonoBehaviour
         {
 
             camMove.Move(); 
-            SetMiniMap();
+            UpdateMiniMap();
         }
 
         if (btns.IsChanged)
@@ -238,7 +242,7 @@ public class UIManager : MonoBehaviour
         selects.SetPos();
     }
 
-    private void SetMiniMap()
+    private void UpdateMiniMap()
     {
 
         PlayerManager playerManager = PlayerManager.instance;
@@ -426,13 +430,31 @@ public class UIManager : MonoBehaviour
         camMove.IsControl = _isControl;
     }
 
+    private void SetAddCamPos()
+    {
+
+        
+
+        Transform camTrans = camMove.transform;
+        if (Physics.Raycast(camTrans.position, camTrans.forward, out RaycastHit hit, 70f, 1 << VarianceManager.LAYER_GROUND))
+        {
+
+            addCamPos.x = camTrans.position.x - hit.point.x;
+            addCamPos.z = camTrans.position.z - hit.point.z;
+        }
+    }
+
     /// <summary>
     /// Ä· °­Á¦ ÀÌµ¿
     /// </summary>
     public void GoCam(ref Vector3 _pos, bool _forcedMove = false)
     {
 
+        _pos += addCamPos;
         camMove.SetPos(ref _pos, _forcedMove);
+        UpdateMiniMap();
+
+        Debug.LogWarning($"MousePos : {inputManager.MousePos}\nLR: {miniMap.LeftBot}\tRT{miniMap.RightTop}\nCenter: {(miniMap.LeftBot + miniMap.RightTop) / 2}\n");
     }
 
     public void OnGUI()

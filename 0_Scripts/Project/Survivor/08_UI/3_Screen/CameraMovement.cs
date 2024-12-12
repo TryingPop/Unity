@@ -19,7 +19,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private Vector3 minBound;
     [SerializeField] private Vector3 maxBound;
 
-    [SerializeField] private CinemachineVirtualCamera mainCam;
+    // [SerializeField] private CinemachineVirtualCamera mainCam;
+    [SerializeField] private Camera mainCam;
 
     private float horizontal;
     private float vertical;
@@ -71,14 +72,14 @@ public class CameraMovement : MonoBehaviour
         float z = vertical * moveSpeed * Time.deltaTime + pos.z;
         float y = scrollWheel * -scrollWheelSpeed;
 
-        y = y + mainCam.m_Lens.FieldOfView;
+        y = y + mainCam.fieldOfView;
         
         ChkBound(ref x, ref y, ref z);
         dir = new Vector3(x, pos.y, z);
 
         transform.position = dir;
 
-        mainCam.m_Lens.FieldOfView = y;
+        mainCam.fieldOfView = y;
     }
 
     public void SetPos(ref Vector3 _pos, bool _forcedMove = false)
