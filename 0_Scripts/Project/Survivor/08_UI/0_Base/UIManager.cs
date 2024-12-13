@@ -430,18 +430,16 @@ public class UIManager : MonoBehaviour
         camMove.IsControl = _isControl;
     }
 
+    /// <summary>
+    /// 카메라가 바라보는 곳과 오차 계산
+    /// </summary>
     private void SetAddCamPos()
     {
 
-        
-
-        Transform camTrans = camMove.transform;
-        if (Physics.Raycast(camTrans.position, camTrans.forward, out RaycastHit hit, 70f, 1 << VarianceManager.LAYER_GROUND))
-        {
-
-            addCamPos.x = camTrans.position.x - hit.point.x;
-            addCamPos.z = camTrans.position.z - hit.point.z;
-        }
+        Vector3 camPos = camMove.transform.position;
+        PlayerManager.instance.UiPosToWorldPos(gameScreen.MyCenter, out Vector3 cenPos);
+        addCamPos.x = camPos.x - cenPos.x;
+        addCamPos.z = camPos.z - cenPos.z;
     }
 
     /// <summary>
@@ -453,8 +451,6 @@ public class UIManager : MonoBehaviour
         _pos += addCamPos;
         camMove.SetPos(ref _pos, _forcedMove);
         UpdateMiniMap();
-
-        Debug.LogWarning($"MousePos : {inputManager.MousePos}\nLR: {miniMap.LeftBot}\tRT{miniMap.RightTop}\nCenter: {(miniMap.LeftBot + miniMap.RightTop) / 2}\n");
     }
 
     public void OnGUI()

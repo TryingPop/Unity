@@ -31,6 +31,8 @@ public class GameScreen : MonoBehaviour,
     public Vector2 MyLeftBottom => myLeftBottom;
     public Vector2 MyRightTop => myRightTop;
 
+    public Vector2 MyCenter => (myLeftBottom + myRightTop) / 2;
+
     public void GetMyUIPos()
     {
 
