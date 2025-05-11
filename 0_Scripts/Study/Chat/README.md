@@ -33,5 +33,12 @@ ServerClient 클래스 정의도 포함되어 있는데, 해당 클래스는 단
 메시지를 입력받으면 \\n을 추가해 메세지를 구분한다.<br/>
 
 
+LayoutRebuilder의 ForceRebuildLayoutImmediate 메소드를 사용한다면 Content Size Filter 컴포넌트가 있어야 한다.<br/>
+
+
+## 작동 여부
+이상없이 실행된다.<br/>
+
+
 ## 참고 사이트
 https://www.youtube.com/watch?v=y3FU6d_BpjI
