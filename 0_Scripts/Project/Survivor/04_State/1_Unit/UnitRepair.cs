@@ -11,7 +11,7 @@ public class UnitRepair : IUnitAction
     public override void Action(Unit _unit)
     {
 
-        // 수리 대상이 없거나 수리를 못학거나 대상이 파괴된(사망인) 상태면 종료
+        // 수리 대상이 없거나 수리를 못하거나 대상이 파괴된(사망인) 상태면 종료
         if (_unit.Target == null
             || _unit.Target.gameObject.layer == VarianceManager.LAYER_DEAD)
         {
@@ -34,13 +34,19 @@ public class UnitRepair : IUnitAction
 
             //건설 해야하는 상태
             if (targetState == MY_STATE.GAMEOBJECT.BUILDING_UNFINISHED)
-            { 
-                
+            {
+
+
+#if UNITY_EDITOR
+
+                Debug.Log($"{_unit.MyStat.MyName}이 {_unit.Target.MyStat.MyName} 건설을 시도 합니다.");
+#endif
+
+                // 건물 건설 상태 필요.
                 _unit.Target.Heal(0);
                 return;
             }
 
-            // 수리인 경우
             if (_unit.MyTurn == 0)
             {
 

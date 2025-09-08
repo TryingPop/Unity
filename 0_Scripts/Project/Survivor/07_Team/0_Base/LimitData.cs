@@ -6,15 +6,18 @@ using UnityEngine;
 public abstract class LimitData : ILimitData
 {
 
-    [SerializeField] protected int curVal;
-    [SerializeField] protected int maxVal;
+    [SerializeField, Tooltip("현재 수치")] protected int curVal;
+    [SerializeField, Tooltip("맥스 수치")] protected int maxVal;
 
 #if UNITY_EDITOR
 
-    [SerializeField] bool chkBtn;
+    [SerializeField, Tooltip("잠글 버튼이 있는지 없는지 디버깅 전용 변수")] bool chkBtn;
 #endif
 
-    [SerializeField] protected ButtonInfo lockBtn;
+    [SerializeField, 
+        Tooltip("현재 수치가 맥스수치보다 크거나 같은 경우 잠글 버튼")] 
+    protected ButtonInfo lockBtn;
+
     public virtual int CurVal() => curVal;
 
     // [SerializeField] protected MYTYPE.UPGRADE myType;

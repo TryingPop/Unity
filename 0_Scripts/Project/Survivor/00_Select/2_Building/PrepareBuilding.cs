@@ -15,8 +15,8 @@ public class PrepareBuilding : MonoBehaviour, Follower
     [SerializeField] public int selectIdx;               // 생성할 건물 idx
     [SerializeField] protected int prefabIdx = -1;
 
-    [SerializeField] protected Transform[] chkGround;       // 현재 사용 X
-    [SerializeField] protected LayerMask groundLayer;       // 현재 사용 X
+    // [SerializeField] protected Transform[] chkGround;       // 현재 사용 X
+    // [SerializeField] protected LayerMask groundLayer;       // 현재 사용 X
     [SerializeField] protected int interval;                // 단위 배치용도 0.2 0.4f 자리 안가게 설정
 
     public int PrefabIdx
@@ -50,6 +50,11 @@ public class PrepareBuilding : MonoBehaviour, Follower
     private void OnTriggerStay(Collider other)
     {
 
+#if UNITY_EDITOR
+
+        Debug.Log($"{other.name}과 stay");
+#endif
+
         if (!other.CompareTag("Ground") && isBuild)
         {
 
@@ -63,7 +68,11 @@ public class PrepareBuilding : MonoBehaviour, Follower
     /// </summary>
     private void OnTriggerExit(Collider other)
     {
-        
+
+#if UNITY_EDITOR
+
+        Debug.Log($"{other.name}과 exit");
+#endif
         if (!other.CompareTag("Ground"))
         {
 
@@ -71,6 +80,14 @@ public class PrepareBuilding : MonoBehaviour, Follower
             SetColor();
         }
     }
+
+#if UNITY_EDITOR
+    private void OnTriggerEnter(Collider other)
+    {
+
+        Debug.Log($"{other.name}과 enter");
+    }
+#endif
 
     /// <summary>
     /// 색상 설정
@@ -102,6 +119,7 @@ public class PrepareBuilding : MonoBehaviour, Follower
     /// <summary>
     /// 지면 확인, 현재는 사용 X
     /// </summary>
+    /*
     protected bool ChkGround()
     {
 
@@ -113,7 +131,7 @@ public class PrepareBuilding : MonoBehaviour, Follower
 
         return true;
     }
-
+    */
 
     /// <summary>
     /// 건물 지을 수 잇는 공간이면 Target으로 넘겨준다 
@@ -128,6 +146,7 @@ public class PrepareBuilding : MonoBehaviour, Follower
         Debug.Log("일꾼 유닛은 플레이어 입니다.\n그래서 당장은 플레이어 레이어로 가져오나,\n"
             + "추후 확장에서는 레이어를 다른 방법으로 지정해주셔야 합니다.");
 #endif
+
         // 건물 건설하는 레이어는 플레이어로 설정된다.
         var go = PoolManager.instance.GetPrefabs(PrefabIdx, VarianceManager.LAYER_PLAYER, transform.position);
         Building building = go.GetComponent<Building>();
@@ -141,9 +160,10 @@ public class PrepareBuilding : MonoBehaviour, Follower
     /// </summary>
     public void Used()
     {
-
         
         ActionManager.instance.RemoveFollowMouse(this);
+        isBuild = true;
+        SetColor();
         gameObject.SetActive(false);
     }
 

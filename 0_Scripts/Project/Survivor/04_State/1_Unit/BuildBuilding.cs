@@ -35,8 +35,8 @@ public class BuildBuilding : IUnitAction
             int supply = stats.Supply;
             int gold = stats.Cost;
             
-
             TeamInfo unitTeam = _unit.MyTeam;
+            // 건물 지을 수 있는지 확인
             if (unitTeam.ChkAdd(stats.MyType)
                 && unitTeam.ChkGold(gold)
                 && unitTeam.ChkSupply(supply))
@@ -54,6 +54,7 @@ public class BuildBuilding : IUnitAction
                     // 골드 소모
                     unitTeam.AddGold(-gold);
                     unitTeam.AddCnt(stats.MyType);
+                    // 프리팹 생성
                     var go = PoolManager.instance.GetSamePrefabs(_unit.Target, _unit.gameObject.layer, _unit.TargetPos);
 
                     if (go)

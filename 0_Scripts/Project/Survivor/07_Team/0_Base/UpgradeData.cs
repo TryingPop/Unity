@@ -9,8 +9,8 @@ using UnityEngine;
 public class UpgradeData : LimitUpgrade
 {
 
-    [SerializeField] protected int cost;
-    [SerializeField] protected int lvlCost;
+    [SerializeField, Tooltip("기본 비용")] protected int cost;
+    [SerializeField, Tooltip("레벨업 추가 비용")] protected int lvlCost;
 
     /// <summary>
     /// 업그레이드당 추가 비용
